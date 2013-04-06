@@ -1,0 +1,7 @@
+cpu
+ . add the BRK + NMI bug
+ . branch + interrupts
+ 
+ppu
+ . $2005/6 masks for internal scroll temp register (bit15 is ok?)
+ . $2002 nmi suppression

@@ -85,6 +85,16 @@ void nes_unload()
 	nes.mapper = 0;
 }
 
+u8 apu_read(u32 addr)
+{
+	return(0);
+}
+
+void apu_write(u32 addr,u8 data)
+{
+
+}
+
 void nes_reset(int hard)
 {
 	int i;
@@ -99,8 +109,10 @@ void nes_reset(int hard)
 	}
 	mem_setreadfunc(2,ppu_read);
 	mem_setreadfunc(3,ppu_read);
+	mem_setreadfunc(4,apu_read);
 	mem_setwritefunc(2,ppu_write);
 	mem_setwritefunc(3,ppu_write);
+	mem_setwritefunc(4,apu_write);
 	nes.mapper->reset(hard);
 	cpu_reset(hard);
 	ppu_reset(hard);
@@ -115,9 +127,5 @@ void nes_reset(int hard)
 
 void nes_frame()
 {
-	char buf[512];
-
-	cpu_disassemble(buf,nes.cpu.pc);
-	log_printf("$%04X: %s\n",nes.cpu.pc,buf);
 	cpu_step();
 }

@@ -151,3 +151,8 @@ void mem_setvram(int banksize,int page,int bank)
 		nes.ppu.writepages[page + i] = nes.cart->vram.data + offset + (i * 1024);
 	}
 }
+
+void mem_setsramsize(int banks)
+{
+	cart_setsramsize(nes.cart,banks);
+}

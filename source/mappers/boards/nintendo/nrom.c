@@ -22,6 +22,9 @@
 
 static void reset(int hard)
 {
+	mem_setsramsize(2);
+	mem_setsram8(6,0);
+
 	mem_setprg16(0x8,0);
 	mem_setprg16(0xC,-1);
 	if(nes.cart->chr.size)

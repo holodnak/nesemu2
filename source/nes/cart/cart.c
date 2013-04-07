@@ -192,18 +192,19 @@ static void allocdata(data_t *data,int len)
 		data->data = malloc(len);
 	else
 		data->data = realloc(data->data,len);
+	memset(data->data,0,len);
 }
 
 void cart_setsramsize(cart_t *r,int banks)
 {
-	allocdata(&r->sram,banks * 1024);
-	log_printf("cart_setsramsize:  sram size set to %dkb\n",banks);
+	allocdata(&r->sram,banks * 0x1000);
+	log_printf("cart_setsramsize:  sram size set to %dkb\n",banks * 0x1000 / 1024);
 }
 
 void cart_setwramsize(cart_t *r,int banks)
 {
-	allocdata(&r->wram,banks * 1024);
-	log_printf("cart_setwramsize:  wram size set to %dkb\n",banks);
+	allocdata(&r->wram,banks * 0x1000);
+	log_printf("cart_setwramsize:  wram size set to %dkb\n",banks * 0x1000 / 1024);
 }
 
 void cart_setvramsize(cart_t *r,int banks)

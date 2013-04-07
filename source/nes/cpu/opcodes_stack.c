@@ -27,7 +27,7 @@ static INLINE void OP_PHA()
 static INLINE void OP_PHP()
 {
 	compact_flags();
-	push(P);
+	push(P | 0x10);
 }
 
 static INLINE void OP_PLA()
@@ -77,3 +77,32 @@ static INLINE void OP_JSR()
 	PC = (memread(PC) << 8) | TMPREG;
 }
 
+/*
+BRK
+#  address R/W description
+--- ------- --- -----------------------------------------------
+1    PC     R  fetch opcode, increment PC
+2    PC     R  read next instruction byte (and throw it away), increment PC
+3  $0100,S  W  push PCH on stack (with B flag set), decrement S
+4  $0100,S  W  push PCL on stack, decrement S
+5  $0100,S  W  push P on stack, decrement S
+6   $FFFE   R  fetch PCL
+7   $FFFF   R  fetch PCH
+*/
+static INLINE void OP_BRK()
+{
+	push((u8)(PC >> 8));
+	push((u8)PC);
+	compact_flags();
+	push(P | 0x10);
+	FLAG_I = 1;
+/*	if(NMISTATE) {
+		NMISTATE = 0;
+		PC = memread(0xFFFA);
+		PC |= memread(0xFFFB) << 8;
+	}
+	else*/ {
+		PC = memread(0xFFFE);
+		PC |= memread(0xFFFF) << 8;
+	}
+}

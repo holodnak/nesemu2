@@ -82,5 +82,6 @@ void cpu_write(u32 addr,u8 data);
 void cpu_step();
 u32 cpu_execute(u32 cycles);
 u16 cpu_disassemble(char *buffer,u16 opcodepos);
+void cpu_disassemble_init();
 
 #endif

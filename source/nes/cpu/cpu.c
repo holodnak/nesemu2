@@ -103,6 +103,17 @@ static void expand_flags()
 
 static void compact_flags()
 {
+#ifdef CPU_DEBUG
+	if(FLAG_C & 0xFE || 
+		FLAG_Z & 0xFE ||
+		FLAG_I & 0xFE ||
+		FLAG_D & 0xFE ||
+		FLAG_B & 0xFE ||
+		FLAG_V & 0xFE ||
+		FLAG_N & 0xFE) {
+		log_printf("compact_flags:  one or more flags is dirty!\n");
+	}
+#endif
 	P = 0x20;
 	P |= (FLAG_C) << 0;
 	P |= (FLAG_Z) << 1;
@@ -135,12 +146,12 @@ static void execute_irq()
 	compact_flags();
 	push(P);
 	FLAG_I = 1;
-	if(NMISTATE) {
+/*	if(NMISTATE) {
 		NMISTATE = 0;
 		PC = memread(0xFFFA);
 		PC |= memread(0xFFFB) << 8;
 	}
-	else {
+	else*/ {
 		PC = memread(0xFFFE);
 		PC |= memread(0xFFFF) << 8;
 	}
@@ -148,7 +159,7 @@ static void execute_irq()
 
 int cpu_init()
 {
-
+	cpu_disassemble_init();
 	return(0);
 }
 
@@ -159,7 +170,8 @@ void cpu_kill()
 void cpu_reset(int hard)
 {
 	if(hard) {
-		A = X = Y = SP = 0;
+		A = X = Y = 0;
+		SP = 0xFF;
 		PC = 0;
 		P = 0x20;
 		expand_flags();
@@ -168,6 +180,7 @@ void cpu_reset(int hard)
 	FLAG_I = 1;
 	PC = memread(0xFFFC);
 	PC |= memread(0xFFFD) << 8;
+//	PC = 0xC000;
 }
 
 u64 cpu_getcycles()
@@ -252,6 +265,12 @@ void cpu_write(u32 addr,u8 data)
 	log_printf("cpu_write:  unhandled write at $%04X\n",addr,data);
 }
 
+u8 cpu_getflags()
+{
+	compact_flags();
+	return(P);
+}
+
 #include "addrmodes.c"
 #include "opcodes.c"
 #include "opcodes_branch.c"
@@ -262,4 +281,7 @@ void cpu_write(u32 addr,u8 data)
 #include "opcodes_alu.c"
 #include "opcodes_flag.c"
 #include "opcodes_stack.c"
+#ifdef CPU_UNDOC
+	#include "opcodes_undocumented.c"
+#endif
 #include "execute.c"

@@ -53,7 +53,7 @@ void ppu_step()
 
 		//last cycle
 		if(LINECYCLES == 340) {
-			log_printf("ppu_step:  scanline %d, cycle %d:  setting VBLANK\n",SCANLINE,LINECYCLES);
+//			log_printf("ppu_step:  scanline %d, cycle %d:  setting VBLANK\n",SCANLINE,LINECYCLES);
 			STATUS |= 0x80;
 			if(CONTROL0 & 0x80)
 				cpu_set_nmi(1);

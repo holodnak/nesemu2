@@ -53,11 +53,14 @@ void mem_setchr(int banksize,int page,int rombank);
 void mem_setvram(int banksize,int page,int rombank);
 void mem_setsvram(int banksize,int page,int rombank);
 
+//setup sram
+void mem_setsramsize(int banks);
+
 //macros for cpu memory
-#define mem_unsetcpu4(p,b)		mem_unsetcpu(4,p,b)
-#define mem_unsetcpu8(p,b)		mem_unsetcpu(8,p,b)
-#define mem_unsetcpu16(p,b)	mem_unsetcpu(16,p,b)
-#define mem_unsetcpu32(p,b)	mem_unsetcpu(32,p,b)
+#define mem_unsetcpu4(p)		mem_unsetcpu(4,p)
+#define mem_unsetcpu8(p)		mem_unsetcpu(8,p)
+#define mem_unsetcpu16(p)		mem_unsetcpu(16,p)
+#define mem_unsetcpu32(p)		mem_unsetcpu(32,p)
 #define mem_setprg4(p,b)		mem_setprg(4,p,b)
 #define mem_setprg8(p,b)		mem_setprg(8,p,b)
 #define mem_setprg16(p,b)		mem_setprg(16,p,b)
@@ -68,10 +71,10 @@ void mem_setsvram(int banksize,int page,int rombank);
 #define mem_setsram8(p,b)		mem_setsram(8,p,b)
 
 //macros for ppu memory
-#define mem_unsetppu1(p,b)		mem_unsetppu(1,p,b)
-#define mem_unsetppu2(p,b)		mem_unsetppu(2,p,b)
-#define mem_unsetppu4(p,b)		mem_unsetppu(4,p,b)
-#define mem_unsetppu8(p,b)		mem_unsetppu(8,p,b)
+#define mem_unsetppu1(p)		mem_unsetppu(1,p)
+#define mem_unsetppu2(p)		mem_unsetppu(2,p)
+#define mem_unsetppu4(p)		mem_unsetppu(4,p)
+#define mem_unsetppu8(p)		mem_unsetppu(8,p)
 #define mem_setnt1(p,b)			mem_setnt(1,p,b)
 #define mem_setnt2(p,b)			mem_setnt(2,p,b)
 #define mem_setchr1(p,b)		mem_setchr(1,p,b)

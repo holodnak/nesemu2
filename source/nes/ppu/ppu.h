@@ -64,6 +64,7 @@ typedef struct ppu_s {
 
 int ppu_init();
 void ppu_kill();
+void ppu_setmirroring(int t);
 void ppu_reset(int hard);
 u8 ppu_read(u32 addr);
 void ppu_write(u32 addr,u8 data);

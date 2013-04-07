@@ -34,6 +34,7 @@ static mapper_t *get_mapper(int mapperid)
 {
 	//nintendo boards
 	MAPPER(B_NROM);
+	MAPPER(B_SxROM);
 
 	return(0);
 }

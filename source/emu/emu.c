@@ -25,7 +25,7 @@
 #include "system/video.h"
 
 #define SUBSYSTEM_START	static subsystem_t subsystems[] = {
-#define SUBSYSTEM(n)		{##n##_init,##n##_kill},
+#define SUBSYSTEM(n)		{n ## _init,n ## _kill},
 #define SUBSYSTEM_END	{0,0}};
 
 typedef int (*initfunc_t)();

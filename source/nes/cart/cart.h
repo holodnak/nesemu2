@@ -22,7 +22,7 @@
 #define __cart_h__
 
 #include "types.h"
-#include "nes/ppu/cache.h"
+#include "nes/ppu/tilecache.h"
 
 //mirroring types
 #define MIRROR_H			0

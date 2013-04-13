@@ -18,11 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "log/log.h"
 #include "nes/io.h"
 #include "nes/nes.h"
 #include "system/input.h"
-
-//u8 nes_frameirq;
 
 //read from apu/joypads
 u8 nes_read_4000(u32 addr)
@@ -35,12 +34,14 @@ u8 nes_read_4000(u32 addr)
 	if(addr == 0x4017)
 		return(nes.inputdev[1]->read() | nes.expdev->read());
 
-/*	if(addr == 0x4015) {
-		u8 ret = apu_read(addr) | nes_frameirq;
-		nes_frameirq = 0;
+	if(addr == 0x4015) {
+		u8 ret = /*apu_read(addr) |*/ nes.frame_irq;
+		cpu_set_irq(0);
+//		nes_frameirq = 0;
+		log_printf("nes_read_4000: $%04X\n",addr);
 		return(ret);
 	}
-
+/*
 	//else return an apu read
 	return(apu_read(addr));*/
 	return(0);
@@ -81,10 +82,11 @@ void nes_write_4000(u32 addr,u8 data)
 	}
 
 	//frame irq control
-/*	else if(addr == 0x4017) {
+	else if(addr == 0x4017) {
+		log_printf("nes_write_4000: $%04X = $%02X\n",addr,data);
 		nes.frame_irqmode = data;
-		nes_frame_irqmode = data;
-	}*/
+		nes.frame_irq = 0;
+	}
 }
 
 u8 nes_read_mem(u32 addr)

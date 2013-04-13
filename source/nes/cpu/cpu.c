@@ -53,7 +53,7 @@
 #define PREV_NMISTATE	nes.cpu.prev_nmistate
 #define PREV_IRQSTATE	nes.cpu.prev_irqstate
 
-static u8 memread(u32 addr)
+static INLINE u8 memread(u32 addr)
 {
 	//increment cycle counter, check irq lines
 	cpu_tick();
@@ -61,7 +61,7 @@ static u8 memread(u32 addr)
 	return(cpu_read(addr));
 }
 
-static void memwrite(u32 addr,u8 data)
+static INLINE void memwrite(u32 addr,u8 data)
 {
 	//increment cycle counter, check irq lines
 	cpu_tick();
@@ -70,27 +70,27 @@ static void memwrite(u32 addr,u8 data)
 }
 
 //push data to stack
-static void push(u8 data)
+static INLINE void push(u8 data)
 {
 	memwrite(SP | 0x100,data);
 	SP--;
 }
 
 //pop data from stack
-static u8 pop()
+static INLINE u8 pop()
 {
 	SP++;
 	return(memread(SP | 0x100));
 }
 
 //check value for n/z and set flags
-static void checknz(u8 n)
+static INLINE void checknz(u8 n)
 {
 	FLAG_N = (n >> 7) & 1;
 	FLAG_Z = (n == 0) ? 1 : 0;
 }
 
-static void expand_flags()
+static INLINE void expand_flags()
 {
 	FLAG_C = (P & 0x01) >> 0;
 	FLAG_Z = (P & 0x02) >> 1;
@@ -101,7 +101,7 @@ static void expand_flags()
 	FLAG_N = (P & 0x80) >> 7;
 }
 
-static void compact_flags()
+static INLINE void compact_flags()
 {
 #ifdef CPU_DEBUG
 	if(FLAG_C & 0xFE || 
@@ -124,7 +124,7 @@ static void compact_flags()
 	P |= (FLAG_N) << 7;
 }
 
-static void execute_nmi()
+static INLINE void execute_nmi()
 {
 	memread(PC);
 	memread(PC);
@@ -137,7 +137,7 @@ static void execute_nmi()
 	PC |= memread(0xFFFB) << 8;
 }
 
-static void execute_irq()
+static INLINE void execute_irq()
 {
 	memread(PC);
 	memread(PC);

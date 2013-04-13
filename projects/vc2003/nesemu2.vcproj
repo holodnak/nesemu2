@@ -372,7 +372,7 @@
 					Name="ppu"
 					Filter="">
 					<File
-						RelativePath="..\..\source\nes\ppu\cache.c">
+						RelativePath="..\..\source\nes\ppu\attribcache.c">
 					</File>
 					<File
 						RelativePath="..\..\source\nes\ppu\io.c">
@@ -382,6 +382,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\nes\ppu\step.c">
+					</File>
+					<File
+						RelativePath="..\..\source\nes\ppu\tilecache.c">
 					</File>
 				</Filter>
 				<Filter
@@ -605,10 +608,13 @@
 					Name="ppu"
 					Filter="">
 					<File
-						RelativePath="..\..\source\nes\ppu\cache.h">
+						RelativePath="..\..\source\nes\ppu\attribcache.h">
 					</File>
 					<File
 						RelativePath="..\..\source\nes\ppu\ppu.h">
+					</File>
+					<File
+						RelativePath="..\..\source\nes\ppu\tilecache.h">
 					</File>
 				</Filter>
 				<Filter

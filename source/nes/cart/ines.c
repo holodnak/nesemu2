@@ -114,8 +114,8 @@ int cart_load_ines(cart_t *ret,const char *filename)
 		ret->cache_hflip = (cache_t*)malloc(ret->chr.size);
 
 		//convert all chr tiles to cache tiles
-		convert_tiles(ret->chr.data,ret->cache,ret->chr.size / 16,0);
-		convert_tiles(ret->chr.data,ret->cache_hflip,ret->chr.size / 16,1);
+		cache_tiles(ret->chr.data,ret->cache,ret->chr.size / 16,0);
+		cache_tiles(ret->chr.data,ret->cache_hflip,ret->chr.size / 16,1);
 	}
 	else {
 

@@ -55,8 +55,8 @@ void ppu_memwrite(u32 addr,u8 data)
 			u8 *chr = nes.ppu.readpages[page];
 			u32 a = addr & 0x3F0;
 
-			convert_tile(chr + a,cache + (a / 8));
-			convert_tile_hflip(chr + a,cache_hflip + (a / 8));
+			cache_tile(chr + a,cache + (a / 8));
+			cache_tile_hflip(chr + a,cache_hflip + (a / 8));
 		}
 	}
 }

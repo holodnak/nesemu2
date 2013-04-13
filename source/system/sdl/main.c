@@ -36,6 +36,8 @@ int quit = 0;
 char romfilename[_MAX_PATH];
 static palette_t *pal = 0;
 
+static int keydown = 0;
+
 int mainloop()
 {
 	//load file into the nes
@@ -62,8 +64,20 @@ int mainloop()
 		nes_frame();
 		video_endframe();
 		input_poll();
-		if(joykeys[SDLK_p])
+		if(joykeys[SDLK_p]) {
+			keydown |= 1;
+		}
+		else if(keydown & 1) {
 			nes_reset(0);
+			keydown &= ~1;
+		}
+		if(joykeys[SDLK_o]) {
+			keydown |= 2;
+		}
+		else if(keydown & 2) {
+			nes_reset(1);
+			keydown &= ~2;
+		}
 		system_check_events();
 	}
 

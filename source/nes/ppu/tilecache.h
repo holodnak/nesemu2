@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __cache_h__
-#define __cache_h__
+#ifndef __ppu__tilecache_h__
+#define __ppu__tilecache_h__
 
 #include "types.h"
 
@@ -28,8 +28,8 @@
 
 typedef u64 cache_t;
 
-void convert_tile(u8 *chr,cache_t *cache);
-void convert_tile_hflip(u8 *chr,cache_t *cache);
-void convert_tiles(u8 *chr,cache_t *cache,int num,int hflip);
+void cache_tile(u8 *chr,cache_t *cache);
+void cache_tile_hflip(u8 *chr,cache_t *cache);
+void cache_tiles(u8 *chr,cache_t *cache,int num,int hflip);
 
 #endif

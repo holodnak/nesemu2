@@ -88,7 +88,7 @@ void video_endframe()
 	for(y=0;y<240;y++) {
 		for(x=0;x<256;x++) {
 			palentry_t *e = &palette->pal[src[x] >> 8][src[x] & 0x3F];
-			dest[x] = (e->r) | (e->g << 8) | (e->b << 16);
+			dest[x] = (e->r << 16) | (e->g << 8) | (e->b << 0);
 		}
 		dest += pitch;
 		src += 256;

@@ -62,6 +62,10 @@ typedef struct nes_s {
 	//input strobe and connected devices
 	u8				strobe;
 	inputdev_t	*inputdev[2],*expdev;
+
+	//frame irq
+	u8				frame_irqmode;
+	u8				frame_irq;
 } nes_t;
 
 extern nes_t nes;

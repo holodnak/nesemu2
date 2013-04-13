@@ -18,6 +18,13 @@ SOURCES = $(SOURCE_CONFIG) $(SOURCE_LOG) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURC
 OBJECTS = $(patsubst %.c,%.o,$(SOURCES))
 TARGET = nesemu2.exe
 
+TRASHFILES = nesemu2.log stdout.txt stderr.txt
+TRASHFILES += projects/codeblocks/nesemu2.depend projects/codeblocks/nesemu2.layout
+TRASHFILES += projects/vc2003/nesemu2.suo projects/vc2003/nesemu2.ncb
+TRASHDIRS = projects/codeblocks/bin projects/codeblocks/obj
+TRASHDIRS += projects/vc2003/Debug projects/vc2003/Release
+TRASHDIRS += projects/vc2010/Debug projects/vc2010/Release
+
 CC=gcc
 LD=gcc
 
@@ -29,12 +36,16 @@ LDFLAGS=-lSDL
 #SOURCE_FILES=$(foreach dir,$(SOURCE_DIRS),$(wildcard $(dir)/*.c))
 #OBJECTS=$(patsubst %.c,%.o,$(SOURCE_FILES))
 
-.PHONY: clean
+.PHONY: clean distclean
 
 all: $(TARGET)
 
 clean:
-	rm $(OBJECTS) $(TARGET)
+	rm -f $(OBJECTS) $(TARGET)
+
+distclean: clean
+	rm -f $(TRASHFILES)
+	rm -rf $(TRASHDIRS)
 
 $(TARGET): $(OBJECTS)
 	$(LD) -o $@ $^ $(LDFLAGS)

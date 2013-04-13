@@ -26,6 +26,7 @@
 #include "nes/ppu/ppu.h"
 #include "nes/cart/cart.h"
 #include "mappers/mappers.h"
+#include "inputdev/inputdev.h"
 
 #define CONTROL0		nes.ppu.control0
 #define CONTROL1		nes.ppu.control1
@@ -49,15 +50,18 @@
 typedef struct nes_s {
 
 	//2a03/2c02 data
-	cpu_t		cpu;
-	ppu_t		ppu;
+	cpu_t			cpu;
+	ppu_t			ppu;
 
 	//cartridge inserted
-	cart_t	*cart;
+	cart_t		*cart;
 
 	//mapper functions
-	mapper_t	*mapper;
+	mapper_t		*mapper;
 
+	//input strobe and connected devices
+	u8				strobe;
+	inputdev_t	*inputdev[2],*expdev;
 } nes_t;
 
 extern nes_t nes;
@@ -67,6 +71,7 @@ void nes_kill();
 int nes_load_cart(cart_t *c);
 int nes_load(char *filename);
 void nes_unload();
+void nes_set_inputdev(int n,inputdev_t *d);
 void nes_reset(int hard);
 void nes_frame();
 

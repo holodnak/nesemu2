@@ -171,16 +171,22 @@ void cpu_reset(int hard)
 {
 	if(hard) {
 		A = X = Y = 0;
-		SP = 0xFF;
-		PC = 0;
-		P = 0x20;
+		SP = 0xFD;
+		P = 0x34;
 		expand_flags();
 		memset(nes.cpu.ram,0,0x800);
 	}
-	FLAG_I = 1;
+	else {
+		FLAG_I = 1;
+		SP -= 3;
+	}
 	PC = memread(0xFFFC);
 	PC |= memread(0xFFFD) << 8;
-//	PC = 0xC000;
+
+	log_printf("cpu_reset:  vectors:\n");
+	log_printf("  nmi:    $%04X\n",memread(0xFFFA) | (memread(0xFFFB) << 8));
+	log_printf("  irq:    $%04X\n",memread(0xFFFE) | (memread(0xFFFF) << 8));
+	log_printf("  reset:  $%04X\n",memread(0xFFFC) | (memread(0xFFFD) << 8));
 }
 
 u64 cpu_getcycles()
@@ -204,6 +210,8 @@ void cpu_tick()
 	PREV_NMISTATE = NMISTATE;
 	if(FLAG_I == 0)
 		PREV_IRQSTATE = IRQSTATE;
+	NMISTATE = 0;
+	IRQSTATE = 0;
 
 	//increment cycle counter for every memory access
 	CYCLES++;

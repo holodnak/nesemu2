@@ -22,6 +22,7 @@
 #include <string.h>
 #include "log/log.h"
 #include "nes/nes.h"
+#include "nes/io.h"
 #include "nes/memory.h"
 #include "nes/ppu/ppu.h"
 
@@ -88,12 +89,41 @@ void nes_unload()
 	nes.mapper = 0;
 }
 
-u8 apu_read(u32 addr)
+	//read port
+	u8 (*read)();
+
+	//write port
+	void (*write)(u8);
+
+	//strobe
+	void (*strobe)();
+
+	//update controller info
+	void (*update)();
+	
+static u8 inputdev_null_read()				{return(0);}
+static void inputdev_null_write(u8 data)	{}
+static void inputdev_null_strobe()			{}
+static void inputdev_null_update()			{}
+
+void nes_set_inputdev(int n,inputdev_t *d)
+{
+	d->read = (d->read == 0) ? inputdev_null_read : d->read;
+	d->write = (d->write == 0) ? inputdev_null_write : d->write;
+	d->strobe = (d->strobe == 0) ? inputdev_null_strobe : d->strobe;
+	d->update = (d->update == 0) ? inputdev_null_update : d->update;
+	if(n < 2)
+		nes.inputdev[n] = d;
+	else
+		nes.expdev = d;
+}
+
+static u8 apu_read(u32 addr)
 {
 	return(0);
 }
 
-void apu_write(u32 addr,u8 data)
+static void apu_write(u32 addr,u8 data)
 {
 
 }
@@ -101,8 +131,6 @@ void apu_write(u32 addr,u8 data)
 void nes_reset(int hard)
 {
 	int i;
-
-log_printf("1");
 
 	//zero out all read/write pages/functions
 	for(i=0;i<16;i++) {
@@ -114,28 +142,22 @@ log_printf("1");
 		nes.ppu.writepages[i] = 0;
 	}
 
-log_printf("2");
-
 	//setup read/write funcs
 	mem_setreadfunc(2,ppu_read);
 	mem_setreadfunc(3,ppu_read);
-	mem_setreadfunc(4,apu_read);
+	mem_setreadfunc(4,nes_read_4000);
 	mem_setwritefunc(2,ppu_write);
 	mem_setwritefunc(3,ppu_write);
-	mem_setwritefunc(4,apu_write);
-
-log_printf("3");
+	mem_setwritefunc(4,nes_write_4000);
 
 	//set cart mirroring
 	mem_setmirroring(nes.cart->mirroring);
 
 	//reset the mapper, cpu, and ppu
-log_printf("4");
 	nes.mapper->reset(hard);
-log_printf("5");
 	cpu_reset(hard);
-log_printf("6");
 	ppu_reset(hard);
+
 	//clear some memory for hard reset
 	if(hard) {
 		memset(nes.cpu.ram,0,0x800);
@@ -150,7 +172,7 @@ void nes_frame()
 {
 	u32 curframe = nes.ppu.frames;
 
-	log_printf("executing frame %d\n",curframe);
+//	log_printf("executing frame %d\n",curframe);
 	while(nes.ppu.frames == curframe) {
 		cpu_step();
 	}

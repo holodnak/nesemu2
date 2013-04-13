@@ -18,84 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <SDL/SDL.h>
-#include <stdio.h>
-#include "log/log.h"
-#include "emu/emu.h"
-#include "nes/nes.h"
-#include "system/system.h"
-#include "system/video.h"
-#include "system/input.h"
-#include "palette/palette.h"
-#include "palette/generator.h"
-#include "inputdev/null.h"
-#include "inputdev/joypad0.h"
-#include "inputdev/joypad1.h"
+#ifndef __inputdev__null_h__
+#define __inputdev__null_h__
 
-int quit = 0;
-char romfilename[_MAX_PATH];
-static palette_t *pal = 0;
+#include "inputdev.h"
 
-int mainloop()
-{
-	//load file into the nes
-	if(nes_load(romfilename) != 0) {
-		return(1);
-	}
+extern inputdev_t dev_null;
 
-	nes_set_inputdev(0,&dev_joypad0);
-	nes_set_inputdev(1,&dev_null);
-	nes_set_inputdev(2,&dev_null);
-	pal = palette_generate(-15,45);
-	video_setpalette(pal);
-	video_setscreen(nes.ppu.screen);
-
-	log_printf("resetting nes...\n");
-
-	//reset the nes
-	nes_reset(1);
-
-	log_printf("starting main loop...\n");
-
-	//main event loop
-	while(quit == 0) {
-		nes_frame();
-		video_endframe();
-		input_poll();
-		if(joykeys[SDLK_p])
-			nes_reset(0);
-		system_check_events();
-	}
-
-	palette_destroy(pal);
-
-	return(0);
-}
-
-int main(int argc,char *argv[])
-{
-	int ret;
-
-	if(argc < 2) {
-		log_printf("usage:  %s file.rom\n");
-		return(1);
-	}
-
-	//set rom filename
-	strncpy(romfilename,argv[1],_MAX_PATH);
-
-	//initialize the emulator
-	if(emu_init() != 0) {
-        log_printf("main:  emu_init() failed\n");
-        return(2);
-	}
-
-	//begin the main loop
-	ret = mainloop();
-
-	//destroy emulator
-	emu_kill();
-
-	//return to os
-	return(ret);
-}
+#endif

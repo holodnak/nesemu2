@@ -156,6 +156,21 @@
 				Name="nes"
 				Filter="">
 				<File
+					RelativePath="..\..\source\nes\io.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\..\source\nes\memory.c">
 				</File>
 				<File
@@ -485,9 +500,6 @@
 				<File
 					RelativePath="..\..\source\config\config.c">
 				</File>
-				<File
-					RelativePath="..\..\source\config\defaults.c">
-				</File>
 			</Filter>
 			<Filter
 				Name="log"
@@ -514,6 +526,22 @@
 				</File>
 				<File
 					RelativePath="..\..\source\palette\palette.c">
+				</File>
+			</Filter>
+			<Filter
+				Name="inputdev"
+				Filter="">
+				<File
+					RelativePath="..\..\source\inputdev\inputdev.c">
+				</File>
+				<File
+					RelativePath="..\..\source\inputdev\joypad0.c">
+				</File>
+				<File
+					RelativePath="..\..\source\inputdev\joypad1.c">
+				</File>
+				<File
+					RelativePath="..\..\source\inputdev\null.c">
 				</File>
 			</Filter>
 		</Filter>
@@ -557,6 +585,9 @@
 			<Filter
 				Name="nes"
 				Filter="">
+				<File
+					RelativePath="..\..\source\nes\io.h">
+				</File>
 				<File
 					RelativePath="..\..\source\nes\memory.h">
 				</File>
@@ -647,6 +678,22 @@
 				</File>
 				<File
 					RelativePath="..\..\source\palette\palette.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="inputdev"
+				Filter="">
+				<File
+					RelativePath="..\..\source\inputdev\inputdev.h">
+				</File>
+				<File
+					RelativePath="..\..\source\inputdev\joypad0.h">
+				</File>
+				<File
+					RelativePath="..\..\source\inputdev\joypad1.h">
+				</File>
+				<File
+					RelativePath="..\..\source\inputdev\null.h">
 				</File>
 			</Filter>
 		</Filter>

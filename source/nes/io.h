@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2013 by James Holodnak                                  *
- *   jamesholodnak@gmail.com                                               *
+ *   Copyright (C) 2006-2009 by Dead_Body   *
+ *   jamesholodnak@gmail.com   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,59 +18,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "emu/emu.h"
-#include "log/log.h"
-#include "config/config.h"
-#include "system/system.h"
-#include "system/video.h"
-#include "system/input.h"
-#include "nes/nes.h"
+#ifndef __nes__io_h__
+#define __nes__io_h__
 
-#define SUBSYSTEM_START	static subsystem_t subsystems[] = {
-#define SUBSYSTEM(n)		{n ## _init,n ## _kill},
-#define SUBSYSTEM_END	{0,0}};
+#include "types.h"
 
-typedef int (*initfunc_t)();
-typedef void (*killfunc_t)();
+//nes io handlers
+u8 nes_read_4000(u32 addr);
+void nes_write_4000(u32 addr,u8 data);
 
-typedef struct subsystem_s {
-	initfunc_t	init;
-	killfunc_t	kill;
-} subsystem_t;
+//generic read/write function handlers that use the memory ptrs
+u8 nes_read_mem(u32 addr);
+void nes_write_mem(u32 addr,u8 data);
 
-SUBSYSTEM_START
-//	SUBSYSTEM(config)
-	SUBSYSTEM(log)
-	SUBSYSTEM(system)
-	SUBSYSTEM(video)
-	SUBSYSTEM(input)
-//	SUBSYSTEM(sound)
-	SUBSYSTEM(nes)
-SUBSYSTEM_END
+//nes rom read handler
+u8 nes_read_rom(u32 addr);
 
-int emu_init()
-{
-	int i;
-
-	//loop thru the subsystem function pointers and init
-	for(i=0;subsystems[i].init;i++) {
-		if(subsystems[i].init() != 0) {
-			emu_kill();
-			return(1);
-		}
-	}
-	return(0);
-}
-
-void emu_kill()
-{
-	int i;
-
-	//find the end of the pointer list ('i' will equal last one + 1)
-	for(i=0;subsystems[i].kill;i++);
-
-	//loop thru the subsystem function pointers backwards and kill
-	for(i--;i>=0;i--) {
-		subsystems[i].kill();
-	}
-}
+#endif

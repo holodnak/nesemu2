@@ -18,84 +18,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+//hacked in sdl keys only!
 #include <SDL/SDL.h>
-#include <stdio.h>
-#include "log/log.h"
-#include "emu/emu.h"
-#include "nes/nes.h"
-#include "system/system.h"
-#include "system/video.h"
+#include "joypad0.h"
 #include "system/input.h"
-#include "palette/palette.h"
-#include "palette/generator.h"
-#include "inputdev/null.h"
-#include "inputdev/joypad0.h"
-#include "inputdev/joypad1.h"
 
-int quit = 0;
-char romfilename[_MAX_PATH];
-static palette_t *pal = 0;
+static u32 data;
+static u8 counter;
 
-int mainloop()
+static u8 read0()
 {
-	//load file into the nes
-	if(nes_load(romfilename) != 0) {
-		return(1);
-	}
-
-	nes_set_inputdev(0,&dev_joypad0);
-	nes_set_inputdev(1,&dev_null);
-	nes_set_inputdev(2,&dev_null);
-	pal = palette_generate(-15,45);
-	video_setpalette(pal);
-	video_setscreen(nes.ppu.screen);
-
-	log_printf("resetting nes...\n");
-
-	//reset the nes
-	nes_reset(1);
-
-	log_printf("starting main loop...\n");
-
-	//main event loop
-	while(quit == 0) {
-		nes_frame();
-		video_endframe();
-		input_poll();
-		if(joykeys[SDLK_p])
-			nes_reset(0);
-		system_check_events();
-	}
-
-	palette_destroy(pal);
-
-	return(0);
+	return(((data >> counter++) & 1) | 0x40);
 }
 
-int main(int argc,char *argv[])
+static void strobe()
 {
-	int ret;
-
-	if(argc < 2) {
-		log_printf("usage:  %s file.rom\n");
-		return(1);
-	}
-
-	//set rom filename
-	strncpy(romfilename,argv[1],_MAX_PATH);
-
-	//initialize the emulator
-	if(emu_init() != 0) {
-        log_printf("main:  emu_init() failed\n");
-        return(2);
-	}
-
-	//begin the main loop
-	ret = mainloop();
-
-	//destroy emulator
-	emu_kill();
-
-	//return to os
-	return(ret);
+	data = 0;
+	if(joykeys[SDLK_z]) data |= INPUT_A;
+	if(joykeys[SDLK_x]) data |= INPUT_B;
+	if(joykeys[SDLK_a]) data |= INPUT_SELECT;
+	if(joykeys[SDLK_s]) data |= INPUT_START;
+	if(joykeys[SDLK_UP]) data |= INPUT_UP;
+	if(joykeys[SDLK_DOWN]) data |= INPUT_DOWN;
+	if(joykeys[SDLK_LEFT]) data |= INPUT_LEFT;
+	if(joykeys[SDLK_RIGHT]) data |= INPUT_RIGHT;
+	counter = 0;
 }
+
+inputdev_t dev_joypad0 = {read0,0,strobe,0};

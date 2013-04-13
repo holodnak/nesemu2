@@ -17,36 +17,3 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-#include "config/config.h"
-
-int config_init()
-{
-	return(0);
-}
-
-void config_kill()
-{
-
-}
-
-config_t *config_load(char *filename)
-{
-	config_t *ret = 0;
-
-	return(ret);
-}
-
-int config_save(char *filename,config_t *cfg)
-{
-	return(0);
-}
-
-void config_set(char *name,char *data,int size)
-{
-}
-
-char *config_get(char *name,int *size)
-{
-	return(0);
-}

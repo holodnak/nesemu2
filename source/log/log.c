@@ -31,8 +31,10 @@
 	#define MAX_PATH	1024
 #endif
 
+#define LOGFILENAME "nesemu2.log"
+
 static FILE *logfd = 0;
-static char logfilename[MAX_PATH] = "nesemu2.log";
+static char logfilename[MAX_PATH] = LOGFILENAME;
 
 int log_init()
 {
@@ -40,7 +42,7 @@ int log_init()
 		printf("log_init:  already initialized\n");
 		return(0);
 	}
-	sprintf(logfilename,"%s/%s",system_getcwd(),logfilename);
+	sprintf(logfilename,"%s/%s",system_getcwd(),LOGFILENAME);
 	if((logfd = fopen(logfilename,"wt")) == 0) {
 		printf("log_init:  error opening log file '%s'\n",logfilename);
 		return(1);

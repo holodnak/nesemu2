@@ -59,8 +59,13 @@ set  00      20      40      60      80      a0      c0      e0      mode
 +1e  ASL     ROL     LSR     ROR     SHX**y) LDX  y) DEC     INC     Absolute,x
 +1f  SLO*    RLA*    SRE*    RRA*    SHA**y) LAX* y) DCP*    ISB*    Absolute,x
 */
+
 void cpu_step()
 {
+//	char buf[512];
+
+//	cpu_disassemble(buf,PC);
+//	log_printf("$%04X:  %s\n",PC,buf);
 	OPADDR = PC;
 	OPCODE = memread(PC++);
 	switch(nes.cpu.opcode) {
@@ -139,9 +144,11 @@ void cpu_step()
 	}
 	if(PREV_NMISTATE) {
 		execute_nmi();
+		PREV_NMISTATE = 0;
 	}
 	else if(PREV_IRQSTATE) {
 		execute_irq();
+		PREV_IRQSTATE = 0;
 	}
 }
 

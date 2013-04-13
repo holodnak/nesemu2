@@ -22,12 +22,13 @@
 #include <windows.h>
 #endif
 #include <SDL/SDL.h>
+#include "log/log.h"
 #include "palette/palette.h"
 #include "system/video.h"
 
 static SDL_Surface *surface = 0;
 static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;// | SDL_NOFRAME;
-static int screenw,screenh;
+static int screenw,screenh,screenbpp;
 static int screenscale;
 //static u32 palette32[256];
 static u32 interval = 1000 / 60;
@@ -42,11 +43,15 @@ int video_reinit()
 	screenscale = 1;
 	screenw = 256 * screenscale;
 	screenh = 240 * screenscale;
+	screenbpp = 32;
 
 	//initialize surface/window
-	surface = SDL_SetVideoMode(screenw,screenh,32,flags);
+	surface = SDL_SetVideoMode(screenw,screenh,screenbpp,flags);
 	SDL_WM_SetCaption("nesemu2","IDI_MAIN");
 	SDL_ShowCursor(0);
+
+	log_printf("video initialized:  %dx%dx%d %s\n",screenw,screenh,screenbpp,(flags & SDL_FULLSCREEN) ? "fullscreen" : "windowed");
+
 	return(0);
 }
 

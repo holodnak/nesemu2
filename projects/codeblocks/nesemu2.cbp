@@ -211,18 +211,6 @@
 		<Unit filename="../../source/system/sound.h" />
 		<Unit filename="../../source/system/system.h" />
 		<Unit filename="../../source/system/video.h" />
-		<Unit filename="../../source/system/win32/input.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../source/system/win32/main.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../source/system/win32/sound.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../source/system/win32/video.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../../source/types.h" />
 		<Unit filename="../../source/version.h" />
 		<Extensions>

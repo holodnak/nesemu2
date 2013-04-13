@@ -3,6 +3,7 @@
 
 static void reset(int hard)
 {
+	mem_setvramsize(8);
 	mem_setsramsize(2);
 	mmc1_init(mmc1_sync);
 }

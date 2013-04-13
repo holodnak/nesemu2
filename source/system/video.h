@@ -25,6 +25,8 @@
 
 int video_init();
 void video_kill();
+void video_endframe();
 void video_setpalette(palette_t *p);
+void video_setscreen(u16 *s);
 
 #endif

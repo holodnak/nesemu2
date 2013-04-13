@@ -22,6 +22,7 @@
 #define __cart_h__
 
 #include "types.h"
+#include "nes/ppu/cache.h"
 
 //mirroring types
 #define MIRROR_H			0
@@ -81,6 +82,10 @@ typedef struct cart_s {
 
 	//name of game
 	char		title[512];
+
+	//cached tile data
+	cache_t	*cache,*cache_hflip;		//chr cache
+	cache_t	*vcache,*vcache_hflip;	//vram cache
 
 } cart_t;
 

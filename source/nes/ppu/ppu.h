@@ -22,6 +22,7 @@
 #define __ppu_h__
 
 #include "types.h"
+#include "cache.h"
 
 typedef struct ppu_s {
 
@@ -48,12 +49,27 @@ typedef struct ppu_s {
 	u8		oam2[32];
 	u8		palette[32];
 
+	//rendering data
+	//current nametable, attribute byte, and pattern table bytes
+	u8		ntbyte;
+	u8		attribbyte;
+	u8		ptbyte0,ptbyte1;
+
+	//fetched tile data bits with attributes
+	u32	tiledataaddr;
+	u8		tiledata[2][32 + 2];
+	u8		attribdata[32 + 2];
+
 	//screen buffer
-	u16	screen[256 * 240];
+	u16	screen[256 * (240 + 16)];
 
 	//read/write pointers
 	u8		*readpages[16];
 	u8		*writepages[16];
+
+	//cached tile pointers
+	cache_t	*cachepages[16];
+	cache_t	*cachepages_hflip[16];
 
 	//line cycle counter, scanline counter and frame counter
 	u32	linecycles;
@@ -64,10 +80,11 @@ typedef struct ppu_s {
 
 int ppu_init();
 void ppu_kill();
-void ppu_setmirroring(int t);
 void ppu_reset(int hard);
 u8 ppu_read(u32 addr);
 void ppu_write(u32 addr,u8 data);
+u8 ppu_memread(u32 addr);
+void ppu_memwrite(u32 addr,u8 data);
 void ppu_step();
 
 #endif

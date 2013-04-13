@@ -23,6 +23,7 @@
 #endif
 #include <SDL/SDL.h>
 #include "palette/palette.h"
+#include "system/video.h"
 
 static SDL_Surface *surface = 0;
 static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;// | SDL_NOFRAME;
@@ -31,13 +32,14 @@ static int screenscale;
 //static u32 palette32[256];
 static u32 interval = 1000 / 60;
 static u32 lasttime = 0;
-static palette_t *palette;
+static palette_t *palette = 0;
+static u16 *screen;
 
 int video_reinit()
 {
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
-	screenscale = 2;
+	screenscale = 1;
 	screenw = 256 * screenscale;
 	screenh = 240 * screenscale;
 
@@ -66,15 +68,27 @@ void video_kill()
 void video_endframe()
 {
 	u32 t;
+	int pitch,x,y;
 	u32 *dest;
-	int pitch;
+	u16 *src;
 
 	//lock sdl surface
 	SDL_LockSurface(surface);
 
 	//draw
-	dest = (u32*)surface->pixels;
 	pitch = surface->pitch / 4;
+	dest = (u32*)surface->pixels;
+	src = screen;
+
+	for(y=0;y<240;y++) {
+		for(x=0;x<256;x++) {
+			palentry_t *e = &palette->pal[src[x] >> 8][src[x] & 0x3F];
+			dest[x] = (e->r) | (e->g << 8) | (e->b << 16);
+		}
+		dest += pitch;
+		src += 256;
+	}
+
 
 	//flip buffers and unlock surface
 	SDL_Flip(surface);
@@ -94,4 +108,10 @@ void video_endframe()
 void video_setpalette(palette_t *p)
 {
 	palette = p;
+}
+
+//s must be a 256x240 array of 16bit words
+void video_setscreen(u16 *s)
+{
+	screen = s;
 }

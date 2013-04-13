@@ -23,6 +23,7 @@
 #include "config/config.h"
 #include "system/system.h"
 #include "system/video.h"
+#include "nes/nes.h"
 
 #define SUBSYSTEM_START	static subsystem_t subsystems[] = {
 #define SUBSYSTEM(n)		{n ## _init,n ## _kill},
@@ -43,6 +44,7 @@ SUBSYSTEM_START
 	SUBSYSTEM(video)
 //	SUBSYSTEM(input)
 //	SUBSYSTEM(sound)
+	SUBSYSTEM(nes)
 SUBSYSTEM_END
 
 int emu_init()

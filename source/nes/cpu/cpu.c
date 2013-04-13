@@ -271,6 +271,9 @@ u8 cpu_getflags()
 	return(P);
 }
 
+static u8 tmp8;
+static int tmpi;
+
 #include "addrmodes.c"
 #include "opcodes.c"
 #include "opcodes_branch.c"

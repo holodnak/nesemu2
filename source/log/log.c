@@ -32,7 +32,7 @@
 #endif
 
 static FILE *logfd = 0;
-static char logfilename[MAX_PATH] = "nesemu.log";
+static char logfilename[MAX_PATH] = "nesemu2.log";
 
 int log_init()
 {
@@ -40,7 +40,7 @@ int log_init()
 		printf("log_init:  already initialized\n");
 		return(0);
 	}
-	sprintf(logfilename,"%s/nesemu.log",system_getcwd(),logfilename);
+	sprintf(logfilename,"%s/%s",system_getcwd(),logfilename);
 	if((logfd = fopen(logfilename,"wt")) == 0) {
 		printf("log_init:  error opening log file '%s'\n",logfilename);
 		return(1);

@@ -86,6 +86,8 @@ void mem_unsetppu(int banksize,int page)
 	for(i=0;i<banksize;i++) {
 		nes.ppu.readpages[page + i] = 
 		nes.ppu.writepages[page + i] = 0;
+		nes.ppu.cachepages[page] =
+		nes.ppu.cachepages_hflip[page] = 0;
 	}
 }
 
@@ -139,6 +141,8 @@ void mem_setchr(int banksize,int page,int bank)
 	for(i=0;i<banksize;i++) {
 		nes.ppu.readpages[page + i] = nes.cart->chr.data + offset + (i * 1024);
 		nes.ppu.writepages[page + i] = 0;
+		nes.ppu.cachepages[page + i] = (cache_t*)((u8*)nes.cart->cache + offset + (i * 0x400));
+		nes.ppu.cachepages_hflip[page + i] = (cache_t*)((u8*)nes.cart->cache_hflip + offset + (i * 0x400));
 	}
 }
 
@@ -149,10 +153,42 @@ void mem_setvram(int banksize,int page,int bank)
 	for(i=0;i<banksize;i++) {
 		nes.ppu.readpages[page + i] = 
 		nes.ppu.writepages[page + i] = nes.cart->vram.data + offset + (i * 1024);
+		nes.ppu.cachepages[page + i] = (cache_t*)((u8*)nes.cart->vcache + offset + (i * 0x400));
+		nes.ppu.cachepages_hflip[page + i] = (cache_t*)((u8*)nes.cart->vcache_hflip + offset + (i * 0x400));
 	}
 }
 
 void mem_setsramsize(int banks)
 {
 	cart_setsramsize(nes.cart,banks);
+}
+
+void mem_setvramsize(int banks)
+{
+	cart_setvramsize(nes.cart,banks);
+}
+
+void mem_setmirroring(int m)
+{
+	switch(m) {
+		default:
+		case MIRROR_H: mem_setmirroring2(0,0,1,1); break;
+		case MIRROR_V: mem_setmirroring2(0,1,0,1); break;
+		case MIRROR_1L:mem_setmirroring2(0,0,0,0); break;
+		case MIRROR_1H:mem_setmirroring2(1,1,1,1); break;
+		case MIRROR_4:	mem_setmirroring2(0,1,2,3); break;
+	}
+}
+
+//move this to the memory.c file
+void mem_setmirroring2(int n0,int n1,int n2,int n3)
+{
+	mem_setnt1(8 + 0,n0);
+	mem_setnt1(8 + 1,n1);
+	mem_setnt1(8 + 2,n2);
+	mem_setnt1(8 + 3,n3);
+	mem_setnt1(8 + 4,n0);
+	mem_setnt1(8 + 5,n1);
+	mem_setnt1(8 + 6,n2);
+	mem_setnt1(8 + 7,n3);
 }

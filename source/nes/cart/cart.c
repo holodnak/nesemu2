@@ -173,9 +173,15 @@ void cart_unload(cart_t *r)
 		FREE_DATA(r->svram);
 		FREE_DATA(r->trainer);
 		FREE_DATA(r->pc10rom);
+		FREE(r->cache);
+		FREE(r->cache_hflip);
+		FREE(r->vcache);
+		FREE(r->vcache_hflip);
 		FREE(r);
 	}
 }
+
+#define ram_alloc(size,ptr)	(u8*)(ptr ? realloc(ptr,size) : malloc(size))
 
 static void allocdata(data_t *data,int len)
 {
@@ -192,6 +198,8 @@ static void allocdata(data_t *data,int len)
 		data->data = malloc(len);
 	else
 		data->data = realloc(data->data,len);
+
+	//zero out the newly allocated memory
 	memset(data->data,0,len);
 }
 
@@ -211,10 +219,14 @@ void cart_setvramsize(cart_t *r,int banks)
 {
 	allocdata(&r->vram,banks * 1024);
 	log_printf("cart_setvramsize:  vram size set to %dkb\n",banks);
+
+	//tile cache data
+	r->vcache = (cache_t*)ram_alloc(r->vram.size,r->vcache);
+	r->vcache_hflip = (cache_t*)ram_alloc(r->vram.size,r->vcache_hflip);
 }
 
 void cart_setsvramsize(cart_t *r,int banks)
 {
-	allocdata(&r->vram,banks * 1024);
-	log_printf("cart_setvramsize:  vram size set to %dkb\n",banks);
+	allocdata(&r->svram,banks * 1024);
+	log_printf("cart_setsvramsize:  svram size set to %dkb\n",banks);
 }

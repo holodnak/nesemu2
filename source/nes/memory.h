@@ -53,8 +53,13 @@ void mem_setchr(int banksize,int page,int rombank);
 void mem_setvram(int banksize,int page,int rombank);
 void mem_setsvram(int banksize,int page,int rombank);
 
-//setup sram
+//setup sram/vram
 void mem_setsramsize(int banks);
+void mem_setvramsize(int banks);
+
+//mirroring
+void mem_setmirroring(int t);
+void mem_setmirroring2(int n0,int n1,int n2,int n3);
 
 //macros for cpu memory
 #define mem_unsetcpu4(p)		mem_unsetcpu(4,p)

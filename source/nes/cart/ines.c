@@ -107,6 +107,20 @@ int cart_load_ines(cart_t *ret,const char *filename)
 	load_chunk(&ret->chr,fp);
 	load_chunk(&ret->pc10rom,fp);
 
+	//tile cache stuff
+	if(ret->chr.size) {
+		//allocate memory for the tile cache
+		ret->cache = (cache_t*)malloc(ret->chr.size);
+		ret->cache_hflip = (cache_t*)malloc(ret->chr.size);
+
+		//convert all chr tiles to cache tiles
+		convert_tiles(ret->chr.data,ret->cache,ret->chr.size / 16,0);
+		convert_tiles(ret->chr.data,ret->cache_hflip,ret->chr.size / 16,1);
+	}
+	else {
+
+	}
+
 	//close file and return
 	fclose(fp);
 	return(0);

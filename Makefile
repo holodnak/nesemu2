@@ -1,28 +1,30 @@
 # Makefile for nesemu2
 
-TARGET = nesemu2
-OBJECTS = source/config/config.o source/config/defaults.o
-OBJECTS += source/emu/emu.o
-OBJECTS += source/log/buffer.o source/log/log.o
-OBJECTS += source/mappers/ines.o source/mappers/ines20.o source/mappers/mappers.o source/mappers/unif.o
-OBJECTS += source/mappers/boards/nintendo/nrom.o source/mappers/boards/nintendo/sxrom.o
-OBJECTS += source/mappers/chips/c_mmc1.o
-OBJECTS += source/nes/memory.o source/nes/nes.o
-OBJECTS += source/nes/cart/cart.o source/nes/cart/ines.o source/nes/cart/ines20.o
-OBJECTS += source/nes/cpu/cpu.o source/nes/cpu/disassemble.o
-OBJECTS += source/nes/ppu/io.o source/nes/ppu/ppu.o source/nes/ppu/step.o
-OBJECTS += source/palette/generator.o source/palette/palette.o
-OBJECTS += source/system/sdl/video.o source/system/sdl/input.o source/system/sdl/sound.o
-OBJECTS += source/system/sdl/main.o source/system/sdl/system.o source/system/sdl/win32/SDL_win32_main.o
+SOURCE_CONFIG = source/config/config.c source/config/defaults.c
+SOURCE_LOG = source/log/buffer.c source/log/log.c
+SOURCE_EMU = source/emu/emu.c
+SOURCE_MAPPERS = source/mappers/ines.c source/mappers/ines20.c source/mappers/mappers.c source/mappers/unif.c
+SOURCE_MAPPERS += source/mappers/boards/nintendo/nrom.c source/mappers/boards/nintendo/sxrom.c
+SOURCE_MAPPERS += source/mappers/chips/c_mmc1.c
+SOURCE_NES = source/nes/memory.c source/nes/nes.c
+SOURCE_NES += source/nes/cart/cart.c source/nes/cart/ines.c source/nes/cart/ines20.c
+SOURCE_NES += source/nes/cpu/cpu.c source/nes/cpu/disassemble.c
+SOURCE_NES += source/nes/ppu/io.c source/nes/ppu/ppu.c source/nes/ppu/step.c source/nes/ppu/cache.c
+SOURCE_PALETTE = source/palette/generator.c source/palette/palette.c
+SOURCE_SYSTEM_SDL = source/system/sdl/video.c source/system/sdl/input.c source/system/sdl/sound.c
+SOURCE_SYSTEM_SDL += source/system/sdl/main.c source/system/sdl/system.c source/system/sdl/win32/SDL_win32_main.c
 
-SOURCE_PATH=source
+SOURCES = $(SOURCE_CONFIG) $(SOURCE_LOG) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURCE_NES) $(SOURCE_PALETTE) $(SOURCE_SYSTEM_SDL)
+OBJECTS = $(patsubst %.c,%.o,$(SOURCES))
+TARGET = nesemu2.exe
 
 CC=gcc
 LD=gcc
 
-CFLAGS=-g -I$(SOURCE_PATH)
-LDFLAGS=-s -lSDL
+CFLAGS=-g -Isource
+LDFLAGS=-lSDL
 
+#SOURCE_PATH=source
 #SOURCE_DIRS=$(shell find $(SOURCE_PATH) -type d)
 #SOURCE_FILES=$(foreach dir,$(SOURCE_DIRS),$(wildcard $(dir)/*.c))
 #OBJECTS=$(patsubst %.c,%.o,$(SOURCE_FILES))

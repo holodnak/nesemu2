@@ -24,24 +24,40 @@
 #include "emu/emu.h"
 #include "nes/nes.h"
 #include "system/system.h"
+#include "system/video.h"
+#include "palette/palette.h"
+#include "palette/generator.h"
 
 int quit = 0;
 char romfilename[_MAX_PATH];
+static palette_t *pal = 0;
 
 int mainloop()
 {
 	//load file into the nes
-	if(nes_load(romfilename) != 0)
+	if(nes_load(romfilename) != 0) {
 		return(1);
+	}
+
+	pal = palette_generate(-15,45);
+	video_setpalette(pal);
+	video_setscreen(nes.ppu.screen);
+
+	log_printf("resetting nes...\n");
 
 	//reset the nes
 	nes_reset(1);
 
+	log_printf("starting main loop...\n");
+
 	//main event loop
 	while(quit == 0) {
 		nes_frame();
+		video_endframe();
 		system_check_events();
 	}
+
+	palette_destroy(pal);
 
 	return(0);
 }

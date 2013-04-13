@@ -55,6 +55,7 @@ int nes_load_cart(cart_t *c)
 		log_printf("nes_load_cart:  error calling mapper_init\n");
 		return(1);
 	}
+	log_printf("nes_load_cart:  success\n");
 	nes.cart = c;
 	nes.mapper = m;
 	return(0);
@@ -72,6 +73,8 @@ int nes_load(char *filename)
 		log_printf("nes_load:  error loading '%s'\n",filename);
 		return(1);
 	}
+
+	log_printf("nes_load:  loaded file '%s'\n",filename);
 
 	//see if the nes accepts it and return
 	return(nes_load_cart(c));
@@ -99,6 +102,9 @@ void nes_reset(int hard)
 {
 	int i;
 
+log_printf("1");
+
+	//zero out all read/write pages/functions
 	for(i=0;i<16;i++) {
 		nes.cpu.readfuncs[i] = 0;
 		nes.cpu.readpages[i] = 0;
@@ -107,15 +113,30 @@ void nes_reset(int hard)
 		nes.ppu.readpages[i] = 0;
 		nes.ppu.writepages[i] = 0;
 	}
+
+log_printf("2");
+
+	//setup read/write funcs
 	mem_setreadfunc(2,ppu_read);
 	mem_setreadfunc(3,ppu_read);
 	mem_setreadfunc(4,apu_read);
 	mem_setwritefunc(2,ppu_write);
 	mem_setwritefunc(3,ppu_write);
 	mem_setwritefunc(4,apu_write);
+
+log_printf("3");
+
+	//set cart mirroring
+	mem_setmirroring(nes.cart->mirroring);
+
+	//reset the mapper, cpu, and ppu
+log_printf("4");
 	nes.mapper->reset(hard);
+log_printf("5");
 	cpu_reset(hard);
+log_printf("6");
 	ppu_reset(hard);
+	//clear some memory for hard reset
 	if(hard) {
 		memset(nes.cpu.ram,0,0x800);
 		memset(nes.ppu.nametables,0,0x800);
@@ -127,5 +148,10 @@ void nes_reset(int hard)
 
 void nes_frame()
 {
-	cpu_step();
+	u32 curframe = nes.ppu.frames;
+
+	log_printf("executing frame %d\n",curframe);
+	while(nes.ppu.frames == curframe) {
+		cpu_step();
+	}
 }

@@ -18,21 +18,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "nes/nes.h"
-#include "nes/memory.h"
+#ifndef __cache_h__
+#define __cache_h__
 
-int ppu_init()
-{
-	return(0);
-}
+#include "types.h"
 
-void ppu_kill()
-{
-}
+#define CACHE_TILE_SIZE		2
+#define CACHE_MASK			0x0303030303030303LL
 
-void ppu_reset(int hard)
-{
-	nes.ppu.scanline = 0;
-	nes.ppu.linecycles = 0;
-	nes.ppu.frames = 0;
-}
+typedef u64 cache_t;
+
+void convert_tile(u8 *chr,cache_t *cache);
+void convert_tile_hflip(u8 *chr,cache_t *cache);
+void convert_tiles(u8 *chr,cache_t *cache,int num,int hflip);
+
+#endif

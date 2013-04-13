@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="nesemu2" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/nesemu2" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="../../source" />
+				</Compiler>
+				<Linker>
+					<Add option="-lSDL" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/nesemu2" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="../../source/config/config.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/config/config.h" />
+		<Unit filename="../../source/config/defaults.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/emu/emu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/emu/emu.h" />
+		<Unit filename="../../source/log/buffer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/log/buffer.h" />
+		<Unit filename="../../source/log/log.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/log/log.h" />
+		<Unit filename="../../source/mappers/boards/nintendo/nrom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/boards/nintendo/sxrom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/chips/c_mmc1.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/chips/c_mmc1.h" />
+		<Unit filename="../../source/mappers/ines.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/ines20.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/mapperid.h" />
+		<Unit filename="../../source/mappers/mapperinc.h" />
+		<Unit filename="../../source/mappers/mappers.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/mappers.h" />
+		<Unit filename="../../source/mappers/unif.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/cart/cart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/cart/cart.h" />
+		<Unit filename="../../source/nes/cart/ines.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/cart/ines.h" />
+		<Unit filename="../../source/nes/cart/ines20.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/cart/ines20.h" />
+		<Unit filename="../../source/nes/cpu/addrmodes.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/cpu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/cpu.h" />
+		<Unit filename="../../source/nes/cpu/disassemble.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/execute.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/opcodes.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/opcodes_alu.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/opcodes_branch.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/opcodes_compare.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/opcodes_flag.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/opcodes_incdec.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/opcodes_loadstore.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/opcodes_stack.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/opcodes_transfer.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/opcodes_undocumented.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/memory.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/memory.h" />
+		<Unit filename="../../source/nes/nes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/nes.h" />
+		<Unit filename="../../source/nes/ppu/cache.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/ppu/cache.h" />
+		<Unit filename="../../source/nes/ppu/io.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/ppu/ppu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/ppu/ppu.h" />
+		<Unit filename="../../source/nes/ppu/step.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/palette/generator.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/palette/generator.h" />
+		<Unit filename="../../source/palette/palette.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/palette/palette.h" />
+		<Unit filename="../../source/system/input.h" />
+		<Unit filename="../../source/system/main.h" />
+		<Unit filename="../../source/system/sdl/input.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/sdl/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/sdl/sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/sdl/system.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/sdl/video.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/sdl/win32/SDL_win32_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/sound.h" />
+		<Unit filename="../../source/system/system.h" />
+		<Unit filename="../../source/system/video.h" />
+		<Unit filename="../../source/system/win32/input.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/win32/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/win32/sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/win32/video.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/types.h" />
+		<Unit filename="../../source/version.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

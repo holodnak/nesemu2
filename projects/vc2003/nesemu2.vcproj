@@ -69,6 +69,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
@@ -209,6 +210,12 @@
 							<Tool
 								Name="VCCLCompilerTool"/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\source\nes\cpu\opcodes_alu.c">
@@ -330,10 +337,28 @@
 								Name="VCCLCompilerTool"/>
 						</FileConfiguration>
 					</File>
+					<File
+						RelativePath="..\..\source\nes\cpu\opcodes_undocumented.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
 				</Filter>
 				<Filter
 					Name="ppu"
 					Filter="">
+					<File
+						RelativePath="..\..\source\nes\ppu\cache.c">
+					</File>
 					<File
 						RelativePath="..\..\source\nes\ppu\io.c">
 					</File>
@@ -381,7 +406,7 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/mappers"/>
+							ObjectFile="$(IntDir)/mappers/"/>
 					</FileConfiguration>
 				</File>
 				<File
@@ -396,7 +421,7 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/mappers"/>
+							ObjectFile="$(IntDir)/mappers/"/>
 					</FileConfiguration>
 				</File>
 				<File
@@ -411,7 +436,7 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/mappers"/>
+							ObjectFile="$(IntDir)/mappers/"/>
 					</FileConfiguration>
 				</File>
 				<File
@@ -426,7 +451,7 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/mappers"/>
+							ObjectFile="$(IntDir)/mappers/"/>
 					</FileConfiguration>
 				</File>
 				<Filter
@@ -438,7 +463,20 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\nrom.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\sxrom.c">
+						</File>
 					</Filter>
+				</Filter>
+				<Filter
+					Name="chips"
+					Filter="">
+					<File
+						RelativePath="..\..\source\mappers\chips\c_mmc1.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\c_mmc1.h">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -535,6 +573,9 @@
 				<Filter
 					Name="ppu"
 					Filter="">
+					<File
+						RelativePath="..\..\source\nes\ppu\cache.h">
+					</File>
 					<File
 						RelativePath="..\..\source\nes\ppu\ppu.h">
 					</File>

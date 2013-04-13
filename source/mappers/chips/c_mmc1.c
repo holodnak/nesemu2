@@ -109,10 +109,10 @@ void mmc1_write(u32 addr,u8 data)
 void mmc1_syncmirror()
 {
 	switch(regs[0] & 3) {
-		case 0:ppu_setmirroring(MIRROR_1L);break;
-		case 1:ppu_setmirroring(MIRROR_1H);break;
-		case 2:ppu_setmirroring(MIRROR_V);break;
-		case 3:ppu_setmirroring(MIRROR_H);break;
+		case 0:mem_setmirroring(MIRROR_1L);break;
+		case 1:mem_setmirroring(MIRROR_1H);break;
+		case 2:mem_setmirroring(MIRROR_V);break;
+		case 3:mem_setmirroring(MIRROR_H);break;
 	}
 }
 

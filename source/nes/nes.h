@@ -27,6 +27,25 @@
 #include "nes/cart/cart.h"
 #include "mappers/mappers.h"
 
+#define CONTROL0		nes.ppu.control0
+#define CONTROL1		nes.ppu.control1
+#define STATUS			nes.ppu.status
+
+#define LINECYCLES	nes.ppu.linecycles
+#define SCANLINE		nes.ppu.scanline
+#define FRAMES			nes.ppu.frames
+
+#define SCROLL			nes.ppu.scroll
+#define TMPSCROLL		nes.ppu.tmpscroll
+#define STATUS			nes.ppu.status
+
+//'correct' names
+#define PPUCONTROL	nes.ppu.control0
+#define PPUMASK		nes.ppu.control1
+//old names
+#define CONTROL0		nes.ppu.control0
+#define CONTROL1		nes.ppu.control1
+
 typedef struct nes_s {
 
 	//2a03/2c02 data

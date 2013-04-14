@@ -51,7 +51,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>D:\Development\zlib-1.2.7;D:\Development\SDL-1.2.15\include;C:\DELL\drivers\R8088\zlib-1.2.7;C:\DELL\drivers\R8088\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Development\zlib-1.2.7;D:\Development\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -70,17 +70,19 @@
       <ProgramDatabaseFile>$(OutDir)nesemu2.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;CPU_UNDOC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>D:\Development\zlib-1.2.7;D:\Development\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -94,12 +96,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\inputdev\inputdev.c" />
+    <ClCompile Include="..\..\source\inputdev\joypad0.c" />
+    <ClCompile Include="..\..\source\inputdev\joypad1.c" />
+    <ClCompile Include="..\..\source\inputdev\null.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\sxrom.c" />
     <ClCompile Include="..\..\source\mappers\chips\c_mmc1.c" />
     <ClCompile Include="..\..\source\nes\cpu\opcodes_undocumented.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\source\nes\io.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\attribcache.c" />
+    <ClCompile Include="..\..\source\nes\ppu\tilecache.c" />
     <ClCompile Include="..\..\source\system\sdl\input.c" />
     <ClCompile Include="..\..\source\system\sdl\main.c" />
     <ClCompile Include="..\..\source\system\sdl\sound.c" />
@@ -122,6 +134,7 @@
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cpu\opcodes.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cpu\opcodes_alu.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -163,23 +176,22 @@
     <ClCompile Include="..\..\source\nes\cart\ines20.c" />
     <ClCompile Include="..\..\source\mappers\ines.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\ines20.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\mappers.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\unif.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\nintendo\nrom.c" />
     <ClCompile Include="..\..\source\config\config.c" />
-    <ClCompile Include="..\..\source\config\defaults.c" />
     <ClCompile Include="..\..\source\log\buffer.c" />
     <ClCompile Include="..\..\source\log\log.c" />
     <ClCompile Include="..\..\source\emu\emu.c" />
@@ -187,7 +199,14 @@
     <ClCompile Include="..\..\source\palette\palette.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\inputdev\inputdev.h" />
+    <ClInclude Include="..\..\source\inputdev\joypad0.h" />
+    <ClInclude Include="..\..\source\inputdev\joypad1.h" />
+    <ClInclude Include="..\..\source\inputdev\null.h" />
     <ClInclude Include="..\..\source\mappers\chips\c_mmc1.h" />
+    <ClInclude Include="..\..\source\nes\io.h" />
+    <ClInclude Include="..\..\source\nes\ppu\attribcache.h" />
+    <ClInclude Include="..\..\source\nes\ppu\tilecache.h" />
     <ClInclude Include="..\..\source\types.h" />
     <ClInclude Include="..\..\source\version.h" />
     <ClInclude Include="..\..\source\system\input.h" />

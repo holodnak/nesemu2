@@ -22,6 +22,11 @@ static INLINE void OP_NOP()
 {
 }
 
+static INLINE void OP_NOPR()
+{
+	memread(EFFADDR);
+}
+
 static INLINE void OP_UNK()
 {
 	log_printf("OP_UNK:  $%04X = $%02X\n",OPADDR,OPCODE);

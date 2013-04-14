@@ -32,8 +32,8 @@ static INLINE void drawtileline()
 	u8 p[8];
 
 //		tileptr0++;	tileptr1++;
-//		tileptr0++;	tileptr1++; 
-	for(i=0;i<33;i++) {
+//		tileptr0++;	tileptr1++;
+	for(i=0;i<32;i++) {
 		p[0] = ((*tileptr0 >> 7) & 1) | ((*tileptr1 >> 6) & 2);
 		p[1] = ((*tileptr0 >> 6) & 1) | ((*tileptr1 >> 5) & 2);
 		p[2] = ((*tileptr0 >> 5) & 1) | ((*tileptr1 >> 4) & 2);
@@ -43,7 +43,7 @@ static INLINE void drawtileline()
 		p[6] = ((*tileptr0 >> 1) & 1) | ((*tileptr1 >> 0) & 2);
 		p[7] = ((*tileptr0 >> 0) & 1) | ((*tileptr1 << 1) & 2);
 		for(j=0;j<8;j++) {
-			u8 a = 0;//*attribptr;
+			u8 a = 0;//*attribptr & 0xC;
 
 			if(p[j])
 				screenptr[j] = nes.ppu.palette[p[j] | a] | (((CONTROL1 >> 5) & 7) << 8);
@@ -125,6 +125,11 @@ static INLINE void scanline_visible()
 				made up by daisy-chaining the HT counter to the H counter. The HT counter is
 				then clocked every 8 pixel dot clocks (or every 8/3 CPU clock cycles). */
 			}
+			break;
+		case 8:		case 16:		case 24:		case 32:		case 40:		case 48:		case 56:		case 64:
+		case 72:		case 80:		case 88:		case 96:		case 104:	case 112:	case 120:	case 128:
+		case 136:	case 144:	case 152:	case 160:	case 168:	case 176:	case 184:	case 192:
+		case 200:	case 208:	case 216:	case 224:	case 232:	case 240:	case 248:
 			if(CONTROL1 & 0x18) {
 				if((SCROLL & 0x1F) == 0x1F)		//see if HT counter creates carry
 					SCROLL ^= 0x41F;					//yes, clear lower 5 bits and toggle H counter
@@ -132,33 +137,32 @@ static INLINE void scanline_visible()
 					SCROLL++;							//no, increment address
 			}
 			break;
-		case 8:		case 16:		case 24:		case 32:		case 40:		case 48:		case 56:		case 64:
-		case 72:		case 80:		case 88:		case 96:		case 104:	case 112:	case 120:	case 128:
-		case 136:	case 144:	case 152:	case 160:	case 168:	case 176:	case 184:	case 192:
-		case 200:	case 208:	case 216:	case 224:	case 232:	case 240:	case 248:
-			break;
 		case 256:
 			drawtileline();
 			if(CONTROL1 & 0x18) {
 				//update y coordinate
-				if(CONTROL1 & 0x08) {
-					if((SCROLL >> 12) == 7) {
-						int n;
+				if((SCROLL >> 12) == 7) {
+					int n;
 
-						SCROLL &= ~0x7000;
-						n = (SCROLL >> 5) & 0x1F;
-						if(n == 29) {
-							SCROLL &= ~0x03E0;
-							SCROLL ^= 0x0800;
-						}
-						else if(n == 31)
-							SCROLL &= ~0x03E0;
-						else
-							SCROLL += 0x20;
+					SCROLL &= ~0x7000;
+					n = (SCROLL >> 5) & 0x1F;
+					if(n == 29) {
+						SCROLL &= ~0x03E0;
+						SCROLL ^= 0x0800;
 					}
+					else if(n == 31)
+						SCROLL &= ~0x03E0;
 					else
-						SCROLL += 0x1000;
+						SCROLL += 0x20;
 				}
+				else
+					SCROLL += 0x1000;
+			}
+			break;
+		case 257:
+			if(CONTROL1 & 0x18) {
+				SCROLL &= ~0x041F;
+				SCROLL |= TMPSCROLL & 0x041F;
 			}
 			break;
 
@@ -169,16 +173,14 @@ static INLINE void scanline_visible()
 	3. Pattern table bitmap #0 (for next scanline)
 	4. Pattern table bitmap #1 (for next scanline) */
 		case 321:	case 329:
-			break;
-		case 322:	case 330:
 			if(CONTROL1 & 0x08) {
 				nes.ppu.ntbyte = ppu_memread(0x2000 | (SCROLL & 0xFFF));
 			}
 			break;
+		case 322:	case 330:
+			break;
 
 		case 323:	case 331:
-			break;
-		case 324:	case 332:
 			if(CONTROL1 & 0x08) {
 				tmp = SCROLL & 0x3C00;
 				tmp += 0x3C0 + ((SCROLL >> 2) & 7) + (((SCROLL >> (2 + 5)) & 7) << 3);
@@ -187,10 +189,10 @@ static INLINE void scanline_visible()
 				nes.ppu.attribdata[(LINECYCLES - 322) / 8] = tmp;
 			}
 			break;
+		case 324:	case 332:
+			break;
 
 		case 325:	case 333:
-			break;
-		case 326:	case 334:
 			if(CONTROL1 & 0x08) {
 				nes.ppu.tiledataaddr = (nes.ppu.control0 & 0x10) << 8;
 				nes.ppu.tiledataaddr += nes.ppu.ntbyte * 16;
@@ -198,13 +200,15 @@ static INLINE void scanline_visible()
 				nes.ppu.tiledata[0][(LINECYCLES - 322) / 8] = ppu_memread(nes.ppu.tiledataaddr);
 			}
 			break;
+		case 326:	case 334:
+			break;
 
 		case 327:	case 335:
-			break;
-		case 328:	case 336:
 			if(CONTROL1 & 0x08) {
 				nes.ppu.tiledata[1][(LINECYCLES - 322) / 8] = ppu_memread(nes.ppu.tiledataaddr + 8);
 			}
+			break;
+		case 328:	case 336:
 			if(CONTROL1 & 0x18) {
 				if((SCROLL & 0x1F) == 0x1F)		//see if HT counter creates carry
 					SCROLL ^= 0x41F;					//yes, clear lower 5 bits and toggle H counter
@@ -224,10 +228,6 @@ static INLINE void scanline_visible()
 		case 340:
 			if(CONTROL1 & 0x08)
 				nes.ppu.ntbyte = ppu_memread(0x2000 | (SCROLL & 0xFFF));
-			if(CONTROL1 & 0x18) {
-				SCROLL &= ~0x041F;
-				SCROLL |= TMPSCROLL & 0x041F;
-			}
 			break;
 		default:
 //			log_printf("scanline_visible:  unhandled cycle %d\n",LINECYCLES);
@@ -252,8 +252,10 @@ void ppu_step()
 			rendering data for the first time in a frame (this update won't happen if
 			all rendering is disabled via 2001.3 and 2001.4). */
 			if(LINECYCLES == 0) {
-				if(FRAMES & 1)
+				if((FRAMES & 1) && (CONTROL1 & 0x18))
 					LINECYCLES++;
+			}
+			else if(LINECYCLES == 1) {
 				STATUS = 0;
 			}
 			else if(LINECYCLES == 256) {
@@ -291,12 +293,14 @@ void ppu_step()
 			break;
 
 		case 261:
-			//last cycle
-			if(LINECYCLES == 340) {
-//				log_printf("ppu_step:  scanline %d, cycle %d:  setting VBLANK\n",SCANLINE,LINECYCLES);
+			if(LINECYCLES == 1) {
 				STATUS |= 0x80;
 				if(CONTROL0 & 0x80)
 					cpu_set_nmi(1);
+			}
+			//last cycle
+			if(LINECYCLES == 340) {
+//				log_printf("ppu_step:  scanline %d, cycle %d:  setting VBLANK\n",SCANLINE,LINECYCLES);
 			}
 			break;
 		default:

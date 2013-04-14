@@ -112,6 +112,12 @@
     <Filter Include="Header Files\mappers\chips">
       <UniqueIdentifier>{f6f736a4-7800-4970-bb08-d171ef816048}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\inputdev">
+      <UniqueIdentifier>{7a2e63d3-a628-467b-8300-8886d7e9ef74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\inputdev">
+      <UniqueIdentifier>{bae9961a-dfb4-489e-852f-2d9c51fdd715}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -213,9 +219,6 @@
     <ClCompile Include="..\..\source\config\config.c">
       <Filter>Source Files\config</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\config\defaults.c">
-      <Filter>Source Files\config</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\log\buffer.c">
       <Filter>Source Files\log</Filter>
     </ClCompile>
@@ -239,6 +242,27 @@
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cpu\opcodes_undocumented.c">
       <Filter>Source Files\nes\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\inputdev\inputdev.c">
+      <Filter>Source Files\inputdev</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\inputdev\joypad0.c">
+      <Filter>Source Files\inputdev</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\inputdev\joypad1.c">
+      <Filter>Source Files\inputdev</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\inputdev\null.c">
+      <Filter>Source Files\inputdev</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\io.c">
+      <Filter>Source Files\nes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\tilecache.c">
+      <Filter>Source Files\nes\ppu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\attribcache.c">
+      <Filter>Source Files\nes\ppu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +337,27 @@
     </ClInclude>
     <ClInclude Include="..\..\source\mappers\chips\c_mmc1.h">
       <Filter>Header Files\mappers\chips</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\inputdev\inputdev.h">
+      <Filter>Header Files\inputdev</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\inputdev\joypad0.h">
+      <Filter>Header Files\inputdev</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\inputdev\joypad1.h">
+      <Filter>Header Files\inputdev</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\inputdev\null.h">
+      <Filter>Header Files\inputdev</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\nes\io.h">
+      <Filter>Header Files\nes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\nes\ppu\attribcache.h">
+      <Filter>Header Files\nes\ppu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\nes\ppu\tilecache.h">
+      <Filter>Header Files\nes\ppu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

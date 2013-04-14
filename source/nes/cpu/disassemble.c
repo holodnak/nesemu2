@@ -24,44 +24,44 @@
 
 static char opcodes[256][4] = {
 /*  x0    x1    x2    x3    x4    x5    x6    x7    x8    x9    xA    xB    xC    xD    xE    xF           */
- 	"BRK","ORA","???","???","NOP","ORA","ASL","???","PHP","ORA","ASL","???","NOP","ORA","ASL","???", /*00-0F*/
-	"BPL","ORA","???","???","NOP","ORA","ASL","???","CLC","ORA","NOP","???","NOP","ORA","ASL","???", /*10-1F*/
-	"JSR","AND","???","???","BIT","AND","ROL","???","PLP","AND","ROL","???","BIT","AND","ROL","???", /*20-2F*/
-	"BMI","AND","???","???","NOP","AND","ROL","???","SEC","AND","NOP","???","NOP","AND","ROL","???", /*30-3F*/
-	"RTI","EOR","???","???","NOP","EOR","LSR","???","PHA","EOR","LSR","???","JMP","EOR","LSR","???", /*40-4F*/
-	"BVC","EOR","???","???","NOP","EOR","LSR","???","CLI","EOR","NOP","???","NOP","EOR","LSR","???", /*50-5F*/
-	"RTS","ADC","???","???","NOP","ADC","ROR","???","PLA","ADC","ROR","???","JMP","ADC","ROR","???", /*60-6F*/
-	"BVS","ADC","???","???","NOP","ADC","ROR","???","SEI","ADC","NOP","???","NOP","ADC","ROR","???", /*70-7F*/
+ 	"BRK","ORA","???","SLO","NOP","ORA","ASL","SLO","PHP","ORA","ASL","???","NOP","ORA","ASL","SLO", /*00-0F*/
+	"BPL","ORA","???","SLO","NOP","ORA","ASL","SLO","CLC","ORA","NOP","SLO","NOP","ORA","ASL","SLO", /*10-1F*/
+	"JSR","AND","???","RLA","BIT","AND","ROL","RLA","PLP","AND","ROL","???","BIT","AND","ROL","RLA", /*20-2F*/
+	"BMI","AND","???","RLA","NOP","AND","ROL","RLA","SEC","AND","NOP","RLA","NOP","AND","ROL","RLA", /*30-3F*/
+	"RTI","EOR","???","SRE","NOP","EOR","LSR","SRE","PHA","EOR","LSR","???","JMP","EOR","LSR","SRE", /*40-4F*/
+	"BVC","EOR","???","SRE","NOP","EOR","LSR","SRE","CLI","EOR","NOP","SRE","NOP","EOR","LSR","SRE", /*50-5F*/
+	"RTS","ADC","???","RRA","NOP","ADC","ROR","RRA","PLA","ADC","ROR","???","JMP","ADC","ROR","RRA", /*60-6F*/
+	"BVS","ADC","???","RRA","NOP","ADC","ROR","RRA","SEI","ADC","NOP","RRA","NOP","ADC","ROR","RRA", /*70-7F*/
 	"NOP","STA","NOP","SAX","STY","STA","STX","SAX","DEY","NOP","TXA","???","STY","STA","STX","SAX", /*80-8F*/
 	"BCC","STA","???","???","STY","STA","STX","SAX","TYA","STA","TXS","???","???","STA","???","???", /*90-9F*/
 	"LDY","LDA","LDX","LAX","LDY","LDA","LDX","LAX","TAY","LDA","TAX","???","LDY","LDA","LDX","LAX", /*A0-AF*/
 	"BCS","LDA","???","LAX","LDY","LDA","LDX","LAX","CLV","LDA","TSX","???","LDY","LDA","LDX","LAX", /*B0-BF*/
-	"CPY","CMP","NOP","???","CPY","CMP","DEC","???","INY","CMP","DEX","???","CPY","CMP","DEC","???", /*C0-CF*/
-	"BNE","CMP","???","???","NOP","CMP","DEC","???","CLD","CMP","NOP","???","NOP","CMP","DEC","???", /*D0-DF*/
-	"CPX","SBC","???","???","CPX","SBC","INC","???","INX","SBC","NOP","SBC","CPX","SBC","INC","???", /*E0-EF*/
-	"BEQ","SBC","???","???","NOP","SBC","INC","???","SED","SBC","NOP","???","NOP","SBC","INC","???"  /*F0-FF*/
+	"CPY","CMP","NOP","DCP","CPY","CMP","DEC","DCP","INY","CMP","DEX","???","CPY","CMP","DEC","DCP", /*C0-CF*/
+	"BNE","CMP","???","DCP","NOP","CMP","DEC","DCP","CLD","CMP","NOP","DCP","NOP","CMP","DEC","DCP", /*D0-DF*/
+	"CPX","SBC","???","ISB","CPX","SBC","INC","ISB","INX","SBC","NOP","SBC","CPX","SBC","INC","ISB", /*E0-EF*/
+	"BEQ","SBC","???","ISB","NOP","SBC","INC","ISB","SED","SBC","NOP","ISB","NOP","SBC","INC","ISB"  /*F0-FF*/
 };
 enum addrmodes {
 	er=0,no,ab,ax,ay,ac,im,ix,iy,in,re,zp,zx,zy
 };
 static u8 addrtable[256] = {
 /* x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF         */
-   no,ix,er,er,zp,zp,zp,er,no,im,ac,er,ab,ab,ab,er, /*00-0f*/
-   re,iy,er,er,zx,zx,zx,er,no,ay,im,er,ax,ax,ax,er, /*10-1f*/
-   ab,ix,er,er,zp,zp,zp,er,no,im,ac,er,ab,ab,ab,er, /*20-2f*/
-   re,iy,er,er,zx,zx,zx,er,no,ay,im,er,ax,ax,ax,er, /*30-3f*/
-   no,ix,er,er,zp,zp,zp,er,no,im,ac,er,ab,ab,ab,er, /*40-4f*/
-   re,iy,er,er,zx,zx,zx,er,no,ay,im,er,ax,ax,ax,er, /*50-5f*/
-   no,ix,er,er,zp,zp,zp,er,no,im,ac,er,in,ab,ab,er, /*60-6f*/
-   re,iy,er,er,zx,zx,zx,er,no,ay,im,er,ax,ax,ax,er, /*70-7f*/
+   no,ix,er,ix,zp,zp,zp,zp,no,im,ac,er,ab,ab,ab,ab, /*00-0f*/
+   re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*10-1f*/
+   ab,ix,er,ix,zp,zp,zp,zp,no,im,ac,er,ab,ab,ab,ab, /*20-2f*/
+   re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*30-3f*/
+   no,ix,er,ix,zp,zp,zp,zp,no,im,ac,er,ab,ab,ab,ab, /*40-4f*/
+   re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*50-5f*/
+   no,ix,er,ix,zp,zp,zp,zp,no,im,ac,er,in,ab,ab,ab, /*60-6f*/
+   re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*70-7f*/
  	im,ix,im,ix,zp,zp,zp,zp,no,im,no,er,ab,ab,ab,ab, /*80-8f*/
    re,iy,er,er,zx,zx,zy,zy,no,ay,no,er,er,ax,er,er, /*90-9f*/
    im,ix,im,ix,zp,zp,zp,zp,no,im,no,er,ab,ab,ab,ab, /*a0-af*/
-   re,iy,er,iy,zx,zx,zy,zx,no,ay,no,er,ax,ax,ay,ax, /*b0-bf*/
-   im,ix,im,er,zp,zp,zp,er,no,im,no,er,ab,ab,ab,er, /*c0-cf*/
-   re,iy,er,er,zx,zx,zx,er,no,ay,im,er,ax,ax,ax,er, /*d0-df*/
-   im,ix,er,er,zp,zp,zp,er,no,im,no,im,ab,ab,ab,er, /*e0-ef*/
-   re,iy,er,er,zx,zx,zx,er,no,ay,im,er,ax,ax,ax,er  /*f0-ff*/
+   re,iy,er,iy,zx,zx,zy,zy,no,ay,no,er,ax,ax,ay,ay, /*b0-bf*/
+   im,ix,im,ix,zp,zp,zp,zp,no,im,no,er,ab,ab,ab,ab, /*c0-cf*/
+   re,iy,iy,er,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*d0-df*/
+   im,ix,er,ix,zp,zp,zp,zp,no,im,no,im,ab,ab,ab,ab, /*e0-ef*/
+   re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax  /*f0-ff*/
 };
 static u8 oplength[256];
 
@@ -94,7 +94,7 @@ u16 cpu_disassemble(char *buffer,u16 opcodepos)
 				sprintf(buffer,".u8 $%02x",opcode);
 				break;
 			}
-			sprintf(buffer,"%s $%04x,x",opcodes[opcode],addr);
+			sprintf(buffer,"%02X %02X %02X %s $%04x,x",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
 			break;
 		case ay:
 			size = 3;
@@ -104,7 +104,7 @@ u16 cpu_disassemble(char *buffer,u16 opcodepos)
 				sprintf(buffer,".u8 $%02x",opcode);
 				break;
 			}
-			sprintf(buffer,"%s $%04x,y",opcodes[opcode],addr);
+			sprintf(buffer,"%02X %02X %02X %s $%04x,y",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
 			break;
 		case in:size = 3;sprintf(buffer,"%s ($%04X)",opcodes[opcode],cpu_read(opcodepos+1) | (cpu_read(opcodepos+2) << 8));break;
 		case im:size = 2;sprintf(buffer,"%02X %02X    %s #$%02X",opcode,cpu_read(opcodepos+1),opcodes[opcode],cpu_read(opcodepos+1));break;

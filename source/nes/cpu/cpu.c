@@ -96,7 +96,7 @@ static INLINE void expand_flags()
 	FLAG_Z = (P & 0x02) >> 1;
 	FLAG_I = (P & 0x04) >> 2;
 	FLAG_D = (P & 0x08) >> 3;
-	FLAG_B = (P & 0x10) >> 4;
+//	FLAG_B = (P & 0x10) >> 4;
 	FLAG_V = (P & 0x40) >> 6;
 	FLAG_N = (P & 0x80) >> 7;
 }
@@ -119,7 +119,7 @@ static INLINE void compact_flags()
 	P |= (FLAG_Z) << 1;
 	P |= (FLAG_I) << 2;
 	P |= (FLAG_D) << 3;
-	P |= (FLAG_B) << 4;
+//	P |= (FLAG_B) << 4;
 	P |= (FLAG_V) << 6;
 	P |= (FLAG_N) << 7;
 }
@@ -172,7 +172,7 @@ void cpu_reset(int hard)
 	if(hard) {
 		A = X = Y = 0;
 		SP = 0xFD;
-		P = 0x34;
+		P = 0x24;
 		expand_flags();
 		memset(nes.cpu.ram,0,0x800);
 	}
@@ -182,11 +182,10 @@ void cpu_reset(int hard)
 	}
 	PC = memread(0xFFFC);
 	PC |= memread(0xFFFD) << 8;
-
 	log_printf("cpu_reset:  vectors:\n");
-	log_printf("  nmi:    $%04X\n",memread(0xFFFA) | (memread(0xFFFB) << 8));
-	log_printf("  irq:    $%04X\n",memread(0xFFFE) | (memread(0xFFFF) << 8));
-	log_printf("  reset:  $%04X\n",memread(0xFFFC) | (memread(0xFFFD) << 8));
+	log_printf("  nmi:    $%04X\n",cpu_read(0xFFFA) | (cpu_read(0xFFFB) << 8));
+	log_printf("  irq:    $%04X\n",cpu_read(0xFFFE) | (cpu_read(0xFFFF) << 8));
+	log_printf("  reset:  $%04X\n",cpu_read(0xFFFC) | (cpu_read(0xFFFD) << 8));
 }
 
 u64 cpu_getcycles()

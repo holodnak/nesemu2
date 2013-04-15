@@ -32,6 +32,7 @@ struct ines_boardid_s {
 INES_BOARD_START()
 	INES_BOARD(0,		B_NROM)
 	INES_BOARD(1,		B_SxROM)
+	INES_BOARD(2,		B_UxROM)
 INES_BOARD_END()
 
 int mapper_get_mapperid_ines(int num)

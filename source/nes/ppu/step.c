@@ -31,8 +31,6 @@ static INLINE void drawtileline()
 	u8 *attribptr = nes.ppu.attribdata;
 	u8 p[8];
 
-//		tileptr0++;	tileptr1++;
-//		tileptr0++;	tileptr1++;
 	for(i=0;i<32;i++) {
 		p[0] = ((*tileptr0 >> 7) & 1) | ((*tileptr1 >> 6) & 2);
 		p[1] = ((*tileptr0 >> 6) & 1) | ((*tileptr1 >> 5) & 2);
@@ -43,7 +41,7 @@ static INLINE void drawtileline()
 		p[6] = ((*tileptr0 >> 1) & 1) | ((*tileptr1 >> 0) & 2);
 		p[7] = ((*tileptr0 >> 0) & 1) | ((*tileptr1 << 1) & 2);
 		for(j=0;j<8;j++) {
-			u8 a = 0;//*attribptr & 0xC;
+			u8 a = *attribptr & 0xC;
 
 			if(p[j])
 				screenptr[j] = nes.ppu.palette[p[j] | a] | (((CONTROL1 >> 5) & 7) << 8);
@@ -67,6 +65,7 @@ static INLINE void scanline_visible()
 		case 0:
 			break;
 
+		//nametable byte read
 		case 1:		case 9:		case 17:		case 25:		case 33:		case 41:		case 49:		case 57:
 		case 65:		case 73:		case 81:		case 89:		case 97:		case 105:	case 113:	case 121:
 		case 129:	case 137:	case 145:	case 153:	case 161:	case 169:	case 177:	case 185:
@@ -80,6 +79,7 @@ static INLINE void scanline_visible()
 		case 194:	case 202:	case 210:	case 218:	case 226:	case 234:	case 242:	case 250:
 			break;
 
+		//attribute table byte read
 		case 3:		case 11:		case 19:		case 27:		case 35:		case 43:		case 51:		case 59:
 		case 67:		case 75:		case 83:		case 91:		case 99:		case 107:	case 115:	case 123:
 		case 131:	case 139:	case 147:	case 155:	case 163:	case 171:	case 179:	case 187:
@@ -87,7 +87,7 @@ static INLINE void scanline_visible()
 			if(CONTROL1 & 0x08) {
 				tmp = SCROLL & 0x3C00;
 				tmp += 0x3C0 + ((SCROLL >> 2) & 7) + (((SCROLL >> (2 + 5)) & 7) << 3);
-				tmp = ((ppu_memread(tmp) >> (((SCROLL & 2) | (((SCROLL >> 5) & 2) << 1)))) & 3) << 2;
+				tmp = ((ppu_memread(tmp | 0x2000) >> (((SCROLL & 2) | (((SCROLL >> 5) & 2) << 1)))) & 3) << 2;
 				nes.ppu.attribdata[((LINECYCLES) / 8) + 2] = tmp;
 			}
 			break;
@@ -97,6 +97,7 @@ static INLINE void scanline_visible()
 		case 196:	case 204:	case 212:	case 220:	case 228:	case 236:	case 244:	case 252:
 			break;
 
+		//pattern table byte 0 read
 		case 5:		case 13:		case 21:		case 29:		case 37:		case 45:		case 53:		case 61:
 		case 69:		case 77:		case 85:		case 93:		case 101:	case 109:	case 117:	case 125:
 		case 133:	case 141:	case 149:	case 157:	case 165:	case 173:	case 181:	case 189:
@@ -114,29 +115,31 @@ static INLINE void scanline_visible()
 		case 198:	case 206:	case 214:	case 222:	case 230:	case 238:	case 246:	case 254:
 			break;
 
+		//pattern table byte 1 read
 		case 7:		case 15:		case 23:		case 31:		case 39:		case 47:		case 55:		case 63:
 		case 71:		case 79:		case 87:		case 95:		case 103:	case 111:	case 119:	case 127:
 		case 135:	case 143:	case 151:	case 159:	case 167:	case 175:	case 183:	case 191:
 		case 199:	case 207:	case 215:	case 223:	case 231:	case 239:	case 247:	case 255:
 			if(CONTROL1 & 0x08) {
 				nes.ppu.tiledata[1][((LINECYCLES) / 8) + 2] = ppu_memread(nes.ppu.tiledataaddr + 8);
-
-				/*	The first one, the horizontal scroll counter, consists of 6 bits, and is
-				made up by daisy-chaining the HT counter to the H counter. The HT counter is
-				then clocked every 8 pixel dot clocks (or every 8/3 CPU clock cycles). */
 			}
 			break;
+
 		case 8:		case 16:		case 24:		case 32:		case 40:		case 48:		case 56:		case 64:
 		case 72:		case 80:		case 88:		case 96:		case 104:	case 112:	case 120:	case 128:
 		case 136:	case 144:	case 152:	case 160:	case 168:	case 176:	case 184:	case 192:
 		case 200:	case 208:	case 216:	case 224:	case 232:	case 240:	case 248:
 			if(CONTROL1 & 0x18) {
+				/*	The first one, the horizontal scroll counter, consists of 6 bits, and is
+				made up by daisy-chaining the HT counter to the H counter. The HT counter is
+				then clocked every 8 pixel dot clocks (or every 8/3 CPU clock cycles). */
 				if((SCROLL & 0x1F) == 0x1F)		//see if HT counter creates carry
 					SCROLL ^= 0x41F;					//yes, clear lower 5 bits and toggle H counter
 				else
 					SCROLL++;							//no, increment address
 			}
 			break;
+
 		case 256:
 			drawtileline();
 			if(CONTROL1 & 0x18) {
@@ -184,7 +187,7 @@ static INLINE void scanline_visible()
 			if(CONTROL1 & 0x08) {
 				tmp = SCROLL & 0x3C00;
 				tmp += 0x3C0 + ((SCROLL >> 2) & 7) + (((SCROLL >> (2 + 5)) & 7) << 3);
-				tmp = ppu_memread(tmp);
+				tmp = ppu_memread(tmp | 0x2000);
 				tmp = ((tmp >> (((SCROLL & 2) | (((SCROLL >> 5) & 2) << 1)))) & 3) << 2;
 				nes.ppu.attribdata[(LINECYCLES - 322) / 8] = tmp;
 			}
@@ -233,7 +236,8 @@ static INLINE void scanline_visible()
 //			log_printf("scanline_visible:  unhandled cycle %d\n",LINECYCLES);
 			break;
 	}
-	return;
+	if(LINECYCLES > 0 && LINECYCLES <= 64)
+		nes.ppu.oam2[(LINECYCLES - 1) / 2] = 0xFF;
 }
 
 void ppu_step()
@@ -252,8 +256,10 @@ void ppu_step()
 			rendering data for the first time in a frame (this update won't happen if
 			all rendering is disabled via 2001.3 and 2001.4). */
 			if(LINECYCLES == 0) {
-				if((FRAMES & 1) && (CONTROL1 & 0x18))
+				if((FRAMES & 1) && (CONTROL1 & 0x18)) {
 					LINECYCLES++;
+					STATUS = 0;
+				}
 			}
 			else if(LINECYCLES == 1) {
 				STATUS = 0;

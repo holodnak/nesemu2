@@ -264,6 +264,12 @@
     <ClCompile Include="..\..\source\nes\ppu\attribcache.c">
       <Filter>Source Files\nes\ppu</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\uxrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\chips\c_latch.c">
+      <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

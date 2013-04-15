@@ -172,7 +172,7 @@ void nes_frame()
 {
 	u32 curframe = nes.ppu.frames;
 
-	log_printf("executing frame %d\n",curframe);
+//	log_printf("executing frame %d\n",curframe);
 	while(nes.ppu.frames == curframe) {
 		cpu_step();
 	}

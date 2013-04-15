@@ -84,8 +84,17 @@ u8 ppu_read(u32 addr)
 			//clear vblank flag
 			if(ret & 0x80)
 				nes.ppu.status &= 0x60;
+			if(SCANLINE == 0) {
+				if(LINECYCLES == 1) {
+					ret &= 0x7F;
+				}
+				if(LINECYCLES <= 2) {
+					cpu_set_nmi(0);
+				}
+			}
 			nes.ppu.toggle = 0;
-			return(ret);
+			nes.ppu.buf = ret;
+			break;
 		case 4:
 			return(nes.ppu.oam[nes.ppu.oamaddr]);
 		case 7:

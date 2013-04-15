@@ -66,6 +66,17 @@ UNIF_BOARD_START()
 	UNIF_BOARD("NES-SUROM",						B_SxROM)
 	UNIF_BOARD("NES-SXROM",						B_SxROM)
 
+	//UxROM boards
+	UNIF_BOARD("NES-UNROM",						B_UxROM)
+	UNIF_BOARD("HVC-UNROM",						B_UxROM)
+	UNIF_BOARD("IREM-UNROM",					B_UxROM)
+	UNIF_BOARD("KONAMI-UNROM",					B_UxROM)
+	UNIF_BOARD("NES-UOROM",						B_UxROM)
+	UNIF_BOARD("HVC-UOROM",						B_UxROM)
+	UNIF_BOARD("JALECO-JF-15",					B_UxROM)
+	UNIF_BOARD("JALECO-JF-18",					B_UxROM)
+	UNIF_BOARD("JALECO-JF-39",					B_UxROM)					//verify this
+
 UNIF_BOARD_END()
 
 int mapper_get_mapperid_unif(char *str)

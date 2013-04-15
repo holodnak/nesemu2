@@ -57,12 +57,14 @@ typedef struct ppu_s {
 	u8		ptbyte0,ptbyte1;
 
 	//fetched tile data bits with attributes
+	u8		fetchpos;
 	u32	tiledataaddr;
 	u8		tiledata[2][32 + 2];
+	cache_t	cachedata[32 + 2];
 	u8		attribdata[32 + 2];
 
-	//screen buffer
-	u16	screen[256 * (240 + 16)];
+	//line buffer
+	u8		linebuffer[256 + 16];
 
 	//read/write pointers
 	u8		*readpages[16];

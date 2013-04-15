@@ -21,6 +21,7 @@
 #include "attribcache.h"
 #include "nes/nes.h"
 
+#ifdef CACHE_ATTRIB
 void cache_attribbyte(u32 addr,u8 data)
 {
 	u32 a = addr & 0x3F;
@@ -51,3 +52,4 @@ void cache_attrib(int nt)
 		cache_attribbyte(addr + i,ppu_memread(addr + i));
 	}
 }
+#endif

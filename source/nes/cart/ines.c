@@ -117,9 +117,6 @@ int cart_load_ines(cart_t *ret,const char *filename)
 		cache_tiles(ret->chr.data,ret->cache,ret->chr.size / 16,0);
 		cache_tiles(ret->chr.data,ret->cache_hflip,ret->chr.size / 16,1);
 	}
-	else {
-
-	}
 
 	//close file and return
 	fclose(fp);

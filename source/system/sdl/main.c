@@ -20,6 +20,7 @@
 
 #include <SDL/SDL.h>
 #include <stdio.h>
+#include <windows.h>
 #include "log/log.h"
 #include "emu/emu.h"
 #include "nes/nes.h"
@@ -40,6 +41,8 @@ static int keydown = 0;
 
 int mainloop()
 {
+	u32 t,total = 0;
+
 	//load file into the nes
 	if(nes_load(romfilename) != 0) {
 		return(1);
@@ -50,7 +53,6 @@ int mainloop()
 	nes_set_inputdev(2,&dev_null);
 	pal = palette_generate(-15,45);
 	video_setpalette(pal);
-	video_setscreen(nes.ppu.screen);
 
 	log_printf("resetting nes...\n");
 
@@ -61,8 +63,8 @@ int mainloop()
 
 	//main event loop
 	while(quit == 0) {
+		t = GetTickCount();
 		nes_frame();
-		video_endframe();
 		input_poll();
 		if(joykeys[SDLK_p]) {
 			keydown |= 1;
@@ -79,7 +81,11 @@ int mainloop()
 			keydown &= ~2;
 		}
 		system_check_events();
+		total += GetTickCount() - t;
+//		if(total >= 10 * 1000)	quit++;
 	}
+
+	log_printf("fps:  %f (%d frames in %f seconds)\n",(double)nes.ppu.frames / (double)total * 1000.0f,nes.ppu.frames,(double)((double)total / 1000.0f));
 
 	palette_destroy(pal);
 
@@ -111,5 +117,6 @@ int main(int argc,char *argv[])
 	emu_kill();
 
 	//return to os
+	system("pause");
 	return(ret);
 }

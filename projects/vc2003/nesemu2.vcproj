@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CPU_UNDOC"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -69,8 +69,11 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="TRUE"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CPU_UNDOC"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -479,10 +482,16 @@
 						Name="nintendo"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\axrom.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\nrom.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\sxrom.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\uxrom.c">
 						</File>
 					</Filter>
 				</Filter>
@@ -490,10 +499,10 @@
 					Name="chips"
 					Filter="">
 					<File
-						RelativePath="..\..\source\mappers\chips\c_mmc1.c">
+						RelativePath="..\..\source\mappers\chips\latch.c">
 					</File>
 					<File
-						RelativePath="..\..\source\mappers\chips\c_mmc1.h">
+						RelativePath="..\..\source\mappers\chips\mmc1.c">
 					</File>
 				</Filter>
 			</Filter>
@@ -651,6 +660,16 @@
 				<File
 					RelativePath="..\..\source\mappers\mappers.h">
 				</File>
+				<Filter
+					Name="chips"
+					Filter="">
+					<File
+						RelativePath="..\..\source\mappers\chips\latch.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\mmc1.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="config"

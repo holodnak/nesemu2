@@ -38,7 +38,7 @@ u8 nes_read_4000(u32 addr)
 		u8 ret = /*apu_read(addr) |*/ nes.frame_irq;
 		cpu_set_irq(0);
 //		nes_frameirq = 0;
-		log_printf("nes_read_4000: $%04X\n",addr);
+//		log_printf("nes_read_4000: $%04X\n",addr);
 		return(ret);
 	}
 /*
@@ -83,7 +83,7 @@ void nes_write_4000(u32 addr,u8 data)
 
 	//frame irq control
 	else if(addr == 0x4017) {
-		log_printf("nes_write_4000: $%04X = $%02X\n",addr,data);
+//		log_printf("nes_write_4000: $%04X = $%02X\n",addr,data);
 		nes.frame_irqmode = data;
 		nes.frame_irq = 0;
 	}

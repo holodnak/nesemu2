@@ -1,5 +1,5 @@
 #include "mappers/mapperinc.h"
-#include "mappers/chips/c_mmc1.h"
+#include "mappers/chips/mmc1.h"
 
 static void (*sync)() = 0;
 static u8 regs[4];

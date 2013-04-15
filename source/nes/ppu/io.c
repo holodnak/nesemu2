@@ -20,6 +20,7 @@
 
 #include "log/log.h"
 #include "nes/nes.h"
+#include "system/video.h"
 
 u8 ppu_memread(u32 addr)
 {
@@ -59,6 +60,15 @@ void ppu_memwrite(u32 addr,u8 data)
 			cache_tile_hflip(chr + a,cache_hflip + (a / 8));
 		}
 	}
+
+#ifdef CACHE_ATTRIB
+	//check if attribute write
+	else if(addr < 0x3F00) {
+		if((addr & 0x3FF) >= 0x3C0) {
+			cache_attribbyte(addr,data);
+		}
+	}
+#endif
 }
 
 u8 pal_read(u32 addr)
@@ -69,7 +79,7 @@ u8 pal_read(u32 addr)
 void pal_write(u32 addr,u8 data)
 {
 	nes.ppu.palette[addr] = data;
-//	video_setpalentry(addr,palette[data].r,palette[data].g,palette[data].b);
+	video_updatepalette(addr,data);
 }
 
 u8 ppu_read(u32 addr)

@@ -23,7 +23,9 @@
 
 #include "types.h"
 
+#ifdef CACHE_ATTRIB
 void cache_attribbyte(u32 addr,u8 data);
 void cache_attrib(int nt);
+#endif
 
 #endif

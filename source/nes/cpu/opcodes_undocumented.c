@@ -100,3 +100,63 @@ static INLINE void OP_RRA()
 	A = (u8)tmpi;
 	checknz(A);
 }
+
+//"strange behavior" opcodes
+static INLINE void OP_AAC()
+{
+	A &= memread(EFFADDR);
+	checknz(A);
+	FLAG_C = FLAG_N;
+}
+
+static INLINE void OP_ASR()
+{
+	A &= memread(EFFADDR);
+	FLAG_C = A & 1;
+	A >>= 1;
+	checknz(A);
+}
+
+static INLINE void OP_ARR()
+{
+	A &= memread(EFFADDR);
+	A = (A >> 1) | (FLAG_C << 7);
+	checknz(A);
+	FLAG_C = (A >> 6) & 1;
+	FLAG_V = ((A >> 5) & 1) ^ FLAG_C;
+}
+
+static INLINE void OP_ATX()
+{
+//	A &= memread(EFFADDR);
+	A = memread(EFFADDR);
+	X = A;
+	checknz(A);
+}
+
+static INLINE void OP_AXS()
+{
+	tmpi = (X & A) - memread(EFFADDR);
+	X = (u8)tmpi;
+	checknz(X);
+	if(tmpi >= 0)
+		FLAG_C = 1;
+	else
+		FLAG_C = 0;
+}
+
+static INLINE void OP_SYA()
+{
+	tmp8 = Y & ((EFFADDR >> 8) + 1);
+	memread(EFFADDR);
+	memwrite(EFFADDR,tmp8);
+
+}
+
+static INLINE void OP_SXA()
+{
+	tmp8 = X & ((EFFADDR >> 8) + 1);
+	memread(EFFADDR);
+	memwrite(EFFADDR,tmp8);
+
+}

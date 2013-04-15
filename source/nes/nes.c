@@ -164,7 +164,6 @@ void nes_reset(int hard)
 		memset(nes.ppu.nametables,0,0x800);
 		memset(nes.ppu.oam,0,256);
 		memset(nes.ppu.palette,0,32);
-		memset(nes.ppu.screen,0,256*240*sizeof(u16));
 	}
 }
 

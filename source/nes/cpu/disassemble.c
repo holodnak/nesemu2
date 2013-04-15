@@ -24,21 +24,21 @@
 
 static char opcodes[256][4] = {
 /*  x0    x1    x2    x3    x4    x5    x6    x7    x8    x9    xA    xB    xC    xD    xE    xF           */
- 	"BRK","ORA","???","SLO","NOP","ORA","ASL","SLO","PHP","ORA","ASL","???","NOP","ORA","ASL","SLO", /*00-0F*/
+ 	"BRK","ORA","???","SLO","NOP","ORA","ASL","SLO","PHP","ORA","ASL","AAC","NOP","ORA","ASL","SLO", /*00-0F*/
 	"BPL","ORA","???","SLO","NOP","ORA","ASL","SLO","CLC","ORA","NOP","SLO","NOP","ORA","ASL","SLO", /*10-1F*/
-	"JSR","AND","???","RLA","BIT","AND","ROL","RLA","PLP","AND","ROL","???","BIT","AND","ROL","RLA", /*20-2F*/
+	"JSR","AND","???","RLA","BIT","AND","ROL","RLA","PLP","AND","ROL","AAC","BIT","AND","ROL","RLA", /*20-2F*/
 	"BMI","AND","???","RLA","NOP","AND","ROL","RLA","SEC","AND","NOP","RLA","NOP","AND","ROL","RLA", /*30-3F*/
-	"RTI","EOR","???","SRE","NOP","EOR","LSR","SRE","PHA","EOR","LSR","???","JMP","EOR","LSR","SRE", /*40-4F*/
+	"RTI","EOR","???","SRE","NOP","EOR","LSR","SRE","PHA","EOR","LSR","ASR","JMP","EOR","LSR","SRE", /*40-4F*/
 	"BVC","EOR","???","SRE","NOP","EOR","LSR","SRE","CLI","EOR","NOP","SRE","NOP","EOR","LSR","SRE", /*50-5F*/
 	"RTS","ADC","???","RRA","NOP","ADC","ROR","RRA","PLA","ADC","ROR","???","JMP","ADC","ROR","RRA", /*60-6F*/
 	"BVS","ADC","???","RRA","NOP","ADC","ROR","RRA","SEI","ADC","NOP","RRA","NOP","ADC","ROR","RRA", /*70-7F*/
 	"NOP","STA","NOP","SAX","STY","STA","STX","SAX","DEY","NOP","TXA","???","STY","STA","STX","SAX", /*80-8F*/
-	"BCC","STA","???","???","STY","STA","STX","SAX","TYA","STA","TXS","???","???","STA","???","???", /*90-9F*/
-	"LDY","LDA","LDX","LAX","LDY","LDA","LDX","LAX","TAY","LDA","TAX","???","LDY","LDA","LDX","LAX", /*A0-AF*/
+	"BCC","STA","???","???","STY","STA","STX","SAX","TYA","STA","TXS","???","SYA","STA","SXA","???", /*90-9F*/
+	"LDY","LDA","LDX","LAX","LDY","LDA","LDX","LAX","TAY","LDA","TAX","ATX","LDY","LDA","LDX","LAX", /*A0-AF*/
 	"BCS","LDA","???","LAX","LDY","LDA","LDX","LAX","CLV","LDA","TSX","???","LDY","LDA","LDX","LAX", /*B0-BF*/
-	"CPY","CMP","NOP","DCP","CPY","CMP","DEC","DCP","INY","CMP","DEX","???","CPY","CMP","DEC","DCP", /*C0-CF*/
+	"CPY","CMP","NOP","DCP","CPY","CMP","DEC","DCP","INY","CMP","DEX","AXS","CPY","CMP","DEC","DCP", /*C0-CF*/
 	"BNE","CMP","???","DCP","NOP","CMP","DEC","DCP","CLD","CMP","NOP","DCP","NOP","CMP","DEC","DCP", /*D0-DF*/
-	"CPX","SBC","???","ISB","CPX","SBC","INC","ISB","INX","SBC","NOP","SBC","CPX","SBC","INC","ISB", /*E0-EF*/
+	"CPX","SBC","NOP","ISB","CPX","SBC","INC","ISB","INX","SBC","NOP","SBC","CPX","SBC","INC","ISB", /*E0-EF*/
 	"BEQ","SBC","???","ISB","NOP","SBC","INC","ISB","SED","SBC","NOP","ISB","NOP","SBC","INC","ISB"  /*F0-FF*/
 };
 enum addrmodes {
@@ -46,21 +46,21 @@ enum addrmodes {
 };
 static u8 addrtable[256] = {
 /* x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF         */
-   no,ix,er,ix,zp,zp,zp,zp,no,im,ac,er,ab,ab,ab,ab, /*00-0f*/
+   no,ix,er,ix,zp,zp,zp,zp,no,im,ac,im,ab,ab,ab,ab, /*00-0f*/
    re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*10-1f*/
-   ab,ix,er,ix,zp,zp,zp,zp,no,im,ac,er,ab,ab,ab,ab, /*20-2f*/
+   ab,ix,er,ix,zp,zp,zp,zp,no,im,ac,im,ab,ab,ab,ab, /*20-2f*/
    re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*30-3f*/
-   no,ix,er,ix,zp,zp,zp,zp,no,im,ac,er,ab,ab,ab,ab, /*40-4f*/
+   no,ix,er,ix,zp,zp,zp,zp,no,im,ac,im,ab,ab,ab,ab, /*40-4f*/
    re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*50-5f*/
    no,ix,er,ix,zp,zp,zp,zp,no,im,ac,er,in,ab,ab,ab, /*60-6f*/
    re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*70-7f*/
  	im,ix,im,ix,zp,zp,zp,zp,no,im,no,er,ab,ab,ab,ab, /*80-8f*/
-   re,iy,er,er,zx,zx,zy,zy,no,ay,no,er,er,ax,er,er, /*90-9f*/
-   im,ix,im,ix,zp,zp,zp,zp,no,im,no,er,ab,ab,ab,ab, /*a0-af*/
+   re,iy,er,er,zx,zx,zy,zy,no,ay,no,er,ax,ax,ay,er, /*90-9f*/
+   im,ix,im,ix,zp,zp,zp,zp,no,im,no,im,ab,ab,ab,ab, /*a0-af*/
    re,iy,er,iy,zx,zx,zy,zy,no,ay,no,er,ax,ax,ay,ay, /*b0-bf*/
-   im,ix,im,ix,zp,zp,zp,zp,no,im,no,er,ab,ab,ab,ab, /*c0-cf*/
+   im,ix,im,ix,zp,zp,zp,zp,no,im,no,im,ab,ab,ab,ab, /*c0-cf*/
    re,iy,iy,er,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*d0-df*/
-   im,ix,er,ix,zp,zp,zp,zp,no,im,no,im,ab,ab,ab,ab, /*e0-ef*/
+   im,ix,im,ix,zp,zp,zp,zp,no,im,no,im,ab,ab,ab,ab, /*e0-ef*/
    re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax  /*f0-ff*/
 };
 static u8 oplength[256];

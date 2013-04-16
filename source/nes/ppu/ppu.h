@@ -47,21 +47,24 @@ typedef struct ppu_s {
 	//internal memory
 	u8		nametables[0x800];
 	u8		oam[0x100];
-	u8		oam2[32];
 	u8		palette[32];
+
+	//sprite rendering
+	u8		oam2[32];
+	u8		oam2pos;
 
 	//rendering data
 	//current nametable, attribute byte, and pattern table bytes
 	u8		ntbyte;
-	u8		attribbyte;
-	u8		ptbyte0,ptbyte1;
+//	u8		attribbyte;
+//	u8		ptbyte0,ptbyte1;
 
 	//fetched tile data bits with attributes
 	u8		fetchpos;
 	u32	tiledataaddr;
 	u8		tiledata[2][32 + 2];
-	cache_t	cachedata[32 + 2];
 	u8		attribdata[32 + 2];
+	cache_t	cachedata[32 + 2];
 
 	//line buffer
 	u8		linebuffer[256 + 16];
@@ -74,9 +77,11 @@ typedef struct ppu_s {
 	cache_t	*cachepages[16];
 	cache_t	*cachepages_hflip[16];
 
+#ifdef CACHE_ATTRIB
 	//cached attributes
 	u8		cacheattrib[4][32*32];	//attribute cache for four nametables
 	u8		*attribpages[4];			//attribute cache pointers
+#endif
 
 	//line cycle counter, scanline counter and frame counter
 	u32	linecycles;

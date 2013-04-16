@@ -38,6 +38,9 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_UxROM);
 	MAPPER(B_AxROM);
 
+	//tengen
+	MAPPER(B_TENGEN_800032);
+
 	return(0);
 }
 

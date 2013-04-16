@@ -22,17 +22,230 @@
 #include "system/video.h"
 #include "log/log.h"
 
+#define QUICK_SPRITES
+
+typedef struct {
+	u64 line;											//cache line data
+	u8 attr;												//attrib bits
+	u8 x;													//x coord
+	u8 flags;											//flags
+	} sprtemp_t;										//sprite temp entry
+
+static sprtemp_t sprtemp[8];
+
+static INLINE void blankline()
+{
+	u64 *scr64 = (u64*)nes.ppu.linebuffer;
+	int i;
+
+	for(i=0;i<33;i++) {
+		*scr64++ = 0;
+	}
+}
+
 static INLINE void drawtileline()
 {
-	int i,line = SCANLINE - 21;
 	u64 *scr64 = (u64*)nes.ppu.linebuffer;
 	cache_t *cacheptr = nes.ppu.cachedata;
 	u8 *attribptr = nes.ppu.attribdata;
+	int i;
 
 	for(i=0;i<33;i++) {
 		*scr64++ = (*attribptr++ * 0x0404040404040404LL) + *cacheptr++;
 	}
-	video_updateline(SCANLINE - 21,nes.ppu.linebuffer + nes.ppu.scrollx);
+}
+
+static void drawspriteline()
+{
+	u8 spriteline[256 + 8];
+	sprtemp_t *spr = (sprtemp_t*)sprtemp + 7;
+	u64 *spriteline64 = (u64*)spriteline;
+	int n;
+	u8 *dest = nes.ppu.linebuffer;
+
+	dest += nes.ppu.scrollx;
+
+	//clear sprite line
+	for(n=0;n<(256 / 8);n++)
+		spriteline64[n] = 0x00;
+
+	//loop thru all eight possible sprites
+	for(n=0;n<8;n++,spr--) {
+		cache_t offs,mask = CACHE_MASK;
+		u64 *scr64,sp0,sp1,pmask0,pmask1,pmaskxor = 0xFFFFFFFFFFFFFFFFLL;
+		u64 shiftright = (8 - (spr->x & 7)) * 8;
+		u64 shiftleft = (spr->x & 7) * 8;
+
+		if(spr->flags == 0)
+			continue;
+
+		scr64 = ((u64*)spriteline) + (spr->x / 8);
+
+		//draw the pixel
+		offs = spr->attr * 0x0404040404040404LL;
+		sp0 = sp1 = spr->line & mask;
+		pmask0 = pmask1 = (0x8080808080808080LL - sp0) >> 2;
+#ifdef C_RENDER
+#ifdef __GNUC__
+		if(spr->x & 7) {
+#endif
+			sp0 <<= shiftleft;
+			sp1 >>= shiftright;
+			pmask0 <<= shiftleft;
+			pmask1 >>= shiftright;
+			scr64[0] = ((sp0 + offs) & pmask0) | (scr64[0] & ~pmask0);
+			scr64[1] = ((sp1 + offs) & pmask1) | (scr64[1] & ~pmask1);
+#ifdef __GNUC__
+		}
+		else
+			scr64[0] = ((sp0 + offs) & pmask0) | (scr64[0] & ~pmask0);
+#endif
+#else
+#ifdef _MSC_VER
+		__asm {
+			//init screen variable
+			push	edi
+			mov	edi,scr64
+
+			//init our variables
+			movq	mm0,[sp0]
+			movq	mm1,[sp1]
+			movq	mm2,[pmask0]
+			movq	mm3,[pmask1]
+			movq	mm4,[shiftleft]
+			movq	mm5,[shiftright]
+			movq	mm6,[offs]
+			movq	mm7,[pmaskxor]
+
+			//shift out the pixels between the two qwords
+			psllq	mm0,mm4
+			psrlq	mm1,mm5
+			psllq	mm2,mm4
+			psrlq	mm3,mm5
+
+			//add the attribute bytes
+			paddq	mm0,mm6
+			paddq	mm1,mm6
+
+			//mask with pixel mask
+			pand	mm0,mm2
+			pand	mm1,mm3
+
+			//invert mask to mask the screen pixels
+			pxor	mm2,mm7
+			pxor	mm3,mm7
+
+			//get the old screen pixels
+			movq	mm6,[edi  ]
+			movq	mm7,[edi+8]
+
+			//and them with the inverted pixel mask
+			pand	mm6,mm2
+			pand	mm7,mm3
+
+			//merge the old pixels with new pixels
+			por	mm0,mm6
+			por	mm1,mm7
+
+			//draw pixels to buffer
+			movq	[edi  ],mm0
+			movq	[edi+8],mm1
+
+			//done
+			emms
+			pop	edi
+		}
+		//end non-gcc code
+#elif defined(__GNUC__)
+#ifdef PS2
+//#error no background draw for this platform
+#else
+		__asm__ __volatile__(
+			//init our variables
+			"movq	%1,%%mm0\n"
+			"movq	%2,%%mm1\n"
+			"movq	%3,%%mm2\n"
+			"movq	%4,%%mm3\n"
+			"movq	%5,%%mm4\n"
+			"movq	%6,%%mm5\n"
+			"movq	%7,%%mm6\n"
+			"movq	%8,%%mm7\n"
+
+			//shift out the pixels between the two qwords
+			"psllq	%%mm4,%%mm0\n"
+			"psrlq	%%mm5,%%mm1\n"
+			"psllq	%%mm4,%%mm2\n"
+			"psrlq	%%mm5,%%mm3\n"
+
+			//add the attribute bytes
+			"paddq	%%mm6,%%mm0\n"
+			"paddq	%%mm6,%%mm1\n"
+
+			//mask with pixel mask
+			"pand	%%mm2,%%mm0\n"
+			"pand	%%mm3,%%mm1\n"
+
+			//invert mask to mask the screen pixels
+			"pxor	%%mm7,%%mm2\n"
+			"pxor	%%mm7,%%mm3\n"
+
+			//get the old screen pixels
+			"movq	(%0),%%mm6\n"
+			"movq	8(%0),%%mm7\n"
+
+			//and them with the inverted pixel mask
+			"pand	%%mm2,%%mm6\n"
+			"pand	%%mm3,%%mm7\n"
+
+			//merge the old pixels with new pixels
+			"por	%%mm6,%%mm0\n"
+			"por	%%mm7,%%mm1\n"
+
+			//draw pixels to buffer
+			"movq	%%mm0,(%0)\n"
+			"movq	%%mm1,8(%0)\n"
+
+			//done
+			"emms\n"
+				:
+				: "r"(scr64),
+					"m"(sp0),"m"(sp1),"m"(pmask0),"m"(pmask1),
+					"m"(shiftleft),"m"(shiftright),"m"(offs),"m"(pmaskxor)
+				: "memory"
+			);
+#endif
+#else
+#error no background draw for this platform
+#endif
+#endif
+
+		//check for sprite0 hit
+		if((spr->flags & 2) && (CONTROL1 & 8) && (spr->x >= (((CONTROL1 ^ 4) & 4) << 1))) {
+			u8 *sprite = spriteline + spr->x;
+			u8 *bg = dest + spr->x;
+			int j;
+
+			for(j=0;j<8 && (spr->x + j) < 255;j++) {
+				if((sprite[j] & 3) && ((bg[j] & 0xF) != 0)) {
+					STATUS |= 0x40;
+					spr->flags = 0;
+					break;
+				}
+			}
+		}
+	}
+
+	//draw the sprite line to the buffer
+	for(n=(((CONTROL1 ^ 4) & 4) << 1);n<256;n++) {
+		u8 pixel = spriteline[n];
+
+		if(pixel & 3) {
+			if((pixel & 0x10) == 0)    //foreground sprite
+				dest[n] = pixel | 0x10;
+			else if((dest[n] & 3) == 0)      //background sprite that is visible
+				dest[n] = pixel | 0x10;
+		}
+	}
 }
 
 static INLINE void fetch_ntbyte()
@@ -147,6 +360,157 @@ static INLINE void inc_linecycles()
 	}
 }
 
+static INLINE void process_sprites()
+{
+	if(LINECYCLES == 0) {
+		nes.ppu.oam2pos = 0;
+	}
+
+	/* Cycles 1-64: Secondary OAM (32-byte buffer for current sprites on scanline) is
+	   initialized to $FF - attempting to read $2004 will return $FF */
+	else if((LINECYCLES <= 64) && ((LINECYCLES & 1) == 0)) {
+		nes.ppu.oam2[nes.ppu.oam2pos++] = 0xFF;
+	}
+
+	/* Cycles 65-256: Sprite evaluation
+	On odd cycles, data is read from (primary) OAM
+	On even cycles, data is written to secondary OAM (unless writes are inhibited, in
+	   which case it will read the value in secondary OAM instead)
+	1. Starting at n = 0, read a sprite's Y-coordinate (OAM[n][0], copying it to the
+	   next open slot in secondary OAM (unless 8 sprites have been found, in which case the write is ignored).
+	1a. If Y-coordinate is in range, copy remaining bytes of sprite data (OAM[n][1] thru
+	    OAM[n][3]) into secondary OAM.
+	2. Increment n
+	2a. If n has overflowed back to zero (all 64 sprites evaluated), go to 4
+	2b. If less than 8 sprites have been found, go to 1
+	2c. If exactly 8 sprites have been found, disable writes to secondary OAM. This causes sprites in back to drop out.
+	3. Starting at m = 0, evaluate OAM[n][m] as a Y-coordinate.
+	3a. If the value is in range, set the sprite overflow flag in $2002 and read the next 3 entries
+	    of OAM (incrementing 'm' after each byte and incrementing 'n' when 'm' overflows); if m = 3, increment n
+	3b. If the value is not in range, increment n AND m (without carry). If n overflows to 0, go to 4; otherwise go to 3
+	4. Attempt (and fail) to copy OAM[n][0] into the next free slot in secondary OAM, and increment n (repeat until HBLANK is reached) */
+	else if(LINECYCLES <= 256) {
+		if(LINECYCLES == 65) {
+			nes.ppu.oam2pos = 0;
+		}
+	}
+
+	/* Cycles 257-320: Sprite fetches (8 sprites total, 8 cycles per sprite)
+	1-4: Read the Y-coordinate, tile number, attributes, and X-coordinate
+	     of the selected sprite from secondary OAM
+	5-8: Read the X-coordinate of the selected sprite from secondary OAM
+	     4 times (while the PPU fetches the sprite tile data)
+	For the first empty sprite slot, this will consist of sprite #63's Y-coordinate
+	followed by 3 $FF bytes; for subsequent empty sprite slots, this will be four $FF bytes */
+	else if(LINECYCLES <= 320) {
+
+	}
+
+	/* Cycles 321-340+0: Background render pipeline initialization
+    Read the first byte in secondary OAM (while the PPU fetches
+	 the first two background tiles for the next scanline) */
+	else {
+
+	}
+}
+
+//process all sprites that belong to the next scanline
+static INLINE void quick_process_sprites()
+{
+	int i,h,sprinrange;
+	u8 *s;
+
+	//clear the sprite temp memory
+	for(i=0;i<8;i++) {
+		sprtemp[i].line = 0;
+		sprtemp[i].attr = sprtemp[i].x = sprtemp[i].flags = 0;
+	}
+
+	//determine sprite height
+	h = 8 + ((CONTROL0 & 0x20) >> 2);
+
+	//loop thru all 64 visible sprites, keeping note of the first eight visible
+	for(sprinrange=0,i=0;i<64;i++) {
+		int sprline;
+		cache_t *cache;
+		u8 patternbank;
+
+		//sprite data pointer
+		s = &nes.ppu.oam[i * 4];
+
+		//get the sprite tile line to draw
+		sprline = (SCANLINE - 21) - s[0];
+
+		//check for visibility on this line
+		if(sprline >= 0 && sprline < h) {
+
+			//if we have 8 sprites already, skip it
+			if(sprinrange < 8) {
+
+				//copy sprite data to temp memory
+				sprtemp[sprinrange].attr = (s[2] & 3) | ((s[2] & 0x20) >> 3);
+				sprtemp[sprinrange].x = s[3];
+				sprtemp[sprinrange].flags = 1;
+
+				//if sprite0 check is needed
+				if((i == 0)/* && (nes->rom->sprite0hack == 0)*/)
+					sprtemp[sprinrange].flags = 2;
+
+				//call mapper callback
+				if(s[1] >= 0xFD && s[1] <= 0xFE)
+					nes.mapper->tile(s[1],(CONTROL0 & 8) >> 3);
+
+				//determine pattern bank used (upper or lower)
+				if(CONTROL0 & 0x20)
+					patternbank = (s[1] & 1) << 2;
+				else
+					patternbank = (CONTROL0 & 8) >> 1;
+
+				//if sprite is to be flipped horizontally
+				if(s[2] & 0x40)
+					cache = (cache_t*)nes.ppu.cachepages_hflip[(s[1] >> 6) | patternbank];
+				else
+					cache = (cache_t*)nes.ppu.cachepages[(s[1] >> 6) | patternbank];
+
+				//select tile for 8x16 sprites
+				if(CONTROL0 & 0x20) {
+					cache += ((s[1] & 0x3E) * 2) + ((s[2] & 0x80) >> 6);
+					if(sprline >= 8) {
+						if(s[2] & 0x80)
+							cache -= 2;
+						else
+							cache += 2;
+						sprline &= 7;
+					}
+				}
+
+				//select tile for 8x8 sprites
+				else
+					cache += (s[1] & 0x3F) * 2;
+
+				//if sprite is to be flipped vertically
+				if((s[2] & 0x80) != 0)
+					sprline = 7 - sprline;
+
+				//select tile line
+				cache += (sprline / 4);
+
+				//store sprite tile line
+				sprtemp[sprinrange].line = *cache >> ((sprline & 3) * 2);
+
+				//increment sprite in range counter
+				sprinrange++;
+			}
+
+			//8+ sprites are visible, set the flag and exit the loop
+			else {
+				STATUS |= 0x20;
+				break;
+			}
+		}
+	}
+}
+
 static INLINE void scanline_20()
 {
 	/* There are 2 conditions that update all 5 PPU scroll counters with the
@@ -228,6 +592,9 @@ static INLINE void scanline_20()
 			inc_hscroll();
 			if(LINECYCLES == 256) {
 				inc_vscroll();
+#ifdef QUICK_SPRITES
+				quick_process_sprites();
+#endif
 			}
 			break;
 		case 257:
@@ -284,6 +651,9 @@ static INLINE void scanline_20()
 //			log_printf("scanline_20:  unhandled cycle %d\n",LINECYCLES);
 			break;
 	}
+#ifndef QUICK_SPRITES
+	process_sprites();
+#endif
 }
 
 //scanlines 21-260
@@ -351,10 +721,18 @@ static INLINE void scanline_visible()
 			if(LINECYCLES == 256) {
 				if(SCANLINE == 21)
 					video_startframe();
-				drawtileline();
+				if(CONTROL1 & 0x8)
+					drawtileline();
+				else
+					blankline();
+				drawspriteline();
+				video_updateline(SCANLINE - 21,nes.ppu.linebuffer + nes.ppu.scrollx);
 				if(SCANLINE == 260)
 					video_endframe();
 				inc_vscroll();
+#ifdef QUICK_SPRITES
+				quick_process_sprites();
+#endif
 			}
 			break;
 		case 257:
@@ -404,8 +782,9 @@ static INLINE void scanline_visible()
 //			log_printf("scanline_visible:  unhandled cycle %d\n",LINECYCLES);
 			break;
 	}
-	if(LINECYCLES > 0 && LINECYCLES <= 64)
-		nes.ppu.oam2[(LINECYCLES - 1) / 2] = 0xFF;
+#ifndef QUICK_SPRITES
+	process_sprites();
+#endif
 }
 
 static INLINE void scanline_261()

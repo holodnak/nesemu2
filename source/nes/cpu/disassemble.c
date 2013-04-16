@@ -22,6 +22,11 @@
 #include <string.h>
 #include "nes/cpu/cpu.h"
 
+enum addrmodes {
+	er=0,no,ab,ax,ay,ac,im,ix,iy,in,re,zp,zx,zy
+};
+
+#ifdef CPU_UNDOC
 static char opcodes[256][4] = {
 /*  x0    x1    x2    x3    x4    x5    x6    x7    x8    x9    xA    xB    xC    xD    xE    xF           */
  	"BRK","ORA","???","SLO","NOP","ORA","ASL","SLO","PHP","ORA","ASL","AAC","NOP","ORA","ASL","SLO", /*00-0F*/
@@ -40,9 +45,6 @@ static char opcodes[256][4] = {
 	"BNE","CMP","???","DCP","NOP","CMP","DEC","DCP","CLD","CMP","NOP","DCP","NOP","CMP","DEC","DCP", /*D0-DF*/
 	"CPX","SBC","NOP","ISB","CPX","SBC","INC","ISB","INX","SBC","NOP","SBC","CPX","SBC","INC","ISB", /*E0-EF*/
 	"BEQ","SBC","???","ISB","NOP","SBC","INC","ISB","SED","SBC","NOP","ISB","NOP","SBC","INC","ISB"  /*F0-FF*/
-};
-enum addrmodes {
-	er=0,no,ab,ax,ay,ac,im,ix,iy,in,re,zp,zx,zy
 };
 static u8 addrtable[256] = {
 /* x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF         */
@@ -63,6 +65,46 @@ static u8 addrtable[256] = {
    im,ix,im,ix,zp,zp,zp,zp,no,im,no,im,ab,ab,ab,ab, /*e0-ef*/
    re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax  /*f0-ff*/
 };
+#else
+static char opcodes[256][4] = {
+ 	"BRK","ORA","???","???","???","ORA","ASL","???","PHP","ORA","ASL","???","???","ORA","ASL","???", /*00-0F*/
+	"BPL","ORA","???","???","???","ORA","ASL","???","CLC","ORA","???","???","???","ORA","ASL","???", /*10-1F*/
+	"JSR","AND","???","???","BIT","AND","ROL","???","PLP","AND","ROL","???","BIT","AND","ROL","???", /*20-2F*/
+	"BMI","AND","???","???","???","AND","ROL","???","SEC","AND","???","???","???","AND","ROL","???", /*30-3F*/
+	"RTI","EOR","???","???","???","EOR","LSR","???","PHA","EOR","LSR","???","JMP","EOR","LSR","???", /*40-4F*/
+	"BVC","EOR","???","???","???","EOR","LSR","???","CLI","EOR","???","???","???","EOR","LSR","???", /*50-5F*/
+	"RTS","ADC","???","???","???","ADC","ROR","???","PLA","ADC","ROR","???","JMP","ADC","ROR","???", /*60-6F*/
+	"BVS","ADC","???","???","???","ADC","ROR","???","SEI","ADC","???","???","???","ADC","ROR","???", /*70-7F*/
+	"???","STA","???","???","STY","STA","STX","???","DEY","???","TXA","???","STY","STA","STX","???", /*80-8F*/
+	"BCC","STA","???","???","STY","STA","STX","???","TYA","STA","TXS","???","???","STA","???","???", /*90-9F*/
+	"LDY","LDA","LDX","???","LDY","LDA","LDX","???","TAY","LDA","TAX","???","LDY","LDA","LDX","???", /*A0-AF*/
+	"BCS","LDA","???","???","LDY","LDA","LDX","???","CLV","LDA","TSX","???","LDY","LDA","LDX","???", /*B0-BF*/
+	"CPY","CMP","???","???","CPY","CMP","DEC","???","INY","CMP","DEX","???","CPY","CMP","DEC","???", /*C0-CF*/
+	"BNE","CMP","???","???","???","CMP","DEC","???","CLD","CMP","???","???","???","CMP","DEC","???", /*D0-DF*/
+	"CPX","SBC","???","???","CPX","SBC","INC","???","INX","SBC","NOP","???","CPX","SBC","INC","???", /*E0-EF*/
+	"BEQ","SBC","???","???","???","SBC","INC","???","SED","SBC","???","???","???","SBC","INC","???"  /*F0-FF*/
+};
+static u8 addrtable[256] = {
+/* x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF         */
+   no,ix,er,er,er,zp,zp,er,no,im,ac,er,er,ab,ab,er, /*00-0f*/
+   re,iy,er,er,er,zx,zx,er,no,ay,er,er,er,ax,ax,er, /*10-1f*/
+   ab,ix,er,er,zp,zp,zp,er,no,im,ac,er,ab,ab,ab,er, /*20-2f*/
+   re,iy,er,er,er,zx,zx,er,no,ay,er,er,er,ax,ax,er, /*30-3f*/
+   no,ix,er,er,er,zp,zp,er,no,im,ac,er,ab,ab,ab,er, /*40-4f*/
+   re,iy,er,er,er,zx,zx,er,no,ay,er,er,er,ax,ax,er, /*50-5f*/
+   no,ix,er,er,er,zp,zp,er,no,im,ac,er,in,ab,ab,er, /*60-6f*/
+   re,iy,er,er,er,zx,zx,er,no,ay,er,er,er,ax,ax,er, /*70-7f*/
+ 	er,ix,er,er,zp,zp,zp,er,no,er,no,er,ab,ab,ab,er, /*80-8f*/
+   re,iy,er,er,zx,zx,zy,er,no,ay,no,er,er,ax,er,er, /*90-9f*/
+   im,ix,im,er,zp,zp,zp,er,no,im,no,er,ab,ab,ab,er, /*a0-af*/
+   re,iy,er,er,zx,zx,zy,er,no,ay,no,er,ax,ax,ay,er, /*b0-bf*/
+   im,ix,er,er,zp,zp,zp,er,no,im,no,er,ab,ab,ab,er, /*c0-cf*/
+   re,iy,er,er,er,zx,zx,er,no,ay,er,er,er,ax,ax,er, /*d0-df*/
+   im,ix,er,er,zp,zp,zp,er,no,im,no,er,ab,ab,ab,er, /*e0-ef*/
+   re,iy,er,er,zx,zx,zx,er,no,ay,er,er,ax,ax,ax,er  /*f0-ff*/
+};
+#endif
+
 static u8 oplength[256];
 
 u16 cpu_disassemble(char *buffer,u16 opcodepos)

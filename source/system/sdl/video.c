@@ -41,7 +41,7 @@ int video_reinit()
 {
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
-	screenscale = 1;
+	screenscale = 2;
 	screenw = 256 * screenscale;
 	screenh = 240 * screenscale;
 	screenbpp = 32;
@@ -99,11 +99,16 @@ void video_endframe()
 //this handles lines coming directly from the nes engine
 void video_updateline(int line,u8 *s)
 {
-	u32 *dest = (u32*)((u8*)surface->pixels + (line * surface->pitch));
+	u32 *dest1 = (u32*)((u8*)surface->pixels + (((line * 2) + 0) * surface->pitch));
+	u32 *dest2 = (u32*)((u8*)surface->pixels + (((line * 2) + 1) * surface->pitch));
 	int i;
 
 	for(i=0;i<256;i++) {
-		*dest++ = palettecache[*s++];
+		u32 pixel = palettecache[*s++];
+		*dest1++ = pixel;
+		*dest1++ = pixel;
+		*dest2++ = pixel;
+		*dest2++ = pixel;
 	}
 }
 

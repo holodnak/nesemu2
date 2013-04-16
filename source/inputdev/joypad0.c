@@ -34,8 +34,8 @@ static u8 read0()
 static void strobe()
 {
 	data = 0;
-	if(joykeys[SDLK_z]) data |= INPUT_A;
-	if(joykeys[SDLK_x]) data |= INPUT_B;
+	if(joykeys[SDLK_x]) data |= INPUT_A;
+	if(joykeys[SDLK_z]) data |= INPUT_B;
 	if(joykeys[SDLK_a]) data |= INPUT_SELECT;
 	if(joykeys[SDLK_s]) data |= INPUT_START;
 	if(joykeys[SDLK_UP]) data |= INPUT_UP;

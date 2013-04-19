@@ -24,28 +24,28 @@
 #include "types.h"
 #include "nes/cpu/cpu.h"
 #include "nes/ppu/ppu.h"
+#include "nes/apu/apu.h"
 #include "nes/cart/cart.h"
 #include "mappers/mappers.h"
 #include "inputdev/inputdev.h"
 
-#define CONTROL0		nes.ppu.control0
-#define CONTROL1		nes.ppu.control1
-#define STATUS			nes.ppu.status
-
+//timing
 #define LINECYCLES	nes.ppu.linecycles
 #define SCANLINE		nes.ppu.scanline
 #define FRAMES			nes.ppu.frames
 
+//scroll registers
+#define SCROLLX		nes.ppu.scrollx
 #define SCROLL			nes.ppu.scroll
 #define TMPSCROLL		nes.ppu.tmpscroll
-#define STATUS			nes.ppu.status
+#define TOGGLE			nes.ppu.toggle
 
-//'correct' names
-#define PPUCONTROL	nes.ppu.control0
+//registers
+#define PPUCONTROL	nes.ppu.control0		//'correct' names
 #define PPUMASK		nes.ppu.control1
-//old names
-#define CONTROL0		nes.ppu.control0
+#define CONTROL0		nes.ppu.control0		//old names
 #define CONTROL1		nes.ppu.control1
+#define STATUS			nes.ppu.status
 
 typedef struct nes_s {
 

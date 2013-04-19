@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __cart_h__
-#define __cart_h__
+#ifndef __nes__cart_h__
+#define __nes__cart_h__
 
 #include "types.h"
 #include "nes/ppu/tilecache.h"

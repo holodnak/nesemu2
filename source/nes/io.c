@@ -26,68 +26,76 @@
 //read from apu/joypads
 u8 nes_read_4000(u32 addr)
 {
-	//try input port 0 read
-	if(addr == 0x4016)
-		return(nes.inputdev[0]->read());
+	switch(addr) {
+		//apu registers
+		case 0x4000:	case 0x4001:	case 0x4002:	case 0x4003:
+		case 0x4004:	case 0x4005:	case 0x4006:	case 0x4007:
+		case 0x4008:	case 0x4009:	case 0x400A:	case 0x400B:
+		case 0x400C:	case 0x400D:	case 0x400E:	case 0x400F:
+		case 0x4010:	case 0x4011:	case 0x4012:	case 0x4013:
+		case 0x4015:
+			return(apu_read(addr));
 
-	//try input port 1 read
-	if(addr == 0x4017)
-		return(nes.inputdev[1]->read() | nes.expdev->read());
+		//sprite memory read
+		case 0x4014:
+			return(nes.ppu.oam[nes.ppu.oamaddr]);
 
-	if(addr == 0x4015) {
-		u8 ret = /*apu_read(addr) |*/ nes.frame_irq;
-		cpu_set_irq(0);
-//		nes_frameirq = 0;
-//		log_printf("nes_read_4000: $%04X\n",addr);
-		return(ret);
+		//input port 0 read
+		case 0x4016:
+			return(nes.inputdev[0]->read());
+
+		//input port 1 read
+		case 0x4017:
+			return(nes.inputdev[1]->read());
+
+		default:
+			log_printf("nes_read_4000:  unhandled read at $%04X\n",addr);
+			break;
 	}
-/*
-	//else return an apu read
-	return(apu_read(addr));*/
 	return(0);
 }
-
-u8 nes_frame_irqmode = 0;
 
 //write to sprite dma, nes joypad strobe, and apu registers
 void nes_write_4000(u32 addr,u8 data)
 {
 	u32 temp,temp2;
 
-	//write to apu
-	if(addr <= 0x4013 || addr == 0x4015) {
-//		nes.apuregs[addr & 0x1F] = data;
-//		apu_write(addr,data);
-	}
+	switch(addr) {
+		//apu registers
+		case 0x4000:	case 0x4001:	case 0x4002:	case 0x4003:
+		case 0x4004:	case 0x4005:	case 0x4006:	case 0x4007:
+		case 0x4008:	case 0x4009:	case 0x400A:	case 0x400B:
+		case 0x400C:	case 0x400D:	case 0x400E:	case 0x400F:
+		case 0x4010:	case 0x4011:	case 0x4012:	case 0x4013:
+		case 0x4015:	case 0x4017:
+			apu_write(addr,data);
+			break;
 
-	//sprite dma write
-	else if(addr == 0x4014) {
-		temp2 = data << 8;
-		for(temp=0;temp<256;temp++,temp2++)
-			nes.ppu.oam[temp] = cpu_read(temp2);
-		temp2 = 513 + ((u32)nes.cpu.cycles & 1);
-		for(temp=0;temp<temp2;temp++)
-			cpu_tick();
-	}
+		//sprite dma write
+		case 0x4014:
+			temp2 = data << 8;
+			for(temp=0;temp<256;temp++,temp2++)
+				nes.ppu.oam[temp] = cpu_read(temp2);
+			temp2 = 513 + ((u32)nes.cpu.cycles & 1);
+			for(temp=0;temp<temp2;temp++)
+				cpu_tick();
+			break;
 
-	//strobe joypads
-	else if(addr == 0x4016) {
-		nes.inputdev[0]->write(data);
-		nes.inputdev[1]->write(data);
-		nes.expdev->write(data);
-		if(((data & 1) == 0) && (nes.strobe & 1)) {
-			nes.inputdev[0]->strobe();
-			nes.inputdev[1]->strobe();
-			nes.expdev->strobe();
-		}
-		nes.strobe = data;
-	}
+		//strobe joypads
+		case 0x4016:
+			nes.inputdev[0]->write(data);
+			nes.inputdev[1]->write(data);
+			nes.expdev->write(data);
+			if(((data & 1) == 0) && (nes.strobe & 1)) {
+				nes.inputdev[0]->strobe();
+				nes.inputdev[1]->strobe();
+				nes.expdev->strobe();
+			}
+			nes.strobe = data;
+			break;
 
-	//frame irq control
-	else if(addr == 0x4017) {
-//		log_printf("nes_write_4000: $%04X = $%02X\n",addr,data);
-		nes.frame_irqmode = data;
-		nes.frame_irq = 0;
+		default:
+			log_printf("nes_write_4000:  unhandled write at $%04X = $%02X\n",addr,data);
 	}
 }
 

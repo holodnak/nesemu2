@@ -22,8 +22,6 @@
 #include "system/video.h"
 #include "log/log.h"
 
-#define QUICK_SPRITES
-
 typedef struct {
 	u64 line;											//cache line data
 	u8 attr;												//attrib bits
@@ -46,23 +44,32 @@ static INLINE void blankline()
 static INLINE void drawtileline()
 {
 	u64 *scr64 = (u64*)nes.ppu.linebuffer;
-	cache_t *cacheptr = nes.ppu.cachedata;
 	u8 *attribptr = nes.ppu.attribdata;
+	cache_t *cacheptr = nes.ppu.cachedata;
 	int i;
 
+	//draw all pixels
 	for(i=0;i<33;i++) {
 		*scr64++ = (*attribptr++ * 0x0404040404040404LL) + *cacheptr++;
 	}
+
+	//hide leftmost 8 pixels
+	if((CONTROL1 & 2) == 0) {
+		for(i=0;i<(8 + nes.ppu.scrollx);i++) {
+			nes.ppu.linebuffer[i] = 0;
+		}
+	}
 }
 
-static void drawspriteline()
+static INLINE void drawspriteline()
 {
 	u8 spriteline[256 + 8];
 	sprtemp_t *spr = (sprtemp_t*)sprtemp + 7;
 	u64 *spriteline64 = (u64*)spriteline;
-	int n;
 	u8 *dest = nes.ppu.linebuffer;
+	int n,j,x;
 
+	//adjust for fine scroll x
 	dest += nes.ppu.scrollx;
 
 	//clear sprite line
@@ -79,13 +86,34 @@ static void drawspriteline()
 		if(spr->flags == 0)
 			continue;
 
+		//get offset in sprite buffer
 		scr64 = ((u64*)spriteline) + (spr->x / 8);
 
-		//draw the pixel
+		//setup to draw the pixel
 		offs = spr->attr * 0x0404040404040404LL;
 		sp0 = sp1 = spr->line & mask;
 		pmask0 = pmask1 = (0x8080808080808080LL - sp0) >> 2;
-#ifdef C_RENDER
+
+		//sprite is sprite 0, check for hit
+		if(spr->flags & 2) {
+			u64 sprtileline;
+			u8 *sprtileline8,*bg;
+
+			sprtileline = (sp0 + offs) & pmask0;
+			sprtileline8 = ((u8*)&sprtileline);
+			bg = dest + spr->x;
+			for(x=spr->x,j=0;j<8 && (spr->x + j) < 255;j++,x++) {
+				if(((CONTROL1 & 4) == 0) && (x < 8))
+					continue;
+				if((sprtileline8[j] & 3) && ((bg[j] & 0xF) != 0)) {
+					STATUS |= 0x40;
+					spr->flags = 0;
+					break;
+				}
+			}
+		}
+
+		//render pixel to sprite line buffer
 #ifdef __GNUC__
 		if(spr->x & 7) {
 #endif
@@ -100,139 +128,6 @@ static void drawspriteline()
 		else
 			scr64[0] = ((sp0 + offs) & pmask0) | (scr64[0] & ~pmask0);
 #endif
-#else
-#ifdef _MSC_VER
-		__asm {
-			//init screen variable
-			push	edi
-			mov	edi,scr64
-
-			//init our variables
-			movq	mm0,[sp0]
-			movq	mm1,[sp1]
-			movq	mm2,[pmask0]
-			movq	mm3,[pmask1]
-			movq	mm4,[shiftleft]
-			movq	mm5,[shiftright]
-			movq	mm6,[offs]
-			movq	mm7,[pmaskxor]
-
-			//shift out the pixels between the two qwords
-			psllq	mm0,mm4
-			psrlq	mm1,mm5
-			psllq	mm2,mm4
-			psrlq	mm3,mm5
-
-			//add the attribute bytes
-			paddq	mm0,mm6
-			paddq	mm1,mm6
-
-			//mask with pixel mask
-			pand	mm0,mm2
-			pand	mm1,mm3
-
-			//invert mask to mask the screen pixels
-			pxor	mm2,mm7
-			pxor	mm3,mm7
-
-			//get the old screen pixels
-			movq	mm6,[edi  ]
-			movq	mm7,[edi+8]
-
-			//and them with the inverted pixel mask
-			pand	mm6,mm2
-			pand	mm7,mm3
-
-			//merge the old pixels with new pixels
-			por	mm0,mm6
-			por	mm1,mm7
-
-			//draw pixels to buffer
-			movq	[edi  ],mm0
-			movq	[edi+8],mm1
-
-			//done
-			emms
-			pop	edi
-		}
-		//end non-gcc code
-#elif defined(__GNUC__)
-#ifdef PS2
-//#error no background draw for this platform
-#else
-		__asm__ __volatile__(
-			//init our variables
-			"movq	%1,%%mm0\n"
-			"movq	%2,%%mm1\n"
-			"movq	%3,%%mm2\n"
-			"movq	%4,%%mm3\n"
-			"movq	%5,%%mm4\n"
-			"movq	%6,%%mm5\n"
-			"movq	%7,%%mm6\n"
-			"movq	%8,%%mm7\n"
-
-			//shift out the pixels between the two qwords
-			"psllq	%%mm4,%%mm0\n"
-			"psrlq	%%mm5,%%mm1\n"
-			"psllq	%%mm4,%%mm2\n"
-			"psrlq	%%mm5,%%mm3\n"
-
-			//add the attribute bytes
-			"paddq	%%mm6,%%mm0\n"
-			"paddq	%%mm6,%%mm1\n"
-
-			//mask with pixel mask
-			"pand	%%mm2,%%mm0\n"
-			"pand	%%mm3,%%mm1\n"
-
-			//invert mask to mask the screen pixels
-			"pxor	%%mm7,%%mm2\n"
-			"pxor	%%mm7,%%mm3\n"
-
-			//get the old screen pixels
-			"movq	(%0),%%mm6\n"
-			"movq	8(%0),%%mm7\n"
-
-			//and them with the inverted pixel mask
-			"pand	%%mm2,%%mm6\n"
-			"pand	%%mm3,%%mm7\n"
-
-			//merge the old pixels with new pixels
-			"por	%%mm6,%%mm0\n"
-			"por	%%mm7,%%mm1\n"
-
-			//draw pixels to buffer
-			"movq	%%mm0,(%0)\n"
-			"movq	%%mm1,8(%0)\n"
-
-			//done
-			"emms\n"
-				:
-				: "r"(scr64),
-					"m"(sp0),"m"(sp1),"m"(pmask0),"m"(pmask1),
-					"m"(shiftleft),"m"(shiftright),"m"(offs),"m"(pmaskxor)
-				: "memory"
-			);
-#endif
-#else
-#error no background draw for this platform
-#endif
-#endif
-
-		//check for sprite0 hit
-		if((spr->flags & 2) && (CONTROL1 & 8) && (spr->x >= (((CONTROL1 ^ 4) & 4) << 1))) {
-			u8 *sprite = spriteline + spr->x;
-			u8 *bg = dest + spr->x;
-			int j;
-
-			for(j=0;j<8 && (spr->x + j) < 255;j++) {
-				if((sprite[j] & 3) && ((bg[j] & 0xF) != 0)) {
-					STATUS |= 0x40;
-					spr->flags = 0;
-					break;
-				}
-			}
-		}
 	}
 
 	//draw the sprite line to the buffer
@@ -248,10 +143,38 @@ static void drawspriteline()
 	}
 }
 
+static INLINE void calc_ntaddr()
+{
+	nes.ppu.busaddr = 0x2000 | (SCROLL & 0xFFF);
+}
+
+static INLINE void calc_attribaddr()
+{
+	nes.ppu.busaddr = SCROLL & 0x3C00;
+	nes.ppu.busaddr += 0x3C0 + ((SCROLL >> 2) & 7) + (((SCROLL >> (2 + 5)) & 7) << 3);
+	nes.ppu.busaddr |= 0x2000;
+}
+
+static INLINE void calc_pattern0addr()
+{
+	nes.ppu.busaddr = (CONTROL0 & 0x10) << 8;
+	nes.ppu.busaddr += nes.ppu.ntbyte * 16;
+	nes.ppu.busaddr += SCROLL >> 12;
+}
+
+static INLINE void calc_pattern1addr()
+{
+	nes.ppu.busaddr += 8;
+}
+
 static INLINE void fetch_ntbyte()
 {
-	if(CONTROL1 & 0x08)
-		nes.ppu.ntbyte = ppu_memread(0x2000 | (SCROLL & 0xFFF));
+	if(CONTROL1 & 0x08) {
+		nes.ppu.ntbyte = ppu_memread(nes.ppu.busaddr);
+
+		//mapper tile callback
+		nes.mapper->tile(nes.ppu.ntbyte,((CONTROL0 & 0x10) >> 2) >> 2);
+	}
 }
 
 static INLINE void fetch_attribbyte()
@@ -263,9 +186,7 @@ static INLINE void fetch_attribbyte()
 		tmp = SCROLL & 0xFFF;
 		nes.ppu.attribdata[nes.ppu.fetchpos] = nes.ppu.attribpages[tmp >> 10][tmp & 0x3FF];
 #else
-		tmp = SCROLL & 0x3C00;
-		tmp += 0x3C0 + ((SCROLL >> 2) & 7) + (((SCROLL >> (2 + 5)) & 7) << 3);
-		tmp = ((ppu_memread(tmp | 0x2000) >> (((SCROLL & 2) | (((SCROLL >> 5) & 2) << 1)))) & 3);
+		tmp = ((ppu_memread(nes.ppu.busaddr) >> (((SCROLL & 2) | (((SCROLL >> 5) & 2) << 1)))) & 3);
 		nes.ppu.attribdata[nes.ppu.fetchpos] = tmp;
 #endif
 	}
@@ -276,10 +197,7 @@ static INLINE void fetch_patternbyte0()
 	if(CONTROL1 & 0x08) {
 		cache_t *cache,pixels;
 
-		nes.ppu.tiledataaddr = (CONTROL0 & 0x10) << 8;
-		nes.ppu.tiledataaddr += nes.ppu.ntbyte * 16;
-		nes.ppu.tiledataaddr += SCROLL >> 12;
-		nes.ppu.tiledata[0][nes.ppu.fetchpos] = ppu_memread(nes.ppu.tiledataaddr);
+		nes.ppu.tiledata[0][nes.ppu.fetchpos] = ppu_memread(nes.ppu.busaddr);
 
 		//tile bank cache pointer
 		cache = nes.ppu.cachepages[(nes.ppu.ntbyte >> 6) | ((CONTROL0 & 0x10) >> 2)];
@@ -297,7 +215,7 @@ static INLINE void fetch_patternbyte0()
 static INLINE void fetch_patternbyte1()
 {
 	if(CONTROL1 & 0x08) {
-		nes.ppu.tiledata[1][nes.ppu.fetchpos] = ppu_memread(nes.ppu.tiledataaddr + 8);
+		nes.ppu.tiledata[1][nes.ppu.fetchpos] = ppu_memread(nes.ppu.busaddr);
 		nes.ppu.fetchpos++;
 	}
 }
@@ -317,11 +235,11 @@ static INLINE void inc_hscroll()
 
 static INLINE void inc_vscroll()
 {
+	int n;
+
 	if(CONTROL1 & 0x18) {
 		//update y coordinate
 		if((SCROLL >> 12) == 7) {
-			int n;
-
 			SCROLL &= ~0x7000;
 			n = (SCROLL >> 5) & 0x1F;
 			if(n == 29) {
@@ -345,6 +263,12 @@ static INLINE void update_hscroll()
 		SCROLL |= TMPSCROLL & 0x041F;
 	}
 	nes.ppu.fetchpos = 0;
+}
+
+static INLINE void update_scroll()
+{
+	if(CONTROL1 & 0x18)
+		SCROLL = TMPSCROLL;
 }
 
 static INLINE void inc_linecycles()
@@ -390,9 +314,7 @@ static INLINE void process_sprites()
 	3b. If the value is not in range, increment n AND m (without carry). If n overflows to 0, go to 4; otherwise go to 3
 	4. Attempt (and fail) to copy OAM[n][0] into the next free slot in secondary OAM, and increment n (repeat until HBLANK is reached) */
 	else if(LINECYCLES <= 256) {
-		if(LINECYCLES == 65) {
-			nes.ppu.oam2pos = 0;
-		}
+
 	}
 
 	/* Cycles 257-320: Sprite fetches (8 sprites total, 8 cycles per sprite)
@@ -444,69 +366,65 @@ static INLINE void quick_process_sprites()
 		//check for visibility on this line
 		if(sprline >= 0 && sprline < h) {
 
-			//if we have 8 sprites already, skip it
-			if(sprinrange < 8) {
-
-				//copy sprite data to temp memory
-				sprtemp[sprinrange].attr = (s[2] & 3) | ((s[2] & 0x20) >> 3);
-				sprtemp[sprinrange].x = s[3];
-				sprtemp[sprinrange].flags = 1;
-
-				//if sprite0 check is needed
-				if((i == 0)/* && (nes->rom->sprite0hack == 0)*/)
-					sprtemp[sprinrange].flags = 2;
-
-				//call mapper callback
-				if(s[1] >= 0xFD && s[1] <= 0xFE)
-					nes.mapper->tile(s[1],(CONTROL0 & 8) >> 3);
-
-				//determine pattern bank used (upper or lower)
-				if(CONTROL0 & 0x20)
-					patternbank = (s[1] & 1) << 2;
-				else
-					patternbank = (CONTROL0 & 8) >> 1;
-
-				//if sprite is to be flipped horizontally
-				if(s[2] & 0x40)
-					cache = (cache_t*)nes.ppu.cachepages_hflip[(s[1] >> 6) | patternbank];
-				else
-					cache = (cache_t*)nes.ppu.cachepages[(s[1] >> 6) | patternbank];
-
-				//select tile for 8x16 sprites
-				if(CONTROL0 & 0x20) {
-					cache += ((s[1] & 0x3E) * 2) + ((s[2] & 0x80) >> 6);
-					if(sprline >= 8) {
-						if(s[2] & 0x80)
-							cache -= 2;
-						else
-							cache += 2;
-						sprline &= 7;
-					}
-				}
-
-				//select tile for 8x8 sprites
-				else
-					cache += (s[1] & 0x3F) * 2;
-
-				//if sprite is to be flipped vertically
-				if((s[2] & 0x80) != 0)
-					sprline = 7 - sprline;
-
-				//select tile line
-				cache += (sprline / 4);
-
-				//store sprite tile line
-				sprtemp[sprinrange].line = *cache >> ((sprline & 3) * 2);
-
-				//increment sprite in range counter
-				sprinrange++;
-			}
-
-			//8+ sprites are visible, set the flag and exit the loop
-			else {
+			//if more than 8 sprites are found, set the flag and exit the loop
+			if(sprinrange == 8) {
 				STATUS |= 0x20;
 				break;
 			}
+
+			//copy sprite data to temp memory
+			sprtemp[sprinrange].attr = (s[2] & 3) | ((s[2] & 0x20) >> 3);
+			sprtemp[sprinrange].x = s[3];
+			sprtemp[sprinrange].flags = 1;
+
+			//if sprite0 check is needed
+			if((i == 0)/* && (nes->rom->sprite0hack == 0)*/)
+				sprtemp[sprinrange].flags = 2;
+
+			//call mapper callback
+			nes.mapper->tile(s[1],(CONTROL0 & 8) >> 3);
+
+			//determine pattern bank used (upper or lower)
+			if(CONTROL0 & 0x20)
+				patternbank = (s[1] & 1) << 2;
+			else
+				patternbank = (CONTROL0 & 8) >> 1;
+
+			//if sprite is to be flipped horizontally
+			if(s[2] & 0x40)
+				cache = (cache_t*)nes.ppu.cachepages_hflip[(s[1] >> 6) | patternbank];
+			else
+				cache = (cache_t*)nes.ppu.cachepages[(s[1] >> 6) | patternbank];
+
+			//select tile for 8x16 sprites
+			if(CONTROL0 & 0x20) {
+				cache += ((s[1] & 0x3E) * 2) + ((s[2] & 0x80) >> 6);
+				if(sprline >= 8) {
+					if(s[2] & 0x80)
+						cache -= 2;
+					else
+						cache += 2;
+					sprline &= 7;
+				}
+			}
+
+			//select tile for 8x8 sprites
+			else
+				cache += (s[1] & 0x3F) * 2;
+
+			//if sprite is to be flipped vertically
+			if((s[2] & 0x80) != 0)
+				sprline = 7 - sprline;
+
+			//select tile line
+			cache += (sprline / 4);
+
+			//store sprite tile line
+			sprtemp[sprinrange].line = *cache >> ((sprline & 3) * 2);
+
+			//increment sprite in range counter
+			sprinrange++;
+
 		}
 	}
 }
@@ -518,32 +436,22 @@ static INLINE void scanline_20()
 	2006/2. The second, is at the beginning of scanline 20, when the PPU starts
 	rendering data for the first time in a frame (this update won't happen if
 	all rendering is disabled via 2001.3 and 2001.4). */
-/*	if(LINECYCLES == 0) {
-		if((FRAMES & 1) && (CONTROL1 & 0x18)) {
-			LINECYCLES++;
-			STATUS = 0;
-		}
-	}
-	else if(LINECYCLES == 1) {
-		STATUS = 0;
-	}
-	else if(LINECYCLES >= 280 && LINECYCLES <= 304) {
-		if(CONTROL1 & 0x18)
-			SCROLL = TMPSCROLL;
-	}*/
 	switch(LINECYCLES) {
+
 		//the idle cycle
 		case 0:
-//			LINECYCLES++;
 			break;
 
 		//nametable byte read
 		case 1:
+			//clear ppu status register
 			STATUS = 0;
+			cpu_set_nmi(0);
 		case 9:		case 17:		case 25:		case 33:		case 41:		case 49:		case 57:
 		case 65:		case 73:		case 81:		case 89:		case 97:		case 105:	case 113:	case 121:
 		case 129:	case 137:	case 145:	case 153:	case 161:	case 169:	case 177:	case 185:
 		case 193:	case 201:	case 209:	case 217:	case 225:	case 233:	case 241:	case 249:
+			calc_ntaddr();
 			break;
 		case 2:		case 10:		case 18:		case 26:		case 34:		case 42:		case 50:		case 58:
 		case 66:		case 74:		case 82:		case 90:		case 98:		case 106:	case 114:	case 122:
@@ -557,6 +465,7 @@ static INLINE void scanline_20()
 		case 67:		case 75:		case 83:		case 91:		case 99:		case 107:	case 115:	case 123:
 		case 131:	case 139:	case 147:	case 155:	case 163:	case 171:	case 179:	case 187:
 		case 195:	case 203:	case 211:	case 219:	case 227:	case 235:	case 243:	case 251:
+			calc_attribaddr();
 			break;
 		case 4:		case 12:		case 20:		case 28:		case 36:		case 44:		case 52:		case 60:
 		case 68:		case 76:		case 84:		case 92:		case 100:	case 108:	case 116:	case 124:
@@ -570,6 +479,7 @@ static INLINE void scanline_20()
 		case 69:		case 77:		case 85:		case 93:		case 101:	case 109:	case 117:	case 125:
 		case 133:	case 141:	case 149:	case 157:	case 165:	case 173:	case 181:	case 189:
 		case 197:	case 205:	case 213:	case 221:	case 229:	case 237:	case 245:	case 253:
+			calc_pattern0addr();
 			break;
 		case 6:		case 14:		case 22:		case 30:		case 38:		case 46:		case 54:		case 62:
 		case 70:		case 78:		case 86:		case 94:		case 102:	case 110:	case 118:	case 126:
@@ -583,6 +493,7 @@ static INLINE void scanline_20()
 		case 71:		case 79:		case 87:		case 95:		case 103:	case 111:	case 119:	case 127:
 		case 135:	case 143:	case 151:	case 159:	case 167:	case 175:	case 183:	case 191:
 		case 199:	case 207:	case 215:	case 223:	case 231:	case 239:	case 247:	case 255:
+			calc_pattern1addr();
 			break;
 		case 8:		case 16:		case 24:		case 32:		case 40:		case 48:		case 56:		case 64:
 		case 72:		case 80:		case 88:		case 96:		case 104:	case 112:	case 120:	case 128:
@@ -604,9 +515,9 @@ static INLINE void scanline_20()
 		case 280:	case 281:	case 282:	case 283:	case 284:	case 285:	case 286:	case 287:
 		case 288:	case 289:	case 290:	case 291:	case 292:	case 293:	case 294:	case 295:
 		case 296:	case 297:	case 298:	case 299:	case 300:	case 301:	case 302:	case 303:
+			break;
 		case 304:
-			if(CONTROL1 & 0x18)
-				SCROLL = TMPSCROLL;
+			update_scroll();
 			break;
 	/* Memory fetch phase 161 thru 168
 	-------------------------------
@@ -615,35 +526,39 @@ static INLINE void scanline_20()
 	3. Pattern table bitmap #0 (for next scanline)
 	4. Pattern table bitmap #1 (for next scanline) */
 		case 321:	case 329:
+			calc_ntaddr();
 			break;
 		case 322:	case 330:
 			fetch_ntbyte();
 			break;
 
 		case 323:	case 331:
+			calc_attribaddr();
 			break;
 		case 324:	case 332:
 			fetch_attribbyte();
 			break;
 
 		case 325:	case 333:
+			calc_pattern0addr();
 			break;
 		case 326:	case 334:
 			fetch_patternbyte0();
 			break;
 
 		case 327:	case 335:
+			calc_pattern1addr();
 			break;
 		case 328:	case 336:
 			fetch_patternbyte1();
 			inc_hscroll();
 			break;
 
-		case 337:
-		case 339:
+		case 337:	case 339:
+			calc_ntaddr();
 			break;
-		case 338:
-		case 340:
+
+		case 340:	case 338:
 			fetch_ntbyte();
 			break;
 
@@ -652,7 +567,8 @@ static INLINE void scanline_20()
 			break;
 	}
 #ifndef QUICK_SPRITES
-	process_sprites();
+	if(CONTROL1 & 0x10)
+		process_sprites();
 #endif
 }
 
@@ -664,14 +580,14 @@ static INLINE void scanline_visible()
 		case 0:
 			if((SCANLINE == 21) && (FRAMES & 1) && (CONTROL1 & 0x18))
 				inc_linecycles();
-			else
-				break;
+			break;
 
 		//nametable byte read
 		case 1:		case 9:		case 17:		case 25:		case 33:		case 41:		case 49:		case 57:
 		case 65:		case 73:		case 81:		case 89:		case 97:		case 105:	case 113:	case 121:
 		case 129:	case 137:	case 145:	case 153:	case 161:	case 169:	case 177:	case 185:
 		case 193:	case 201:	case 209:	case 217:	case 225:	case 233:	case 241:	case 249:
+			calc_ntaddr();
 			break;
 		case 2:		case 10:		case 18:		case 26:		case 34:		case 42:		case 50:		case 58:
 		case 66:		case 74:		case 82:		case 90:		case 98:		case 106:	case 114:	case 122:
@@ -685,6 +601,7 @@ static INLINE void scanline_visible()
 		case 67:		case 75:		case 83:		case 91:		case 99:		case 107:	case 115:	case 123:
 		case 131:	case 139:	case 147:	case 155:	case 163:	case 171:	case 179:	case 187:
 		case 195:	case 203:	case 211:	case 219:	case 227:	case 235:	case 243:	case 251:
+			calc_attribaddr();
 			break;
 		case 4:		case 12:		case 20:		case 28:		case 36:		case 44:		case 52:		case 60:
 		case 68:		case 76:		case 84:		case 92:		case 100:	case 108:	case 116:	case 124:
@@ -698,6 +615,7 @@ static INLINE void scanline_visible()
 		case 69:		case 77:		case 85:		case 93:		case 101:	case 109:	case 117:	case 125:
 		case 133:	case 141:	case 149:	case 157:	case 165:	case 173:	case 181:	case 189:
 		case 197:	case 205:	case 213:	case 221:	case 229:	case 237:	case 245:	case 253:
+			calc_pattern0addr();
 			break;
 		case 6:		case 14:		case 22:		case 30:		case 38:		case 46:		case 54:		case 62:
 		case 70:		case 78:		case 86:		case 94:		case 102:	case 110:	case 118:	case 126:
@@ -711,6 +629,7 @@ static INLINE void scanline_visible()
 		case 71:		case 79:		case 87:		case 95:		case 103:	case 111:	case 119:	case 127:
 		case 135:	case 143:	case 151:	case 159:	case 167:	case 175:	case 183:	case 191:
 		case 199:	case 207:	case 215:	case 223:	case 231:	case 239:	case 247:	case 255:
+			calc_pattern1addr();
 			break;
 		case 8:		case 16:		case 24:		case 32:		case 40:		case 48:		case 56:		case 64:
 		case 72:		case 80:		case 88:		case 96:		case 104:	case 112:	case 120:	case 128:
@@ -731,7 +650,8 @@ static INLINE void scanline_visible()
 					video_endframe();
 				inc_vscroll();
 #ifdef QUICK_SPRITES
-				quick_process_sprites();
+				if(CONTROL1 & 0x10)
+					quick_process_sprites();
 #endif
 			}
 			break;
@@ -746,35 +666,38 @@ static INLINE void scanline_visible()
 	3. Pattern table bitmap #0 (for next scanline)
 	4. Pattern table bitmap #1 (for next scanline) */
 		case 321:	case 329:
+			calc_ntaddr();
 			break;
 		case 322:	case 330:
 			fetch_ntbyte();
 			break;
 
 		case 323:	case 331:
+			calc_attribaddr();
 			break;
 		case 324:	case 332:
 			fetch_attribbyte();
 			break;
 
 		case 325:	case 333:
+			calc_pattern0addr();
 			break;
 		case 326:	case 334:
 			fetch_patternbyte0();
 			break;
 
 		case 327:	case 335:
+			calc_pattern1addr();
 			break;
 		case 328:	case 336:
 			fetch_patternbyte1();
 			inc_hscroll();
 			break;
 
-		case 337:
-		case 339:
+		case 337:	case 339:
+			calc_ntaddr();
 			break;
-		case 338:
-		case 340:
+		case 338:	case 340:
 			fetch_ntbyte();
 			break;
 
@@ -787,12 +710,13 @@ static INLINE void scanline_visible()
 #endif
 }
 
-static INLINE void scanline_261()
+static INLINE void scanline_0()
 {
-	if(LINECYCLES == 1) {
+	if(LINECYCLES == 0) {
 		STATUS |= 0x80;
 		if(CONTROL0 & 0x80)
 			cpu_set_nmi(1);
+//		log_printf("scanline_0:  frame %d, scanline %d, cycle %d:  setting VBLANK flag\n",FRAMES,SCANLINE,LINECYCLES);
 	}
 	//last cycle
 //	if(LINECYCLES == 340) {
@@ -800,12 +724,19 @@ static INLINE void scanline_261()
 //	}
 }
 
+static INLINE void scanline_261()
+{
+}
+
 void ppu_step()
 {
 	switch(SCANLINE) {
 		//vblank
-		case 0:		case 1:		case 2:		case 3:		case 4:		case 5:		case 6:		case 7:		case 8:		case 9:
-		case 10:		case 11:		case 12:		case 13:		case 14:		case 15:		case 16:		case 17:		case 18:		case 19:
+		case 0:
+			scanline_0();
+			break;
+		case 1:		case 2:		case 3:		case 4:		case 5:		case 6:		case 7:		case 8:		case 9:		case 10:
+		case 11:		case 12:		case 13:		case 14:		case 15:		case 16:		case 17:		case 18:		case 19:
 			break;
 
 		//dummy scanline
@@ -841,6 +772,7 @@ void ppu_step()
 			scanline_visible();
 			break;
 
+		//wasted line
 		case 261:
 			scanline_261();
 			break;

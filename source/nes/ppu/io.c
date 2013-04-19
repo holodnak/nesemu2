@@ -88,29 +88,35 @@ u8 ppu_read(u32 addr)
 
 	switch(addr & 7) {
 		case 2:
-			//TODO: nmi suppression
 			//bottom 5 bits come from the $2007 buffer
 			ret = (nes.ppu.status & 0xE0) | (nes.ppu.buf & 0x1F);
+
 			//clear vblank flag
-			if(ret & 0x80)
+			if(ret & 0x80) {
+//				log_printf("ppu_read:  frame %d, scanline %d, cycle %d:  clearing VBLANK flag\n",FRAMES,SCANLINE,LINECYCLES);
 				nes.ppu.status &= 0x60;
+			}
+
+			//nmi suppression
 			if(SCANLINE == 0) {
 				if(LINECYCLES == 1) {
 					ret &= 0x7F;
 				}
-				if(LINECYCLES <= 2) {
+				if(LINECYCLES < 4) {
 					cpu_set_nmi(0);
 				}
 			}
-			nes.ppu.toggle = 0;
+			TOGGLE = 0;
 			nes.ppu.buf = ret;
+//			if(SCANLINE == 261 && LINECYCLES < 10)	log_printf("ppu_read:  read $2002 called at cycle %d (line %d, frame %d)\n",LINECYCLES,SCANLINE,FRAMES);
 			break;
 		case 4:
-			return(nes.ppu.oam[nes.ppu.oamaddr]);
+			nes.ppu.buf = nes.ppu.oam[nes.ppu.oamaddr];
+			break;
 		case 7:
 //			log_message("2007 read: ppuscroll = $%04X, scanline = %d\n",nes->ppu.scroll,nes->scanline);
 			nes.ppu.buf = nes.ppu.latch;
-			SCROLL &= 0x3FFF;
+			SCROLL &= 0x7FFF;
 			nes.ppu.latch = ppu_memread(SCROLL);
 			if((SCROLL & 0x3F00) == 0x3F00)
 				nes.ppu.buf = pal_read(SCROLL & 0x1F);
@@ -118,7 +124,7 @@ u8 ppu_read(u32 addr)
 				SCROLL += 32;
 			else
 				SCROLL += 1;
-			return(nes.ppu.buf);
+			break;
 	}
 	return(nes.ppu.buf);
 }
@@ -127,13 +133,18 @@ void ppu_write(u32 addr,u8 data)
 {
 	int i;
 
+	nes.ppu.buf = data;
 	switch(addr & 7) {
 		case 0:
-			nes.ppu.control0 = data;
-			nes.ppu.tmpscroll = (nes.ppu.tmpscroll & 0x73FF) | ((data & 3) << 10);
+			if((STATUS & 0x80) && (data & 0x80) && ((CONTROL0 & 0x80) == 0))
+				cpu_set_nmi(1);
+			if(((data & 0x80) == 0) && (SCANLINE == 0) && (LINECYCLES < 3))
+				cpu_set_nmi(0);
+			CONTROL0 = data;
+			TMPSCROLL = (TMPSCROLL & 0x73FF) | ((data & 3) << 10);
 			return;
 		case 1:
-			nes.ppu.control1 = data;
+			CONTROL1 = data;
 			return;
 		case 3:
 			nes.ppu.oamaddr = data;
@@ -142,44 +153,44 @@ void ppu_write(u32 addr,u8 data)
 			nes.ppu.oam[nes.ppu.oamaddr++] = data;
 			return;
 		case 5:				//scroll
-			if(nes.ppu.toggle == 0) { //first write
-				nes.ppu.tmpscroll = (nes.ppu.tmpscroll & ~0x001F) | (data >> 3);
-				nes.ppu.scrollx = data & 7;
-				nes.ppu.toggle = 1;
+			if(TOGGLE == 0) { //first write
+				TMPSCROLL = (TMPSCROLL & ~0x001F) | (data >> 3);
+				SCROLLX = data & 7;
+				TOGGLE = 1;
 			}
 			else { //second write
-				nes.ppu.tmpscroll &= ~0x73E0;
-				nes.ppu.tmpscroll |= ((data & 0xF8) << 2) | ((data & 7) << 12);
-				nes.ppu.toggle = 0;
+				TMPSCROLL &= ~0x73E0;
+				TMPSCROLL |= ((data & 0xF8) << 2) | ((data & 7) << 12);
+				TOGGLE = 0;
 			}
 			return;
 		case 6:				//vram addr
-			if(nes.ppu.toggle == 0) { //first write
-				nes.ppu.tmpscroll = (nes.ppu.tmpscroll & ~0xFF00) | ((data & 0x3F) << 8);
-				nes.ppu.toggle = 1;
+			if(TOGGLE == 0) { //first write
+				TMPSCROLL = (TMPSCROLL & ~0xFF00) | ((data & 0x3F) << 8);
+				TOGGLE = 1;
 			}
 			else { //second write
-				nes.ppu.scroll = nes.ppu.tmpscroll = (nes.ppu.tmpscroll & ~0x00FF) | data;
-				nes.ppu.toggle = 0;
+				SCROLL = TMPSCROLL = (TMPSCROLL & ~0x00FF) | data;
+				TOGGLE = 0;
 			}
 			return;
 		case 7:				//vram data
-			if(nes.ppu.scroll < 0x3F00) {
-				ppu_memwrite(nes.ppu.scroll,data);
+			if(SCROLL < 0x3F00) {
+				ppu_memwrite(SCROLL,data);
 			}
 			else {
-				if((nes.ppu.scroll & 0x0F) == 0) {
+				if((SCROLL & 0x0F) == 0) {
 					for(i=0;i<8;i++)
 						pal_write(i * 4,data);
 				}
-				else if(nes.ppu.scroll & 3)
-					pal_write(nes.ppu.scroll & 0x1F,data);
+				else if(SCROLL & 3)
+					pal_write(SCROLL & 0x1F,data);
 			}
-			if(nes.ppu.control0 & 4)
-				nes.ppu.scroll += 32;
+			if(CONTROL0 & 4)
+				SCROLL += 32;
 			else
-				nes.ppu.scroll += 1;
-			nes.ppu.scroll &= 0x3FFF;
+				SCROLL += 1;
+			SCROLL &= 0x7FFF;
 			return;
 	}
 }

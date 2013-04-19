@@ -18,84 +18,100 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-//push/pop
-static INLINE void OP_PHA()
+static INLINE u8 memread(u32 addr)
 {
-	push(A);
+	//increment cycle counter, check irq lines
+	cpu_tick();
+
+	//read data from address
+	return(cpu_read(addr));
 }
 
-static INLINE void OP_PHP()
+static INLINE void memwrite(u32 addr,u8 data)
 {
-	compact_flags();
-	push(P | 0x10);
+	//increment cycle counter, check irq lines
+	cpu_tick();
+
+	//write data to its address
+	cpu_write(addr,data);
 }
 
-static INLINE void OP_PLA()
+//push data to stack
+static INLINE void push(u8 data)
 {
-	memread(SP | 0x100);
-	A = pop();
-	checknz(A);
+	memwrite(SP | 0x100,data);
+	SP--;
 }
 
-static INLINE void OP_PLP()
+//pop data from stack
+static INLINE u8 pop()
 {
-	memread(SP | 0x100);
-	P = pop();
-	expand_flags();
+	SP++;
+	return(memread(SP | 0x100));
 }
 
-//rts/rti
-static INLINE void OP_RTS()
+//check value for n/z and set flags
+static INLINE void checknz(u8 n)
 {
-	memread(SP | 0x100);
-	PC = pop();
-	PC |= pop() << 8;
-	memread(PC++);
+	FLAG_N = (n >> 7) & 1;
+	FLAG_Z = (n == 0) ? 1 : 0;
 }
 
-static INLINE void OP_RTI()
+static INLINE void expand_flags()
 {
-	memread(SP | 0x100);
-	P = pop();
-	expand_flags();
-	PC = pop();
-	PC |= pop() << 8;
+	FLAG_C = (P & 0x01) >> 0;
+	FLAG_Z = (P & 0x02) >> 1;
+	FLAG_I = (P & 0x04) >> 2;
+	FLAG_D = (P & 0x08) >> 3;
+//	FLAG_B = (P & 0x10) >> 4;
+	FLAG_V = (P & 0x40) >> 6;
+	FLAG_N = (P & 0x80) >> 7;
 }
 
-//jmp/jsr
-static INLINE void OP_JMP()
+static INLINE void compact_flags()
 {
-	PC = EFFADDR;
+#ifdef CPU_DEBUG
+	if(FLAG_C & 0xFE || 
+		FLAG_Z & 0xFE ||
+		FLAG_I & 0xFE ||
+		FLAG_D & 0xFE ||
+		FLAG_B & 0xFE ||
+		FLAG_V & 0xFE ||
+		FLAG_N & 0xFE) {
+		log_printf("compact_flags:  one or more flags is dirty!\n");
+	}
+#endif
+	P = 0x20;
+	P |= (FLAG_C) << 0;
+	P |= (FLAG_Z) << 1;
+	P |= (FLAG_I) << 2;
+	P |= (FLAG_D) << 3;
+//	P |= (FLAG_B) << 4;
+	P |= (FLAG_V) << 6;
+	P |= (FLAG_N) << 7;
 }
 
-static INLINE void OP_JSR()
+static INLINE void execute_nmi()
 {
-//	TMPREG = memread(PC++);
-	PC++;
-	memread(SP | 0x100);
+	memread(PC);
+	memread(PC);
 	push((u8)(PC >> 8));
 	push((u8)PC);
-	PC = (memread(PC) << 8) | TMPREG;
+	compact_flags();
+	push(P);
+	FLAG_I = 1;
+	PC = memread(0xFFFA);
+	PC |= memread(0xFFFB) << 8;
 }
 
-/*
-BRK
-#  address R/W description
---- ------- --- -----------------------------------------------
-1    PC     R  fetch opcode, increment PC
-2    PC     R  read next instruction byte (and throw it away), increment PC
-3  $0100,S  W  push PCH on stack (with B flag set), decrement S
-4  $0100,S  W  push PCL on stack, decrement S
-5  $0100,S  W  push P on stack, decrement S
-6   $FFFE   R  fetch PCL
-7   $FFFF   R  fetch PCH
-*/
-static INLINE void OP_BRK()
+static INLINE void execute_irq()
 {
+	memread(PC);
+	memread(PC);
 	push((u8)(PC >> 8));
 	push((u8)PC);
 	compact_flags();
-	push(P | 0x10);
+	push(P);
 	FLAG_I = 1;
 	if(NMISTATE) {
 		NMISTATE = 0;

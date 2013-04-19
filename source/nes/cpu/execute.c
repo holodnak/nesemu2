@@ -139,12 +139,13 @@ void cpu_step()
 			break;
 	}
 	if(PREV_NMISTATE) {
-		execute_nmi();
+		NMISTATE = 0;
 		PREV_NMISTATE = 0;
+		execute_nmi();
 	}
 	else if(PREV_IRQSTATE) {
+		IRQSTATE = 0;
 		execute_irq();
-		PREV_IRQSTATE = 0;
 	}
 }
 

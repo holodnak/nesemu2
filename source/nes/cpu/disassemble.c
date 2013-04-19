@@ -163,26 +163,30 @@ u16 cpu_disassemble(char *buffer,u16 opcodepos)
 
 void cpu_disassemble_init()
 {
-int i;
+	int i;
 
-for(i=0;i<256;i++)
-	{
-	switch(addrtable[i])
-		{
-		case er:
-		case no:
-		case ac:oplength[i] = 1;break;
-		case im:
-		case ix:
-		case iy:
-		case re:
-		case zp:
-		case zx:
-		case zy:oplength[i] = 2;break;
-		case ab:
-		case ax:
-		case ay:
-		case in:oplength[i] = 3;break;
+	for(i=0;i<256;i++) {
+		switch(addrtable[i]) {
+			case er:
+			case no:
+			case ac:
+				oplength[i] = 1;
+				break;
+			case im:
+			case ix:
+			case iy:
+			case re:
+			case zp:
+			case zx:
+			case zy:
+				oplength[i] = 2;
+				break;
+			case ab:
+			case ax:
+			case ay:
+			case in:
+				oplength[i] = 3;
+				break;
 		}
 	}
 }

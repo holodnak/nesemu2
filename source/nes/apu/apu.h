@@ -18,54 +18,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mapperinc.h"
+#ifndef __nes__apu_h__
+#define __nes__apu_h__
 
-#ifdef MAPPER
-	#undef MAPPER
+typedef struct square_s {
+	u8 length;			//length counter
+} square_t;
+
+typedef struct triangle_s {
+	u8 length;			//length counter
+} triangle_t;
+
+typedef struct noise_s {
+	u8 length;			//length counter
+} noise_t;
+
+typedef struct dpcm_s {
+	u8 length;			//length counter
+} dpcm_t;
+
+typedef struct apu_s {
+	square_t		square[2];
+	triangle_t	triangle;
+	noise_t		noise;
+	dpcm_t		dpcm;
+} apu_t;
+
+int apu_init();
+void apu_kill();
+void apu_reset(int hard);
+u8 apu_read(u32 addr);
+void apu_write(u32 addr,u8 data);
+
 #endif
-
-#define MAPPER(n) { \
-	extern mapper_t mapper##n; \
-	if(mapperid == n) \
-		return(&mapper##n); \
-	}
-
-static mapper_t *get_mapper(int mapperid)
-{
-	//nintendo boards
-	MAPPER(B_NROM);
-	MAPPER(B_SxROM);
-	MAPPER(B_UxROM);
-	MAPPER(B_AxROM);
-	MAPPER(B_PxROM);
-	MAPPER(B_TxROM);
-
-	//tengen
-	MAPPER(B_TENGEN_800032);
-
-	return(0);
-}
-
-static void null_mapper_tile(u8 t,int b)
-{
-}
-
-static void null_mapper_cycle()
-{
-}
-
-static void null_mapper_state(int m,u8 *d)
-{
-}
-
-mapper_t *mapper_init(int mapperid)
-{
-	mapper_t *ret = get_mapper(mapperid);
-
-	if(ret == 0)
-		return(0);
-	ret->tile = (ret->tile == 0) ? null_mapper_tile : ret->tile;
-	ret->cycle = (ret->cycle == 0) ? null_mapper_cycle : ret->cycle;
-	ret->state = (ret->state == 0) ? null_mapper_state : ret->state;
-	return(ret);
-}

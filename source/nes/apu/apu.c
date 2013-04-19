@@ -18,54 +18,52 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mapperinc.h"
+#include "nes/nes.h"
+#include "log/log.h"
 
-#ifdef MAPPER
-	#undef MAPPER
-#endif
+u8 lengths[32] = {
+	0x0A,0xFE,
+	0x14,0x02,
+	0x28,0x04,
+	0x50,0x06,
+	0xA0,0x08,
+	0x3C,0x0A,
+	0x0E,0x0C,
+	0x1A,0x0E,
+	0x0C,0x10,
+	0x18,0x12,
+	0x30,0x14,
+	0x60,0x16,
+	0xC0,0x18,
+	0x48,0x1A,
+	0x10,0x1C,
+	0x20,0x1E
+};
 
-#define MAPPER(n) { \
-	extern mapper_t mapper##n; \
-	if(mapperid == n) \
-		return(&mapper##n); \
-	}
-
-static mapper_t *get_mapper(int mapperid)
+int apu_init()
 {
-	//nintendo boards
-	MAPPER(B_NROM);
-	MAPPER(B_SxROM);
-	MAPPER(B_UxROM);
-	MAPPER(B_AxROM);
-	MAPPER(B_PxROM);
-	MAPPER(B_TxROM);
-
-	//tengen
-	MAPPER(B_TENGEN_800032);
-
 	return(0);
 }
 
-static void null_mapper_tile(u8 t,int b)
+void apu_kill()
 {
 }
 
-static void null_mapper_cycle()
+void apu_reset(int hard)
 {
 }
 
-static void null_mapper_state(int m,u8 *d)
+u8 apu_read(u32 addr)
 {
+//	log_printf("apu_read: $%04X\n",addr);
+	return(0);
 }
 
-mapper_t *mapper_init(int mapperid)
+void apu_write(u32 addr,u8 data)
 {
-	mapper_t *ret = get_mapper(mapperid);
+//	log_printf("apu_write: $%04X = $%02X\n",addr,data);
+}
 
-	if(ret == 0)
-		return(0);
-	ret->tile = (ret->tile == 0) ? null_mapper_tile : ret->tile;
-	ret->cycle = (ret->cycle == 0) ? null_mapper_cycle : ret->cycle;
-	ret->state = (ret->state == 0) ? null_mapper_state : ret->state;
-	return(ret);
+void apu_frame()
+{
 }

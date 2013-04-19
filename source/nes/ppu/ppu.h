@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __ppu_h__
-#define __ppu_h__
+#ifndef __nes__ppu_h__
+#define __nes__ppu_h__
 
 #include "types.h"
 #include "tilecache.h"
@@ -58,10 +58,10 @@ typedef struct ppu_s {
 	u8		ntbyte;
 //	u8		attribbyte;
 //	u8		ptbyte0,ptbyte1;
+	u32	busaddr;
 
 	//fetched tile data bits with attributes
 	u8		fetchpos;
-	u32	tiledataaddr;
 	u8		tiledata[2][32 + 2];
 	u8		attribdata[32 + 2];
 	cache_t	cachedata[32 + 2];

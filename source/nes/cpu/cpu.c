@@ -21,141 +21,59 @@
 #include <stdlib.h>
 #include <string.h>
 #include "nes/nes.h"
-#include "nes/ppu/ppu.h"
 #include "log/log.h"
 
-#define PC	nes.cpu.pc
-#define A	nes.cpu.a
-#define X	nes.cpu.x
-#define Y	nes.cpu.y
-#define P	nes.cpu.p
-#define SP	nes.cpu.sp
-
-#define TMPADDR	nes.cpu.tmpaddr
-#define EFFADDR	nes.cpu.effaddr
-
-#define FLAG_C		nes.cpu.flags.c
-#define FLAG_Z		nes.cpu.flags.z
-#define FLAG_I		nes.cpu.flags.i
-#define FLAG_D		nes.cpu.flags.d
-#define FLAG_B		nes.cpu.flags.b
-#define FLAG_V		nes.cpu.flags.v
-#define FLAG_N		nes.cpu.flags.n
-
-#define OPCODE		nes.cpu.opcode
-#define OPADDR		nes.cpu.opaddr
-#define TMPREG		nes.cpu.tmpreg
-
-#define CYCLES		nes.cpu.cycles
-
+//defines to make easier reading
+#define PC					nes.cpu.pc
+#define A					nes.cpu.a
+#define X					nes.cpu.x
+#define Y					nes.cpu.y
+#define P					nes.cpu.p
+#define SP					nes.cpu.sp
+#define TMPADDR			nes.cpu.tmpaddr
+#define EFFADDR			nes.cpu.effaddr
+#define FLAG_C				nes.cpu.flags.c
+#define FLAG_Z				nes.cpu.flags.z
+#define FLAG_I				nes.cpu.flags.i
+#define FLAG_D				nes.cpu.flags.d
+#define FLAG_B				nes.cpu.flags.b
+#define FLAG_V				nes.cpu.flags.v
+#define FLAG_N				nes.cpu.flags.n
+#define OPCODE				nes.cpu.opcode
+#define OPADDR				nes.cpu.opaddr
+#define TMPREG				nes.cpu.tmpreg
+#define CYCLES				nes.cpu.cycles
 #define NMISTATE			nes.cpu.nmistate
 #define IRQSTATE			nes.cpu.irqstate
 #define PREV_NMISTATE	nes.cpu.prev_nmistate
 #define PREV_IRQSTATE	nes.cpu.prev_irqstate
 
-static INLINE u8 memread(u32 addr)
-{
-	//increment cycle counter, check irq lines
-	cpu_tick();
+//temp variable for opcode functions
+static u8 tmp8;
+static int tmpi;
 
-	return(cpu_read(addr));
-}
+//include helper functions
+#include "helper.c"
 
-static INLINE void memwrite(u32 addr,u8 data)
-{
-	//increment cycle counter, check irq lines
-	cpu_tick();
+//include addressing mode functions
+#include "addrmodes.c"
 
-	cpu_write(addr,data);
-}
-
-//push data to stack
-static INLINE void push(u8 data)
-{
-	memwrite(SP | 0x100,data);
-	SP--;
-}
-
-//pop data from stack
-static INLINE u8 pop()
-{
-	SP++;
-	return(memread(SP | 0x100));
-}
-
-//check value for n/z and set flags
-static INLINE void checknz(u8 n)
-{
-	FLAG_N = (n >> 7) & 1;
-	FLAG_Z = (n == 0) ? 1 : 0;
-}
-
-static INLINE void expand_flags()
-{
-	FLAG_C = (P & 0x01) >> 0;
-	FLAG_Z = (P & 0x02) >> 1;
-	FLAG_I = (P & 0x04) >> 2;
-	FLAG_D = (P & 0x08) >> 3;
-//	FLAG_B = (P & 0x10) >> 4;
-	FLAG_V = (P & 0x40) >> 6;
-	FLAG_N = (P & 0x80) >> 7;
-}
-
-static INLINE void compact_flags()
-{
-#ifdef CPU_DEBUG
-	if(FLAG_C & 0xFE || 
-		FLAG_Z & 0xFE ||
-		FLAG_I & 0xFE ||
-		FLAG_D & 0xFE ||
-		FLAG_B & 0xFE ||
-		FLAG_V & 0xFE ||
-		FLAG_N & 0xFE) {
-		log_printf("compact_flags:  one or more flags is dirty!\n");
-	}
+//include opcode functions
+#include "opcodes.c"
+#include "opcodes_branch.c"
+#include "opcodes_loadstore.c"
+#include "opcodes_transfer.c"
+#include "opcodes_compare.c"
+#include "opcodes_incdec.c"
+#include "opcodes_alu.c"
+#include "opcodes_flag.c"
+#include "opcodes_stack.c"
+#ifdef CPU_UNDOC
+	#include "opcodes_undocumented.c"
 #endif
-	P = 0x20;
-	P |= (FLAG_C) << 0;
-	P |= (FLAG_Z) << 1;
-	P |= (FLAG_I) << 2;
-	P |= (FLAG_D) << 3;
-//	P |= (FLAG_B) << 4;
-	P |= (FLAG_V) << 6;
-	P |= (FLAG_N) << 7;
-}
 
-static INLINE void execute_nmi()
-{
-	memread(PC);
-	memread(PC);
-	push((u8)(PC >> 8));
-	push((u8)PC);
-	compact_flags();
-	push(P);
-	FLAG_I = 1;
-	PC = memread(0xFFFA);
-	PC |= memread(0xFFFB) << 8;
-}
-
-static INLINE void execute_irq()
-{
-	memread(PC);
-	memread(PC);
-	push((u8)(PC >> 8));
-	push((u8)PC);
-	compact_flags();
-	push(P);
-	FLAG_I = 1;
-/*	if(NMISTATE) {
-		NMISTATE = 0;
-		PC = memread(0xFFFA);
-		PC |= memread(0xFFFB) << 8;
-	}
-	else*/ {
-		PC = memread(0xFFFE);
-		PC |= memread(0xFFFF) << 8;
-	}
-}
+//include functions to execute opcodes
+#include "execute.c"
 
 int cpu_init()
 {
@@ -182,10 +100,6 @@ void cpu_reset(int hard)
 	}
 	PC = memread(0xFFFC);
 	PC |= memread(0xFFFD) << 8;
-	log_printf("cpu_reset:  vectors:\n");
-	log_printf("  nmi:    $%04X\n",cpu_read(0xFFFA) | (cpu_read(0xFFFB) << 8));
-	log_printf("  irq:    $%04X\n",cpu_read(0xFFFE) | (cpu_read(0xFFFF) << 8));
-	log_printf("  reset:  $%04X\n",cpu_read(0xFFFC) | (cpu_read(0xFFFD) << 8));
 }
 
 u64 cpu_getcycles()
@@ -209,8 +123,6 @@ void cpu_tick()
 	PREV_NMISTATE = NMISTATE;
 	if(FLAG_I == 0)
 		PREV_IRQSTATE = IRQSTATE;
-	NMISTATE = 0;
-	IRQSTATE = 0;
 
 	//increment cycle counter for every memory access
 	CYCLES++;
@@ -277,21 +189,3 @@ u8 cpu_getflags()
 	compact_flags();
 	return(P);
 }
-
-static u8 tmp8;
-static int tmpi;
-
-#include "addrmodes.c"
-#include "opcodes.c"
-#include "opcodes_branch.c"
-#include "opcodes_loadstore.c"
-#include "opcodes_transfer.c"
-#include "opcodes_compare.c"
-#include "opcodes_incdec.c"
-#include "opcodes_alu.c"
-#include "opcodes_flag.c"
-#include "opcodes_stack.c"
-#ifdef CPU_UNDOC
-	#include "opcodes_undocumented.c"
-#endif
-#include "execute.c"

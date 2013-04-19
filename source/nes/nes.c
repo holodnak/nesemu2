@@ -155,8 +155,8 @@ void nes_reset(int hard)
 
 	//reset the mapper, cpu, and ppu
 	nes.mapper->reset(hard);
-	cpu_reset(hard);
 	ppu_reset(hard);
+	cpu_reset(hard);
 
 	//clear some memory for hard reset
 	if(hard) {
@@ -173,6 +173,7 @@ void nes_frame()
 
 //	log_printf("executing frame %d\n",curframe);
 	while(nes.ppu.frames == curframe) {
+//		char buf[256];	cpu_disassemble(buf,nes.cpu.pc);	log_printf("%s\n",buf);
 		cpu_step();
 	}
 }

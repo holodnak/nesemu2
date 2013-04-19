@@ -18,6 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+//#define DOUBLESIZE
+
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -41,7 +43,11 @@ int video_reinit()
 {
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
+#ifdef DOUBLESIZE
 	screenscale = 2;
+#else
+	screenscale = 1;
+#endif
 	screenw = 256 * screenscale;
 	screenh = 240 * screenscale;
 	screenbpp = 32;
@@ -99,9 +105,10 @@ void video_endframe()
 //this handles lines coming directly from the nes engine
 void video_updateline(int line,u8 *s)
 {
+	int i;
+#ifdef DOUBLESIZE
 	u32 *dest1 = (u32*)((u8*)surface->pixels + (((line * 2) + 0) * surface->pitch));
 	u32 *dest2 = (u32*)((u8*)surface->pixels + (((line * 2) + 1) * surface->pitch));
-	int i;
 
 	for(i=0;i<256;i++) {
 		u32 pixel = palettecache[*s++];
@@ -110,6 +117,13 @@ void video_updateline(int line,u8 *s)
 		*dest2++ = pixel;
 		*dest2++ = pixel;
 	}
+#else
+	u32 *dest = (u32*)((u8*)surface->pixels + (line * surface->pitch));
+
+	for(i=0;i<256;i++) {
+		*dest++ = palettecache[*s++];
+	}
+#endif
 }
 
 

@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __cpu_h__
-#define __cpu_h__
+#ifndef __nes__cpu_h__
+#define __nes__cpu_h__
 
 #include "types.h"
 

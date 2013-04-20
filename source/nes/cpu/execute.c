@@ -144,6 +144,7 @@ static INLINE void cpu_step()
 		execute_nmi();
 	}
 	else if(PREV_IRQSTATE) {
+		IRQSTATE = 0;				//hardware should reset this!
 		execute_irq();
 	}
 }

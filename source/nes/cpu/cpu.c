@@ -100,6 +100,10 @@ void cpu_reset(int hard)
 	}
 	PC = memread(0xFFFC);
 	PC |= memread(0xFFFD) << 8;
+	log_printf("vectors:\n");
+	log_printf("  nmi:    $%04X\n",cpu_read(0xFFFA) | (cpu_read(0xFFFB) << 8));
+	log_printf("  irq:    $%04X\n",cpu_read(0xFFFE) | (cpu_read(0xFFFF) << 8));
+	log_printf("  reset:  $%04X\n",cpu_read(0xFFFC) | (cpu_read(0xFFFD) << 8));
 }
 
 u64 cpu_getcycles()

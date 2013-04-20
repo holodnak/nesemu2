@@ -115,37 +115,22 @@ u16 cpu_disassemble(char *buffer,u16 opcodepos)
 	strcpy(buffer,"");
 	opcode = cpu_read(opcodepos);
 	switch(addrtable[opcode]) {
-		case er:size = 1;sprintf(buffer,".u8 $%02x",opcode);break;
+		case er:size = 1;sprintf(buffer,"%02X       .u8 $%02x",opcode);break;
 		case no:size = 1;sprintf(buffer,"%02X       %s",opcode,opcodes[opcode]);break;
 		case ac:size = 1;sprintf(buffer,"%02X       %s a",opcode,opcodes[opcode]);break;
 		case ab:
 			size = 3;
 			addr = cpu_read(opcodepos+1) | (cpu_read(opcodepos+2) << 8);
-			if(addr < 0x100) { /*should be zero page, so its bad opcode*/
-				size = 1;
-				sprintf(buffer,".u8 $%02x",opcode);
-				break;
-			}
 			sprintf(buffer,"%02X %02X %02X %s $%04x",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
 			break;
 		case ax:
 			size = 3;
 			addr = cpu_read(opcodepos+1) | (cpu_read(opcodepos+2) << 8);
-			if(addr < 0x100) { /*should be zero page, so its bad opcode*/
-				size = 1;
-				sprintf(buffer,".u8 $%02x",opcode);
-				break;
-			}
 			sprintf(buffer,"%02X %02X %02X %s $%04x,x",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
 			break;
 		case ay:
 			size = 3;
 			addr = cpu_read(opcodepos+1) | (cpu_read(opcodepos+2) << 8);
-			if(addr < 0x100) { /*should be zero page, so its bad opcode*/
-				size = 1;
-				sprintf(buffer,".u8 $%02x",opcode);
-				break;
-			}
 			sprintf(buffer,"%02X %02X %02X %s $%04x,y",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
 			break;
 		case in:size = 3;sprintf(buffer,"%02X %02X %02X %s ($%04X)",opcode,cpu_read(opcodepos+1),cpu_read(opcodepos+2),opcodes[opcode],cpu_read(opcodepos+1) | (cpu_read(opcodepos+2) << 8));break;

@@ -845,13 +845,12 @@ static INLINE void scanline_0()
 	}
 }
 
-char tmp[8192];
+char tmp[1024];
 
 static INLINE void scanline_261()
 {
 	if(LINECYCLES == 0) {
-		strncpy(tmp,nes.cart->sram.data+4,8192);
-		printf(tmp);
+//		memcpy(tmp,nes.cart->sram.data+4,1024);	printf(tmp);
 		video_endframe();
 	}
 }
@@ -913,7 +912,7 @@ void ppu_step()
 			scanline_261();
 			break;
 	}
-//	if(LINECYCLES & 1)
+	if(LINECYCLES & 1)
 		nes.mapper->cycle();
 	inc_linecycles();
 }

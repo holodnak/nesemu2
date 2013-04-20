@@ -159,11 +159,5 @@ void nes_reset(int hard)
 
 void nes_frame()
 {
-	u32 curframe = nes.ppu.frames;
-
-//	log_printf("executing frame %d\n",curframe);
-	while(nes.ppu.frames == curframe) {
-//		char buf[256];	cpu_disassemble(buf,nes.cpu.pc);	log_printf("%s\n",buf);
-		cpu_step();
-	}
+	cpu_execute_frame();
 }

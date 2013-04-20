@@ -60,7 +60,7 @@ set  00      20      40      60      80      a0      c0      e0      mode
 +1f  SLO*    RLA*    SRE*    RRA*    SHA**y) LAX* y) DCP*    ISB*    Absolute,x
 */
 
-void cpu_step()
+static INLINE void cpu_step()
 {
 	OPADDR = PC;
 	OPCODE = memread(PC++);
@@ -157,4 +157,13 @@ u32 cpu_execute(u32 cycles)
 		cpu_step();
 	}
 	return((u32)(CYCLES - start));
+}
+
+void cpu_execute_frame()
+{
+	u32 curframe = FRAMES;
+
+	while(FRAMES == curframe) {
+		cpu_step();
+	}
 }

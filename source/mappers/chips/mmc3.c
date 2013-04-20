@@ -154,6 +154,7 @@ void mmc3_write(u32 addr,u8 data)
 			break;
 		case 0xC000:
 			irqlatch = data;
+			log_printf("mmc3_write:  irq latch = %d\n",data);
 			break;
 		case 0xC001:
 			irqcounter = 0;
@@ -177,17 +178,23 @@ void mmc3_cycle()
 		irqwait--;
 	if((irqwait == 0) && (nes.ppu.busaddr & 0x1000)) {
 		tmp = irqcounter;
-		if((irqcounter == 0) && irqreload)
+		if((irqcounter == 0) && irqreload) {
 			irqcounter = irqlatch;
-		else
+			log_printf("mmc3_cycle:  RELOADED!  irq counter = %d (frame %d, line %d, pixel %d)\n",irqcounter,FRAMES,SCANLINE,LINECYCLES);
+		}
+		else {
 			irqcounter--;
-		if((tmp || irqreload) && (irqcounter == 0) && irqenabled)
+			log_printf("mmc3_cycle:  CLOCKED!  irq counter = %d (frame %d, line %d, pixel %d)\n",irqcounter,FRAMES,SCANLINE,LINECYCLES);
+		}
+		if((tmp || irqreload) && (irqcounter == 0) && irqenabled) {
 			cpu_set_irq(1);
+			log_printf("mmc3_cycle:  IRQ!  (frame %d, line %d, pixel %d)\n",FRAMES,SCANLINE,LINECYCLES);
+		}
 		irqreload = 0;
 	}
 	if(nes.ppu.busaddr & 0x1000) {
 //		log_printf("mmc3_cycle:  busaddr A12 high ($%04X), line %d, pixel %d\n",nes.ppu.busaddr,nes.ppu.scanline,nes.ppu.linecycles);
-		irqwait = 14;
+		irqwait = 16;
 	}
 }
 

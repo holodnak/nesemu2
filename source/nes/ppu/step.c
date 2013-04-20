@@ -340,6 +340,13 @@ static INLINE void set_nmi()
 		cpu_set_nmi(1);
 }
 
+static INLINE void update_line()
+{
+	drawtileline();
+	drawspriteline();
+	video_updateline(SCANLINE - 21,nes.ppu.linebuffer + nes.ppu.scrollx);
+}
+
 static INLINE void process_sprites()
 {
 	if(LINECYCLES == 0) {
@@ -402,6 +409,7 @@ static INLINE void quick_process_sprites()
 	for(i=0;i<8;i++) {
 		sprtemp[i].line = 0;
 		sprtemp[i].attr = sprtemp[i].x = sprtemp[i].flags = 0;
+		sprtemp[i].tile = 0xFF;
 	}
 
 	//determine sprite height
@@ -563,7 +571,8 @@ static INLINE void scanline_prerender()
 			inc_hscroll();
 			inc_vscroll();
 #ifdef QUICK_SPRITES
-			quick_process_sprites();
+			if(CONTROL1 & 0x10)
+				quick_process_sprites();
 #endif
 			break;
 
@@ -644,10 +653,13 @@ static INLINE void scanline_prerender()
 		case 337:	case 339:
 			calc_ntaddr();
 			break;
-		case 340:
-			skip_cycle();
 		case 338:	
 			fetch_ntbyte();
+			break;
+		case 340:
+			fetch_ntbyte();
+			skip_cycle();
+			video_startframe();
 			break;
 
 		default:
@@ -720,23 +732,20 @@ static INLINE void scanline_visible()
 		case 8:		case 16:		case 24:		case 32:		case 40:		case 48:		case 56:		case 64:
 		case 72:		case 80:		case 88:		case 96:		case 104:	case 112:	case 120:	case 128:
 		case 136:	case 144:	case 152:	case 160:	case 168:	case 176:	case 184:	case 192:
-		case 200:	case 208:	case 216:	case 224:	case 232:	case 240:	case 248:	case 256:
+		case 200:	case 208:	case 216:	case 224:	case 232:	case 240:	case 248:
 			fetch_patternbyte1();
 			inc_hscroll();
-			if(LINECYCLES == 256) {
-				if(SCANLINE == 21)
-					video_startframe();
-				drawtileline();
-				drawspriteline();
-				video_updateline(SCANLINE - 21,nes.ppu.linebuffer + nes.ppu.scrollx);
-				if(SCANLINE == 260)
-					video_endframe();
-				inc_vscroll();
+			break;
+		case 256:
+			fetch_patternbyte1();
+			inc_hscroll();
+			update_line();
+//			log_printf("sprites %s (%s)\n",(CONTROL1 & 0x10) ? "enabled" : "disabled",(CONTROL1 & 0x10) ? "8x16" : "8x8");
+			inc_vscroll();
 #ifdef QUICK_SPRITES
-//				if(CONTROL1 & 0x10)
-					quick_process_sprites();
+			if(CONTROL1 & 0x10)
+				quick_process_sprites();
 #endif
-			}
 			break;
 
 		//garbage nametable address calc
@@ -836,8 +845,15 @@ static INLINE void scanline_0()
 	}
 }
 
+char tmp[8192];
+
 static INLINE void scanline_261()
 {
+	if(LINECYCLES == 0) {
+		strncpy(tmp,nes.cart->sram.data+4,8192);
+		printf(tmp);
+		video_endframe();
+	}
 }
 
 void ppu_step()
@@ -881,7 +897,15 @@ void ppu_step()
 		case 231:	case 232:	case 233:	case 234:	case 235:	case 236:	case 237:	case 238:	case 239:	case 240:
 		case 241:	case 242:	case 243:	case 244:	case 245:	case 246:	case 247:	case 248:	case 249:	case 250:
 		case 251:	case 252:	case 253:	case 254:	case 255:	case 256:	case 257:	case 258:	case 259:	case 260:
-			scanline_visible();
+			if(CONTROL1 & 0x18)
+				scanline_visible();
+			else {
+				nes.ppu.busaddr = SCROLL; //hack
+				if(LINECYCLES == 256) {
+					blankline();
+					video_updateline(SCANLINE - 21,nes.ppu.linebuffer);
+				}
+			}
 			break;
 
 		//wasted line

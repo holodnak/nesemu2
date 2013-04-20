@@ -79,8 +79,8 @@ void cpu_set_irq(u8 state);
 void cpu_tick();
 u8 cpu_read(u32 addr);
 void cpu_write(u32 addr,u8 data);
-void cpu_step();
 u32 cpu_execute(u32 cycles);
+void cpu_execute_frame();
 u16 cpu_disassemble(char *buffer,u16 opcodepos);
 void cpu_disassemble_init();
 

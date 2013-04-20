@@ -45,7 +45,7 @@ typedef struct ppu_s {
 	u8		buf,latch;
 
 	//internal memory
-	u8		nametables[0x800];
+	u8		nametables[0x800 * 2];
 	u8		oam[0x100];
 	u8		palette[32];
 

@@ -151,7 +151,7 @@ static INLINE void calc_ntaddr()
 
 static INLINE void calc_attribaddr()
 {
-	nes.ppu.busaddr = SCROLL & 0x3C00;
+	nes.ppu.busaddr = SCROLL & 0xC00;
 	nes.ppu.busaddr += 0x3C0 + ((SCROLL >> 2) & 7) + (((SCROLL >> (2 + 5)) & 7) << 3);
 	nes.ppu.busaddr |= 0x2000;
 }
@@ -286,12 +286,20 @@ static INLINE void inc_vscroll()
 
 static INLINE void update_hscroll()
 {
+	int i;
+
 	if(CONTROL1 & 0x18) {
 		SCROLL &= ~0x041F;
 		SCROLL |= TMPSCROLL & 0x041F;
 	}
 	nes.ppu.fetchpos = 0;
 	nes.ppu.cursprite = 0;
+	for(i=0;i<(32 + 2);i++) {
+		nes.ppu.attribdata[i] = 0;
+		nes.ppu.cachedata[i] = 0;
+		nes.ppu.tiledata[0][i] = 0;
+		nes.ppu.tiledata[1][i] = 0;
+	}
 }
 
 static INLINE void update_scroll()
@@ -563,7 +571,7 @@ static INLINE void scanline_prerender()
 		case 257:
 			update_hscroll();
 		case 265:	case 273:	case 281:	case 289:	case 297:	case 305:	case 313:
-		//	calc_ntaddr();
+			calc_ntaddr();
 			break;
 
 		//garbage nametable fetch
@@ -572,7 +580,7 @@ static INLINE void scanline_prerender()
 
 		//garbage attribute address calc
 		case 259:	case 267:	case 275:	case 283:	case 291:	case 299:	case 307:	case 315:
-		//	calc_attribaddr();
+			calc_attribaddr();
 			break;
 
 		//garbage attribute fetch
@@ -581,7 +589,7 @@ static INLINE void scanline_prerender()
 
 		//calculate address of sprite pattern low
 		case 261:	case 269:	case 277:	case 285:	case 293:	case 301:	case 309:	case 317:
-		//	calc_spritepattern0addr();
+			calc_spritepattern0addr();
 			break;
 
 		//fetch sprite pattern low
@@ -590,7 +598,7 @@ static INLINE void scanline_prerender()
 
 		//calculate address of sprite pattern high
 		case 263:	case 271:	case 279:	case 287:	case 295:	case 303:	case 311:	case 319:
-		//	calc_spritepattern1addr();
+			calc_spritepattern1addr();
 			break;
 
 		//fetch sprite pattern high (update scroll registers on cycle 304)
@@ -718,17 +726,14 @@ static INLINE void scanline_visible()
 			if(LINECYCLES == 256) {
 				if(SCANLINE == 21)
 					video_startframe();
-				if(CONTROL1 & 0x8)
-					drawtileline();
-				else
-					blankline();
+				drawtileline();
 				drawspriteline();
 				video_updateline(SCANLINE - 21,nes.ppu.linebuffer + nes.ppu.scrollx);
 				if(SCANLINE == 260)
 					video_endframe();
 				inc_vscroll();
 #ifdef QUICK_SPRITES
-				if(CONTROL1 & 0x10)
+//				if(CONTROL1 & 0x10)
 					quick_process_sprites();
 #endif
 			}
@@ -738,7 +743,7 @@ static INLINE void scanline_visible()
 		case 257:
 			update_hscroll();
 		case 265:	case 273:	case 281:	case 289:	case 297:	case 305:	case 313:
-		//	calc_ntaddr();
+			calc_ntaddr();
 			break;
 
 		//garbage nametable fetch
@@ -747,7 +752,7 @@ static INLINE void scanline_visible()
 
 		//garbage attribute address calc
 		case 259:	case 267:	case 275:	case 283:	case 291:	case 299:	case 307:	case 315:
-		//	calc_attribaddr();
+			calc_attribaddr();
 			break;
 
 		//garbage attribute fetch
@@ -756,7 +761,7 @@ static INLINE void scanline_visible()
 
 		//calculate address of sprite pattern low
 		case 261:	case 269:	case 277:	case 285:	case 293:	case 301:	case 309:	case 317:
-		//	calc_spritepattern0addr();
+			calc_spritepattern0addr();
 			break;
 
 		//fetch sprite pattern low
@@ -765,7 +770,7 @@ static INLINE void scanline_visible()
 
 		//calculate address of sprite pattern high
 		case 263:	case 271:	case 279:	case 287:	case 295:	case 303:	case 311:	case 319:
-		//	calc_spritepattern1addr();
+			calc_spritepattern1addr();
 			break;
 
 		//fetch sprite pattern high
@@ -829,10 +834,6 @@ static INLINE void scanline_0()
 		set_nmi();
 //		log_printf("scanline_0:  frame %d, scanline %d, cycle %d:  setting VBLANK flag\n",FRAMES,SCANLINE,LINECYCLES);
 	}
-	//last cycle
-//	if(LINECYCLES == 340) {
-//		log_printf("ppu_step:  scanline %d, cycle %d:  setting VBLANK\n",SCANLINE,LINECYCLES);
-//	}
 }
 
 static INLINE void scanline_261()
@@ -888,7 +889,7 @@ void ppu_step()
 			scanline_261();
 			break;
 	}
-	if(LINECYCLES & 1)
+//	if(LINECYCLES & 1)
 		nes.mapper->cycle();
 	inc_linecycles();
 }

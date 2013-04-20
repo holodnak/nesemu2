@@ -41,6 +41,10 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_FxROM);
 	MAPPER(B_TxROM);
 
+	//taito
+	MAPPER(B_TAITO_X1_005);
+	MAPPER(B_TAITO_X1_005A);
+
 	//tengen
 	MAPPER(B_TENGEN_800032);
 

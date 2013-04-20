@@ -18,8 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "memory.h"
-#include "nes.h"
+#include "nes/memory.h"
+#include "nes/nes.h"
+#include "log/log.h"
 
 //set read page function pointer
 void mem_setreadfunc(int page,readfunc_t readfunc)
@@ -126,7 +127,7 @@ void mem_setwram(int banksize,int page,int bank)
 
 void mem_setnt(int banksize,int page,int bank)
 {
-	int i,p,offset = (bank * banksize * 1024) & 0x7FF;
+	int i,p,offset = (bank * banksize * 1024) & 0xFFF;
 
 	for(i=0;i<banksize;i++) {
 		p = page + i;
@@ -193,6 +194,7 @@ void mem_setmirroring(int m)
 {
 	switch(m) {
 		default:
+			log_printf("mem_setmirroring:  bad mirroring type %d\n",m);
 		case MIRROR_H: mem_setmirroring2(0,0,1,1); break;
 		case MIRROR_V: mem_setmirroring2(0,1,0,1); break;
 		case MIRROR_1L:mem_setmirroring2(0,0,0,0); break;
@@ -201,7 +203,6 @@ void mem_setmirroring(int m)
 	}
 }
 
-//move this to the memory.c file
 void mem_setmirroring2(int n0,int n1,int n2,int n3)
 {
 	mem_setnt1(8 + 0,n0);

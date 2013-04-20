@@ -15,9 +15,9 @@ void mmc3_sync()
 		mmc3_syncchr(0xFF,0);
 	else
 		mmc3_syncvram(7,0);
-//	if(nes.cart->mirroring & 8)
-//	   ppu_setmirroring(MIRROR_4);
-//	else
+	if(nes.cart->mirroring == MIRROR_4)
+	   mem_setmirroring(MIRROR_4);
+	else
 		mmc3_syncmirror();
 	mmc3_syncsram();
 }
@@ -79,10 +79,6 @@ void mmc3_syncsram()
 
 void mmc3_syncmirror()
 {
-//	if(mirror & 1)
-//		mem_setmirroring(MIRROR_H);
-//	else
-//		mem_setmirroring(MIRROR_V);
 	mem_setmirroring(mirror);
 }
 
@@ -148,7 +144,6 @@ void mmc3_write(u32 addr,u8 data)
 			sync();
 			break;
 		case 0xA000:
-//			mirror = data & 1;
 			mirror = (data & 1) ^ 1;
 			sync();
 			break;
@@ -166,6 +161,7 @@ void mmc3_write(u32 addr,u8 data)
 			break;
 		case 0xE000:
 			irqenabled = 0;
+			cpu_set_irq(0);
 			break;
 		case 0xE001:
 			irqenabled = 1;
@@ -189,8 +185,10 @@ void mmc3_cycle()
 			cpu_set_irq(1);
 		irqreload = 0;
 	}
-	if(nes.ppu.busaddr & 0x1000)
-		irqwait = 8;
+	if(nes.ppu.busaddr & 0x1000) {
+//		log_printf("mmc3_cycle:  busaddr A12 high ($%04X), line %d, pixel %d\n",nes.ppu.busaddr,nes.ppu.scanline,nes.ppu.linecycles);
+		irqwait = 14;
+	}
 }
 
 void mmc3_state(int mode,u8 *data)

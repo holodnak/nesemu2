@@ -47,19 +47,6 @@ static void sync()
 		mem_setchr2(2 ^ chrxor,chr[2] >> 1);
 	}
 	mem_setmirroring(mirror);
-
-	if (control & 0x20)
-	{
-		for (i = 0; i < 8; i++)
-			mem_setchr1(chrxor ^ i, chr[i]);
-	}
-	else
-	{
-		for (i = 0; i < 4; i += 2)
-			mem_setchr2(chrxor ^ i, chr[i] >> 1);
-		for (i = 4; i < 8; i++)
-			mem_setchr1(chrxor ^ i, chr[i]);
-	}
 }
 
 static void write_6000(u32 addr,u8 data)

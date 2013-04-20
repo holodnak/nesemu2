@@ -140,11 +140,10 @@ void cpu_step()
 	}
 	if(PREV_NMISTATE) {
 		NMISTATE = 0;
-		PREV_NMISTATE = 0;
+		PREV_NMISTATE = 0;		//necessary?  no!
 		execute_nmi();
 	}
 	else if(PREV_IRQSTATE) {
-		IRQSTATE = 0;
 		execute_irq();
 	}
 }

@@ -77,13 +77,15 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="3"
+				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;QUICK_SPRITES"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				CompileAs="1"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -538,6 +540,13 @@
 						Filter="">
 						<File
 							RelativePath="..\..\source\mappers\boards\camerica\bf909x.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="taito"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\taito\x1-005.c">
 						</File>
 					</Filter>
 				</Filter>

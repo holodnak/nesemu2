@@ -76,6 +76,10 @@ enum boardid_e {
 	//irem
 	B_IREM_H_3001,
 
+	//taito
+	B_TAITO_X1_005,
+	B_TAITO_X1_005A,
+
 	//unlicensed
 	B_H2288,
 	B_70IN1,

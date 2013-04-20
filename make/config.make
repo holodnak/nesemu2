@@ -9,5 +9,8 @@ USE_ASM_RENDER ?= 0
 # use undocumented cpu opcodes
 USE_CPU_UNDOC ?= 0
 
+# use quick sprite code
+USE_QUICK_SPRITES ?= 1
+
 # build type
-BUILD ?= RELEASE
+BUILD ?= DEBUG

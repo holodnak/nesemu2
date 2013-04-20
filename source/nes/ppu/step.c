@@ -480,8 +480,6 @@ static INLINE void quick_process_sprites()
 
 static INLINE void scanline_prerender()
 {
-//	if(LINECYCLES == 3)
-//		clear_nmi();
 	/* There are 2 conditions that update all 5 PPU scroll counters with the
 	contents of the latches adjacent to them. The first is after a write to
 	2006/2. The second, is at the beginning of scanline 20, when the PPU starts
@@ -888,10 +886,6 @@ void ppu_step()
 		//wasted line
 		case 261:
 			scanline_261();
-			break;
-
-		default:
-			log_printf("ppu_step:  unhandled scanline %d (bug!)\n",SCANLINE);
 			break;
 	}
 	if(LINECYCLES & 1)

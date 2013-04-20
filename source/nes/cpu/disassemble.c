@@ -148,7 +148,7 @@ u16 cpu_disassemble(char *buffer,u16 opcodepos)
 			}
 			sprintf(buffer,"%02X %02X %02X %s $%04x,y",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
 			break;
-		case in:size = 3;sprintf(buffer,"%s ($%04X)",opcodes[opcode],cpu_read(opcodepos+1) | (cpu_read(opcodepos+2) << 8));break;
+		case in:size = 3;sprintf(buffer,"%02X %02X %02X %s ($%04X)",opcode,cpu_read(opcodepos+1),cpu_read(opcodepos+2),opcodes[opcode],cpu_read(opcodepos+1) | (cpu_read(opcodepos+2) << 8));break;
 		case im:size = 2;sprintf(buffer,"%02X %02X    %s #$%02X",opcode,cpu_read(opcodepos+1),opcodes[opcode],cpu_read(opcodepos+1));break;
 		case ix:size = 2;sprintf(buffer,"%02X %02X    %s ($%02X,x)",opcode,cpu_read(opcodepos+1),opcodes[opcode],cpu_read(opcodepos+1));break;
 		case iy:size = 2;sprintf(buffer,"%02X %02X    %s ($%02X),y",opcode,cpu_read(opcodepos+1),opcodes[opcode],cpu_read(opcodepos+1));break;

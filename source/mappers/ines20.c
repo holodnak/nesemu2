@@ -30,19 +30,18 @@ struct ines20_boardid_s {
 #define INES20_BOARD(n,s,b)	{n,s,b},
 
 INES20_BOARD_START()
-	INES20_BOARD(0,	0,		B_NROM)
-//	INES20_BOARD(0,	1,		B_NROM)			//nrom +	save ram
-	INES20_BOARD(1,	0,		B_SxROM)
-	INES20_BOARD(2,	0,		B_UxROM)
-	INES20_BOARD(4,	0,		B_TxROM)
-	INES20_BOARD(7,	0,		B_AxROM)
-	INES20_BOARD(9,	0,		B_PxROM)
+//	INES20_BOARD(0,	1,		B_NROM_SRAM)			//nrom +	save ram
+	INES20_BOARD(71,	1,		B_CAMERICA_BF9097)
 INES20_BOARD_END()
 
 int mapper_get_mapperid_ines20(int num,int sub)
 {
 	int i;
-
+	
+	//no submapper, just use the ines function
+	if(sub == 0) {
+		return(mapper_get_mapperid_ines(num));
+	}
 	for(i=0;boards[i].boardid != -1;i++) {
 		if((num == boards[i].num) && (sub == boards[i].sub))
 			return(boards[i].boardid);

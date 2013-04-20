@@ -1,7 +1,27 @@
+/***************************************************************************
+ *   Copyright (C) 2013 by James Holodnak                                  *
+ *   jamesholodnak@gmail.com                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "mappers/mapperinc.h"
 
 static u8 control,mirror;
-static u8 irqsource,irqlatch,irqreload,irqenabled,irqcounter;
+static u8 irqsource,irqlatch,irqreload,irqenabled,irqcounter,irqcpu;
 static u8 prg[3],chr[8];
 
 static void sync()
@@ -27,6 +47,23 @@ static void sync()
 		mem_setchr2(2 ^ chrxor,chr[2] >> 1);
 	}
 	mem_setmirroring(mirror);
+
+	if (control & 0x20)
+	{
+		for (i = 0; i < 8; i++)
+			mem_setchr1(chrxor ^ i, chr[i]);
+	}
+	else
+	{
+		for (i = 0; i < 4; i += 2)
+			mem_setchr2(chrxor ^ i, chr[i] >> 1);
+		for (i = 4; i < 8; i++)
+			mem_setchr1(chrxor ^ i, chr[i]);
+	}
+}
+
+static void write_6000(u32 addr,u8 data)
+{
 }
 
 static void write_upper(u32 addr,u8 data)
@@ -65,6 +102,7 @@ static void write_upper(u32 addr,u8 data)
 			break;
 		case 0xE000:
 			irqenabled = 0;
+			cpu_set_irq(0);
 			break;
 		case 0xE001:
 			irqenabled = 1;
@@ -77,6 +115,7 @@ static void reset(int hard)
 {
 	int i;
 
+	mem_setwritefunc(6,write_6000);
 	for(i=8;i<16;i++)
 		mem_setwritefunc(i,write_upper);
 	control = 0;
@@ -89,28 +128,41 @@ static void reset(int hard)
 	irqreload = 0;
 	irqenabled = 0;
 	irqcounter = 0;
+	irqcpu = 0;
 	sync();
 }
 
 static void clock_irqcounter()
 {
-	if(irqcounter == 0 || irqreload) {
+	if(irqreload) {
 		irqcounter = irqlatch + 1;
 		irqreload = 0;
-		return;
 	}
-	if(irqcounter == 1 && irqenabled)
-		cpu_set_irq(1);
-	else
-		cpu_set_irq(0);
-	irqcounter--;
+	else if(irqcounter == 0) {
+		irqcounter = irqlatch;
+	}
+	else {
+		irqcounter--;
+		if(irqcounter == 0 && irqenabled) {
+			cpu_set_irq(1);
+//		log_printf("800032.c:  irq at frame %d, scanline %d, cycle %d\n",nes.ppu.frames,nes.ppu.scanline,nes.ppu.linecycles);
+		}
+	}
 }
 
 static void cycle()
 {
 	if(irqsource == 0) {
-		if((nes.ppu.control1 & 0x18) && (nes.ppu.linecycles == 256))
+		if((nes.ppu.control1 & 0x18) && (nes.ppu.linecycles == 265))
 			clock_irqcounter();
+	}
+	else {
+//		log_printf("800032.c:  (cpu mode) cycle() called at frame %d, scanline %d, cycle %d\n",nes.ppu.frames,nes.ppu.scanline,nes.ppu.linecycles);
+		irqcpu--;
+		if(irqcpu == 0) {
+			irqcpu = 3 * 4 / 2;
+			clock_irqcounter();
+		}
 	}
 }
 

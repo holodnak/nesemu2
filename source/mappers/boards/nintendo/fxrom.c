@@ -19,14 +19,6 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/mmc1.h"
+#include "mappers/chips/mmc4.h"
 
-static void reset(int hard)
-{
-	if(nes.cart->chr.size == 0)
-		mem_setvramsize(8);
-	mem_setsramsize(2);
-	mmc1_init(mmc1_sync);
-}
-
-MAPPER(B_SxROM,reset,0,0,mmc1_state);
+MAPPER(B_FxROM,mmc4_init,mmc4_tile,0,mmc4_state);

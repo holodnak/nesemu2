@@ -22,6 +22,7 @@ SOURCE_NES += source/nes/cart/cart.c source/nes/cart/ines.c source/nes/cart/ines
 SOURCE_NES += source/nes/cpu/cpu.c source/nes/cpu/disassemble.c
 SOURCE_NES += source/nes/ppu/io.c source/nes/ppu/ppu.c source/nes/ppu/step.c
 SOURCE_NES += source/nes/ppu/tilecache.c source/nes/ppu/attribcache.c
+SOURCE_NES += source/nes/apu/apu.c
 
 # palette
 SOURCE_PALETTE = source/palette/generator.c source/palette/palette.c

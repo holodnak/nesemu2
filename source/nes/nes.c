@@ -118,16 +118,6 @@ void nes_set_inputdev(int n,inputdev_t *d)
 		nes.expdev = d;
 }
 
-static u8 apu_read(u32 addr)
-{
-	return(0);
-}
-
-static void apu_write(u32 addr,u8 data)
-{
-
-}
-
 void nes_reset(int hard)
 {
 	int i;

@@ -77,7 +77,6 @@ void mmc4_tile(u8 tile,int highpt)
 			mem_setchr4(4,latch[1][1]);
 		}
 	}
-	mmc4_sync();
 }
 
 void mmc4_state(int mode,u8 *data)

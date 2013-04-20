@@ -39,13 +39,26 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../source/config/config.h" />
-		<Unit filename="../../source/config/defaults.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../../source/emu/emu.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../source/emu/emu.h" />
+		<Unit filename="../../source/inputdev/inputdev.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/inputdev/inputdev.h" />
+		<Unit filename="../../source/inputdev/joypad0.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/inputdev/joypad0.h" />
+		<Unit filename="../../source/inputdev/joypad1.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/inputdev/joypad1.h" />
+		<Unit filename="../../source/inputdev/null.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/inputdev/null.h" />
 		<Unit filename="../../source/log/buffer.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -54,16 +67,54 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../source/log/log.h" />
+		<Unit filename="../../source/mappers/boards/camerica/bf909x.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/boards/nintendo/axrom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/boards/nintendo/fxrom.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../source/mappers/boards/nintendo/nrom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/boards/nintendo/pxrom.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../source/mappers/boards/nintendo/sxrom.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../source/mappers/chips/c_mmc1.c">
+		<Unit filename="../../source/mappers/boards/nintendo/txrom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/boards/nintendo/uxrom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/boards/tengen/800032.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../source/mappers/chips/c_mmc1.h" />
+		<Unit filename="../../source/mappers/chips/latch.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/chips/latch.h" />
+		<Unit filename="../../source/mappers/chips/mmc1.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/chips/mmc1.h" />
+		<Unit filename="../../source/mappers/chips/mmc2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/chips/mmc2.h" />
+		<Unit filename="../../source/mappers/chips/mmc3.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/chips/mmc3.h" />
+		<Unit filename="../../source/mappers/chips/mmc4.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/mappers/chips/mmc4.h" />
 		<Unit filename="../../source/mappers/ines.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -79,6 +130,10 @@
 		<Unit filename="../../source/mappers/unif.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../source/nes/apu/apu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/apu/apu.h" />
 		<Unit filename="../../source/nes/cart/cart.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -104,6 +159,11 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../source/nes/cpu/execute.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../source/nes/cpu/helper.c">
 			<Option compilerVar="CC" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -158,6 +218,10 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
+		<Unit filename="../../source/nes/io.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/io.h" />
 		<Unit filename="../../source/nes/memory.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -166,9 +230,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../source/nes/nes.h" />
-		<Unit filename="../../source/nes/ppu/cache.c">
+		<Unit filename="../../source/nes/ppu/attribcache.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../source/nes/ppu/attribcache.h" />
 		<Unit filename="../../source/nes/ppu/cache.h" />
 		<Unit filename="../../source/nes/ppu/io.c">
 			<Option compilerVar="CC" />
@@ -180,6 +245,10 @@
 		<Unit filename="../../source/nes/ppu/step.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../source/nes/ppu/tilecache.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/nes/ppu/tilecache.h" />
 		<Unit filename="../../source/palette/generator.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -211,6 +280,18 @@
 		<Unit filename="../../source/system/sound.h" />
 		<Unit filename="../../source/system/system.h" />
 		<Unit filename="../../source/system/video.h" />
+		<Unit filename="../../source/system/win32/input.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/win32/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/win32/sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../source/system/win32/video.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../source/types.h" />
 		<Unit filename="../../source/version.h" />
 		<Extensions>
@@ -218,6 +299,15 @@
 			<envvars />
 			<debugger />
 			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

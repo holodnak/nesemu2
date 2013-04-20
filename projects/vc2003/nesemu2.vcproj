@@ -508,6 +508,9 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\axrom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\fxrom.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\nrom.c">
 						</File>
 						<File
@@ -528,6 +531,13 @@
 						Filter="">
 						<File
 							RelativePath="..\..\source\mappers\boards\tengen\800032.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="camerica"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\camerica\bf909x.c">
 						</File>
 					</Filter>
 				</Filter>

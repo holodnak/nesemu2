@@ -113,6 +113,11 @@ enum boardid_e {
 	B_SA_72007,
 	B_SA_72008,
 
+	//camerica
+	B_CAMERICA_BF9093,
+	B_CAMERICA_BF9096,
+	B_CAMERICA_BF9097,
+
 	//ffe
 	B_FFE_MAPPER6,
 	B_FFE_MAPPER8,

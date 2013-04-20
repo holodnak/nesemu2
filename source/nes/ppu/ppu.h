@@ -53,17 +53,14 @@ typedef struct ppu_s {
 	u8		oam2[32];
 	u8		oam2pos;
 
-	//rendering data
-	//current nametable, attribute byte, and pattern table bytes
-	u8		ntbyte;
-//	u8		attribbyte;
-//	u8		ptbyte0,ptbyte1;
+	//rendering data, current address the ppu is accessing
 	u32	busaddr;
 
-	//fetched tile data bits with attributes
-	u8		fetchpos;
-	u8		tiledata[2][32 + 2];
+	//fetched nametable, attribute, tile and cached tile data
+	u8		fetchpos,cursprite;
+	u8		ntbyte;
 	u8		attribdata[32 + 2];
+	u8		tiledata[2][32 + 2];
 	cache_t	cachedata[32 + 2];
 
 	//line buffer

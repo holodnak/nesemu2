@@ -23,11 +23,12 @@
 #include "log/log.h"
 
 typedef struct {
-	u64 line;											//cache line data
-	u8 attr;												//attrib bits
-	u8 x;													//x coord
-	u8 flags;											//flags
-	} sprtemp_t;										//sprite temp entry
+	u64 line;				//cache line data
+	u8 attr;					//attrib bits
+	u8 x;						//x coord
+	u8 flags;				//flags
+	u8 tile;					//sprite tile index
+	} sprtemp_t;			//sprite temp entry
 
 static sprtemp_t sprtemp[8];
 
@@ -78,7 +79,7 @@ static INLINE void drawspriteline()
 
 	//loop thru all eight possible sprites
 	for(n=0;n<8;n++,spr--) {
-		cache_t offs,mask = CACHE_MASK;
+		cache_t offs;
 		u64 *scr64,sp0,sp1,pmask0,pmask1,pmaskxor = 0xFFFFFFFFFFFFFFFFLL;
 		u64 shiftright = (8 - (spr->x & 7)) * 8;
 		u64 shiftleft = (spr->x & 7) * 8;
@@ -91,7 +92,7 @@ static INLINE void drawspriteline()
 
 		//setup to draw the pixel
 		offs = spr->attr * 0x0404040404040404LL;
-		sp0 = sp1 = spr->line & mask;
+		sp0 = sp1 = spr->line & CACHE_MASK;
 		pmask0 = pmask1 = (0x8080808080808080LL - sp0) >> 2;
 
 		//sprite is sprite 0, check for hit
@@ -99,13 +100,13 @@ static INLINE void drawspriteline()
 			u64 sprtileline;
 			u8 *sprtileline8,*bg;
 
-			sprtileline = (sp0 + offs) & pmask0;
+			sprtileline = sp0 & pmask0;
 			sprtileline8 = ((u8*)&sprtileline);
 			bg = dest + spr->x;
 			for(x=spr->x,j=0;j<8 && (spr->x + j) < 255;j++,x++) {
 				if(((CONTROL1 & 4) == 0) && (x < 8))
 					continue;
-				if((sprtileline8[j] & 3) && ((bg[j] & 0xF) != 0)) {
+				if(sprtileline8[j] && ((bg[j] & 0xF) != 0)) {
 					STATUS |= 0x40;
 					spr->flags = 0;
 					break;
@@ -167,6 +168,33 @@ static INLINE void calc_pattern1addr()
 	nes.ppu.busaddr += 8;
 }
 
+static INLINE void calc_spritepattern0addr()
+{
+	//process 8x16 sprite
+	if(CONTROL0 & 0x20) {
+		//bank to get tile from
+		nes.ppu.busaddr = (sprtemp[nes.ppu.cursprite].tile & 1) << 12;
+
+		//tile offset
+		nes.ppu.busaddr += (sprtemp[nes.ppu.cursprite].tile & 0xFE) * 16;
+	}
+
+	//process 8x8 sprite
+	else {
+		//bank to get tile from
+		nes.ppu.busaddr = (CONTROL0 & 8) << 9;
+
+		//tile offset
+		nes.ppu.busaddr += sprtemp[nes.ppu.cursprite].tile * 16;
+	}
+}
+
+static INLINE void calc_spritepattern1addr()
+{
+	nes.ppu.busaddr += 8;
+	nes.ppu.cursprite++;
+}
+
 static INLINE void fetch_ntbyte()
 {
 	if(CONTROL1 & 0x08) {
@@ -216,7 +244,6 @@ static INLINE void fetch_patternbyte1()
 {
 	if(CONTROL1 & 0x08) {
 		nes.ppu.tiledata[1][nes.ppu.fetchpos] = ppu_memread(nes.ppu.busaddr);
-		nes.ppu.fetchpos++;
 	}
 }
 
@@ -231,6 +258,7 @@ static INLINE void inc_hscroll()
 		else
 			SCROLL++;							//no, increment address
 	}
+	nes.ppu.fetchpos++;
 }
 
 static INLINE void inc_vscroll()
@@ -263,6 +291,7 @@ static INLINE void update_hscroll()
 		SCROLL |= TMPSCROLL & 0x041F;
 	}
 	nes.ppu.fetchpos = 0;
+	nes.ppu.cursprite = 0;
 }
 
 static INLINE void update_scroll()
@@ -282,6 +311,25 @@ static INLINE void inc_linecycles()
 			FRAMES++;
 		}
 	}
+}
+
+static INLINE void skip_cycle()
+{
+	if((FRAMES & 1) && (CONTROL1 & 0x18))
+		inc_linecycles();
+}
+
+static INLINE void clear_nmi()
+{
+	STATUS = 0;
+	cpu_set_nmi(0);
+}
+
+static INLINE void set_nmi()
+{
+	STATUS |= 0x80;
+	if(CONTROL0 & 0x80)
+		cpu_set_nmi(1);
 }
 
 static INLINE void process_sprites()
@@ -376,9 +424,10 @@ static INLINE void quick_process_sprites()
 			sprtemp[sprinrange].attr = (s[2] & 3) | ((s[2] & 0x20) >> 3);
 			sprtemp[sprinrange].x = s[3];
 			sprtemp[sprinrange].flags = 1;
+			sprtemp[sprinrange].tile = s[1];
 
 			//if sprite0 check is needed
-			if((i == 0)/* && (nes->rom->sprite0hack == 0)*/)
+			if(i == 0)
 				sprtemp[sprinrange].flags = 2;
 
 			//call mapper callback
@@ -429,8 +478,10 @@ static INLINE void quick_process_sprites()
 	}
 }
 
-static INLINE void scanline_20()
+static INLINE void scanline_prerender()
 {
+//	if(LINECYCLES == 3)
+//		clear_nmi();
 	/* There are 2 conditions that update all 5 PPU scroll counters with the
 	contents of the latches adjacent to them. The first is after a write to
 	2006/2. The second, is at the beginning of scanline 20, when the PPU starts
@@ -445,8 +496,7 @@ static INLINE void scanline_20()
 		//nametable byte read
 		case 1:
 			//clear ppu status register
-			STATUS = 0;
-			cpu_set_nmi(0);
+			clear_nmi();
 		case 9:		case 17:		case 25:		case 33:		case 41:		case 49:		case 57:
 		case 65:		case 73:		case 81:		case 89:		case 97:		case 105:	case 113:	case 121:
 		case 129:	case 137:	case 145:	case 153:	case 161:	case 169:	case 177:	case 185:
@@ -498,33 +548,60 @@ static INLINE void scanline_20()
 		case 8:		case 16:		case 24:		case 32:		case 40:		case 48:		case 56:		case 64:
 		case 72:		case 80:		case 88:		case 96:		case 104:	case 112:	case 120:	case 128:
 		case 136:	case 144:	case 152:	case 160:	case 168:	case 176:	case 184:	case 192:
-		case 200:	case 208:	case 216:	case 224:	case 232:	case 240:	case 248:	case 256:
+		case 200:	case 208:	case 216:	case 224:	case 232:	case 240:	case 248://	case 256:
 			fetch_patternbyte1();
 			inc_hscroll();
-			if(LINECYCLES == 256) {
-				inc_vscroll();
-#ifdef QUICK_SPRITES
-				quick_process_sprites();
-#endif
-			}
 			break;
-		case 257:
-			update_hscroll();
+		case 256:
+			fetch_patternbyte1();
+			inc_hscroll();
+			inc_vscroll();
+#ifdef QUICK_SPRITES
+			quick_process_sprites();
+#endif
 			break;
 
-		case 280:	case 281:	case 282:	case 283:	case 284:	case 285:	case 286:	case 287:
-		case 288:	case 289:	case 290:	case 291:	case 292:	case 293:	case 294:	case 295:
-		case 296:	case 297:	case 298:	case 299:	case 300:	case 301:	case 302:	case 303:
+		//garbage nametable address calc
+		case 257:
+			update_hscroll();
+		case 265:	case 273:	case 281:	case 289:	case 297:	case 305:	case 313:
+		//	calc_ntaddr();
 			break;
+
+		//garbage nametable fetch
+		case 258:	case 266:	case 274:	case 282:	case 290:	case 298:	case 306:	case 314:
+			break;
+
+		//garbage attribute address calc
+		case 259:	case 267:	case 275:	case 283:	case 291:	case 299:	case 307:	case 315:
+		//	calc_attribaddr();
+			break;
+
+		//garbage attribute fetch
+		case 260:	case 268:	case 276:	case 284:	case 292:	case 300:	case 308:	case 316:
+			break;
+
+		//calculate address of sprite pattern low
+		case 261:	case 269:	case 277:	case 285:	case 293:	case 301:	case 309:	case 317:
+		//	calc_spritepattern0addr();
+			break;
+
+		//fetch sprite pattern low
+		case 262:	case 270:	case 278:	case 286:	case 294:	case 302:	case 310:	case 318:
+			break;
+
+		//calculate address of sprite pattern high
+		case 263:	case 271:	case 279:	case 287:	case 295:	case 303:	case 311:	case 319:
+		//	calc_spritepattern1addr();
+			break;
+
+		//fetch sprite pattern high (update scroll registers on cycle 304)
 		case 304:
 			update_scroll();
+		case 264:	case 272:	case 280:	case 288:	case 296:	case 312:	case 320:
 			break;
-	/* Memory fetch phase 161 thru 168
-	-------------------------------
-	1. Name table byte
-	2. Attribute table byte
-	3. Pattern table bitmap #0 (for next scanline)
-	4. Pattern table bitmap #1 (for next scanline) */
+
+		//nametable byte for next scanline
 		case 321:	case 329:
 			calc_ntaddr();
 			break;
@@ -532,6 +609,7 @@ static INLINE void scanline_20()
 			fetch_ntbyte();
 			break;
 
+		//attribute byte for next scanline
 		case 323:	case 331:
 			calc_attribaddr();
 			break;
@@ -539,6 +617,7 @@ static INLINE void scanline_20()
 			fetch_attribbyte();
 			break;
 
+		//pattern low byte tile
 		case 325:	case 333:
 			calc_pattern0addr();
 			break;
@@ -546,6 +625,7 @@ static INLINE void scanline_20()
 			fetch_patternbyte0();
 			break;
 
+		//pattern high byte tile
 		case 327:	case 335:
 			calc_pattern1addr();
 			break;
@@ -554,11 +634,13 @@ static INLINE void scanline_20()
 			inc_hscroll();
 			break;
 
+		//garbage nametable fetches
 		case 337:	case 339:
 			calc_ntaddr();
 			break;
-
-		case 340:	case 338:
+		case 340:
+			skip_cycle();
+		case 338:	
 			fetch_ntbyte();
 			break;
 
@@ -578,8 +660,6 @@ static INLINE void scanline_visible()
 	switch(LINECYCLES) {
 		//the idle cycle
 		case 0:
-			if((SCANLINE == 21) && (FRAMES & 1) && (CONTROL1 & 0x18))
-				inc_linecycles();
 			break;
 
 		//nametable byte read
@@ -655,16 +735,47 @@ static INLINE void scanline_visible()
 #endif
 			}
 			break;
+
+		//garbage nametable address calc
 		case 257:
 			update_hscroll();
+		case 265:	case 273:	case 281:	case 289:	case 297:	case 305:	case 313:
+		//	calc_ntaddr();
 			break;
 
-	/* Memory fetch phase 161 thru 168
-	-------------------------------
-	1. Name table byte
-	2. Attribute table byte
-	3. Pattern table bitmap #0 (for next scanline)
-	4. Pattern table bitmap #1 (for next scanline) */
+		//garbage nametable fetch
+		case 258:	case 266:	case 274:	case 282:	case 290:	case 298:	case 306:	case 314:
+			break;
+
+		//garbage attribute address calc
+		case 259:	case 267:	case 275:	case 283:	case 291:	case 299:	case 307:	case 315:
+		//	calc_attribaddr();
+			break;
+
+		//garbage attribute fetch
+		case 260:	case 268:	case 276:	case 284:	case 292:	case 300:	case 308:	case 316:
+			break;
+
+		//calculate address of sprite pattern low
+		case 261:	case 269:	case 277:	case 285:	case 293:	case 301:	case 309:	case 317:
+		//	calc_spritepattern0addr();
+			break;
+
+		//fetch sprite pattern low
+		case 262:	case 270:	case 278:	case 286:	case 294:	case 302:	case 310:	case 318:
+			break;
+
+		//calculate address of sprite pattern high
+		case 263:	case 271:	case 279:	case 287:	case 295:	case 303:	case 311:	case 319:
+		//	calc_spritepattern1addr();
+			break;
+
+		//fetch sprite pattern high
+		
+		case 264:	case 272:	case 280:	case 288:	case 296:	case 304:	case 312:	case 320:
+			break;
+
+		//nametable byte for next scanline
 		case 321:	case 329:
 			calc_ntaddr();
 			break;
@@ -672,6 +783,7 @@ static INLINE void scanline_visible()
 			fetch_ntbyte();
 			break;
 
+		//attribute byte for next scanline
 		case 323:	case 331:
 			calc_attribaddr();
 			break;
@@ -679,6 +791,7 @@ static INLINE void scanline_visible()
 			fetch_attribbyte();
 			break;
 
+		//pattern low byte tile
 		case 325:	case 333:
 			calc_pattern0addr();
 			break;
@@ -686,6 +799,7 @@ static INLINE void scanline_visible()
 			fetch_patternbyte0();
 			break;
 
+		//pattern high byte tile
 		case 327:	case 335:
 			calc_pattern1addr();
 			break;
@@ -694,6 +808,7 @@ static INLINE void scanline_visible()
 			inc_hscroll();
 			break;
 
+		//garbage nametable fetches
 		case 337:	case 339:
 			calc_ntaddr();
 			break;
@@ -713,9 +828,7 @@ static INLINE void scanline_visible()
 static INLINE void scanline_0()
 {
 	if(LINECYCLES == 0) {
-		STATUS |= 0x80;
-		if(CONTROL0 & 0x80)
-			cpu_set_nmi(1);
+		set_nmi();
 //		log_printf("scanline_0:  frame %d, scanline %d, cycle %d:  setting VBLANK flag\n",FRAMES,SCANLINE,LINECYCLES);
 	}
 	//last cycle
@@ -739,9 +852,9 @@ void ppu_step()
 		case 11:		case 12:		case 13:		case 14:		case 15:		case 16:		case 17:		case 18:		case 19:
 			break;
 
-		//dummy scanline
+		//pre-render scanline
 		case 20:
-			scanline_20();
+			scanline_prerender();
 			break;
 
 		//visible scanlines
@@ -781,5 +894,7 @@ void ppu_step()
 			log_printf("ppu_step:  unhandled scanline %d (bug!)\n",SCANLINE);
 			break;
 	}
+	if(LINECYCLES & 1)
+		nes.mapper->cycle();
 	inc_linecycles();
 }

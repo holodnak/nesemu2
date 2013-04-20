@@ -1,13 +1,12 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/mmc3.h"
-#include "nes/memory.h"
 
 static void (*sync)();
 static u8 command;
 static u8 prg[2],chr[8];
 static u8 mirror;
 static u8 sramenabled;
-static u8 irqlatch,irqcounter,irqenabled,irqreload;
+static u8 irqlatch,irqcounter,irqenabled,irqreload,irqwait;
 
 void mmc3_sync()
 {
@@ -16,9 +15,9 @@ void mmc3_sync()
 		mmc3_syncchr(0xFF,0);
 	else
 		mmc3_syncvram(7,0);
-	if(nes.cart->mirroring & 8)
-	   mem_setmirroring(MIRROR_4);
-	else
+//	if(nes.cart->mirroring & 8)
+//	   ppu_setmirroring(MIRROR_4);
+//	else
 		mmc3_syncmirror();
 	mmc3_syncsram();
 }
@@ -80,13 +79,14 @@ void mmc3_syncsram()
 
 void mmc3_syncmirror()
 {
-	if(mirror & 1)
-		mem_setmirroring(MIRROR_H);
-	else
-		mem_setmirroring(MIRROR_V);
+//	if(mirror & 1)
+//		mem_setmirroring(MIRROR_H);
+//	else
+//		mem_setmirroring(MIRROR_V);
+	mem_setmirroring(mirror);
 }
 
-void mmc3_init(void (*s)())
+void mmc3_reset(void (*s)(),int hard)
 {
 	int i;
 
@@ -103,6 +103,7 @@ void mmc3_init(void (*s)())
 	sramenabled = 1;
 	irqcounter = irqlatch = 0;
 	irqenabled = irqreload = 0;
+	irqwait = 0;
 	sync();
 }
 
@@ -147,13 +148,14 @@ void mmc3_write(u32 addr,u8 data)
 			sync();
 			break;
 		case 0xA000:
-			mirror = data;
+//			mirror = data & 1;
+			mirror = (data & 1) ^ 1;
 			sync();
 			break;
 		case 0xA001:
 		//keep enabled all the time for now
 //			sramenabled = data & 0x80;
-			sync();
+//			sync();
 			break;
 		case 0xC000:
 			irqlatch = data;
@@ -171,35 +173,24 @@ void mmc3_write(u32 addr,u8 data)
 	}
 }
 
-void mmc3_cycle(int line,int pcycles)
+void mmc3_cycle()
 {
-/*	u8 n;
+	u8 tmp;
 
-	//counter is only clocked on visible lines when ppu is rendering
-	if((line < 20 || line > 260) && (line != 1000))
-		return;
-
-	if((nes.ppu.control1 & 0x18) == 0 || (nes.ppu.control1 & 0x18) != 0x18)
-		return;
-
-	if(irqenabled == 0)
-		return;
-
-	if(line == 20) {
-		irqcounter = irqreload;
-		return;
-	}
-
-	n = irqcounter;
-	if((irqcounter == 0) || irqreload) {
+	if(irqwait)
+		irqwait--;
+	if((irqwait == 0) && (nes.ppu.busaddr & 0x1000)) {
+		tmp = irqcounter;
+		if((irqcounter == 0) && irqreload)
+			irqcounter = irqlatch;
+		else
+			irqcounter--;
+		if((tmp || irqreload) && (irqcounter == 0) && irqenabled)
+			cpu_set_irq(1);
 		irqreload = 0;
-		irqcounter = irqlatch;
 	}
-	else
-		irqcounter--;
-
-	if(n && (irqcounter == 0) && irqenabled)
-		dead6502_irq();*/
+	if(nes.ppu.busaddr & 0x1000)
+		irqwait = 8;
 }
 
 void mmc3_state(int mode,u8 *data)
@@ -213,5 +204,6 @@ void mmc3_state(int mode,u8 *data)
 	STATE_U8(irqcounter);
 	STATE_U8(irqenabled);
 	STATE_U8(irqreload);
+	STATE_U8(irqwait);
 	sync();
 }

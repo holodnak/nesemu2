@@ -38,10 +38,16 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_UxROM);
 	MAPPER(B_AxROM);
 	MAPPER(B_PxROM);
+	MAPPER(B_FxROM);
 	MAPPER(B_TxROM);
 
 	//tengen
 	MAPPER(B_TENGEN_800032);
+
+	//camerica
+	MAPPER(B_CAMERICA_BF9093);
+	MAPPER(B_CAMERICA_BF9096);
+	MAPPER(B_CAMERICA_BF9097);
 
 	return(0);
 }

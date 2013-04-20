@@ -35,4 +35,6 @@ void ppu_reset(int hard)
 	nes.ppu.scanline = 0;
 	nes.ppu.linecycles = 0;
 	nes.ppu.frames = 0;
+	nes.ppu.fetchpos = 0;
+	nes.ppu.cursprite = 0;
 }

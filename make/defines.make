@@ -1,5 +1,33 @@
 # defines for nesemu2
 
+# detect os
+ifeq ($(OS),Windows_NT)
+	OSTARGET = WIN32
+else
+	UNAME = $(shell uname -s)
+	ifeq ($(UNAME),Linux)
+		OSTARGET = LINUX
+	endif
+	ifeq ($(UNAME),Darwin)
+		OSTARGET = OSX
+	endif
+endif
+OSTARGET ?= LINUX
+
+# setup defines
+ifeq ($(USE_CPU_UNDOC),1)
+	DEFINES += -DCPU_UNDOC
+endif
+ifeq ($(USE_ASM_RENDER),1)
+	DEFINES += -DASM_RENDER
+endif
+ifeq ($(USE_CACHE_ATTRIB),1)
+	DEFINES += -DCACHE_ATTRIB
+endif
+ifeq ($(USE_QUICK_SPRITES),1)
+	DEFINES += -DQUICK_SPRITES
+endif
+
 # compiler/linker programs
 CC = gcc
 LD = gcc
@@ -15,23 +43,10 @@ LDFLAGS_RELEASE = -s
 # libraries for linking
 LIBS = -lSDL
 
-# setup defines
-ifeq ($(USE_CPU_UNDOC),1)
-	DEFINES += -DCPU_UNDOC
-endif
-
-ifeq ($(USE_ASM_RENDER),1)
-	DEFINES += -DASM_RENDER
-endif
-
-ifeq ($(USE_CACHE_ATTRIB),1)
-	DEFINES += -DCACHE_ATTRIB
-endif
-
-ifeq ($(USE_QUICK_SPRITES),1)
-	DEFINES += -DQUICK_SPRITES
-endif
-
 # compiler/linker flags
 CFLAGS = $(CFLAGS_$(BUILD)) $(DEFINES) -I$(PATH_SOURCE) -D$(OSTARGET) -D$(BUILD)
 LDFLAGS = $(LDFLAGS_$(BUILD)) $(LIBS)
+
+# resource compiler (win32 only)
+RC = windres
+RCFLAGS = --input-format=rc --output-format=coff

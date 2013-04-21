@@ -32,7 +32,7 @@ SOURCE_SYSTEM_SDL = source/system/sdl/video.c source/system/sdl/input.c source/s
 SOURCE_SYSTEM_SDL += source/system/sdl/main.c source/system/sdl/system.c
 
 # sdl/win32 system files
-SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c
+SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c source/system/win32/nesemu2-res.o
 
 # linux system files
 SOURCE_SYSTEM_LINUX = source/system/linux/stricmp.c
@@ -50,12 +50,6 @@ TRASHDIRS = projects/codeblocks/bin projects/codeblocks/obj
 TRASHDIRS += projects/vc2003/Debug projects/vc2003/Release
 TRASHDIRS += projects/vc2010/Debug projects/vc2010/Release projects/vc2010/ipch
 
-# generate object files
-OBJECTS = $(patsubst %.c,%.o,$(SOURCES))
-
-# output executable name
-OUTPUT = nesemu2
-
 # system stuff
 ifeq ($(OSTARGET),WIN32)
 	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_WIN32)
@@ -66,3 +60,9 @@ ifeq ($(OSTARGET),LINUX)
 	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_LINUX)
 	TARGET = $(OUTPUT)
 endif
+
+# generate object files
+OBJECTS = $(patsubst %.c,%.o,$(SOURCES))
+
+# output executable name
+OUTPUT = nesemu2

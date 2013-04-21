@@ -35,6 +35,7 @@ int nes_init()
 	memset(&nes,0,sizeof(nes_t));
 	ret += cpu_init();
 	ret += ppu_init();
+	ret += apu_init();
 	return(ret);
 }
 
@@ -42,6 +43,7 @@ void nes_kill()
 {
 	cpu_kill();
 	ppu_kill();
+	apu_kill();
 }
 
 int nes_load_cart(cart_t *c)
@@ -147,6 +149,7 @@ void nes_reset(int hard)
 	nes.mapper->reset(hard);
 	ppu_reset(hard);
 	cpu_reset(hard);
+	apu_reset(hard);
 
 	//clear some memory for hard reset
 	if(hard) {

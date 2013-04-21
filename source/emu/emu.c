@@ -24,6 +24,7 @@
 #include "system/system.h"
 #include "system/video.h"
 #include "system/input.h"
+#include "system/sound.h"
 #include "nes/nes.h"
 
 #define SUBSYSTEM_START	static subsystem_t subsystems[] = {
@@ -44,7 +45,7 @@ SUBSYSTEM_START
 	SUBSYSTEM(system)
 	SUBSYSTEM(video)
 	SUBSYSTEM(input)
-//	SUBSYSTEM(sound)
+	SUBSYSTEM(sound)
 	SUBSYSTEM(nes)
 SUBSYSTEM_END
 

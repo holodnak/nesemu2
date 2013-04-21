@@ -167,7 +167,12 @@
     <ClCompile Include="..\..\source\mappers\chips\mmc2.c" />
     <ClCompile Include="..\..\source\mappers\chips\mmc3.c" />
     <ClCompile Include="..\..\source\mappers\chips\mmc4.c" />
-    <ClCompile Include="..\..\source\nes\apu\apu.c" />
+    <ClCompile Include="..\..\source\nes\apu\apu.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\apu\mattapu.c" />
     <ClCompile Include="..\..\source\nes\cpu\helper.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>

@@ -144,7 +144,32 @@ static INLINE void OP_AXS()
 	else
 		FLAG_C = 0;
 }
+/*
+// 9E: // shx $1234,y
+Array
+(
+[1005] => addr = PB();
+[1020] => d = Y;
+[1050] => addr = u8(addr) + 256 * PB();
+[1080] => RB(wrap(addr, addr+d));
+[1262] => WB(wrap(addr, addr+d), X & ((addr+d) >> 8));
+)
 
+// 9C: // shy $1234,x
+Array
+(
+[1005] => addr = PB();
+[1010] => d = X;
+[1050] => addr = u8(addr) + 256 * PB();
+[1080] => RB(wrap(addr, addr+d));
+[1263] => WB(wrap(addr, addr+d), Y & ((addr+d) >> 8));
+)
+
+Where PB() is equal to RB(PC++),
+RB(addr) reads a byte from given address,
+and WB(addr, value) writes a byte into the given address;
+and wrap(addr, addr2) is equal to (addr & 0xFF00) + (addr2 & 0xFF). 
+*/
 static INLINE void OP_SYA()
 {
 	tmp8 = Y & ((EFFADDR >> 8) + 1);

@@ -118,6 +118,15 @@
     <Filter Include="Header Files\inputdev">
       <UniqueIdentifier>{bae9961a-dfb4-489e-852f-2d9c51fdd715}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\mappers\boards\tengen">
+      <UniqueIdentifier>{6fcfe4c4-9d62-41b9-8654-6452db3ed9b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\boards\camerica">
+      <UniqueIdentifier>{992ea390-c6d6-40f3-b2f6-bbc2d7c0e5d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\boards\taito">
+      <UniqueIdentifier>{50962921-7d9f-4ca7-9cae-2998dd5b010b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -234,9 +243,6 @@
     <ClCompile Include="..\..\source\palette\palette.c">
       <Filter>Source Files\palette</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\mappers\chips\c_mmc1.c">
-      <Filter>Source Files\mappers\chips</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\nintendo\sxrom.c">
       <Filter>Source Files\mappers\boards\nintendo</Filter>
     </ClCompile>
@@ -267,8 +273,47 @@
     <ClCompile Include="..\..\source\mappers\boards\nintendo\uxrom.c">
       <Filter>Source Files\mappers\boards\nintendo</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\mappers\chips\c_latch.c">
+    <ClCompile Include="..\..\source\nes\cpu\helper.c">
+      <Filter>Source Files\nes\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\chips\latch.c">
       <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\chips\mmc1.c">
+      <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\chips\mmc2.c">
+      <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\chips\mmc3.c">
+      <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\chips\mmc4.c">
+      <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\txrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\axrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\fxrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\pxrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\camerica\bf909x.c">
+      <Filter>Source Files\mappers\boards\camerica</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\taito\x1-005.c">
+      <Filter>Source Files\mappers\boards\taito</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\tengen\800032.c">
+      <Filter>Source Files\mappers\boards\tengen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\apu\apu.c">
+      <Filter>Source Files\nes\apu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -341,9 +386,6 @@
     <ClInclude Include="..\..\source\palette\palette.h">
       <Filter>Header Files\palette</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\mappers\chips\c_mmc1.h">
-      <Filter>Header Files\mappers\chips</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\inputdev\inputdev.h">
       <Filter>Header Files\inputdev</Filter>
     </ClInclude>
@@ -364,6 +406,24 @@
     </ClInclude>
     <ClInclude Include="..\..\source\nes\ppu\tilecache.h">
       <Filter>Header Files\nes\ppu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\mappers\chips\latch.h">
+      <Filter>Header Files\mappers\chips</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\mappers\chips\mmc1.h">
+      <Filter>Header Files\mappers\chips</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\mappers\chips\mmc2.h">
+      <Filter>Header Files\mappers\chips</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\mappers\chips\mmc3.h">
+      <Filter>Header Files\mappers\chips</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\mappers\chips\mmc4.h">
+      <Filter>Header Files\mappers\chips</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\nes\apu\apu.h">
+      <Filter>Header Files\nes\apu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -20,7 +20,6 @@
 
 #include <SDL/SDL.h>
 #include <stdio.h>
-#include <windows.h>
 #include "log/log.h"
 #include "emu/emu.h"
 #include "nes/nes.h"
@@ -63,7 +62,7 @@ int mainloop()
 
 	//main event loop
 	while(quit == 0) {
-		t = GetTickCount();
+		t = SDL_GetTicks();
 		nes_frame();
 		input_poll();
 		if(joykeys[SDLK_p]) {
@@ -81,7 +80,7 @@ int mainloop()
 			keydown &= ~2;
 		}
 		system_check_events();
-		total += GetTickCount() - t;
+		total += SDL_GetTicks() - t;
 //		if(total >= 10 * 1000)	quit++;
 	}
 

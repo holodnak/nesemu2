@@ -52,7 +52,7 @@ static u8 read_low(u32 addr)
 			return(ram[addr & 0x7F]);
 		}
 	}
-	return((u8)addr >> 8);
+	return((u8)(addr >> 8));
 }
 
 static void write_low(u32 addr,u8 data)

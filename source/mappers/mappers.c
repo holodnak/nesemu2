@@ -36,6 +36,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_NROM);
 	MAPPER(B_SxROM);
 	MAPPER(B_UxROM);
+	MAPPER(B_UN1ROM);
 	MAPPER(B_AxROM);
 	MAPPER(B_PxROM);
 	MAPPER(B_FxROM);

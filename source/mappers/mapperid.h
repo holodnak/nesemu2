@@ -42,6 +42,7 @@ enum boardid_e {
 	B_UxROM,
 	B_GxROM_MxROM,		//GNROM + MHROM -- same function different names
 	B_TQROM,
+	B_UN1ROM,
 	B_EVENT,
 
 	//konami

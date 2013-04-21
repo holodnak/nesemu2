@@ -7,5 +7,8 @@ ppu
  . start attribute cache
  . $2005/6 masks for internal scroll temp register (bit15 is ok?)
  . $2002 nmi suppression
- . dirty buffer system for cache + vram, what if rom writes the data backwards?
+ . dirty buffer system for cache + vram...NECESSARY ASAP (wizards & warriors)
  . make the other two nametables for four screen handled by cart, not ppu
+
+broken games
+ . senjou no ookami (not working at all)

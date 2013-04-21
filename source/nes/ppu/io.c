@@ -50,7 +50,7 @@ void ppu_memwrite(u32 addr,u8 data)
 
 	//if address is in chr ram, update the cache
 	if(addr < 0x2000) {
-		if((addr & 0xF) == 0xF) {
+/*		if((addr & 0xF) == 0xF)*/ {
 			cache_t *cache = nes.ppu.cachepages[page];
 			cache_t *cache_hflip = nes.ppu.cachepages_hflip[page];
 			u8 *chr = nes.ppu.readpages[page];

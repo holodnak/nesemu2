@@ -18,43 +18,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mapperinc.h"
+#include "mappers/mapperinc.h"
+#include "mappers/chips/latch.h"
 
-struct ines_boardid_s {
-	int num;
-	int boardid;
-};
-
-#define INES_BOARD_START()		static struct ines_boardid_s boards[] = {
-#define INES_BOARD_END()		{0,-1}};
-#define INES_BOARD(n,b)			{n,b},
-
-INES_BOARD_START()
-	INES_BOARD(0,		B_NROM)
-	INES_BOARD(1,		B_SxROM)
-	INES_BOARD(2,		B_UxROM)
-	INES_BOARD(3,		B_CNROM)
-	INES_BOARD(4,		B_TxROM)
-	INES_BOARD(7,		B_AxROM)
-	INES_BOARD(9,		B_PxROM)
-	INES_BOARD(10,		B_FxROM)
-	INES_BOARD(13,		B_CPROM)
-	INES_BOARD(64,		B_TENGEN_800032)
-	INES_BOARD(71,		B_CAMERICA_BF9093)
-	INES_BOARD(80,		B_TAITO_X1_005)
-	INES_BOARD(94,		B_UN1ROM)
-	INES_BOARD(119,	B_TQROM)
-	INES_BOARD(207,	B_TAITO_X1_005A)
-	INES_BOARD(232,	B_CAMERICA_BF9096)
-INES_BOARD_END()
-
-int mapper_get_mapperid_ines(int num)
+static void sync()
 {
-	int i;
-
-	for(i=0;boards[i].boardid != -1;i++) {
-		if(num == boards[i].num)
-			return(boards[i].boardid);
-	}
-	return(B_UNSUPPORTED);
+	mem_setprg16(0x8,latch_reg << 2);
+	mem_setprg16(0xC,0xFF);
+	mem_setvram8(0,0);
 }
+
+static void reset(int hard)
+{
+	mem_setvramsize(8);
+	latch_init(sync);
+}
+
+MAPPER(B_UN1ROM,reset,0,0,latch_state);

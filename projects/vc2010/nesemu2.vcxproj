@@ -158,6 +158,7 @@
     <ClCompile Include="..\..\source\mappers\boards\nintendo\sxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\tqrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\txrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\un1rom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\uxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\taito\x1-005.c" />
     <ClCompile Include="..\..\source\mappers\boards\tengen\800032.c" />

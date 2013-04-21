@@ -19,9 +19,20 @@
  ***************************************************************************/
 
 #include <SDL/SDL.h>
-#include <direct.h>
+
+//getcwd
+#ifdef WIN32
+	#include <direct.h>
+#else
+	#include <unistd.h>
+#endif
+
 #include "types.h"
 #include "system/main.h"
+
+#ifndef _MAX_PATH
+	#define _MAX_PATH 4096
+#endif
 
 static SDL_Joystick *joystick = 0;
 

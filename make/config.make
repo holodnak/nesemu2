@@ -14,3 +14,6 @@ USE_QUICK_SPRITES ?= 1
 
 # build type
 BUILD ?= DEBUG
+
+# os target
+OS ?= WIN32

@@ -27,10 +27,24 @@ SOURCE_NES += source/nes/apu/apu.c
 # palette
 SOURCE_PALETTE = source/palette/generator.c source/palette/palette.c
 
-# system files
+# sdl system files
 SOURCE_SYSTEM_SDL = source/system/sdl/video.c source/system/sdl/input.c source/system/sdl/sound.c
-SOURCE_SYSTEM_SDL += source/system/sdl/main.c source/system/sdl/system.c source/system/sdl/win32/SDL_win32_main.c
-SOURCE_SYSTEM = $(SOURCE_SYSTEM_SDL)
+SOURCE_SYSTEM_SDL += source/system/sdl/main.c source/system/sdl/system.c
+
+# sdl/win32 system files
+SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c
+
+# linux system files
+SOURCE_SYSTEM_LINUX = source/system/linux/stricmp.c
+
+# system files
+ifeq ($(OS),WIN32)
+SOURCE_SYSTEM = $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_WIN32)
+endif
+
+ifeq ($(OS),LINUX)
+SOURCE_SYSTEM = $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_LINUX)
+endif
 
 # build list of source files
 SOURCES = $(SOURCE_CONFIG) $(SOURCE_LOG) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE) $(SOURCE_SYSTEM)

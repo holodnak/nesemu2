@@ -33,7 +33,7 @@
 #include "inputdev/joypad1.h"
 
 int quit = 0;
-char romfilename[_MAX_PATH];
+char romfilename[1024];
 static palette_t *pal = 0;
 
 static int keydown = 0;
@@ -103,7 +103,7 @@ int main(int argc,char *argv[])
 	}
 
 	//set rom filename
-	strncpy(romfilename,argv[1],_MAX_PATH);
+	strncpy(romfilename,argv[1],1024);
 
 //strcpy(romfilename,"smb.nes");
 
@@ -120,6 +120,8 @@ int main(int argc,char *argv[])
 	emu_kill();
 
 	//return to os
+#ifdef WIN32
 	system("pause");
+#endif
 	return(ret);
 }

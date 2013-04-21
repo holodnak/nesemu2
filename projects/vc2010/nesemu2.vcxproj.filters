@@ -315,6 +315,15 @@
     <ClCompile Include="..\..\source\nes\apu\apu.c">
       <Filter>Source Files\nes\apu</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\tqrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\cnrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\cprom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

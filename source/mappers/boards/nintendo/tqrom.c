@@ -18,42 +18,29 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mapperinc.h"
+#include "mappers/mapperinc.h"
+#include "mappers/chips/mmc3.h"
 
-struct ines_boardid_s {
-	int num;
-	int boardid;
-};
-
-#define INES_BOARD_START()		static struct ines_boardid_s boards[] = {
-#define INES_BOARD_END()		{0,-1}};
-#define INES_BOARD(n,b)			{n,b},
-
-INES_BOARD_START()
-	INES_BOARD(0,		B_NROM)
-	INES_BOARD(1,		B_SxROM)
-	INES_BOARD(2,		B_UxROM)
-	INES_BOARD(3,		B_CNROM)
-	INES_BOARD(4,		B_TxROM)
-	INES_BOARD(7,		B_AxROM)
-	INES_BOARD(9,		B_PxROM)
-	INES_BOARD(10,		B_FxROM)
-	INES_BOARD(13,		B_CPROM)
-	INES_BOARD(64,		B_TENGEN_800032)
-	INES_BOARD(71,		B_CAMERICA_BF9093)
-	INES_BOARD(80,		B_TAITO_X1_005)
-	INES_BOARD(119,	B_TQROM)
-	INES_BOARD(207,	B_TAITO_X1_005A)
-	INES_BOARD(232,	B_CAMERICA_BF9096)
-INES_BOARD_END()
-
-int mapper_get_mapperid_ines(int num)
+static void sync()
 {
-	int i;
+	int i,j;
 
-	for(i=0;boards[i].boardid != -1;i++) {
-		if(num == boards[i].num)
-			return(boards[i].boardid);
+	mmc3_syncprg(0x3F,0);
+	for(i=0;i<8;i++) {
+		j = mmc3_getchrbank(i);
+		if(j & 0x40)
+			mem_setvram1(i,j & 7);
+		else
+			mem_setchr1(i,j & 0x3F);
 	}
-	return(B_UNSUPPORTED);
+	mmc3_syncsram();
+	mmc3_syncmirror();
 }
+
+static void reset(int hard)
+{
+	mem_setvramsize(8);
+	mmc3_reset(sync,hard);
+}
+
+MAPPER(B_TQROM,reset,0,mmc3_cycle,mmc3_state);

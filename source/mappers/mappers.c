@@ -40,6 +40,9 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_PxROM);
 	MAPPER(B_FxROM);
 	MAPPER(B_TxROM);
+	MAPPER(B_TQROM);
+	MAPPER(B_CNROM);
+	MAPPER(B_CPROM);
 
 	//taito
 	MAPPER(B_TAITO_X1_005);

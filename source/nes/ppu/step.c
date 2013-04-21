@@ -412,6 +412,10 @@ static INLINE void quick_process_sprites()
 		sprtemp[i].tile = 0xFF;
 	}
 
+	//if sprites disabled, return
+	if((CONTROL1 & 0x10) == 0)
+		return;
+
 	//determine sprite height
 	h = 8 + ((CONTROL0 & 0x20) >> 2);
 
@@ -571,8 +575,7 @@ static INLINE void scanline_prerender()
 			inc_hscroll();
 			inc_vscroll();
 #ifdef QUICK_SPRITES
-			if(CONTROL1 & 0x10)
-				quick_process_sprites();
+			quick_process_sprites();
 #endif
 			break;
 
@@ -743,8 +746,7 @@ static INLINE void scanline_visible()
 //			log_printf("sprites %s (%s)\n",(CONTROL1 & 0x10) ? "enabled" : "disabled",(CONTROL1 & 0x10) ? "8x16" : "8x8");
 			inc_vscroll();
 #ifdef QUICK_SPRITES
-			if(CONTROL1 & 0x10)
-				quick_process_sprites();
+			quick_process_sprites();
 #endif
 			break;
 

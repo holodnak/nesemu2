@@ -151,9 +151,12 @@
     <ClCompile Include="..\..\source\inputdev\null.c" />
     <ClCompile Include="..\..\source\mappers\boards\camerica\bf909x.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\axrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\cnrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\cprom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\fxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\pxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\sxrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\tqrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\txrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\uxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\taito\x1-005.c" />

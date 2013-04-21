@@ -37,22 +37,13 @@ SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c
 # linux system files
 SOURCE_SYSTEM_LINUX = source/system/linux/stricmp.c
 
-# system files
-ifeq ($(OS),WIN32)
-SOURCE_SYSTEM = $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_WIN32)
-endif
-
-ifeq ($(OS),LINUX)
-SOURCE_SYSTEM = $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_LINUX)
-endif
-
 # build list of source files
-SOURCES = $(SOURCE_CONFIG) $(SOURCE_LOG) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE) $(SOURCE_SYSTEM)
+SOURCES = $(SOURCE_CONFIG) $(SOURCE_LOG) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE)
 
 # extra files to remove
 TRASHFILES = nesemu2.log stdout.txt stderr.txt
 TRASHFILES += projects/codeblocks/nesemu2.depend projects/codeblocks/nesemu2.layout
-TRASHFILES += projects/vc2003/nesemu2.ncb
+TRASHFILES += projects/vc2003/nesemu2.ncb projects/vc2010/nesemu2.sdf
 
 # extra directories to remove
 TRASHDIRS = projects/codeblocks/bin projects/codeblocks/obj
@@ -62,5 +53,16 @@ TRASHDIRS += projects/vc2010/Debug projects/vc2010/Release projects/vc2010/ipch
 # generate object files
 OBJECTS = $(patsubst %.c,%.o,$(SOURCES))
 
-# target executable filename
-TARGET = nesemu2.exe
+# output executable name
+OUTPUT = nesemu2
+
+# system stuff
+ifeq ($(OSTARGET),WIN32)
+	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_WIN32)
+	TARGET = $(OUTPUT).exe
+endif
+
+ifeq ($(OSTARGET),LINUX)
+	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_LINUX)
+	TARGET = $(OUTPUT)
+endif

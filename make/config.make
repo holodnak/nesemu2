@@ -16,4 +16,4 @@ USE_QUICK_SPRITES ?= 1
 BUILD ?= DEBUG
 
 # os target
-OS ?= WIN32
+OSTARGET ?= WIN32

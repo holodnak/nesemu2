@@ -18,7 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-//#define DOUBLESIZE
+#define DOUBLESIZE
+#define FRAMELIMIT
 
 #ifdef WIN32
 #include <windows.h>
@@ -93,12 +94,14 @@ void video_endframe()
 
 	//simple frame limiter
 	t = SDL_GetTicks();
-/*	while((t - lasttime) < interval) {
+#ifdef FRAMELIMIT
+	while((t - lasttime) < interval) {
 #ifdef WIN32
-		Sleep(interval - (t - lasttime) + 0);
+//		Sleep(interval - (t - lasttime) + 0);
 #endif
 		t = SDL_GetTicks();
-	}*/
+	}
+#endif
 	lasttime = t;
 }
 

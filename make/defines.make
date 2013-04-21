@@ -33,5 +33,5 @@ ifeq ($(USE_QUICK_SPRITES),1)
 endif
 
 # compiler/linker flags
-CFLAGS = $(CFLAGS_$(BUILD)) $(DEFINES) -I$(PATH_SOURCE)
+CFLAGS = $(CFLAGS_$(BUILD)) $(DEFINES) -I$(PATH_SOURCE) -D$(OSTARGET) -D$(BUILD)
 LDFLAGS = $(LDFLAGS_$(BUILD)) $(LIBS)

@@ -18,17 +18,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#define DOUBLESIZE
-#define FRAMELIMIT
+//#define DOUBLESIZE
+//#define FRAMELIMIT
 
 #ifdef WIN32
-#include <windows.h>
+	#include <windows.h>
 #endif
 #include <SDL/SDL.h>
 #include "log/log.h"
 #include "palette/palette.h"
 #include "system/video.h"
 #include "nes/nes.h"
+#include "system/win32/resource.h"
 
 static SDL_Surface *surface = 0;
 static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;// | SDL_NOFRAME;

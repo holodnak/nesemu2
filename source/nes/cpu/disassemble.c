@@ -115,7 +115,7 @@ u16 cpu_disassemble(char *buffer,u16 opcodepos)
 	strcpy(buffer,"");
 	opcode = cpu_read(opcodepos);
 	switch(addrtable[opcode]) {
-		case er:size = 1;sprintf(buffer,"%02X       .u8 $%02x",opcode);break;
+		case er:size = 1;sprintf(buffer,"%02X       .u8 $%02x",opcode,opcode);break;
 		case no:size = 1;sprintf(buffer,"%02X       %s",opcode,opcodes[opcode]);break;
 		case ac:size = 1;sprintf(buffer,"%02X       %s a",opcode,opcodes[opcode]);break;
 		case ab:

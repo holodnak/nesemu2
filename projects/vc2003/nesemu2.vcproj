@@ -417,6 +417,31 @@
 					Filter="">
 					<File
 						RelativePath="..\..\source\nes\apu\apu.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\nes\apu\mattapu.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
 					</File>
 				</Filter>
 				<Filter
@@ -510,6 +535,12 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\axrom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\cnrom.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\cprom.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\fxrom.c">
 						</File>
 						<File
@@ -522,7 +553,13 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\sxrom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\tqrom.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\txrom.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\un1rom.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\uxrom.c">
@@ -802,6 +839,9 @@
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File
+				RelativePath="..\..\source\system\win32\nesemu2.rc">
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\docs\Todo">

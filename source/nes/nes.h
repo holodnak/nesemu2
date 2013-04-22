@@ -76,7 +76,7 @@ void nes_kill();
 int nes_load_cart(cart_t *c);
 int nes_load(char *filename);
 void nes_unload();
-void nes_set_inputdev(int n,inputdev_t *d);
+void nes_set_inputdev(int n,int id);
 void nes_reset(int hard);
 void nes_frame();
 

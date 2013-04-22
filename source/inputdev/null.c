@@ -18,6 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "null.h"
+#include "inputdev.h"
 
-inputdev_t dev_null = {0,0,0,0};
+INPUTDEV(I_NULL,0,0,0,0);

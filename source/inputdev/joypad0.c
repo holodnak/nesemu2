@@ -20,13 +20,13 @@
 
 //hacked in sdl keys only!
 #include <SDL/SDL.h>
-#include "joypad0.h"
+#include "inputdev.h"
 #include "system/input.h"
 
 static u32 data;
 static u8 counter;
 
-static u8 read0()
+static u8 read()
 {
 	return(((data >> counter++) & 1) | 0x40);
 }
@@ -45,4 +45,4 @@ static void strobe()
 	counter = 0;
 }
 
-inputdev_t dev_joypad0 = {read0,0,strobe,0};
+INPUTDEV(I_JOYPAD0,read,0,strobe,0);

@@ -404,15 +404,6 @@
     <ClInclude Include="..\..\source\inputdev\inputdev.h">
       <Filter>Header Files\inputdev</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\inputdev\joypad0.h">
-      <Filter>Header Files\inputdev</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\inputdev\joypad1.h">
-      <Filter>Header Files\inputdev</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\inputdev\null.h">
-      <Filter>Header Files\inputdev</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\nes\io.h">
       <Filter>Header Files\nes</Filter>
     </ClInclude>

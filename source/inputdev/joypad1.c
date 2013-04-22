@@ -18,13 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "joypad1.h"
+#include "inputdev.h"
 #include "system/input.h"
 
 static u32 data;
 static u8 counter;
 
-static u8 read1()
+static u8 read()
 {
 	return(((data >> counter++) & 1) | 0x40);
 }
@@ -43,4 +43,4 @@ static void strobe()
 	counter = 0;
 }
 
-inputdev_t dev_joypad1 = {read1,0,strobe,0};
+INPUTDEV(I_JOYPAD1,read,0,strobe,0);

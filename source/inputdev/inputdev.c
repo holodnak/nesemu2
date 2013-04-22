@@ -19,3 +19,44 @@
  ***************************************************************************/
 
 #include "inputdev.h"
+
+#ifdef INPUTDEV
+	#undef INPUTDEV
+#endif
+
+#define INPUTDEV(n) { \
+	extern inputdev_t inputdev##n; \
+	if(inputdevid == n) \
+		return(&inputdev##n); \
+	}
+
+static inputdev_t *get_inputdev(int inputdevid)
+{
+	//null device
+	INPUTDEV(I_NULL);
+
+	//standard input devices
+	INPUTDEV(I_JOYPAD0);
+	INPUTDEV(I_JOYPAD1);
+
+	return(0);
+}
+
+static u8 null_read()				{return(0);}
+static void null_write(u8 data)	{}
+static void null_strobe()			{}
+static void null_update()			{}
+
+inputdev_t *inputdev_get(int inputdevid)
+{
+	inputdev_t *ret = get_inputdev(inputdevid);
+
+	if(ret == 0) {
+		return(get_inputdev(I_NULL));
+	}
+	ret->read = (ret->read == 0) ? null_read : ret->read;
+	ret->write = (ret->write == 0) ? null_write : ret->write;
+	ret->strobe = (ret->strobe == 0) ? null_strobe : ret->strobe;
+	ret->update = (ret->update == 0) ? null_update : ret->update;
+	return(ret);
+}

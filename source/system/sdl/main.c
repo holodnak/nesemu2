@@ -28,9 +28,6 @@
 #include "system/input.h"
 #include "palette/palette.h"
 #include "palette/generator.h"
-#include "inputdev/null.h"
-#include "inputdev/joypad0.h"
-#include "inputdev/joypad1.h"
 
 int quit = 0;
 char romfilename[1024];
@@ -47,9 +44,8 @@ int mainloop()
 		return(1);
 	}
 
-	nes_set_inputdev(0,&dev_joypad0);
-	nes_set_inputdev(1,&dev_null);
-	nes_set_inputdev(2,&dev_null);
+	nes_set_inputdev(0,I_JOYPAD0);
+
 	pal = palette_generate(-15,45);
 	video_setpalette(pal);
 
@@ -120,7 +116,7 @@ int main(int argc,char *argv[])
 	emu_kill();
 
 	//return to os
-#ifdef WIN32
+#if defined(WIN32) && defined(DEBUG)
 	system("pause");
 #endif
 	return(ret);

@@ -23,7 +23,13 @@
 
 #include "types.h"
 
+#define INPUTDEV(id,read,write,strobe,update) \
+	inputdev_t inputdev##id = {id,read,write,strobe,update}
+
 typedef struct inputdev_s {
+	//device id
+	int id;
+
 	//read port
 	u8 (*read)();
 
@@ -36,5 +42,15 @@ typedef struct inputdev_s {
 	//update controller info
 	void (*update)();
 } inputdev_t;
+
+enum inputdevid_e {
+	I_NULL,
+	I_JOYPAD0,
+	I_JOYPAD1,
+	I_ZAPPER,
+	I_POWERPAD,
+};
+
+inputdev_t *inputdev_get(int id);
 
 #endif

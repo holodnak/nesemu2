@@ -33,6 +33,9 @@ int nes_init()
 	int ret = 0;
 	
 	memset(&nes,0,sizeof(nes_t));
+	nes_set_inputdev(0,I_NULL);
+	nes_set_inputdev(1,I_NULL);
+	nes_set_inputdev(2,I_NULL);
 	ret += cpu_init();
 	ret += ppu_init();
 	ret += apu_init();
@@ -91,33 +94,12 @@ void nes_unload()
 	nes.mapper = 0;
 }
 
-	//read port
-	u8 (*read)();
-
-	//write port
-	void (*write)(u8);
-
-	//strobe
-	void (*strobe)();
-
-	//update controller info
-	void (*update)();
-	
-static u8 inputdev_null_read()				{return(0);}
-static void inputdev_null_write(u8 data)	{}
-static void inputdev_null_strobe()			{}
-static void inputdev_null_update()			{}
-
-void nes_set_inputdev(int n,inputdev_t *d)
+void nes_set_inputdev(int n,int id)
 {
-	d->read = (d->read == 0) ? inputdev_null_read : d->read;
-	d->write = (d->write == 0) ? inputdev_null_write : d->write;
-	d->strobe = (d->strobe == 0) ? inputdev_null_strobe : d->strobe;
-	d->update = (d->update == 0) ? inputdev_null_update : d->update;
 	if(n < 2)
-		nes.inputdev[n] = d;
+		nes.inputdev[n] = inputdev_get(id);
 	else
-		nes.expdev = d;
+		nes.expdev = inputdev_get(id);
 }
 
 void nes_reset(int hard)

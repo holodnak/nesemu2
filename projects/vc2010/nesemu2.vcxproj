@@ -137,11 +137,13 @@
       <AdditionalDependencies>SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)nesemu2.exe</OutputFile>
       <AdditionalLibraryDirectories>D:\Development\SDL-1.2.15\lib;D:\Development\zlib-1.2.7\win32\zlib\Release;C:\mingw\home\Guest\zlib\Release;C:\DELL\drivers\R8088\SDL-1.2.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
+      <LinkStatus>false</LinkStatus>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -294,9 +296,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\inputdev\inputdev.h" />
-    <ClInclude Include="..\..\source\inputdev\joypad0.h" />
-    <ClInclude Include="..\..\source\inputdev\joypad1.h" />
-    <ClInclude Include="..\..\source\inputdev\null.h" />
     <ClInclude Include="..\..\source\mappers\chips\latch.h" />
     <ClInclude Include="..\..\source\mappers\chips\mmc1.h" />
     <ClInclude Include="..\..\source\mappers\chips\mmc2.h" />

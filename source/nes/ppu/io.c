@@ -71,12 +71,12 @@ void ppu_memwrite(u32 addr,u8 data)
 #endif
 }
 
-u8 pal_read(u32 addr)
+u8 ppu_pal_read(u32 addr)
 {
 	return(nes.ppu.palette[addr]);
 }
 
-void pal_write(u32 addr,u8 data)
+void ppu_pal_write(u32 addr,u8 data)
 {
 	nes.ppu.palette[addr] = data;
 	video_updatepalette(addr,data);
@@ -119,7 +119,7 @@ u8 ppu_read(u32 addr)
 			SCROLL &= 0x7FFF;
 			nes.ppu.latch = ppu_memread(SCROLL);
 			if((SCROLL & 0x3F00) == 0x3F00)
-				nes.ppu.buf = pal_read(SCROLL & 0x1F);
+				nes.ppu.buf = ppu_pal_read(SCROLL & 0x1F);
 			if(CONTROL0 & 4)
 				SCROLL += 32;
 			else
@@ -181,10 +181,10 @@ void ppu_write(u32 addr,u8 data)
 			else {
 				if((SCROLL & 0x0F) == 0) {
 					for(i=0;i<8;i++)
-						pal_write(i * 4,data);
+						ppu_pal_write(i * 4,data);
 				}
 				else if(SCROLL & 3)
-					pal_write(SCROLL & 0x1F,data);
+					ppu_pal_write(SCROLL & 0x1F,data);
 			}
 			if(CONTROL0 & 4)
 				SCROLL += 32;

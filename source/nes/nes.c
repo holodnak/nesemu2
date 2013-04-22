@@ -18,15 +18,25 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "log/log.h"
 #include "nes/nes.h"
 #include "nes/io.h"
 #include "nes/memory.h"
-#include "nes/ppu/ppu.h"
+#include "nes/state/state.h"
 
 nes_t nes;
+
+//kludge
+static mapper_state(int mode,u8 *data)	{	nes.mapper->state(mode,data);		}
+
+//non-kludges
+static vram_state(int mode,u8 *data)	{	STATE_ARRAY_U8(nes.cart->vram.data,nes.cart->vram.size);		}
+static svram_state(int mode,u8 *data)	{	STATE_ARRAY_U8(nes.cart->svram.data,nes.cart->svram.size);	}
+static wram_state(int mode,u8 *data)	{	STATE_ARRAY_U8(nes.cart->wram.data,nes.cart->wram.size);		}
+static sram_state(int mode,u8 *data)	{	STATE_ARRAY_U8(nes.cart->sram.data,nes.cart->sram.size);		}
 
 int nes_init()
 {
@@ -36,6 +46,13 @@ int nes_init()
 	nes_set_inputdev(0,I_NULL);
 	nes_set_inputdev(1,I_NULL);
 	nes_set_inputdev(2,I_NULL);
+	state_init();
+	state_register(B_NES,nes_state);
+	state_register(B_MAPR,mapper_state);
+	state_register(B_VRAM,vram_state);
+	state_register(B_SVRAM,svram_state);
+	state_register(B_WRAM,wram_state);
+	state_register(B_SRAM,sram_state);
 	ret += cpu_init();
 	ret += ppu_init();
 	ret += apu_init();
@@ -44,6 +61,7 @@ int nes_init()
 
 void nes_kill()
 {
+	state_kill();
 	cpu_kill();
 	ppu_kill();
 	apu_kill();
@@ -145,4 +163,35 @@ void nes_reset(int hard)
 void nes_frame()
 {
 	cpu_execute_frame();
+}
+
+void nes_state(int mode,u8 *data)
+{
+	STATE_U8(nes.strobe);
+}
+
+void nes_savestate(char *filename)
+{
+	FILE *fp;
+
+	if((fp = fopen(filename,"wb")) == 0) {
+		log_printf("nes_savestate:  error opening file '%s'\n",filename);
+		return;
+	}
+	log_printf("nes_savestate:  saving state to '%s'\n",filename);
+	state_save(fp);
+	fclose(fp);
+}
+
+void nes_loadstate(char *filename)
+{
+	FILE *fp;
+
+	if((fp = fopen(filename,"rb")) == 0) {
+		log_printf("nes_loadstate:  error opening file '%s'\n",filename);
+		return;
+	}
+	log_printf("nes_loadstate:  loading state from '%s'\n",filename);
+	state_load(fp);
+	fclose(fp);
 }

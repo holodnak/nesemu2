@@ -40,7 +40,7 @@ typedef struct subsystem_s {
 } subsystem_t;
 
 SUBSYSTEM_START
-//	SUBSYSTEM(config)
+	SUBSYSTEM(config)
 	SUBSYSTEM(log)
 	SUBSYSTEM(system)
 	SUBSYSTEM(video)

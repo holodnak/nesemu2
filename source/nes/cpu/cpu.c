@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "nes/nes.h"
+#include "nes/state/state.h"
 #include "log/log.h"
 
 //defines to make easier reading
@@ -78,6 +79,7 @@ static int tmpi;
 int cpu_init()
 {
 	cpu_disassemble_init();
+	state_register(B_CPU,cpu_state);
 	return(0);
 }
 
@@ -192,4 +194,18 @@ u8 cpu_getflags()
 {
 	compact_flags();
 	return(P);
+}
+
+void cpu_state(int mode,u8 *data)
+{
+	STATE_U8(A);
+	STATE_U8(X);
+	STATE_U8(Y);
+	STATE_U8(SP);
+	STATE_U8(P);
+	STATE_U16(PC);
+	STATE_U64(CYCLES);
+	STATE_U8(PREV_NMISTATE);
+	STATE_U8(PREV_IRQSTATE);
+	STATE_ARRAY_U8(nes.cpu.ram,0x800);
 }

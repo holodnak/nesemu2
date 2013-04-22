@@ -83,5 +83,6 @@ u32 cpu_execute(u32 cycles);
 void cpu_execute_frame();
 u16 cpu_disassemble(char *buffer,u16 opcodepos);
 void cpu_disassemble_init();
+void cpu_state(int mode,u8 *data);
 
 #endif

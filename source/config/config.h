@@ -1,47 +1,55 @@
+/***************************************************************************
+ *   Copyright (C) 2013 by James Holodnak                                  *
+ *   jamesholodnak@gmail.com                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #ifndef __config_h__
 #define __config_h__
 
-#if 0
-#include "defines.h"
+typedef struct configvar_s {
+	struct configvar_s *next;
+	char *name;
+	char *data;
+} configvar_t;
 
-typedef struct config_s {
-	char path_rom[512];			//path to roms (also last directory browsed)
-	char path_state[512];		//path to save states
-	char path_cheat[512];		//path to disk change states
-	char path_shots[512];		//screenshot path
-	u32 soundenabled;		//sound enabled
-	u32 soundchannels;	//enabled sound channels
-	//stick system dependent config variables
-	//elsewhere, do not define them here
-	u32 filter;				//video filter
-	u32 windowed;			//set to 1 if we are in windowed mode
-	u32 windowscale;		//window size for windowed mode
-	u32 fullscreen;		//fullscreen mode
-	u32 shotformat;		//screenshot format
-	u32 devices[4];		//player devices
-	u32 expdevice;			//expansion device (famicom)
-	u32 hue,sat;			//palette hue/saturation
+int config_init();
+void config_kill();
 
-	u32 fdsbios;			//fds bios selection (0=nintendo,1=hle)
-	u32 showinfo;			//show info at top while playing game
+//load configuration
+int config_load(char *filename);
 
-	//input configuration
-	u32 gui_keys[16];		//gui keys
-	u32 joy_keys[4][10];		//key config for joypads
-	u32 pad_keys[16];		//powerpad buttons
+//save configuration
+int config_save(char *filename);
 
-	char recent[10][1024];	//recent files
-	u32 recentfreeze;
-} config_t;
+//add config var
+void config_add_var(char *name,char *data);
 
-//these both are actually defined in nesemu.c
-extern char path_config[];		//path to configuration file (set by config_defaults() or
-extern config_t config;			//some other system dependent reset call)
+//delete config var
+void config_delete_var(char *name);
 
-//system dependent config functions
-void config_defaults();			//set configuration defaults
-int config_load();
-int config_save();
-#endif
+//get config var
+char *config_get_string(char *name,char *def);
+int config_get_int(char *name,int def);
+double config_get_double(char *name,double def);
+
+//set config var
+void config_set_string(char *name,char *data);
+void config_set_int(char *name,int data);
+void config_set_double(char *name,double data);
 
 #endif

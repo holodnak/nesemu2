@@ -23,6 +23,7 @@
 #include "log/log.h"
 #include "emu/emu.h"
 #include "nes/nes.h"
+#include "config/config.h"
 #include "system/system.h"
 #include "system/video.h"
 #include "system/input.h"
@@ -31,22 +32,31 @@
 
 int quit = 0;
 char romfilename[1024];
+char statefilename[1024];
 static palette_t *pal = 0;
 
 static int keydown = 0;
 
 int mainloop()
 {
-	u32 t,total = 0;
+	u32 t,total = 0,frames = 0;
 
 	//load file into the nes
 	if(nes_load(romfilename) != 0) {
 		return(1);
 	}
 
+	strncpy(statefilename,romfilename,1024);
+	strcat(statefilename,".state");
+
 	nes_set_inputdev(0,I_JOYPAD0);
 
-	pal = palette_generate(-15,45);
+	if(strcmp(config_get_string("palette.source","generator"),"file") == 0) {
+		pal = palette_load(config_get_string("palette.filename","roni.pal"));
+	}
+	if(pal == 0) {
+		pal = palette_generate(config_get_int("palette.generator.hue",-15),config_get_int("palette.generator.saturation",45));
+	}
 	video_setpalette(pal);
 
 	log_printf("resetting nes...\n");
@@ -75,12 +85,27 @@ int mainloop()
 			nes_reset(1);
 			keydown &= ~2;
 		}
+		if(joykeys[SDLK_F5]) {
+			keydown |= 4;
+		}
+		else if(keydown & 4) {
+			nes_savestate(statefilename);
+			keydown &= ~4;
+		}
+		if(joykeys[SDLK_F8]) {
+			keydown |= 8;
+		}
+		else if(keydown & 8) {
+			nes_loadstate(statefilename);
+			keydown &= ~8;
+		}
 		system_check_events();
 		total += SDL_GetTicks() - t;
+		frames++;
 //		if(total >= 10 * 1000)	quit++;
 	}
 
-	log_printf("fps:  %f (%d frames in %f seconds)\n",(double)nes.ppu.frames / (double)total * 1000.0f,nes.ppu.frames,(double)((double)total / 1000.0f));
+	log_printf("fps:  %f (%d frames in %f seconds)\n",(double)frames / (double)total * 1000.0f,frames,(double)((double)total / 1000.0f));
 
 	palette_destroy(pal);
 

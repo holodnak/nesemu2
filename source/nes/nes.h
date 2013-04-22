@@ -24,8 +24,8 @@
 #include "types.h"
 #include "nes/cpu/cpu.h"
 #include "nes/ppu/ppu.h"
-//#include "nes/apu/apu.h"
-#include "nes/apu/mattapu.h"
+#include "nes/apu/apu.h"
+//#include "nes/apu/mattapu.h"
 #include "nes/cart/cart.h"
 #include "mappers/mappers.h"
 #include "inputdev/inputdev.h"
@@ -79,5 +79,8 @@ void nes_unload();
 void nes_set_inputdev(int n,int id);
 void nes_reset(int hard);
 void nes_frame();
+void nes_state(int mode,u8 *data);
+void nes_savestate(char *filename);
+void nes_loadstate(char *filename);
 
 #endif

@@ -12,3 +12,7 @@ ppu
 
 broken games
  . senjou no ookami (not working at all)
+
+states
+ . make each unit with a *_state() function register that function with the
+   state saving system.  should register it and have unique id.

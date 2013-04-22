@@ -39,7 +39,7 @@ const float emphasis_factor[8][3]={
 */
 
 /* measurement by Quietust */
-const double emphasis_factor[8][3]={
+static const double emphasis_factor[8][3]={
    {1.00, 1.00, 1.00},
    {1.00, 0.80, 0.81},
    {0.78, 0.94, 0.66},
@@ -50,19 +50,18 @@ const double emphasis_factor[8][3]={
    {0.70, 0.70, 0.70}
 };
 
-/*void palette_set(palentry_t *p)  //set palette from array
+static void generate_emphasis(palette_t *p)
 {
 	int i,j;
 
-	for(j=0;j<8;j++) {
+	for(j=1;j<8;j++) {
 		for(i=0;i<64;i++) {
-			palettes[j][i].r = (u8)((double)p[i].r * emphasis_factor[j][0]);
-			palettes[j][i].g = (u8)((double)p[i].g * emphasis_factor[j][1]);
-			palettes[j][i].b = (u8)((double)p[i].b * emphasis_factor[j][2]);
+			p->pal[j][i].r = (u8)((double)p->pal[0][i].r * emphasis_factor[j][0]);
+			p->pal[j][i].g = (u8)((double)p->pal[0][i].g * emphasis_factor[j][1]);
+			p->pal[j][i].b = (u8)((double)p->pal[0][i].b * emphasis_factor[j][2]);
 		}
 	}
-	palette = palettes[0];
-}*/
+}
 
 palette_t *palette_create()
 {
@@ -82,13 +81,28 @@ palette_t *palette_load(char *filename)
 {
 	palette_t *ret = 0;
 	FILE *fp;
+	u8 colors[3];
+	int i;
 
 	if((fp = fopen(filename,"rb")) == 0) {
 		log_printf("palette_load:  error opening '%s'\n",filename);
 		return(0);
 	}
-	
+	ret = palette_create();
+	for(i=0;i<64;i++) {
+		fread(colors,1,3,fp);
+		if(feof(fp)) {
+			log_printf("palette_load:  unexpected end of file in '%s'\n",filename);
+			palette_destroy(ret);
+			ret = 0;
+			break;
+		}
+		ret->pal[0][i].r = colors[0];
+		ret->pal[0][i].g = colors[1];
+		ret->pal[0][i].b = colors[2];
+	}
 	fclose(fp);
+	generate_emphasis(ret);
 	return(ret);
 }
 

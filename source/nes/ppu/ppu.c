@@ -20,9 +20,11 @@
 
 #include "nes/nes.h"
 #include "nes/memory.h"
+#include "nes/state/state.h"
 
 int ppu_init()
 {
+	state_register(B_PPU,ppu_state);
 	return(0);
 }
 
@@ -37,4 +39,39 @@ void ppu_reset(int hard)
 	nes.ppu.frames = 0;
 	nes.ppu.fetchpos = 0;
 	nes.ppu.cursprite = 0;
+}
+
+void ppu_sync()
+{
+	int i;
+
+	//cache palette data
+	for(i=0;i<0x20;i++)
+		ppu_pal_write(i,ppu_pal_read(i));
+
+#ifdef CACHE_ATTRIB
+	for(i=0;i<4;i++)
+		cache_attrib(i);
+#endif
+}
+
+void ppu_state(int mode,u8 *data)
+{
+	STATE_U8(CONTROL0);
+	STATE_U8(CONTROL1);
+	STATE_U8(STATUS);
+	STATE_U16(TMPSCROLL);
+	STATE_U16(SCROLL);
+	STATE_U8(SCROLLX);
+	STATE_U8(TOGGLE);
+	STATE_U8(nes.ppu.buf);
+	STATE_U8(nes.ppu.latch);
+	STATE_U8(nes.ppu.oamaddr);
+	STATE_ARRAY_U8(nes.ppu.oam,256);
+	STATE_U32(LINECYCLES);
+	STATE_U32(SCANLINE);
+	STATE_U32(FRAMES);
+	STATE_ARRAY_U8(nes.ppu.nametables,0x1000);
+	STATE_ARRAY_U8(nes.ppu.palette,32);
+	ppu_sync();
 }

@@ -18,61 +18,27 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "nes/nes.h"
-#include "nes/state/state.h"
-#include "log/log.h"
+#ifndef __blocks_h__
+#define __blocks_h__
 
-static u8 regs[0x20];
+#include <stdio.h>
+#include "types.h"
 
-static u8 lengths[32] = {
-	0x0A,0xFE,
-	0x14,0x02,
-	0x28,0x04,
-	0x50,0x06,
-	0xA0,0x08,
-	0x3C,0x0A,
-	0x0E,0x0C,
-	0x1A,0x0E,
-	0x0C,0x10,
-	0x18,0x12,
-	0x30,0x14,
-	0x60,0x16,
-	0xC0,0x18,
-	0x48,0x1A,
-	0x10,0x1C,
-	0x20,0x1E
-};
+#define MAKEID(c1,c2,c3,c4)	(((c1) << 0) | ((c2) << 8) | ((c3) << 16) | ((c4) << 24))
 
-int apu_init()
-{
-	state_register(B_APU,apu_state);
-	return(0);
-}
+//if state data is gzipped
+#define STATE_FLAG_GZIP		0x8000
 
-void apu_kill()
-{
-}
+//block stored in memory
+typedef struct block_s {
+	u8		type;		//block type
+	u32	size;		//block size
+	u8		*data;	//block data
+} block_t;
 
-void apu_reset(int hard)
-{
-}
+block_t *block_create(u32 type,u32 size);
+void block_destroy(block_t *b);
+block_t *block_load(FILE *fp);
+int block_save(FILE *fp,block_t *b);
 
-u8 apu_read(u32 addr)
-{
-//	log_printf("apu_read: $%04X\n",addr);
-	return(0);
-}
-
-void apu_write(u32 addr,u8 data)
-{
-//	log_printf("apu_write: $%04X = $%02X\n",addr,data);
-}
-
-void apu_frame()
-{
-}
-
-void apu_state(int mode,u8 *data)
-{
-	STATE_ARRAY_U8(regs,0x20);
-}
+#endif

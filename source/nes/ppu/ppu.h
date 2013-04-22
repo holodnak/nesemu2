@@ -94,6 +94,9 @@ u8 ppu_read(u32 addr);
 void ppu_write(u32 addr,u8 data);
 u8 ppu_memread(u32 addr);
 void ppu_memwrite(u32 addr,u8 data);
+u8 ppu_pal_read(u32 addr);
+void ppu_pal_write(u32 addr,u8 data);
 void ppu_step();
+void ppu_state(int mode,u8 *data);
 
 #endif

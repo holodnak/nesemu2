@@ -417,16 +417,6 @@
 					Filter="">
 					<File
 						RelativePath="..\..\source\nes\apu\apu.c">
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\source\nes\apu\mattapu.c">
@@ -460,6 +450,12 @@
 				<Filter
 					Name="state"
 					Filter="">
+					<File
+						RelativePath="..\..\source\nes\state\block.c">
+					</File>
+					<File
+						RelativePath="..\..\source\nes\state\state.c">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -750,6 +746,12 @@
 				<Filter
 					Name="state"
 					Filter="">
+					<File
+						RelativePath="..\..\source\nes\state\block.h">
+					</File>
+					<File
+						RelativePath="..\..\source\nes\state\state.h">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

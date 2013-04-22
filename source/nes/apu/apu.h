@@ -49,5 +49,6 @@ void apu_kill();
 void apu_reset(int hard);
 u8 apu_read(u32 addr);
 void apu_write(u32 addr,u8 data);
+void apu_state(int mode,u8 *data);
 
 #endif

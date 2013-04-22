@@ -23,11 +23,6 @@
 
 #include "types.h"
 
-#define STATE_LOAD		0	//load state info into mapper
-#define STATE_SAVE		1	//get state info from mapper
-#define STATE_LOADCFG	2	//load config info into mapper
-#define STATE_SAVECFG	3	//get config info from mapper
-
 typedef struct mapper_s {
 	int boardid;					//internal board id
 	void (*reset)(int);			//mapper reset function

@@ -36,8 +36,8 @@ static void sync()
 	mem_setprg8(0xA,prg[1]);
 	mem_setprg8(0xC,prg[2]);
 	mem_setprg8(0xE,0xFF);
-	mem_setchr2(0,chr[0]);
-	mem_setchr2(2,chr[1]);
+	mem_setchr2(0,chr[0] >> 1);
+	mem_setchr2(2,chr[1] >> 1);
 	mem_setchr1(4,chr[2]);
 	mem_setchr1(5,chr[3]);
 	mem_setchr1(6,chr[4]);

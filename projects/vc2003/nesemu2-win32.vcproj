@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="nesemu2"
-	ProjectGUID="{D0F018F5-28FB-4968-B283-7B02CDE64C1B}"
+	Name="nesemu2-win32"
+	ProjectGUID="{16F5E4B6-A913-473A-B879-77B9AADFF453}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -12,35 +12,31 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug\nesemu2"
-			IntermediateDirectory="Debug\nesemu2"
+			OutputDirectory="Debug\nesemu-win32"
+			IntermediateDirectory="Debug\nesemu-win32"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				InlineFunctionExpansion="2"
-				OptimizeForProcessor="3"
-				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;QUICK_SPRITES"
+				AdditionalIncludeDirectories="..\..\source"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="4"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib"
-				OutputFile="$(OutDir)/nesemu2.exe"
+				OutputFile="$(OutDir)/nesemu2-win32.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;D:\Development\SDL-1.2.15\lib&quot;;&quot;D:\Development\zlib-1.2.7\win32\zlib\Debug&quot;;C:\mingw\home\Guest\zlib\Debug;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\lib&quot;"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/nesemu2.pdb"
-				SubSystem="1"
+				ProgramDatabaseFile="$(OutDir)/nesemu2-win32.pdb"
+				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -65,37 +61,27 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release\nesemu2"
-			IntermediateDirectory="Release\nesemu2"
+			OutputDirectory="Release\nesemu-win32"
+			IntermediateDirectory="Release\nesemu-win32"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				GlobalOptimizations="TRUE"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
-				FavorSizeOrSpeed="1"
-				OmitFramePointers="TRUE"
-				OptimizeForProcessor="3"
-				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;QUICK_SPRITES"
+				AdditionalIncludeDirectories="..\..\source"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"
-				CompileAs="1"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib"
-				OutputFile="$(OutDir)/nesemu2.exe"
+				OutputFile="$(OutDir)/nesemu2-win32.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;D:\Development\SDL-1.2.15\lib&quot;;&quot;D:\Development\zlib-1.2.7\win32\zlib\Release&quot;;C:\mingw\home\Guest\zlib\Release;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\lib&quot;"
 				GenerateDebugInformation="TRUE"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"/>
@@ -132,37 +118,23 @@
 				Name="system"
 				Filter="">
 				<Filter
-					Name="sdl"
+					Name="win32"
 					Filter="">
 					<File
-						RelativePath="..\..\source\system\sdl\input.c">
+						RelativePath="..\..\source\system\win32\input.c">
 					</File>
 					<File
-						RelativePath="..\..\source\system\sdl\main.c">
+						RelativePath="..\..\source\system\win32\main.c">
 					</File>
 					<File
-						RelativePath="..\..\source\system\sdl\sound.c">
+						RelativePath="..\..\source\system\win32\sound.c">
 					</File>
 					<File
-						RelativePath="..\..\source\system\sdl\system.c">
+						RelativePath="..\..\source\system\win32\system.c">
 					</File>
 					<File
-						RelativePath="..\..\source\system\sdl\video.c">
+						RelativePath="..\..\source\system\win32\video.c">
 					</File>
-					<Filter
-						Name="win32"
-						Filter="">
-						<File
-							RelativePath="..\..\source\system\sdl\win32\SDL_win32_main.c">
-						</File>
-					</Filter>
-					<Filter
-						Name="console"
-						Filter="">
-						<File
-							RelativePath="..\..\source\system\sdl\console\console.c">
-						</File>
-					</Filter>
 				</Filter>
 				<Filter
 					Name="common"
@@ -249,160 +221,156 @@
 								Name="VCCLCompilerTool"/>
 						</FileConfiguration>
 					</File>
-					<Filter
-						Name="opcodes"
-						Filter="">
-						<File
-							RelativePath="..\..\source\nes\cpu\opcodes\alu.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\cpu\opcodes\branch.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\cpu\opcodes\compare.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\cpu\opcodes\flag.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\cpu\opcodes\incdec.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\cpu\opcodes\loadstore.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\cpu\opcodes\misc.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\cpu\opcodes\stack.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\cpu\opcodes\transfer.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\cpu\opcodes\undocumented.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-					</Filter>
+					<File
+						RelativePath="..\..\source\nes\cpu\opcodes.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cpu\opcodes_alu.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cpu\opcodes_branch.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cpu\opcodes_compare.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cpu\opcodes_flag.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cpu\opcodes_incdec.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cpu\opcodes_loadstore.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cpu\opcodes_stack.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cpu\opcodes_transfer.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cpu\opcodes_undocumented.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+					</File>
 				</Filter>
 				<Filter
 					Name="ppu"
@@ -422,100 +390,6 @@
 					<File
 						RelativePath="..\..\source\nes\ppu\tilecache.c">
 					</File>
-					<Filter
-						Name="step"
-						Filter="">
-						<File
-							RelativePath="..\..\source\nes\ppu\step\calc.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\ppu\step\draw.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\ppu\step\fetch.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\ppu\step\misc.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\ppu\step\scroll.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\..\source\nes\ppu\step\sprite.c">
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="TRUE">
-								<Tool
-									Name="VCCLCompilerTool"/>
-							</FileConfiguration>
-						</File>
-					</Filter>
 				</Filter>
 				<Filter
 					Name="apu"
@@ -764,6 +638,9 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\source\system\win32\resource.h">
+			</File>
+			<File
 				RelativePath="..\..\source\types.h">
 			</File>
 			<File
@@ -948,6 +825,9 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
 				RelativePath="..\..\source\system\win32\nesemu2-icon.rc">
+			</File>
+			<File
+				RelativePath="..\..\source\system\win32\nesemu2.rc">
 			</File>
 		</Filter>
 		<File

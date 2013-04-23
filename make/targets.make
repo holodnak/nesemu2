@@ -11,7 +11,7 @@ distclean: clean
 	rm -f $(TRASHFILES)
 	rm -rf $(TRASHDIRS)
 
-source/system/win32/nesemu2-res.o: source/system/win32/nesemu2.rc
+source/system/win32/nesemu2-res.o: source/system/win32/nesemu2-icon.rc
 	$(RC) $(RCFLAGS) $^ $@
 
 $(TARGET): $(OBJECTS)

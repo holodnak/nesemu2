@@ -20,7 +20,7 @@
 
 #include <SDL/SDL.h>
 #include "types.h"
-//#include "system/config.h"
+#include "log/log.h"
 
 static int sound_bps = 16;
 static int sound_samplerate = 44100;

@@ -29,14 +29,14 @@
 
 nes_t nes;
 
-//kludge
-static mapper_state(int mode,u8 *data)	{	nes.mapper->state(mode,data);		}
+//kludge (or possibly not)
+static void mapper_state(int mode,u8 *data)	{	nes.mapper->state(mode,data);		}
 
 //non-kludges
-static vram_state(int mode,u8 *data)	{	STATE_ARRAY_U8(nes.cart->vram.data,nes.cart->vram.size);		}
-static svram_state(int mode,u8 *data)	{	STATE_ARRAY_U8(nes.cart->svram.data,nes.cart->svram.size);	}
-static wram_state(int mode,u8 *data)	{	STATE_ARRAY_U8(nes.cart->wram.data,nes.cart->wram.size);		}
-static sram_state(int mode,u8 *data)	{	STATE_ARRAY_U8(nes.cart->sram.data,nes.cart->sram.size);		}
+static void vram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes.cart->vram.data,nes.cart->vram.size);		}
+static void svram_state(int mode,u8 *data)	{	STATE_ARRAY_U8(nes.cart->svram.data,nes.cart->svram.size);	}
+static void wram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes.cart->wram.data,nes.cart->wram.size);		}
+static void sram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes.cart->sram.data,nes.cart->sram.size);		}
 
 int nes_init()
 {

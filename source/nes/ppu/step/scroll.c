@@ -18,51 +18,63 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <windows.h>
-#include "types.h"
-#include "system/system.h"
+static INLINE void inc_hscroll()
+{
+	if(CONTROL1 & 0x18) {
+		/*	The first one, the horizontal scroll counter, consists of 6 bits, and is
+		made up by daisy-chaining the HT counter to the H counter. The HT counter is
+		then clocked every 8 pixel dot clocks (or every 8/3 CPU clock cycles). */
+		if((SCROLL & 0x1F) == 0x1F)		//see if HT counter creates carry
+			SCROLL ^= 0x41F;					//yes, clear lower 5 bits and toggle H counter
+		else
+			SCROLL++;							//no, increment address
+	}
+	nes.ppu.fetchpos++;
+}
 
-//these global variables provide information for the device input code
-int joyx,joyy;		//x and y coords for paddle/mouse
-u8 joyzap;			//zapper trigger
-u8 joykeys[370];	//keyboard state
+static INLINE void inc_vscroll()
+{
+	int n;
 
-// this will map joystick axises/buttons to unused keyboard buttons
-#define FIRSTJOYSTATEKEY (350) // ideally should be SDLK_LAST
-u8 joystate[20];	// dpad + 8 buttons is enuff' for me but let's be sure :-)
+	if(CONTROL1 & 0x18) {
+		//update y coordinate
+		if((SCROLL >> 12) == 7) {
+			SCROLL &= ~0x7000;
+			n = (SCROLL >> 5) & 0x1F;
+			if(n == 29) {
+				SCROLL &= ~0x03E0;
+				SCROLL ^= 0x0800;
+			}
+			else if(n == 31)
+				SCROLL &= ~0x03E0;
+			else
+				SCROLL += 0x20;
+		}
+		else
+			SCROLL += 0x1000;
+	}
+}
 
-int input_init()
+static INLINE void update_hscroll()
 {
 	int i;
 
-//	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
-	for(i=0;i<20;i++) {
-		joystate[i] = 0;
+	if(CONTROL1 & 0x18) {
+		SCROLL &= ~0x041F;
+		SCROLL |= TMPSCROLL & 0x041F;
 	}
-	return(0);
+	nes.ppu.fetchpos = 0;
+	nes.ppu.cursprite = 0;
+	for(i=0;i<(32 + 2);i++) {
+		nes.ppu.attribdata[i] = 0;
+		nes.ppu.cachedata[i] = 0;
+		nes.ppu.tiledata[0][i] = 0;
+		nes.ppu.tiledata[1][i] = 0;
+	}
 }
 
-void input_kill()
+static INLINE void update_scroll()
 {
-}
-
-void input_poll()
-{
-/*	Uint8 *keystate = SDL_GetKeyState(NULL);
-	int i,x,y;
-
-//	joyx = joyy = 0;
-
-	//need to update mousex/mousey/mousebuttons here
-
-	//now update key/mouse state, the input device logic will
-	//decode the key/mouse data into the correct input for the nes
-	for(i=0;i<300;i++)
-		joykeys[i] = keystate[i];
-	joyzap = (SDL_GetMouseState(&x,&y) & 1) << 4;
-	
-	for (i=0; i < 20; i++)
-	{
-		joykeys[FIRSTJOYSTATEKEY + i] = joystate[i];
-	}*/
+	if(CONTROL1 & 0x18)
+		SCROLL = TMPSCROLL;
 }

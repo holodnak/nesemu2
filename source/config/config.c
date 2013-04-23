@@ -49,7 +49,8 @@ static char *eatwhitespace(char *str)
 
 int config_init()
 {
-	return(config_load(FILE_CONFIG));
+	config_load(FILE_CONFIG);
+	return(0);
 }
 
 void config_kill()
@@ -197,12 +198,27 @@ double config_get_double(char *name,double def)
 
 void config_set_string(char *name,char *data)
 {
+	configvar_t *v = config;
+
+	while(v) {
+		if(strcmp(name,v->name) == 0) {
+			free(v->data);
+			v->data = strdup(data);
+		}
+		v = v->next;
+	}
 }
+
+static char tmpstr[64];
 
 void config_set_int(char *name,int data)
 {
+	sprintf(tmpstr,"%d",data);
+	config_set_string(name,tmpstr);
 }
 
 void config_set_double(char *name,double data)
 {
+	sprintf(tmpstr,"%f",data);
+	config_set_string(name,tmpstr);
 }

@@ -1,0 +1,5 @@
+#include "resource-icon.h"
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAIN                ICON                    "mainicon.ico"

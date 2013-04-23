@@ -18,51 +18,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <windows.h>
+#include <stdlib.h>
+#include <string.h>
+#include <direct.h>
 #include "types.h"
-#include "system/system.h"
+#include "system/main.h"
 
-//these global variables provide information for the device input code
-int joyx,joyy;		//x and y coords for paddle/mouse
-u8 joyzap;			//zapper trigger
-u8 joykeys[370];	//keyboard state
-
-// this will map joystick axises/buttons to unused keyboard buttons
-#define FIRSTJOYSTATEKEY (350) // ideally should be SDLK_LAST
-u8 joystate[20];	// dpad + 8 buttons is enuff' for me but let's be sure :-)
-
-int input_init()
+int system_init()
 {
-	int i;
-
-//	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
-	for(i=0;i<20;i++) {
-		joystate[i] = 0;
-	}
 	return(0);
 }
 
-void input_kill()
+void system_kill()
 {
 }
 
-void input_poll()
+void system_check_events()
 {
-/*	Uint8 *keystate = SDL_GetKeyState(NULL);
-	int i,x,y;
 
-//	joyx = joyy = 0;
+}
 
-	//need to update mousex/mousey/mousebuttons here
+char *system_getcwd()
+{
+	static char buf[_MAX_PATH];
 
-	//now update key/mouse state, the input device logic will
-	//decode the key/mouse data into the correct input for the nes
-	for(i=0;i<300;i++)
-		joykeys[i] = keystate[i];
-	joyzap = (SDL_GetMouseState(&x,&y) & 1) << 4;
-	
-	for (i=0; i < 20; i++)
-	{
-		joykeys[FIRSTJOYSTATEKEY + i] = joystate[i];
-	}*/
+	if(getcwd(buf,_MAX_PATH) == NULL)
+		memset(buf,0,_MAX_PATH);
+	return(buf);
 }

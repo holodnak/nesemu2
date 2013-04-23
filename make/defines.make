@@ -3,6 +3,7 @@
 # detect os
 ifeq ($(OS),Windows_NT)
 	OSTARGET = WIN32
+	DEFINES = -DNO_STDIO_REDIRECT
 else
 	UNAME = $(shell uname -s)
 	ifeq ($(UNAME),Linux)

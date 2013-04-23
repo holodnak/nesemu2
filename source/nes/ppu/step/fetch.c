@@ -18,51 +18,62 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <windows.h>
-#include "types.h"
-#include "system/system.h"
-
-//these global variables provide information for the device input code
-int joyx,joyy;		//x and y coords for paddle/mouse
-u8 joyzap;			//zapper trigger
-u8 joykeys[370];	//keyboard state
-
-// this will map joystick axises/buttons to unused keyboard buttons
-#define FIRSTJOYSTATEKEY (350) // ideally should be SDLK_LAST
-u8 joystate[20];	// dpad + 8 buttons is enuff' for me but let's be sure :-)
-
-int input_init()
+static INLINE void fetch_ntbyte()
 {
-	int i;
+	if(CONTROL1 & 0x08) {
+		nes.ppu.ntbyte = ppu_memread(nes.ppu.busaddr);
 
-//	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
-	for(i=0;i<20;i++) {
-		joystate[i] = 0;
+		//mapper tile callback
+		nes.mapper->tile(nes.ppu.ntbyte,((CONTROL0 & 0x10) >> 2) >> 2);
 	}
-	return(0);
 }
 
-void input_kill()
+static INLINE void fetch_atbyte()
+{
+	u32 tmp;
+
+	if(CONTROL1 & 0x08) {
+#ifdef CACHE_ATTRIB
+		tmp = SCROLL & 0xFFF;
+		nes.ppu.attribdata[nes.ppu.fetchpos] = nes.ppu.attribpages[tmp >> 10][tmp & 0x3FF];
+#else
+		tmp = ((ppu_memread(nes.ppu.busaddr) >> (((SCROLL & 2) | (((SCROLL >> 5) & 2) << 1)))) & 3);
+		nes.ppu.attribdata[nes.ppu.fetchpos] = tmp;
+#endif
+	}
+}
+
+static INLINE void fetch_pt0byte()
+{
+	if(CONTROL1 & 0x08) {
+		cache_t *cache,pixels;
+
+		nes.ppu.tiledata[0][nes.ppu.fetchpos] = ppu_memread(nes.ppu.busaddr);
+
+		//tile bank cache pointer
+		cache = nes.ppu.cachepages[(nes.ppu.ntbyte >> 6) | ((CONTROL0 & 0x10) >> 2)];
+
+		//index to the tile data start, then the tile half (upper or lower half)
+		cache += ((nes.ppu.ntbyte & 0x3F) * 2) + ((SCROLL >> 14) & 1);
+
+		//retreive the tile pixels used
+		pixels = *cache >> (((SCROLL >> 12) & 3) << 1);
+
+		nes.ppu.cachedata[nes.ppu.fetchpos] = pixels & CACHE_MASK;
+	}
+}
+
+static INLINE void fetch_pt1byte()
+{
+	if(CONTROL1 & 0x08) {
+		nes.ppu.tiledata[1][nes.ppu.fetchpos] = ppu_memread(nes.ppu.busaddr);
+	}
+}
+
+static INLINE void fetch_spt0byte()
 {
 }
 
-void input_poll()
+static INLINE void fetch_spt1byte()
 {
-/*	Uint8 *keystate = SDL_GetKeyState(NULL);
-	int i,x,y;
-
-//	joyx = joyy = 0;
-
-	//need to update mousex/mousey/mousebuttons here
-
-	//now update key/mouse state, the input device logic will
-	//decode the key/mouse data into the correct input for the nes
-	for(i=0;i<300;i++)
-		joykeys[i] = keystate[i];
-	joyzap = (SDL_GetMouseState(&x,&y) & 1) << 4;
-	
-	for (i=0; i < 20; i++)
-	{
-		joykeys[FIRSTJOYSTATEKEY + i] = joystate[i];
-	}*/
 }

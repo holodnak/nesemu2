@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nesemu2-win32", "nesemu2-win32.vcproj", "{16F5E4B6-A913-473A-B879-77B9AADFF453}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{16F5E4B6-A913-473A-B879-77B9AADFF453}.Debug.ActiveCfg = Debug|Win32
+		{16F5E4B6-A913-473A-B879-77B9AADFF453}.Debug.Build.0 = Debug|Win32
+		{16F5E4B6-A913-473A-B879-77B9AADFF453}.Release.ActiveCfg = Release|Win32
+		{16F5E4B6-A913-473A-B879-77B9AADFF453}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

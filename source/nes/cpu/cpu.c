@@ -60,17 +60,17 @@ static int tmpi;
 #include "addrmodes.c"
 
 //include opcode functions
-#include "opcodes.c"
-#include "opcodes_branch.c"
-#include "opcodes_loadstore.c"
-#include "opcodes_transfer.c"
-#include "opcodes_compare.c"
-#include "opcodes_incdec.c"
-#include "opcodes_alu.c"
-#include "opcodes_flag.c"
-#include "opcodes_stack.c"
+#include "opcodes/misc.c"
+#include "opcodes/branch.c"
+#include "opcodes/loadstore.c"
+#include "opcodes/transfer.c"
+#include "opcodes/compare.c"
+#include "opcodes/incdec.c"
+#include "opcodes/alu.c"
+#include "opcodes/flag.c"
+#include "opcodes/stack.c"
 #ifdef CPU_UNDOC
-	#include "opcodes_undocumented.c"
+	#include "opcodes/undocumented.c"
 #endif
 
 //include functions to execute opcodes

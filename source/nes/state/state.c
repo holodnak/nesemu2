@@ -51,6 +51,7 @@ static u32 version = 0x0100;
 int state_init()
 {
 	memset(blockinfo,0,sizeof(blockfunc_t) * 16);
+	return(0);
 }
 
 void state_kill()

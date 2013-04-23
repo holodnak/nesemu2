@@ -31,7 +31,7 @@
 
 //block stored in memory
 typedef struct block_s {
-	u8		type;		//block type
+	u32	type;		//block type
 	u32	size;		//block size
 	u8		*data;	//block data
 } block_t;

@@ -21,7 +21,7 @@
 #ifndef __cart__ines_h__
 #define __cart__ines_h__
 
-#include "cart.h"
+#include "nes/cart/cart.h"
 
 int cart_load_ines(cart_t *ret,const char *filename);
 

@@ -62,6 +62,12 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_TXC_22211B);
 	MAPPER(B_TXC_22211C);
 
+	//sachen
+	MAPPER(B_SACHEN_74LS374N);
+//	MAPPER(B_SACHEN_74LS374NA);
+	MAPPER(B_SA_72007);
+	MAPPER(B_SA_72008);
+
 	return(0);
 }
 

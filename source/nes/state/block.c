@@ -56,7 +56,7 @@ block_t *block_load(FILE *fp)
 		return(0);
 	}
 	ret = block_create(type,size);
-	if(fread(ret->data,1,size,fp) != 4) {
+	if(fread(ret->data,1,size,fp) != size) {
 		log_printf("block_load:  error reading block data\n");
 		block_destroy(ret);
 		return(0);
@@ -67,12 +67,15 @@ block_t *block_load(FILE *fp)
 int block_save(FILE *fp,block_t *b)
 {
 	if(fwrite(&b->type,1,4,fp) != 4) {
+		log_printf("block_save:  error writing block type\n");
 		return(-1);
 	}
 	if(fwrite(&b->size,1,4,fp) != 4) {
+		log_printf("block_save:  error writing block size\n");
 		return(-1);
 	}
 	if(fwrite(b->data,1,b->size,fp) != b->size) {
+		log_printf("block_save:  error writing block data\n");
 		return(-1);
 	}
 	return(b->size + 8);

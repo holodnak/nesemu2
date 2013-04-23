@@ -77,8 +77,8 @@ void state_register(u32 type,void (*func)(int,u8*))
 int state_load(FILE *fp)
 {
 	stateheader_t header;
-	u32 type,size;
-	u8 *data;
+	block_t *block;
+	u32 size = 0;
 	int i;
 
 	readvar(header.ident,4);
@@ -87,31 +87,23 @@ int state_load(FILE *fp)
 	readvar(header.usize,4);
 	readvar(header.csize,4);
 	readvar(header.crc32,4);
+	log_printf("state_load:  state header loaded.  version %04X\n",header.version);
 
-	printf("state_load:  state header loaded.  version %04X\n",header.version);
-
-	while(feof(fp) == 0) {
-		char blockname[5] = {0,0,0,0,0};
-
-		fread(&type,1,4,fp);
-		fread(&size,1,4,fp);
-		if(feof(fp))
+	while(feof(fp) == 0 && size < header.usize) {
+		if((block = block_load(fp)) == 0)
 			break;
-
-		memcpy(blockname,&type,4);
-		printf("loading block '%s' (%08X) (%d bytes)\n",blockname,type,size);
-		data = (u8*)malloc(size);
-		fread(data,1,size,fp);
+		size += 8 + block->size;
+		log_printf("state_load:  loaded block '%4s' (%08X) (%d bytes)\n",&block->type,block->type,block->size);
 		for(i=0;blockinfo[i].type;i++) {
-			if(blockinfo[i].type == type) {
-				blockinfo[i].func(STATE_LOAD,data);
+			if(blockinfo[i].type == block->type) {
+				blockinfo[i].func(STATE_LOAD,block->data);
 				break;
 			}
 		}
 		if(blockinfo[i].type == 0) {
-			printf("no handler for block type '%s'\n",blockname);
+			log_printf("state_load:  no handler for block type '%4s'\n",&block->type);
 		}
-		free(data);
+		block_destroy(block);
 	}
 
 	return(0);
@@ -134,7 +126,9 @@ int state_save(FILE *fp)
 	for(i=0;blockinfo[i].type;i++) {
 		blockinfo[i].size = 0;
 		blockinfo[i].func(STATE_SIZE,(u8*)&blockinfo[i].size);
-		header.usize += blockinfo[i].size;
+		if(blockinfo[i].size) {
+			header.usize += blockinfo[i].size + 8;
+		}
 	}
 
 	//write the state header
@@ -147,17 +141,12 @@ int state_save(FILE *fp)
 
 	//write each block
 	for(i=0;blockinfo[i].type;i++) {
-		char blockname[5] = {0,0,0,0,0};
-
 		if(blockinfo[i].size == 0)
 			continue;
-		memcpy(blockname,&blockinfo[i].type,4);
-		printf("saving block '%s' (%08X) (%d bytes)\n",blockname,blockinfo[i].type,blockinfo[i].size);
+		printf("saving block '%4s' (%d bytes)\n",&blockinfo[i].type,blockinfo[i].size);
 		block = block_create(blockinfo[i].type,blockinfo[i].size);
 		blockinfo[i].func(STATE_SAVE,block->data);
-		fwrite(&blockinfo[i].type,1,4,fp);
-		fwrite(&blockinfo[i].size,1,4,fp);
-		fwrite(block->data,1,blockinfo[i].size,fp);
+		block_save(fp,block);
 		block_destroy(block);
 	}
 

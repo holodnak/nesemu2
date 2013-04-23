@@ -554,6 +554,9 @@
 					<File
 						RelativePath="..\..\source\nes\cart\ines20.c">
 					</File>
+					<File
+						RelativePath="..\..\source\nes\cart\unif.c">
+					</File>
 				</Filter>
 				<Filter
 					Name="state"
@@ -695,6 +698,16 @@
 						Filter="">
 						<File
 							RelativePath="..\..\source\mappers\boards\txc\txc-22211.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="sachen"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\sachen\sa-7200x.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sachen\sachen-74ls374n.c">
 						</File>
 					</Filter>
 				</Filter>
@@ -856,6 +869,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\nes\cart\ines20.h">
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cart\unif.h">
 					</File>
 				</Filter>
 				<Filter

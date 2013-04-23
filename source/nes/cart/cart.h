@@ -24,6 +24,9 @@
 #include "types.h"
 #include "nes/ppu/tilecache.h"
 
+//max length for cart titles
+#define CART_TITLE_LEN	512
+
 //mirroring types
 #define MIRROR_H			0
 #define MIRROR_V			1
@@ -81,7 +84,7 @@ typedef struct cart_s {
 	u8			tvmode;
 
 	//name of game
-	char		title[512];
+	char		title[CART_TITLE_LEN];
 
 	//cached tile data
 	cache_t	*cache,*cache_hflip;		//chr cache

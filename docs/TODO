@@ -10,6 +10,7 @@ ppu
 
 mappers
  . find mapper 172/173 games to test (TXC-22211B + TXC-22211C)
+ . what is mapper 150?
 
 broken games
  . guardian legend status bar...still broken

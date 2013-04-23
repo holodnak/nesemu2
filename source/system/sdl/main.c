@@ -29,6 +29,7 @@
 #include "system/input.h"
 #include "palette/palette.h"
 #include "palette/generator.h"
+#include "mappers/mapperid.h"
 
 int quit = 0;
 char romfilename[1024];
@@ -112,6 +113,28 @@ int mainloop()
 	return(0);
 }
 
+static void showmappers()
+{
+	int i,n;
+	const char *str;
+
+	log_printf("supported ines mappers:  0");
+	for(n=1,i=1;i<256;i++) {
+		if(mapper_get_mapperid_ines(i) >= 0) {
+			log_printf(", %d",i);
+			n++;
+		}
+	}
+
+	log_printf("\nsupported unif mappers:\n");
+	for(i=0;;i++) {
+		if((str = mapper_get_unif_boardname(i)) == 0)
+			break;
+		log_printf("   %s\n",str);
+	}
+	log_printf("\n%d ines mappers, %d unif mappers, %d internal boards supported\n",n,i,B_BOARDEND);
+}
+
 int main(int argc,char *argv[])
 {
 	int ret;
@@ -121,6 +144,11 @@ int main(int argc,char *argv[])
 	if(argc < 2) {
 		log_printf("usage:  %s file.rom\n",argv[0]);
 		return(1);
+	}
+
+	if(strcmp("--mappers",argv[1]) == 0) {
+		showmappers();
+		return(0);
 	}
 
 	//set rom filename

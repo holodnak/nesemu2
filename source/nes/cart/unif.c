@@ -34,16 +34,17 @@ typedef struct blockfunc_s {
 	void (*func)(cart_t*,block_t*);
 } blockfunc_t;
 
-typedef struct rominfo_s {
+typedef struct romdata_s {
 	u32	size;
 	u32	crc32;
 	u8		*data;
-} rominfo_t;
+} romdata_t;
 
-static char ident[] = "UNIF";
-static rominfo_t prg[16],chr[16];
+static const char ident[] = "UNIF";
+static romdata_t prg[16],chr[16];
+static char board[128];
 
-static void block_mapr(cart_t *ret,block_t *block)	{	ret->mapperid = mapper_get_mapperid_unif(block->data);	}
+static void block_mapr(cart_t *ret,block_t *block)	{	ret->mapperid = mapper_get_mapperid_unif(block->data); strcpy(board,block->data);}
 static void block_name(cart_t *ret,block_t *block)	{	strncpy(ret->title,block->data,CART_TITLE_LEN);	}
 static void block_mirr(cart_t *ret,block_t *block)	{	ret->mirroring = block->data[0];	}
 static void block_batr(cart_t *ret,block_t *block)	{	ret->battery = block->data[0];	}
@@ -152,23 +153,41 @@ static int load_unif_block(cart_t *ret,FILE *fp)
 	block_t *block = block_load(fp);
 	int i;
 
-	if(block == 0)
+	if(block == 0) {
+		log_printf("load_unif_block:  error loading block\n");
 		return(-1);
+	}
 	for(i=0;blockfuncs[i].type;i++) {
 		if(blockfuncs[i].type == block->type) {
 			blockfuncs[i].func(ret,block);
 			break;
 		}
 	}
-	printf("loaded '%s'\n",&block->type);
 	return(block->size + 8);
+}
+
+static void glue_data(data_t *rom,romdata_t *roms)
+{
+	u32 size,pos;
+	int i;
+
+	for(size=0,i=0;i<16;i++) {
+		size += roms[i].size;
+	}
+	rom->size = size;
+	rom->data = (u8*)malloc(size);
+	for(pos=0,i=0;i<16;i++) {
+		memcpy(rom->data + pos,roms[i].data,roms[i].size);
+		free(roms[i].data);
+		pos += roms[i].size;
+	}
 }
 
 int cart_load_unif(cart_t *ret,const char *filename)
 {
 	u8 header[32];
 	FILE *fp;
-	u32 i,pos,size;
+	u32 pos,size,tmp;
 
 	//open rom file
 	if((fp = fopen(filename,"rb")) == 0) {
@@ -186,40 +205,22 @@ int cart_load_unif(cart_t *ret,const char *filename)
 	pos = 32;
 
 	//clear the prg/chr rom data
-	memset(prg,0,sizeof(rominfo_t)*16);
-	memset(chr,0,sizeof(rominfo_t)*16);
+	memset(prg,0,sizeof(romdata_t)*16);
+	memset(chr,0,sizeof(romdata_t)*16);
+
+	//clear the board name
+	memset(board,0,128);
 
 	//load the unif blocks
 	while(pos < size) {
-		if((i = load_unif_block(ret,fp)) == -1)
+		if((tmp = load_unif_block(ret,fp)) == -1)
 			break;
-		pos += i;
+		pos += tmp;
 	}
 
 	//glue together the prg/chr data
-	for(size=0,i=0;i<16;i++) {
-		size += prg[i].size;
-	}
-	ret->prg.size = size;
-	ret->prg.data = (u8*)malloc(size);
-	for(pos=0,i=0;i<16;i++) {
-		memcpy(ret->prg.data + pos,prg[i].data,prg[i].size);
-		free(prg[i].data);
-		pos += prg[i].size;
-	}
-	log_printf("prg size = %d\n",size);
-
-	for(size=0,i=0;i<16;i++) {
-		size += chr[i].size;
-	}
-	ret->chr.size = size;
-	ret->chr.data = (u8*)malloc(size);
-	for(pos=0,i=0;i<16;i++) {
-		memcpy(ret->chr.data + pos,chr[i].data,chr[i].size);
-		free(chr[i].data);
-		pos += chr[i].size;
-	}
-	log_printf("chr size = %d\n",ret->chr.size);
+	glue_data(&ret->prg,prg);
+	glue_data(&ret->chr,chr);
 
 	//tile cache stuff
 	if(ret->chr.size) {
@@ -231,6 +232,9 @@ int cart_load_unif(cart_t *ret,const char *filename)
 		cache_tiles(ret->chr.data,ret->cache,ret->chr.size / 16,0);
 		cache_tiles(ret->chr.data,ret->cache_hflip,ret->chr.size / 16,1);
 	}
+
+	log_printf("cart_load_unif:  loaded ok.  %dkb prg, %dkb chr, board '%s'\n",
+		ret->prg.size / 1024,ret->chr.size / 1024,board);
 
 	//close file and return
 	fclose(fp);

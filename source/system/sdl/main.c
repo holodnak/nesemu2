@@ -139,8 +139,6 @@ int main(int argc,char *argv[])
 {
 	int ret;
 
-//argc++;
-
 	if(argc < 2) {
 		log_printf("usage:  %s file.rom\n",argv[0]);
 		return(1);
@@ -153,8 +151,6 @@ int main(int argc,char *argv[])
 
 	//set rom filename
 	strncpy(romfilename,argv[1],1024);
-
-//strcpy(romfilename,"smb.nes");
 
 	//initialize the emulator
 	if(emu_init() != 0) {

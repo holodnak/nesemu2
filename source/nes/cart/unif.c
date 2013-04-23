@@ -27,7 +27,26 @@
 #include "nes/state/block.h"
 #include "mappers/mappers.h"
 
-#define makeindex(n)	((n >= '0' && n <= '9') ? (n - '0') : ((n >= 'A' && n <= 'F') ? (n - 'A' + 10) : -1))
+#define BLOCKFUNCSTART()		static blockfunc_t blockfuncs[] = {
+#define BLOCKFUNCEND()			{0,0}};
+#define BLOCKFUNC(name)			{name,block_##name},
+#define BLOCKFUNCDECL(name)	static void block_##name(cart_t *ret,block_t *block)
+
+#define block_rom(n,var,name)	\
+	BLOCKFUNCDECL(name##n) {\
+		var[0x##n].size = block->size;\
+		var[0x##n].data = (u8*)malloc(block->size);\
+		memcpy(var[0x##n].data,block->data,block->size);\
+	}
+#define block_crc(n,var,name)	\
+	BLOCKFUNCDECL(name##n) {\
+		memcpy(&var[0x##n].crc32,block->data,4);\
+	}
+
+#define block_prg(n)		block_rom(n,prg,ID_PRG)
+#define block_chr(n)		block_rom(n,chr,ID_CHR)
+#define block_pck(n)		block_crc(n,prg,ID_PCK)
+#define block_cck(n)		block_crc(n,chr,ID_CCK)
 
 typedef struct blockfunc_s {
 	u32 type;
@@ -44,109 +63,36 @@ static const char ident[] = "UNIF";
 static romdata_t prg[16],chr[16];
 static char board[128];
 
-static void block_mapr(cart_t *ret,block_t *block)	{	ret->mapperid = mapper_get_mapperid_unif(block->data); strcpy(board,block->data);}
-static void block_name(cart_t *ret,block_t *block)	{	strncpy(ret->title,block->data,CART_TITLE_LEN);	}
-static void block_mirr(cart_t *ret,block_t *block)	{	ret->mirroring = block->data[0];	}
-static void block_batr(cart_t *ret,block_t *block)	{	ret->battery = block->data[0];	}
-static void block_tvci(cart_t *ret,block_t *block)	{	ret->tvmode = block->data[0];		}
-
-#define block_rom(n,var)	\
-	static void block_##var##n(cart_t *ret,block_t *block) {\
-		var[n].size = block->size;\
-		var[n].data = (u8*)malloc(block->size);\
-		memcpy(var[n].data,block->data,block->size);\
-	}
-#define block_crc(n,var,name)	\
-	static void block_##name##n(cart_t *ret,block_t *block) {\
-		memcpy(&var[n].crc32,block->data,4);\
-	}
-
-#define block_prg(n)			block_rom(n,prg)
-#define block_chr(n)			block_rom(n,chr)
-#define block_pck(n)			block_crc(n,prg,pck)
-#define block_cck(n)			block_crc(n,chr,cck)
+BLOCKFUNCDECL(ID_MAPR)	{	ret->mapperid = mapper_get_mapperid_unif(block->data); strcpy(board,block->data);	}
+BLOCKFUNCDECL(ID_NAME)	{	strncpy(ret->title,block->data,CART_TITLE_LEN);	}
+BLOCKFUNCDECL(ID_MIRR)	{	ret->mirroring = block->data[0];	}
+BLOCKFUNCDECL(ID_BATR)	{	ret->battery = block->data[0];	}
+BLOCKFUNCDECL(ID_TVCI)	{	ret->tvmode = block->data[0];		}
 
 block_prg(0);	block_prg(1);	block_prg(2);	block_prg(3);	block_prg(4);	block_prg(5);	block_prg(6);	block_prg(7);
-block_prg(8);	block_prg(9);	block_prg(10);	block_prg(11);	block_prg(12);	block_prg(13);	block_prg(14);	block_prg(15);
+block_prg(8);	block_prg(9);	block_prg(A);	block_prg(B);	block_prg(C);	block_prg(D);	block_prg(E);	block_prg(F);
 block_chr(0);	block_chr(1);	block_chr(2);	block_chr(3);	block_chr(4);	block_chr(5);	block_chr(6);	block_chr(7);
-block_chr(8);	block_chr(9);	block_chr(10);	block_chr(11);	block_chr(12);	block_chr(13);	block_chr(14);	block_chr(15);
+block_chr(8);	block_chr(9);	block_chr(A);	block_chr(B);	block_chr(C);	block_chr(D);	block_chr(E);	block_chr(F);
 block_pck(0);	block_pck(1);	block_pck(2);	block_pck(3);	block_pck(4);	block_pck(5);	block_pck(6);	block_pck(7);
-block_pck(8);	block_pck(9);	block_pck(10);	block_pck(11);	block_pck(12);	block_pck(13);	block_pck(14);	block_pck(15);
+block_pck(8);	block_pck(9);	block_pck(A);	block_pck(B);	block_pck(C);	block_pck(D);	block_pck(E);	block_pck(F);
 block_cck(0);	block_cck(1);	block_cck(2);	block_cck(3);	block_cck(4);	block_cck(5);	block_cck(6);	block_cck(7);
-block_cck(8);	block_cck(9);	block_cck(10);	block_cck(11);	block_cck(12);	block_cck(13);	block_cck(14);	block_cck(15);
+block_cck(8);	block_cck(9);	block_cck(A);	block_cck(B);	block_cck(C);	block_cck(D);	block_cck(E);	block_cck(F);
 
-static blockfunc_t blockfuncs[] = {
-	{ID_MAPR,	block_mapr},
-	{ID_NAME,	block_name},
-	{ID_MIRR,	block_mirr},
-	{ID_BATR,	block_batr},
-	{ID_TVCI,	block_tvci},
-	{ID_PRG0,	block_prg0},
-	{ID_PRG1,	block_prg1},
-	{ID_PRG2,	block_prg2},
-	{ID_PRG3,	block_prg3},
-	{ID_PRG4,	block_prg4},
-	{ID_PRG5,	block_prg5},
-	{ID_PRG6,	block_prg6},
-	{ID_PRG7,	block_prg7},
-	{ID_PRG8,	block_prg8},
-	{ID_PRG9,	block_prg9},
-	{ID_PRGA,	block_prg10},
-	{ID_PRGB,	block_prg11},
-	{ID_PRGC,	block_prg12},
-	{ID_PRGD,	block_prg13},
-	{ID_PRGE,	block_prg14},
-	{ID_PRGF,	block_prg15},
-	{ID_CHR0,	block_chr0},
-	{ID_CHR1,	block_chr1},
-	{ID_CHR2,	block_chr2},
-	{ID_CHR3,	block_chr3},
-	{ID_CHR4,	block_chr4},
-	{ID_CHR5,	block_chr5},
-	{ID_CHR6,	block_chr6},
-	{ID_CHR7,	block_chr7},
-	{ID_CHR8,	block_chr8},
-	{ID_CHR9,	block_chr9},
-	{ID_CHRA,	block_chr10},
-	{ID_CHRB,	block_chr11},
-	{ID_CHRC,	block_chr12},
-	{ID_CHRD,	block_chr13},
-	{ID_CHRE,	block_chr14},
-	{ID_CHRF,	block_chr15},
-	{ID_PCK0,	block_pck0},
-	{ID_PCK1,	block_pck1},
-	{ID_PCK2,	block_pck2},
-	{ID_PCK3,	block_pck3},
-	{ID_PCK4,	block_pck4},
-	{ID_PCK5,	block_pck5},
-	{ID_PCK6,	block_pck6},
-	{ID_PCK7,	block_pck7},
-	{ID_PCK8,	block_pck8},
-	{ID_PCK9,	block_pck9},
-	{ID_PCKA,	block_pck10},
-	{ID_PCKB,	block_pck11},
-	{ID_PCKC,	block_pck12},
-	{ID_PCKD,	block_pck13},
-	{ID_PCKE,	block_pck14},
-	{ID_PCKF,	block_pck15},
-	{ID_CCK0,	block_cck0},
-	{ID_CCK1,	block_cck1},
-	{ID_CCK2,	block_cck2},
-	{ID_CCK3,	block_cck3},
-	{ID_CCK4,	block_cck4},
-	{ID_CCK5,	block_cck5},
-	{ID_CCK6,	block_cck6},
-	{ID_CCK7,	block_cck7},
-	{ID_CCK8,	block_cck8},
-	{ID_CCK9,	block_cck9},
-	{ID_CCKA,	block_cck10},
-	{ID_CCKB,	block_cck11},
-	{ID_CCKC,	block_cck12},
-	{ID_CCKD,	block_cck13},
-	{ID_CCKE,	block_cck14},
-	{ID_CCKF,	block_cck15},
-	{0,			0},
-};
+BLOCKFUNCSTART()
+	BLOCKFUNC(ID_MAPR)
+	BLOCKFUNC(ID_NAME)
+	BLOCKFUNC(ID_MIRR)
+	BLOCKFUNC(ID_BATR)
+	BLOCKFUNC(ID_TVCI)
+	BLOCKFUNC(ID_PRG0)	BLOCKFUNC(ID_PRG1)	BLOCKFUNC(ID_PRG2)	BLOCKFUNC(ID_PRG3)
+	BLOCKFUNC(ID_PRG4)	BLOCKFUNC(ID_PRG5)	BLOCKFUNC(ID_PRG6)	BLOCKFUNC(ID_PRG7)
+	BLOCKFUNC(ID_PRG8)	BLOCKFUNC(ID_PRG9)	BLOCKFUNC(ID_PRGA)	BLOCKFUNC(ID_PRGB)
+	BLOCKFUNC(ID_PRGC)	BLOCKFUNC(ID_PRGD)	BLOCKFUNC(ID_PRGE)	BLOCKFUNC(ID_PRGF)
+	BLOCKFUNC(ID_CHR0)	BLOCKFUNC(ID_CHR1)	BLOCKFUNC(ID_CHR2)	BLOCKFUNC(ID_CHR3)
+	BLOCKFUNC(ID_CHR4)	BLOCKFUNC(ID_CHR5)	BLOCKFUNC(ID_CHR6)	BLOCKFUNC(ID_CHR7)
+	BLOCKFUNC(ID_CHR8)	BLOCKFUNC(ID_CHR9)	BLOCKFUNC(ID_CHRA)	BLOCKFUNC(ID_CHRB)
+	BLOCKFUNC(ID_CHRC)	BLOCKFUNC(ID_CHRD)	BLOCKFUNC(ID_CHRE)	BLOCKFUNC(ID_CHRF)
+BLOCKFUNCEND()
 
 static int load_unif_block(cart_t *ret,FILE *fp)
 {

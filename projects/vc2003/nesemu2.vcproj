@@ -556,6 +556,12 @@
 					</File>
 					<File
 						RelativePath="..\..\source\nes\cart\unif.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								GeneratePreprocessedFile="0"/>
+						</FileConfiguration>
 					</File>
 				</Filter>
 				<Filter

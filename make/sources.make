@@ -12,13 +12,12 @@ SOURCE_EMU = source/emu/emu.c
 MAPPER_DIRS=$(shell find $(PATH_SOURCE)/mappers -type d)
 SOURCE_MAPPERS=$(foreach dir,$(MAPPER_DIRS),$(wildcard $(dir)/*.c))
 
-# input devices
-SOURCE_INPUTDEV = source/inputdev/inputdev.c source/inputdev/null.c
-SOURCE_INPUTDEV += source/inputdev/joypad0.c source/inputdev/joypad1.c
+# search inputdev directory for source files
+SOURCE_INPUTDEV = $(foreach dir,$(PATH_SOURCE)/inputdev,$(wildcard $(dir)/*.c))
 
 # nes core
 SOURCE_NES = source/nes/memory.c source/nes/nes.c source/nes/io.c
-SOURCE_NES += source/nes/cart/cart.c source/nes/cart/ines.c source/nes/cart/ines20.c
+SOURCE_NES += source/nes/cart/cart.c source/nes/cart/ines.c source/nes/cart/ines20.c source/nes/cart/unif.c
 SOURCE_NES += source/nes/state/state.c source/nes/state/block.c
 SOURCE_NES += source/nes/cpu/cpu.c source/nes/cpu/disassemble.c
 SOURCE_NES += source/nes/ppu/io.c source/nes/ppu/ppu.c source/nes/ppu/step.c

@@ -18,20 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+#ifndef __font_h__
+#define __font_h__
 
-static void sync()
-{
-	mem_setprg16(0x8,latch_reg >> 2);
-	mem_setprg16(0xC,0xFF);
-	mem_setvram8(0,0);
-}
+#include "types.h"
 
-static void reset(int hard)
-{
-	mem_setvramsize(8);
-	latch_init(sync);
-}
+extern u8 fontmap[];
+extern u8 fontbits[];
 
-MAPPER(B_UN1ROM,reset,0,0,latch_state);
+#endif

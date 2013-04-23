@@ -20,15 +20,9 @@
 
 #include "mappers/mapperinc.h"
 
-enum camerica_ic_e {
-	CAMERICA_BF9093,
-	CAMERICA_BF9096,
-	CAMERICA_BF9097,
-};
-
 static u8 prg,outerprg;
 static u8 prgmask,mirroring;
-static u8 type;
+static int type;
 
 static void sync()
 {
@@ -59,17 +53,17 @@ static void write_outerprgselect(u32 addr,u8 data)
 static void reset(int t,int hard)
 {
 	type = t;
-	if(type == CAMERICA_BF9093) {
+	if(type == B_CAMERICA_BF9093) {
 		prgmask = 0xF;
 	}
-	else if(type == CAMERICA_BF9096) {
+	else if(type == B_CAMERICA_BF9096) {
 		prgmask = 3;
 		mem_setwritefunc(0x8,write_outerprgselect);
 		mem_setwritefunc(0x9,write_outerprgselect);
 		mem_setwritefunc(0xA,write_outerprgselect);
 		mem_setwritefunc(0xB,write_outerprgselect);
 	}
-	else if(type == CAMERICA_BF9097) {
+	else if(type == B_CAMERICA_BF9097) {
 		prgmask = 7;
 		mem_setwritefunc(0x8,write_mirroring);
 		mem_setwritefunc(0x9,write_mirroring);
@@ -94,17 +88,17 @@ static void state(int mode,u8 *data)
 
 static void reset_bf9093(int hard)
 {
-	reset(CAMERICA_BF9093,hard);
+	reset(B_CAMERICA_BF9093,hard);
 }
 
 static void reset_bf9096(int hard)
 {
-	reset(CAMERICA_BF9096,hard);
+	reset(B_CAMERICA_BF9096,hard);
 }
 
 static void reset_bf9097(int hard)
 {
-	reset(CAMERICA_BF9097,hard);
+	reset(B_CAMERICA_BF9097,hard);
 }
 
 MAPPER(B_CAMERICA_BF9093,reset_bf9093,0,0,state);

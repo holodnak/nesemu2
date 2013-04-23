@@ -57,6 +57,11 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_CAMERICA_BF9096);
 	MAPPER(B_CAMERICA_BF9097);
 
+	//txc
+	MAPPER(B_TXC_22211A);
+	MAPPER(B_TXC_22211B);
+	MAPPER(B_TXC_22211C);
+
 	return(0);
 }
 

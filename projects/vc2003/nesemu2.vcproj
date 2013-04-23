@@ -162,6 +162,9 @@
 						<File
 							RelativePath="..\..\source\system\sdl\console\console.c">
 						</File>
+						<File
+							RelativePath="..\..\source\system\sdl\console\font.c">
+						</File>
 					</Filter>
 				</Filter>
 				<Filter
@@ -685,6 +688,13 @@
 						Filter="">
 						<File
 							RelativePath="..\..\source\mappers\boards\taito\x1-005.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="txc"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\txc\txc-22211.c">
 						</File>
 					</Filter>
 				</Filter>

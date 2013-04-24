@@ -1100,9 +1100,9 @@ void apu_kill()
 	apu_destroy();
 }
 
-void apu_setext(apu_t *src_apu, apuext_t *ext)
+void apu_setext(apuext_t *ext)
 {
-   ASSERT(src_apu);
+	apu_t *src_apu = &myapu;
 
    src_apu->ext = ext;
 
@@ -1111,7 +1111,7 @@ void apu_setext(apu_t *src_apu, apuext_t *ext)
       src_apu->ext->init();
 
 		//hax
-		apu = *src_apu;
+//		apu = *src_apu;
    }
 }
 

@@ -30,4 +30,4 @@ static void reset(int hard)
 		mem_setvram8(0,0);
 }
 
-MAPPER(B_NROM,reset,0,0,0);
+MAPPER(B_NROM,reset,0,0,0,0);

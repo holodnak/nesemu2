@@ -20,7 +20,7 @@
 
 #include "nes/memory.h"
 #include "nes/nes.h"
-#include "log/log.h"
+#include "misc/log.h"
 
 //set read page function pointer
 void mem_setreadfunc(int page,readfunc_t readfunc)

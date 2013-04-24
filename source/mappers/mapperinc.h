@@ -21,8 +21,8 @@
 #ifndef __mapperinc_h__
 #define __mapperinc_h__
 
-#define MAPPER(boardid,reset,tile,line,state) \
-	mapper_t mapper##boardid = {boardid,reset,tile,line,state}
+#define MAPPER(boardid,reset,tile,ppucycle,cpucycle,state) \
+	mapper_t mapper##boardid = {boardid,reset,tile,ppucycle,cpucycle,state}
 
 #include "mappers.h"
 #include "mapperid.h"

@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "log/log.h"
+#include "misc/log.h"
 #include "nes/cart/cart.h"
 #include "mappers/mappers.h"
 

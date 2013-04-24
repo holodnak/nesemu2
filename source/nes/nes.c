@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "log/log.h"
+#include "misc/log.h"
 #include "nes/nes.h"
 #include "nes/io.h"
 #include "nes/memory.h"

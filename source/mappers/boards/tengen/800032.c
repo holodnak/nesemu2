@@ -137,7 +137,7 @@ static void clock_irqcounter()
 	}
 }
 
-static void cycle()
+static void ppucycle()
 {
 	if(irqsource == 0) {
 		if((nes.ppu.control1 & 0x18) && (nes.ppu.linecycles == 265))
@@ -167,4 +167,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_TENGEN_800032,reset,0,cycle,state);
+MAPPER(B_TENGEN_800032,reset,0,ppucycle,0,state);

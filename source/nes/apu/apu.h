@@ -21,6 +21,16 @@
 #ifndef __nes__apu_h__
 #define __nes__apu_h__
 
+//external sound
+typedef struct apuext_s
+{
+   void   (*init)();
+   void  (*kill)();
+   void  (*reset)();
+   int (*process)(int);
+	void (*state)(int,u8*);
+} apuext_t;
+
 typedef struct square_s {
 	u8 length;			//length counter
 } square_t;

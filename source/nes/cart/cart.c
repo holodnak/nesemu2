@@ -21,7 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "log/log.h"
+#include "misc/log.h"
+#include "misc/crc32.h"
 #include "nes/cart/cart.h"
 #include "nes/cart/ines.h"
 #include "nes/cart/ines20.h"
@@ -38,6 +39,10 @@
 	d.size = 0;				\
 	d.mask = 0;				\
 }
+
+#define generate_mask_and_crc32(d)	\
+	d.mask = createmask(d.size);		\
+	d.crc32 = crc32(d.data,d.size);
 
 #define FORMAT_ERROR		-1
 #define FORMAT_UNKNOWN	0
@@ -153,11 +158,11 @@ cart_t *cart_load(const char *filename)
 		return(0);
 	}
 
-	//rom loaded ok, create necessary masks
-	ret->prg.mask = createmask(ret->prg.size);
-	ret->chr.mask = createmask(ret->chr.size);
-	ret->trainer.mask = createmask(ret->trainer.size);
-	ret->pc10rom.mask = createmask(ret->pc10rom.size);
+	//rom loaded ok, create necessary masks and generate crc32's
+	generate_mask_and_crc32(ret->prg);
+	generate_mask_and_crc32(ret->chr);
+	generate_mask_and_crc32(ret->trainer);
+	generate_mask_and_crc32(ret->pc10rom);
 
 	//finished
 	return(ret);

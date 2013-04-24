@@ -22,8 +22,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include "log/log.h"
-#include "log/buffer.h"
+#include "misc/log.h"
 #include "system/system.h"
 #include "version.h"
 
@@ -53,7 +52,6 @@ int log_init()
 
 void log_kill()
 {
-	log_buffer_flush();
 	if(logfd)
 		fclose(logfd);
 	logfd = 0;

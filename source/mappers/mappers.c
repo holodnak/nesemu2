@@ -32,6 +32,7 @@
 
 static mapper_t *get_mapper(int mapperid)
 {
+	//licensed
 	//nintendo boards
 	MAPPER(B_NROM);
 	MAPPER(B_SxROM);
@@ -45,10 +46,26 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_CNROM);
 	MAPPER(B_CPROM);
 
+	//konami
+	MAPPER(B_VRC1);
+	MAPPER(B_VRC2A);
+	MAPPER(B_VRC2B);
+	MAPPER(B_VRC3);
+	MAPPER(B_VRC4A);
+	MAPPER(B_VRC4B);
+	MAPPER(B_VRC4C);
+	MAPPER(B_VRC4D);
+	MAPPER(B_VRC4E);
+	MAPPER(B_VRC6A);
+	MAPPER(B_VRC6B);
+	MAPPER(B_VRC7A);
+	MAPPER(B_VRC7B);
+
 	//taito
 	MAPPER(B_TAITO_X1_005);
 	MAPPER(B_TAITO_X1_005A);
 
+	//unlicensed
 	//tengen
 	MAPPER(B_TENGEN_800032);
 
@@ -67,21 +84,17 @@ static mapper_t *get_mapper(int mapperid)
 //	MAPPER(B_SACHEN_74LS374NA);
 	MAPPER(B_SA_72007);
 	MAPPER(B_SA_72008);
+	MAPPER(B_SA_0036);
+	MAPPER(B_SA_0037);
 
 	return(0);
 }
 
-static void null_mapper_tile(u8 t,int b)
-{
-}
+static void null_mapper_tile(int t)			{}
+static void null_mapper_cycle()				{}
+static void null_mapper_state(int m,u8 *d){}
 
-static void null_mapper_cycle()
-{
-}
-
-static void null_mapper_state(int m,u8 *d)
-{
-}
+#define check_null(var,nullfunc)	var = ((var == 0) ? nullfunc : var)
 
 mapper_t *mapper_init(int mapperid)
 {
@@ -89,8 +102,9 @@ mapper_t *mapper_init(int mapperid)
 
 	if(ret == 0)
 		return(0);
-	ret->tile = (ret->tile == 0) ? null_mapper_tile : ret->tile;
-	ret->cycle = (ret->cycle == 0) ? null_mapper_cycle : ret->cycle;
-	ret->state = (ret->state == 0) ? null_mapper_state : ret->state;
+	check_null(ret->tile,		null_mapper_tile);
+	check_null(ret->ppucycle,	null_mapper_cycle);
+	check_null(ret->cpucycle,	null_mapper_cycle);
+	check_null(ret->state,		null_mapper_state);
 	return(ret);
 }

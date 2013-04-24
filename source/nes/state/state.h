@@ -121,6 +121,12 @@
 		STATE_U8((arr)[i]); \
 	}
 
+#define STATE_ARRAY_U16(arr,siz) { \
+	u32 i; \
+	for(i=0;i<(siz);i++)	\
+		STATE_U16((arr)[i]); \
+	}
+
 //state block types
 enum blocktype_e {
 	B_UNKNOWN	= 0,

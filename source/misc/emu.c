@@ -18,9 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "emu/emu.h"
-#include "log/log.h"
-#include "config/config.h"
+#include "misc/emu.h"
+#include "misc/log.h"
+#include "misc/config.h"
+#include "misc/crc32.h"
 #include "system/system.h"
 #include "system/video.h"
 #include "system/input.h"
@@ -52,6 +53,9 @@ SUBSYSTEM_END
 int emu_init()
 {
 	int i;
+
+	//generate crc32 table
+	crc32_gentab();
 
 	//loop thru the subsystem function pointers and init
 	for(i=0;subsystems[i].init;i++) {

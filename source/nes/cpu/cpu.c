@@ -22,7 +22,7 @@
 #include <string.h>
 #include "nes/nes.h"
 #include "nes/state/state.h"
-#include "log/log.h"
+#include "misc/log.h"
 
 //defines to make easier reading
 #define PC					nes.cpu.pc
@@ -137,7 +137,7 @@ void cpu_tick()
 	ppu_step();
 	ppu_step();
 
-	nes.mapper->cycle();
+	nes.mapper->cpucycle();
 }
 
 u8 cpu_read(u32 addr)

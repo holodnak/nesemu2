@@ -129,5 +129,5 @@ static void reset_x1_005a(int hard)
 	reset(TAITO_X1_005A,hard);
 }
 
-MAPPER(B_TAITO_X1_005,reset_x1_005,0,0,state);
-MAPPER(B_TAITO_X1_005A,reset_x1_005a,0,0,state);
+MAPPER(B_TAITO_X1_005,reset_x1_005,0,0,0,state);
+MAPPER(B_TAITO_X1_005A,reset_x1_005a,0,0,0,state);

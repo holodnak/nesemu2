@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "log/log.h"
+#include "misc/log.h"
 #include "nes/cart/cart.h"
 #include "nes/cart/unif.h"
 #include "nes/state/block.h"
@@ -163,6 +163,10 @@ int cart_load_unif(cart_t *ret,const char *filename)
 			break;
 		pos += tmp;
 	}
+
+	//check the crc32's (if blocks are present)
+//	for(i=0;i<16;i++) {
+//	}
 
 	//glue together the prg/chr data
 	glue_data(&ret->prg,prg);

@@ -22,7 +22,7 @@
 				InlineFunctionExpansion="2"
 				OptimizeForProcessor="3"
 				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;QUICK_SPRITES"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;QUICK_SPRITES;CPU_UNDOC"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -710,10 +710,35 @@
 						Name="sachen"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\sachen\sa-003x.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\sachen\sa-7200x.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\sachen\sachen-74ls374n.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="konami"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc2.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc3.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc4.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc6.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc7.c">
 						</File>
 					</Filter>
 				</Filter>
@@ -736,30 +761,6 @@
 						RelativePath="..\..\source\mappers\chips\mmc4.c">
 					</File>
 				</Filter>
-			</Filter>
-			<Filter
-				Name="config"
-				Filter="">
-				<File
-					RelativePath="..\..\source\config\config.c">
-				</File>
-			</Filter>
-			<Filter
-				Name="log"
-				Filter="">
-				<File
-					RelativePath="..\..\source\log\buffer.c">
-				</File>
-				<File
-					RelativePath="..\..\source\log\log.c">
-				</File>
-			</Filter>
-			<Filter
-				Name="emu"
-				Filter="">
-				<File
-					RelativePath="..\..\source\emu\emu.c">
-				</File>
 			</Filter>
 			<Filter
 				Name="palette"
@@ -785,6 +786,22 @@
 				</File>
 				<File
 					RelativePath="..\..\source\inputdev\null.c">
+				</File>
+			</Filter>
+			<Filter
+				Name="misc"
+				Filter="">
+				<File
+					RelativePath="..\..\source\misc\config.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\crc32.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\emu.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\log.c">
 				</File>
 			</Filter>
 		</Filter>
@@ -863,6 +880,9 @@
 					<File
 						RelativePath="..\..\source\nes\apu\apu.h">
 					</File>
+					<File
+						RelativePath="..\..\source\nes\apu\mattapu.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="cart"
@@ -924,27 +944,19 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="config"
+				Name="misc"
 				Filter="">
 				<File
-					RelativePath="..\..\source\config\config.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="log"
-				Filter="">
-				<File
-					RelativePath="..\..\source\log\buffer.h">
+					RelativePath="..\..\source\misc\config.h">
 				</File>
 				<File
-					RelativePath="..\..\source\log\log.h">
+					RelativePath="..\..\source\misc\crc32.h">
 				</File>
-			</Filter>
-			<Filter
-				Name="emu"
-				Filter="">
 				<File
-					RelativePath="..\..\source\emu\emu.h">
+					RelativePath="..\..\source\misc\emu.h">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\log.h">
 				</File>
 			</Filter>
 			<Filter

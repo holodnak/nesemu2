@@ -22,7 +22,7 @@
 #include <string.h>
 #include <malloc.h>
 #include "nes/state/block.h"
-#include "log/log.h"
+#include "misc/log.h"
 
 block_t *block_create(u32 type,u32 size)
 {

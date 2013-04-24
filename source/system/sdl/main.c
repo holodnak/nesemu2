@@ -20,10 +20,10 @@
 
 #include <SDL/SDL.h>
 #include <stdio.h>
-#include "log/log.h"
-#include "emu/emu.h"
+#include "misc/log.h"
+#include "misc/emu.h"
+#include "misc/config.h"
 #include "nes/nes.h"
-#include "config/config.h"
 #include "system/system.h"
 #include "system/video.h"
 #include "system/input.h"

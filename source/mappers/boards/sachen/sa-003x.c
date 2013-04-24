@@ -18,9 +18,60 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "log/buffer.h"
+#include "mappers/mapperinc.h"
 
-void log_buffer_flush()
+static u8 reg;
+static writefunc_t write4;
+static void (*sync)() = 0;
+
+static void sync_0036()
 {
-
+	mem_setprg32(0x8,0);
+	log_printf("sync_0036:  reg = %02X\n",reg);
+	mem_setchr8(0,(reg >> 7));
 }
+
+static void sync_0037()
+{
+	mem_setprg32(8,(reg >> 3) & 1);
+	log_printf("sync_0037:  reg = %02X\n",reg);
+	mem_setchr8(0,reg & 7);
+}
+
+static void write45(u32 addr,u8 data)
+{
+	if(addr < 0x4020) {
+		write4(addr,data);
+		return;
+	}
+	log_printf("sa-003x.c:  write45:  $%04X = $%02X\n");
+	if(addr & 0x100) {
+		reg = data;
+		sync();
+	}
+}
+
+static void reset(int type,int hard)
+{
+	if(type == B_SA_0036)
+		sync = sync_0036;
+	else
+		sync = sync_0037;
+	write4 = mem_getwritefunc(4);
+	mem_setwritefunc(4,write45);
+	mem_setwritefunc(5,write45);
+	reg = 0;
+	sync();
+}
+
+static void state(int mode,u8 *data)
+{
+	STATE_U8(reg);
+	sync();
+}
+
+static void reset_0036(int hard)	{	reset(B_SA_0036,hard);	}
+static void reset_0037(int hard)	{	reset(B_SA_0037,hard);	}
+
+MAPPER(B_SA_0036,reset_0036,0,0,0,state);
+MAPPER(B_SA_0037,reset_0037,0,0,0,state);

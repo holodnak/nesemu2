@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "log/log.h"
+#include "misc/log.h"
 #include "nes/io.h"
 #include "nes/nes.h"
 #include "system/input.h"

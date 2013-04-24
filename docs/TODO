@@ -11,10 +11,15 @@ ppu
 mappers
  . find mapper 172/173 games to test (TXC-22211B + TXC-22211C)
  . what is mapper 150?
+ . sachen 74ls374 broken (chess academy)
+ . sachen 0036 broken (chr problems!) (taiwan mahjong 16)
+ . sachen 0037 broken...why?
+ . tengen rambo-1 needs better irq code
+ . test/finish the vrc mappers
+ . vrc3 is implemented badly
+ . vrc2b (parodius, akumajou special) is broke (chr problems)
+ . vrc4 broken
+ . vrc6 broken
 
 broken games
  . guardian legend status bar...still broken
-
-states
- . make each unit with a *_state() function register that function with the
-   state saving system.  should register it and have unique id.

@@ -20,7 +20,7 @@
 
 #include "nes/nes.h"
 #include "system/video.h"
-#include "log/log.h"
+#include "misc/log.h"
 
 typedef struct {
 	u64 line;				//cache line data
@@ -447,6 +447,6 @@ void ppu_step()
 			break;
 	}
 	if(LINECYCLES & 1)
-		nes.mapper->cycle();
+		nes.mapper->ppucycle();
 	inc_linecycles();
 }

@@ -20,8 +20,9 @@
 
 #include "nes/nes.h"
 #include "nes/state/state.h"
-#include "log/log.h"
+#include "misc/log.h"
 
+static apuext_t *ext = 0;
 static u8 regs[0x20];
 
 static u8 lengths[32] = {
@@ -75,4 +76,9 @@ void apu_frame()
 void apu_state(int mode,u8 *data)
 {
 	STATE_ARRAY_U8(regs,0x20);
+}
+
+void apu_setext(apuext_t *e)
+{
+	ext = e;
 }

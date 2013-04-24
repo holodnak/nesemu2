@@ -34,4 +34,4 @@ static void reset(int hard)
 	latch_init(sync);
 }
 
-MAPPER(B_UxROM,reset,0,0,latch_state);
+MAPPER(B_UxROM,reset,0,0,0,latch_state);

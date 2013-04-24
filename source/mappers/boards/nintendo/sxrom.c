@@ -29,4 +29,4 @@ static void reset(int hard)
 	mmc1_init(mmc1_sync);
 }
 
-MAPPER(B_SxROM,reset,0,0,mmc1_state);
+MAPPER(B_SxROM,reset,0,0,0,mmc1_state);

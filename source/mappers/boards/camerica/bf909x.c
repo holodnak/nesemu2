@@ -101,6 +101,6 @@ static void reset_bf9097(int hard)
 	reset(B_CAMERICA_BF9097,hard);
 }
 
-MAPPER(B_CAMERICA_BF9093,reset_bf9093,0,0,state);
-MAPPER(B_CAMERICA_BF9096,reset_bf9096,0,0,state);
-MAPPER(B_CAMERICA_BF9097,reset_bf9097,0,0,state);
+MAPPER(B_CAMERICA_BF9093,reset_bf9093,0,0,0,state);
+MAPPER(B_CAMERICA_BF9096,reset_bf9096,0,0,0,state);
+MAPPER(B_CAMERICA_BF9097,reset_bf9097,0,0,0,state);

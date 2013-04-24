@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006-2009 by Dead_Body   *
- *   jamesholodnak@gmail.com   *
+ *   Copyright (C) 2013 by James Holodnak                                  *
+ *   jamesholodnak@gmail.com                                               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __boardid_h__
-#define __boardid_h__
+#ifndef __mapperid_h__
+#define __mapperid_h__
 
 enum boardid_e {
 

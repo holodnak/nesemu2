@@ -24,7 +24,7 @@ static INLINE void fetch_ntbyte()
 		nes.ppu.ntbyte = ppu_memread(nes.ppu.busaddr);
 
 		//mapper tile callback
-		nes.mapper->tile(nes.ppu.ntbyte,((CONTROL0 & 0x10) >> 2) >> 2);
+		nes.mapper->tile((int)nes.ppu.ntbyte | ((CONTROL0 & 0x10) << 4));
 	}
 }
 

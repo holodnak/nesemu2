@@ -62,6 +62,7 @@
 
 typedef struct data_s {
 	u32 size,mask;
+	u32 crc32;
 	u8 *data;
 } data_t;
 

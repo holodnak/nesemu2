@@ -25,7 +25,7 @@
 	#include <windows.h>
 #endif
 #include <SDL/SDL.h>
-#include "log/log.h"
+#include "misc/log.h"
 #include "palette/palette.h"
 #include "system/video.h"
 #include "nes/nes.h"

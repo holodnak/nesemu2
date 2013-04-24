@@ -122,7 +122,7 @@ static INLINE void quick_process_sprites()
 				sprtemp[sprinrange].flags = 2;
 
 			//call mapper callback
-			nes.mapper->tile(s[1],(CONTROL0 & 8) >> 3);
+			nes.mapper->tile((int)s[1] | (CONTROL0 & 8) << 5);
 
 			//determine pattern bank used (upper or lower)
 			if(CONTROL0 & 0x20)

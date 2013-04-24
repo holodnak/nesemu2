@@ -79,6 +79,6 @@ static void reset_txc_22211a(int hard)	{	reset(B_TXC_22211A,hard);	}
 static void reset_txc_22211b(int hard)	{	reset(B_TXC_22211B,hard);	}
 static void reset_txc_22211c(int hard)	{	reset(B_TXC_22211C,hard);	}
 
-MAPPER(B_TXC_22211A,reset_txc_22211a,0,0,state);
-MAPPER(B_TXC_22211B,reset_txc_22211b,0,0,state);
-MAPPER(B_TXC_22211C,reset_txc_22211c,0,0,state);
+MAPPER(B_TXC_22211A,reset_txc_22211a,0,0,0,state);
+MAPPER(B_TXC_22211B,reset_txc_22211b,0,0,0,state);
+MAPPER(B_TXC_22211C,reset_txc_22211c,0,0,0,state);

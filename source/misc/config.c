@@ -21,8 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "config/config.h"
-#include "log/log.h"
+#include "misc/config.h"
+#include "misc/log.h"
 
 #define FILE_CONFIG	"nesemu2.cfg"
 

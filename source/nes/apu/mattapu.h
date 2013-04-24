@@ -213,8 +213,9 @@ typedef struct apuext_s
    void  (*shutdown)(void);
    void  (*reset)(void);
    int (*process)(int);
-   apu_memread *mem_read;
-   apu_memwrite *mem_write;
+	void (*state)(int,u8*);
+//   apu_memread *mem_read;
+//   apu_memwrite *mem_write;
 } apuext_t;
 
 

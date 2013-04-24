@@ -654,7 +654,22 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\cprom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\dxrom.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\event.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\exrom.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\fxrom.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\gxrom_mxrom.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\hxrom.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\nrom.c">
@@ -705,6 +720,12 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\txc\txc-22211.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\txc\txc-mxmdhtwo.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\txc\txc-tw.c">
+						</File>
 					</Filter>
 					<Filter
 						Name="sachen"
@@ -741,6 +762,13 @@
 							RelativePath="..\..\source\mappers\boards\konami\vrc7.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="other"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\other\btl-mario1-malee2.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="chips"
@@ -759,6 +787,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\mmc4.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\mmc5.c">
 					</File>
 				</Filter>
 			</Filter>
@@ -940,6 +971,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\mmc4.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\mmc5.h">
 					</File>
 				</Filter>
 			</Filter>

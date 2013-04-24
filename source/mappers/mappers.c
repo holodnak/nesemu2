@@ -34,17 +34,22 @@ static mapper_t *get_mapper(int mapperid)
 {
 	//licensed
 	//nintendo boards
-	MAPPER(B_NROM);
-	MAPPER(B_SxROM);
-	MAPPER(B_UxROM);
-	MAPPER(B_UN1ROM);
 	MAPPER(B_AxROM);
-	MAPPER(B_PxROM);
-	MAPPER(B_FxROM);
-	MAPPER(B_TxROM);
-	MAPPER(B_TQROM);
 	MAPPER(B_CNROM);
 	MAPPER(B_CPROM);
+	MAPPER(B_DxROM);
+	MAPPER(B_ExROM);
+	MAPPER(B_FxROM);
+	MAPPER(B_GxROM_MxROM);
+	MAPPER(B_HxROM);
+	MAPPER(B_NROM);
+	MAPPER(B_PxROM);
+	MAPPER(B_SxROM);
+	MAPPER(B_TxROM);
+	MAPPER(B_TQROM);
+	MAPPER(B_UxROM);
+	MAPPER(B_UN1ROM);
+	MAPPER(B_EVENT);
 
 	//konami
 	MAPPER(B_VRC1);
@@ -78,6 +83,8 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_TXC_22211A);
 	MAPPER(B_TXC_22211B);
 	MAPPER(B_TXC_22211C);
+	MAPPER(B_TXC_TW);
+	MAPPER(B_TXC_MXMDHTWO);
 
 	//sachen
 	MAPPER(B_SACHEN_74LS374N);
@@ -86,6 +93,9 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_SA_72008);
 	MAPPER(B_SA_0036);
 	MAPPER(B_SA_0037);
+
+	//other (unknown)
+	MAPPER(B_MARIO1_MALEE2);
 
 	return(0);
 }

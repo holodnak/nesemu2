@@ -23,7 +23,7 @@
 
 static void reset(int hard)
 {
-	mmc3_reset(mmc3_sync,hard);
+	mmc3_reset(C_MMC3A,mmc3_sync,hard);
 }
 
 MAPPER(B_TxROM,reset,0,mmc3_ppucycle,0,mmc3_state);

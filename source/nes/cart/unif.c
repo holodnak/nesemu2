@@ -22,6 +22,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "misc/log.h"
+#include "misc/crc32.h"
 #include "nes/cart/cart.h"
 #include "nes/cart/unif.h"
 #include "nes/state/block.h"
@@ -41,6 +42,7 @@
 #define block_crc(n,var,name)	\
 	BLOCKFUNCDECL(name##n) {\
 		memcpy(&var[0x##n].crc32,block->data,4);\
+		var[0x##n].flags |= 1;\
 	}
 
 #define block_prg(n)		block_rom(n,prg,ID_PRG)
@@ -57,6 +59,7 @@ typedef struct romdata_s {
 	u32	size;
 	u32	crc32;
 	u8		*data;
+	u8		flags;		//currently used only to indicate if crc was present in rom
 } romdata_t;
 
 static const char ident[] = "UNIF";
@@ -92,6 +95,14 @@ BLOCKFUNCSTART()
 	BLOCKFUNC(ID_CHR4)	BLOCKFUNC(ID_CHR5)	BLOCKFUNC(ID_CHR6)	BLOCKFUNC(ID_CHR7)
 	BLOCKFUNC(ID_CHR8)	BLOCKFUNC(ID_CHR9)	BLOCKFUNC(ID_CHRA)	BLOCKFUNC(ID_CHRB)
 	BLOCKFUNC(ID_CHRC)	BLOCKFUNC(ID_CHRD)	BLOCKFUNC(ID_CHRE)	BLOCKFUNC(ID_CHRF)
+	BLOCKFUNC(ID_PCK0)	BLOCKFUNC(ID_PCK1)	BLOCKFUNC(ID_PCK2)	BLOCKFUNC(ID_PCK3)
+	BLOCKFUNC(ID_PCK4)	BLOCKFUNC(ID_PCK5)	BLOCKFUNC(ID_PCK6)	BLOCKFUNC(ID_PCK7)
+	BLOCKFUNC(ID_PCK8)	BLOCKFUNC(ID_PCK9)	BLOCKFUNC(ID_PCKA)	BLOCKFUNC(ID_PCKB)
+	BLOCKFUNC(ID_PCKC)	BLOCKFUNC(ID_PCKD)	BLOCKFUNC(ID_PCKE)	BLOCKFUNC(ID_PCKF)
+	BLOCKFUNC(ID_CCK0)	BLOCKFUNC(ID_CCK1)	BLOCKFUNC(ID_CCK2)	BLOCKFUNC(ID_CCK3)
+	BLOCKFUNC(ID_CCK4)	BLOCKFUNC(ID_CCK5)	BLOCKFUNC(ID_CCK6)	BLOCKFUNC(ID_CCK7)
+	BLOCKFUNC(ID_CCK8)	BLOCKFUNC(ID_CCK9)	BLOCKFUNC(ID_CCKA)	BLOCKFUNC(ID_CCKB)
+	BLOCKFUNC(ID_CCKC)	BLOCKFUNC(ID_CCKD)	BLOCKFUNC(ID_CCKE)	BLOCKFUNC(ID_CCKF)
 BLOCKFUNCEND()
 
 static int load_unif_block(cart_t *ret,FILE *fp)
@@ -165,8 +176,18 @@ int cart_load_unif(cart_t *ret,const char *filename)
 	}
 
 	//check the crc32's (if blocks are present)
-//	for(i=0;i<16;i++) {
-//	}
+	for(size=0,pos=0;pos<16;pos++) {
+		if(prg[pos].size && (prg[pos].flags & 1)) {
+			if(prg[pos].crc32 != crc32(prg[pos].data,prg[pos].size)) {
+				size |= 1 << pos;
+			}
+		}
+		if(chr[pos].size && (chr[pos].flags & 1)) {
+			if(prg[pos].crc32 != crc32(prg[pos].data,prg[pos].size)) {
+				size |= 1 << (pos + 16);
+			}
+		}
+	}
 
 	//glue together the prg/chr data
 	glue_data(&ret->prg,prg);
@@ -183,8 +204,14 @@ int cart_load_unif(cart_t *ret,const char *filename)
 		cache_tiles(ret->chr.data,ret->cache_hflip,ret->chr.size / 16,1);
 	}
 
+	//show some information
 	log_printf("cart_load_unif:  loaded ok.  %dkb prg, %dkb chr, board '%s'\n",
 		ret->prg.size / 1024,ret->chr.size / 1024,board);
+
+	//report crc errors
+	if(size) {
+		log_printf("cart_load_unif:  crc32 stored does not match the data\n");
+	}
 
 	//close file and return
 	fclose(fp);

@@ -18,16 +18,51 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __mapperinc_h__
-#define __mapperinc_h__
+#include "mappers/mapperinc.h"
 
-#define MAPPER(boardid,reset,tile,ppucycle,cpucycle,state) \
-	mapper_t mapper##boardid = {boardid,reset,tile,ppucycle,cpucycle,state}
+static u8 reg;
 
-#include "mappers/mappers.h"
-#include "mappers/mapperid.h"
-#include "nes/nes.h"
-#include "nes/memory.h"
-#include "nes/state/state.h"
+static void sync()
+{
+	mem_setprg32(8,(reg >> 4) | reg);
+	if(nes.cart->chr.size == 0)
+		mem_setvram8(0,0);
+	else
+		mem_setchr8(0,0);
+}
 
-#endif
+static u8 read(u32 addr)
+{
+	if(addr == 0x5FF0)
+		return(0x50);
+	return(0);
+}
+
+static void write(u32 addr,u8 data)
+{
+//	log_printf("txc-mxmdhtwo:  write to $%04X = $%02X\n",addr,data);
+	reg = data;
+	sync();
+}
+
+static void reset(int hard)
+{
+	int i;
+
+	for(i=8;i<0x10;i++)
+		mem_setwritefunc(i,write);
+	mem_setreadfunc(5,read);
+	mem_setvramsize(8);
+	mem_setsramsize(2);
+	mem_setsram8(6,0);
+	reg = 0;
+	sync();
+}
+
+static void state(int mode,u8 *data)
+{
+	STATE_U8(reg);
+	sync();
+}
+
+MAPPER(B_TXC_MXMDHTWO,reset,0,0,0,state);

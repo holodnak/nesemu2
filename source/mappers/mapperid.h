@@ -35,12 +35,12 @@ enum boardid_e {
 	B_DxROM,
 	B_ExROM,
 	B_FxROM,
+	B_GxROM_MxROM,
 	B_HxROM,
 	B_PxROM,
 	B_SxROM,
 	B_TxROM,
 	B_UxROM,
-	B_GxROM_MxROM,		//GNROM + MHROM -- same function different names
 	B_TQROM,
 	B_UN1ROM,
 	B_EVENT,

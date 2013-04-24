@@ -150,6 +150,9 @@ UNIF_BOARD_START()
 	UNIF_BOARD("UNL-SA-0036",					B_SA_0036)
 	UNIF_BOARD("UNL-SA-0037",					B_SA_0037)
 
+	//other (unknown)
+	UNIF_BOARD("BTL-MARIO1-MALEE2",			B_MARIO1_MALEE2)
+
 UNIF_BOARD_END()
 
 int mapper_get_mapperid_unif(char *str)

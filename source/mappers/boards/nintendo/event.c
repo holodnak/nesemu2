@@ -18,16 +18,71 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __mapperinc_h__
-#define __mapperinc_h__
+#include "mappers/mapperinc.h"
+#include "mappers/chips/mmc1.h"
 
-#define MAPPER(boardid,reset,tile,ppucycle,cpucycle,state) \
-	mapper_t mapper##boardid = {boardid,reset,tile,ppucycle,cpucycle,state}
+static u8 prglock,irqenabled,dip;
+static u32 irqmax,irqcounter;
 
-#include "mappers/mappers.h"
-#include "mappers/mapperid.h"
-#include "nes/nes.h"
-#include "nes/memory.h"
-#include "nes/state/state.h"
+static void sync()
+{
+	static u8 oldreg1 = 0x10;
+	u8 reg1 = mmc1_getlowchr();
 
-#endif
+	mmc1_syncmirror();
+	mmc1_syncsram();
+	mem_setvram8(0,0);
+	if(reg1 & 0x10) {
+		irqenabled = 0;
+		irqcounter = 0;
+		cpu_set_irq(0);
+	}
+	else
+		irqenabled = 1;
+	if(prglock) {
+		mem_setprg32(8,0);
+		if((oldreg1 & 0x10) == 0 && (reg1 & 0x10) == 0x10)
+			prglock = 0;
+	}
+	else {
+		if(reg1 & 8)
+			mmc1_syncprg(7,8);
+		else
+			mem_setprg32(8,(reg1 >> 1) & 3);
+	}
+	oldreg1 = reg1;
+}
+
+static void reset(int hard)
+{
+	mem_setsramsize(2);
+	mem_setvramsize(8);
+	prglock = 1;
+	irqcounter = 0;
+	irqenabled = 0;
+	dip = 4;
+	irqmax = 0x20000000 | (dip << 25);
+	mmc1_init(sync);
+}
+
+static void cpucycle()
+{
+	if(irqenabled == 0)
+		return;
+	irqcounter++;
+	if(irqcounter >= irqmax)
+		cpu_set_irq(1);
+}
+
+static void state(int mode,u8 *data)
+{
+	if(mode >= 2)log_printf("mapper:  B_EVENT:  mode = %d, dip = %X\n",mode,*data);
+	CFG_U8(dip);
+	STATE_U8(dip);
+	STATE_U8(prglock);
+	STATE_U8(irqenabled);
+	STATE_U32(irqcounter);
+	mmc1_state(mode,data);
+}
+
+MAPPER(B_EVENT,reset,0,0,cpucycle,state);

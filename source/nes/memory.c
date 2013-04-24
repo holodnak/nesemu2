@@ -29,7 +29,7 @@ void mem_setreadfunc(int page,readfunc_t readfunc)
 }
 
 //set read page data pointer
-void mem_setreadpage(int page,u8 *ptr)
+void mem_setreadptr(int page,u8 *ptr)
 {
 	nes.cpu.readpages[page] = ptr;
 }
@@ -41,7 +41,7 @@ void mem_setwritefunc(int page,writefunc_t writefunc)
 }
 
 //set write page data pointer
-void mem_setwritepage(int page,u8 *ptr)
+void mem_setwriteptr(int page,u8 *ptr)
 {
 	nes.cpu.writepages[page] = ptr;
 }
@@ -53,7 +53,7 @@ readfunc_t mem_getreadfunc(int page)
 }
 
 //retreive read page data pointer
-u8 *mem_getreadpage(int page)
+u8 *mem_getreadptr(int page)
 {
 	return(nes.cpu.readpages[page]);
 }
@@ -65,7 +65,7 @@ writefunc_t mem_getwritefunc(int page)
 }
 
 //retreive write page data pointer
-u8 *mem_getwritepage(int page)
+u8 *mem_getwriteptr(int page)
 {
 	return(nes.cpu.writepages[page]);
 }

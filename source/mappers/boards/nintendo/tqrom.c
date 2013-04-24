@@ -40,7 +40,7 @@ static void sync()
 static void reset(int hard)
 {
 	mem_setvramsize(8);
-	mmc3_reset(sync,hard);
+	mmc3_reset(C_MMC3A,sync,hard);
 }
 
 MAPPER(B_TQROM,reset,0,mmc3_ppucycle,0,mmc3_state);

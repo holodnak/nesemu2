@@ -28,15 +28,15 @@ int mem_getchrsize();
 
 //page read pointers/functions
 void mem_setreadfunc(int page,readfunc_t readfunc);
-void mem_setreadpage(int page,u8 *ptr);
+void mem_setreadptr(int page,u8 *ptr);
 readfunc_t mem_getreadfunc(int page);
-u8 *mem_getreadpage(int page);
+u8 *mem_getreadptr(int page);
 
 //page write pointers/functions
 void mem_setwritefunc(int page,writefunc_t writefunc);
-void mem_setwritepage(int page,u8 *ptr);
+void mem_setwriteptr(int page,u8 *ptr);
 writefunc_t mem_getwritefunc(int page);
-u8 *mem_getwritepage(int page);
+u8 *mem_getwriteptr(int page);
 
 //unset cpu/ppu memory page
 void mem_unsetcpu(int banksize,int page);

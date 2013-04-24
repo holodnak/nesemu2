@@ -4,9 +4,7 @@
 PATH_SOURCE=source
 
 # misc source files
-SOURCE_CONFIG = source/config/config.c
-SOURCE_LOG = source/log/buffer.c source/log/log.c
-SOURCE_EMU = source/emu/emu.c
+SOURCE_MISC = source/misc/config.c source/misc/log.c source/misc/emu.c source/misc/crc32.c
 
 # search mapper directory for source files
 MAPPER_DIRS=$(shell find $(PATH_SOURCE)/mappers -type d)
@@ -38,7 +36,7 @@ SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c source/system
 SOURCE_SYSTEM_LINUX = source/system/linux/stricmp.c
 
 # build list of source files
-SOURCES = $(SOURCE_CONFIG) $(SOURCE_LOG) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE)
+SOURCES = $(SOURCE_MISC) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE)
 
 # extra files to remove
 TRASHFILES = nesemu2.log stdout.txt stderr.txt

@@ -18,16 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __mapperinc_h__
-#define __mapperinc_h__
+#include "mappers/mapperinc.h"
+#include "mappers/chips/mmc5.h"
 
-#define MAPPER(boardid,reset,tile,ppucycle,cpucycle,state) \
-	mapper_t mapper##boardid = {boardid,reset,tile,ppucycle,cpucycle,state}
+static void reset(int hard)
+{
+	mmc5_reset(hard);
+}
 
-#include "mappers/mappers.h"
-#include "mappers/mapperid.h"
-#include "nes/nes.h"
-#include "nes/memory.h"
-#include "nes/state/state.h"
-
-#endif
+MAPPER(B_ExROM,reset,0,0,0,mmc5_state);

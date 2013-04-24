@@ -10,6 +10,8 @@ ppu
 
 mappers
  . find mapper 172/173 games to test (TXC-22211B + TXC-22211C)
+ . find mapper 206 (dxrom) games to test
+ . mapper 88/206 (dxrom) needs work
  . what is mapper 150?
  . sachen 74ls374 broken (chess academy)
  . sachen 0036 broken (chr problems!) (taiwan mahjong 16)
@@ -20,6 +22,7 @@ mappers
  . vrc2b (parodius, akumajou special) is broke (chr problems)
  . vrc4 broken
  . vrc6 broken
+ . implemennt different mmc3 types and do mmc6 for hxrom boards
 
 broken games
  . guardian legend status bar...still broken

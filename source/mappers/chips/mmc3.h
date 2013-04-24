@@ -23,21 +23,23 @@
 
 #include "types.h"
 
-#define MMC3A	0
-#define MMC3B	1
-#define MMC3C	2
+#define C_MMC3A	0
+#define C_MMC3B	1
+#define C_MMC3C	2
+#define C_MMC6		3
 
 void mmc3_sync();
 u8 mmc3_getprgbank(int n);
 u8 mmc3_getchrbank(int n);
 u8 mmc3_getchrreg(int n);
+u8 mmc3_getcommand();
 void mmc3_syncprg(int a,int o);
 void mmc3_syncchr(int a,int o);
 void mmc3_syncvram(int a,int o);
 void mmc3_syncsram();
 void mmc3_syncmirror();
 void mmc3_write(u32 addr,u8 data);
-void mmc3_reset(void (*s)(),int hard);
+void mmc3_reset(int t,void (*s)(),int hard);
 void mmc3_ppucycle();
 void mmc3_state(int mode,u8 *data);
 

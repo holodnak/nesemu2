@@ -65,6 +65,11 @@ u8 mmc3_getchrreg(int n)
 	return(chr[n & 7]);
 }
 
+u8 mmc3_getcommand()
+{
+	return(command);
+}
+
 void mmc3_syncprg(int a,int o)
 {
 	mem_setprg8(0x8,(mmc3_getprgbank(0) & a) | o);
@@ -102,7 +107,7 @@ void mmc3_syncmirror()
 	mem_setmirroring(mirror);
 }
 
-void mmc3_reset(void (*s)(),int hard)
+void mmc3_reset(int t,void (*s)(),int hard)
 {
 	int i;
 

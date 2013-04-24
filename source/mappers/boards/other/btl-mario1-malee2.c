@@ -18,16 +18,41 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __mapperinc_h__
-#define __mapperinc_h__
+#include "mappers/mapperinc.h"
 
-#define MAPPER(boardid,reset,tile,ppucycle,cpucycle,state) \
-	mapper_t mapper##boardid = {boardid,reset,tile,ppucycle,cpucycle,state}
+static u8 *prg6;
+static u8 *sram7;
 
-#include "mappers/mappers.h"
-#include "mappers/mapperid.h"
-#include "nes/nes.h"
-#include "nes/memory.h"
-#include "nes/state/state.h"
+//reading
+static u8 read6(u32 addr)	{	return(prg6[addr & 0x7FF]);	}
+static u8 read7(u32 addr)	{	return(sram7[addr & 0x7FF]);	}
 
-#endif
+//writing
+static void write7(u32 addr,u8 data)	{	sram7[addr & 0x7FF] = data;	}
+
+static void reset(int hard)
+{
+	mem_setsramsize(2);
+
+	//initialize all bank pointers
+	mem_setprg4(6,8);
+	mem_setsram4(7,0);
+	mem_setprg32(8,0);
+	mem_setchr8(0,0);
+
+	//get pointers to the data
+	prg6 = mem_getreadptr(6);
+	sram7 = mem_getreadptr(7);
+
+	//remove pointers to memory
+	mem_setreadptr(6,0);
+	mem_setreadptr(7,0);
+	mem_setwriteptr(7,0);
+
+	//insert the function pointers from here
+	mem_setreadfunc(6,read6);
+	mem_setreadfunc(7,read7);
+	mem_setwritefunc(7,write7);
+}
+
+MAPPER(B_MARIO1_MALEE2,reset,0,0,0,0);

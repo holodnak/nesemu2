@@ -138,7 +138,7 @@ void ppu_write(u32 addr,u8 data)
 		case 0:
 			if((STATUS & 0x80) && (data & 0x80) && ((CONTROL0 & 0x80) == 0))
 				cpu_set_nmi(1);
-			if(((data & 0x80) == 0) && (SCANLINE == 241) && (LINECYCLES < 3))
+			if(((data & 0x80) == 0) && (SCANLINE == 241) && (LINECYCLES < 4))
 				cpu_set_nmi(0);
 			CONTROL0 = data;
 			TMPSCROLL = (TMPSCROLL & 0x73FF) | ((data & 3) << 10);

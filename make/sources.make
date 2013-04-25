@@ -4,7 +4,8 @@
 PATH_SOURCE=source
 
 # misc source files
-SOURCE_MISC = source/misc/config.c source/misc/log.c source/misc/emu.c source/misc/crc32.c
+SOURCE_MISC = source/misc/config.c source/misc/log.c source/misc/emu.c
+SOURCE_MISC += source/misc/crc32.c source/misc/memutil.c
 
 # search mapper directory for source files
 MAPPER_DIRS=$(shell find $(PATH_SOURCE)/mappers -type d)

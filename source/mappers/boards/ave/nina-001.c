@@ -18,41 +18,38 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mapperinc.h"
+#include "mappers/mapperinc.h"
 
-struct ines20_boardid_s {
-	int num,sub;
-	int boardid;
-};
+static u8 prg,chr[2];
 
-#define INES20_BOARD_START()	static struct ines20_boardid_s boards[] = {
-#define INES20_BOARD_END()		{0,-1}};
-#define INES20_BOARD(n,s,b)	{n,s,b},
-
-INES20_BOARD_START()
-//	INES20_BOARD(0,	1,		B_NROM_SRAM)			//nrom +	save ram
-	INES20_BOARD(4,	1,		B_HxROM)
-	INES20_BOARD(21,	9,		B_VRC4A)
-	INES20_BOARD(21,	14,	B_VRC4C)
-	INES20_BOARD(23,	10,	B_VRC4E)
-	INES20_BOARD(25,	1,		B_VRC4B)
-	INES20_BOARD(25,	3,		B_VRC4D)
-	INES20_BOARD(34,	1,		B_NINA_001)
-//	INES20_BOARD(34,	2,		B_UNION_BOND)
-	INES20_BOARD(71,	1,		B_CAMERICA_BF9097)
-INES20_BOARD_END()
-
-int mapper_get_mapperid_ines20(int num,int sub)
+static void sync()
 {
-	int i;
-	
-	//no submapper, just use the ines function
-	if(sub == 0) {
-		return(mapper_get_mapperid_ines(num));
-	}
-	for(i=0;boards[i].boardid != -1;i++) {
-		if((num == boards[i].num) && (sub == boards[i].sub))
-			return(boards[i].boardid);
-	}
-	return(B_UNSUPPORTED);
+	mem_setprg32(8,prg);
+	mem_setchr4(0,chr[0]);
+	mem_setchr4(4,chr[1]);
 }
+
+static void write(u32 addr,u8 data)
+{
+	switch(addr) {
+		case 0x7FFD:	prg = data;		break;
+		case 0x7FFE:	chr[0] = data;	break;
+		case 0x7FFF:	chr[1] = data;	break;
+	}
+	sync();
+}
+
+static void reset(int hard)
+{
+	mem_setwritefunc(7,write);
+	sync();
+}
+
+static void state(int mode,u8 *data)
+{
+	STATE_U8(prg);
+	STATE_ARRAY_U8(chr,2);
+	sync();
+}
+
+MAPPER(B_NINA_001,reset,0,0,0,state);

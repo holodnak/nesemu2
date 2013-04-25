@@ -26,6 +26,8 @@
 #define mem_realloc(p,sz)	memutil_realloc(p,sz,__FILE__,__LINE__)
 #define mem_free(p)			memutil_free(p,__FILE__,__LINE__)
 
+#include <stdio.h>
+
 int memutil_init();
 void memutil_kill();
 //void *mem_alloc(size_t size);

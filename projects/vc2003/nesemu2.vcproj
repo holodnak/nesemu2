@@ -651,6 +651,9 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\axrom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\bxrom.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\cnrom.c">
 						</File>
 						<File
@@ -770,6 +773,13 @@
 						Filter="">
 						<File
 							RelativePath="..\..\source\mappers\boards\other\btl-mario1-malee2.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="ave"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\ave\nina-001.c">
 						</File>
 					</Filter>
 				</Filter>

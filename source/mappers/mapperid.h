@@ -30,6 +30,7 @@ enum boardid_e {
 	//nintendo
 	B_NROM = 0,
 	B_AxROM,
+	B_BxROM,
 	B_CNROM,
 	B_CPROM,
 	B_DxROM,
@@ -129,6 +130,9 @@ enum boardid_e {
 	B_FFE_MAPPER6,
 	B_FFE_MAPPER8,
 	B_FFE_MAPPER17,
+
+	//ave
+	B_NINA_001,
 
 	//for getting a count of supported boards
 	B_BOARDEND,

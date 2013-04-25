@@ -35,6 +35,7 @@ static mapper_t *get_mapper(int mapperid)
 	//licensed
 	//nintendo boards
 	MAPPER(B_AxROM);
+	MAPPER(B_BxROM);
 	MAPPER(B_CNROM);
 	MAPPER(B_CPROM);
 	MAPPER(B_DxROM);
@@ -93,6 +94,9 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_SA_72008);
 	MAPPER(B_SA_0036);
 	MAPPER(B_SA_0037);
+
+	//ave
+	MAPPER(B_NINA_001);
 
 	//other (unknown)
 	MAPPER(B_MARIO1_MALEE2);

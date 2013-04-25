@@ -18,12 +18,10 @@ mappers
  . sachen 0036 broken (chr problems!) (taiwan mahjong 16)
  . sachen 0037 broken...why?
  . tengen rambo-1 needs better irq code
- . test/finish the vrc mappers
- . vrc3 is implemented badly
- . vrc2b (parodius, akumajou special) is broke (chr problems)
- . vrc4 broken
- . vrc6 broken
  . implemennt different mmc3 types
+
+misc
+ . implement reading of the xml rom databases
 
 broken games
  . guardian legend status bar...still broken

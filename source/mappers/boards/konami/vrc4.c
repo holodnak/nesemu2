@@ -152,7 +152,7 @@ static void ppucycle()
 		return;
 
 	if((irqcontrol & 4) == 0) {
-		irqprescaler -= 3;
+		irqprescaler -= 2;
 		if(irqprescaler <= 0) {
 			irqprescaler += 341;
 			clockirq();
@@ -166,7 +166,7 @@ static void cpucycle()
 		return;
 
 	if(irqcontrol & 4)
-		clockirq(1);
+		clockirq();
 }
 
 static void reset(int revision)
@@ -189,6 +189,10 @@ static void reset(int revision)
 		chr[i] = 0;
 	}
 	mirror = 0;
+	irqcontrol = 0;
+	irqlatch = 0;
+	irqcounter = 0;
+	irqprescaler = 0;
 	sync();
 }
 

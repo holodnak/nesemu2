@@ -89,6 +89,7 @@ int nes_load_cart(cart_t *c)
 int nes_load(char *filename)
 {
 	cart_t *c;
+	int ret;
 
 	//make sure cart is unload
 	nes_unload();
@@ -104,8 +105,10 @@ int nes_load(char *filename)
 	else
 		log_printf("nes_load:  loaded file '%s'\n",filename);
 
-	//see if the nes accepts it and return
-	return(nes_load_cart(c));
+	//see if the nes accepts it
+	if((ret = nes_load_cart(c)) != 0)
+		cart_unload(c);
+	return(ret);
 }
 
 void nes_unload()

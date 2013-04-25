@@ -21,7 +21,7 @@
 #include "mappers/mapperinc.h"
 
 static u8 control,mirror;
-static u8 irqsource,irqlatch,irqreload,irqenabled,irqcounter,irqcpu;
+static u8 irqsource,irqlatch,irqreload,irqenabled,irqcounter,irqcpu,irqwait,needirq;
 static u8 prg[3],chr[8];
 
 static void sync()
@@ -39,23 +39,19 @@ static void sync()
 		mem_setprg8(0xC,prg[1]);
 		mem_setprg8(0x8,prg[2]);
 	}
-	mem_setprg8(0xE,-1);
+	mem_setprg8(0xE,0xFF);
 	for(i=0;i<8;i++)
 		mem_setchr1(i ^ chrxor,chr[i]);
-	if((control & 0x80) == 0) {
+	if((control & 0x20) == 0) {
 		mem_setchr2(0 ^ chrxor,chr[0] >> 1);
 		mem_setchr2(2 ^ chrxor,chr[2] >> 1);
 	}
 	mem_setmirroring(mirror);
 }
 
-static void write_6000(u32 addr,u8 data)
+static void write(u32 addr,u8 data)
 {
-}
-
-static void write_upper(u32 addr,u8 data)
-{
-	switch(addr) {
+	switch(addr & 0xE001) {
 		//control register
 		case 0x8000:
 			control = data;
@@ -76,7 +72,7 @@ static void write_upper(u32 addr,u8 data)
 			}
 			break;
 		case 0xA000:
-			mirror = data & 1;
+			mirror = (data & 1) ^ 1;
 			break;
 		case 0xA001:
 			break;
@@ -85,6 +81,7 @@ static void write_upper(u32 addr,u8 data)
 			break;
 		case 0xC001:
 			irqsource = data & 1;
+			irqcounter = 0;
 			irqreload = 1;
 			break;
 		case 0xE000:
@@ -102,9 +99,8 @@ static void reset(int hard)
 {
 	int i;
 
-	mem_setwritefunc(6,write_6000);
 	for(i=8;i<16;i++)
-		mem_setwritefunc(i,write_upper);
+		mem_setwritefunc(i,write);
 	control = 0;
 	mirror = 0;
 	prg[0] = prg[1] = prg[2] = 0xFF;
@@ -119,36 +115,50 @@ static void reset(int hard)
 	sync();
 }
 
-static void clock_irqcounter()
+static void clockirq()
 {
-	if(irqreload) {
-		irqcounter = irqlatch + 1;
-		irqreload = 0;
-	}
-	else if(irqcounter == 0) {
+	u8 tmp = irqcounter;
+	if((irqcounter == 0) || irqreload) {
 		irqcounter = irqlatch;
 	}
 	else {
 		irqcounter--;
-		if(irqcounter == 0 && irqenabled) {
-			cpu_set_irq(1);
-//		log_printf("800032.c:  irq at frame %d, scanline %d, cycle %d\n",nes.ppu.frames,nes.ppu.scanline,nes.ppu.linecycles);
-		}
 	}
+	if((tmp || irqreload) && (irqcounter == 0) && irqenabled) {
+		needirq = 3;
+	}
+	irqreload = 0;
 }
 
 static void ppucycle()
 {
 	if(irqsource == 0) {
-		if((nes.ppu.control1 & 0x18) && (nes.ppu.linecycles == 265))
-			clock_irqcounter();
+		if(needirq && (--needirq) == 0) {
+			cpu_set_irq(1);
+		}
+		if(irqwait) {
+			irqwait--;
+		}
+		if((irqwait == 0) && (nes.ppu.busaddr & 0x1000)) {
+			clockirq();
+		}
+		if(nes.ppu.busaddr & 0x1000) {
+			irqwait = 8;
+		}
 	}
-	else {
-//		log_printf("800032.c:  (cpu mode) cycle() called at frame %d, scanline %d, cycle %d\n",nes.ppu.frames,nes.ppu.scanline,nes.ppu.linecycles);
+}
+
+static void cpucycle()
+{
+	if(irqsource) {
 		irqcpu--;
 		if(irqcpu == 0) {
-			irqcpu = 3 * 4 / 2;
-			clock_irqcounter();
+			irqcpu = 4;
+			clockirq();
+			if(needirq) {
+				needirq = 0;
+				cpu_set_irq(1);
+			}
 		}
 	}
 }
@@ -159,12 +169,15 @@ static void state(int mode,u8 *data)
 	STATE_ARRAY_U8(prg,3);
 	STATE_ARRAY_U8(chr,8);
 	STATE_U8(mirror);
-	STATE_U8(irqreload);
-	STATE_U8(irqlatch);
 	STATE_U8(irqsource);
+	STATE_U8(irqlatch);
+	STATE_U8(irqreload);
 	STATE_U8(irqenabled);
 	STATE_U8(irqcounter);
+	STATE_U8(irqcpu);
+	STATE_U8(irqwait);
+	STATE_U8(needirq);
 	sync();
 }
 
-MAPPER(B_TENGEN_800032,reset,0,ppucycle,0,state);
+MAPPER(B_TENGEN_800032,reset,0,ppucycle,cpucycle,state);

@@ -26,9 +26,6 @@
 #define C_MMC2		0x20
 #define C_MMC4		0x40
 
-#define C_MMC2		(0 | C_MMC2)
-#define C_MMC4		(0 | C_MMC4)
-
 void mmc2_sync();
 void mmc2_init(int hard);
 void mmc2_write(u32 addr,u8 value);

@@ -170,6 +170,8 @@ void config_delete_var(char *name)
 	}
 }
 
+static char tmpstr[64];
+
 char *config_get_string(char *name,char *def)
 {
 	configvar_t *v = config;
@@ -180,21 +182,21 @@ char *config_get_string(char *name,char *def)
 		}
 		v = v->next;
 	}
+	if(def != 0)
+		config_add_var(name,def);
 	return(def);
 }
 
 int config_get_int(char *name,int def)
 {
-	char *str = config_get_string(name,0);
-
-	return(str ? atoi(str) : def);
+	sprintf(tmpstr,"%d",def);
+	return(atoi(config_get_string(name,tmpstr)));
 }
 
 double config_get_double(char *name,double def)
 {
-	char *str = config_get_string(name,0);
-
-	return(str ? atof(str) : def);
+	sprintf(tmpstr,"%f",def);
+	return(atof(config_get_string(name,tmpstr)));
 }
 
 void config_set_string(char *name,char *data)
@@ -209,8 +211,6 @@ void config_set_string(char *name,char *data)
 		v = v->next;
 	}
 }
-
-static char tmpstr[64];
 
 void config_set_int(char *name,int data)
 {

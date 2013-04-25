@@ -18,8 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-//hacked in sdl keys only!
-#include <SDL/SDL.h>
 #include "inputdev.h"
 #include "system/input.h"
 
@@ -33,15 +31,15 @@ static u8 read()
 
 static void strobe()
 {
-	data = 0;
-	if(joykeys[SDLK_x]) data |= INPUT_A;
-	if(joykeys[SDLK_z]) data |= INPUT_B;
-	if(joykeys[SDLK_a]) data |= INPUT_SELECT;
-	if(joykeys[SDLK_s]) data |= INPUT_START;
-	if(joykeys[SDLK_UP]) data |= INPUT_UP;
-	if(joykeys[SDLK_DOWN]) data |= INPUT_DOWN;
-	if(joykeys[SDLK_LEFT]) data |= INPUT_LEFT;
-	if(joykeys[SDLK_RIGHT]) data |= INPUT_RIGHT;
+	data = 0xFFFFFF00;
+	if(joykeys[joyconfig[0][0]]) data |= INPUT_A;
+	if(joykeys[joyconfig[0][1]]) data |= INPUT_B;
+	if(joykeys[joyconfig[0][2]]) data |= INPUT_SELECT;
+	if(joykeys[joyconfig[0][3]]) data |= INPUT_START;
+	if(joykeys[joyconfig[0][4]]) data |= INPUT_UP;
+	if(joykeys[joyconfig[0][5]]) data |= INPUT_DOWN;
+	if(joykeys[joyconfig[0][6]]) data |= INPUT_LEFT;
+	if(joykeys[joyconfig[0][7]]) data |= INPUT_RIGHT;
 	counter = 0;
 }
 

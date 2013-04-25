@@ -1,5 +1,6 @@
 #include <windows.h>
 #include "resource.h"
+#include "resource-icon.h"
 #define MAX_LOADSTRING 100
 
 // Global Variables:

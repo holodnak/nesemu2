@@ -19,8 +19,9 @@
  ***************************************************************************/
 
 #include <SDL/SDL.h>
-#include "types.h"
+#include "system/input.h"
 #include "system/system.h"
+#include "misc/config.h"
 
 /*
 todo: rewrite input.  only need a few global input variables:
@@ -35,9 +36,10 @@ required variables:
 */
 
 //these global variables provide information for the device input code
-int joyx,joyy;		//x and y coords for paddle/mouse
-u8 joyzap;			//zapper trigger
-u8 joykeys[370];	//keyboard state
+int joyx,joyy;			//x and y coords for paddle/mouse
+u8 joyzap;				//zapper trigger
+u8 joykeys[370];		//keyboard state
+int joyconfig[4][8];	//joypad button configuration
 
 // this will map joystick axises/buttons to unused keyboard buttons
 #define FIRSTJOYSTATEKEY (350) // ideally should be SDLK_LAST
@@ -51,6 +53,7 @@ int input_init()
 	for(i=0;i<20;i++) {
 		joystate[i] = 0;
 	}
+	input_update_config();
 	return(0);
 }
 
@@ -78,4 +81,24 @@ void input_poll()
 		joykeys[FIRSTJOYSTATEKEY + i] = joystate[i];
 	}
 	
+}
+
+void input_update_config()
+{
+	joyconfig[0][0] = config_get_int("joypad0.a",		'x');
+	joyconfig[0][1] = config_get_int("joypad0.b",		'z');
+	joyconfig[0][2] = config_get_int("joypad0.select",	'a');
+	joyconfig[0][3] = config_get_int("joypad0.start",	's');
+	joyconfig[0][4] = config_get_int("joypad0.up",		273);
+	joyconfig[0][5] = config_get_int("joypad0.down",	274);
+	joyconfig[0][6] = config_get_int("joypad0.left",	276);
+	joyconfig[0][7] = config_get_int("joypad0.right",	275);
+	joyconfig[1][0] = config_get_int("joypad1.a",		'h');
+	joyconfig[1][1] = config_get_int("joypad1.b",		'g');
+	joyconfig[1][2] = config_get_int("joypad1.select",	't');
+	joyconfig[1][3] = config_get_int("joypad1.start",	'y');
+	joyconfig[1][4] = config_get_int("joypad1.up",		'i');
+	joyconfig[1][5] = config_get_int("joypad1.down",	'k');
+	joyconfig[1][6] = config_get_int("joypad1.left",	'j');
+	joyconfig[1][7] = config_get_int("joypad1.right",	'l');
 }

@@ -19,13 +19,15 @@
  ***************************************************************************/
 
 #include <windows.h>
-#include "types.h"
+#include "system/input.h"
 #include "system/system.h"
+#include "misc/config.h"
 
 //these global variables provide information for the device input code
-int joyx,joyy;		//x and y coords for paddle/mouse
-u8 joyzap;			//zapper trigger
-u8 joykeys[370];	//keyboard state
+int joyx,joyy;			//x and y coords for paddle/mouse
+u8 joyzap;				//zapper trigger
+u8 joykeys[370];		//keyboard state
+u8 joyconfig[4][8];	//joypad button configuration
 
 // this will map joystick axises/buttons to unused keyboard buttons
 #define FIRSTJOYSTATEKEY (350) // ideally should be SDLK_LAST
@@ -65,4 +67,9 @@ void input_poll()
 	{
 		joykeys[FIRSTJOYSTATEKEY + i] = joystate[i];
 	}*/
+}
+
+void input_update_config()
+{
+	joyconfig[0] = config_get_int();
 }

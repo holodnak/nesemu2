@@ -21,15 +21,7 @@
 #ifndef __system__input_h__
 #define __system__input_h__
 
-//nes input keys
-#define INPUT_A		0x01
-#define INPUT_B		0x02
-#define INPUT_SELECT	0x04
-#define INPUT_START	0x08
-#define INPUT_UP		0x10
-#define INPUT_DOWN	0x20
-#define INPUT_LEFT	0x40
-#define INPUT_RIGHT	0x80
+#include "types.h"
 
 //system keys
 #define INPUT_HARDRESET			0x00100000
@@ -45,12 +37,20 @@
 #define INPUT_LOADDISKSTATE	0x40000000
 #define INPUT_SAVEDISKSTATE	0x80000000
 
-extern int joyx,joyy;		//x and y coords for paddle/mouse
-extern u8 joyzap;				//zapper trigger
-extern u8 joykeys[370];		//keyboard state
+/*typedef struct inputdata_s {
+	int	mousex,mousey;			//x/y coords of the mouse
+	u8		mouseb;					//mouse buttons
+	u8		keyboard[370];			//keyboard state
+} inputdata_t;*/
+
+extern int joyx,joyy;			//x and y coords for paddle/mouse
+extern u8 joyzap;					//zapper trigger
+extern u8 joykeys[370];			//keyboard state
+extern int joyconfig[4][8];		//joypad keys
 
 int input_init();
 void input_kill();
 void input_poll();
+void input_update_config();
 
 #endif

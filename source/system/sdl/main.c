@@ -103,7 +103,6 @@ int mainloop()
 		system_check_events();
 		total += SDL_GetTicks() - t;
 		frames++;
-//		if(total >= 10 * 1000)	quit++;
 	}
 
 	log_printf("fps:  %f (%d frames in %f seconds)\n",(double)frames / (double)total * 1000.0f,frames,(double)((double)total / 1000.0f));

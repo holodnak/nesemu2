@@ -31,15 +31,15 @@ static u8 read()
 
 static void strobe()
 {
-	data = 0;
-/*	if(joykeys[config.joy_keys[1][0]]) data |= INPUT_A;
-	if(joykeys[config.joy_keys[1][1]]) data |= INPUT_B;
-	if(joykeys[config.joy_keys[1][2]]) data |= INPUT_SELECT;
-	if(joykeys[config.joy_keys[1][3]]) data |= INPUT_START;
-	if(joykeys[config.joy_keys[1][4]]) data |= INPUT_UP;
-	if(joykeys[config.joy_keys[1][5]]) data |= INPUT_DOWN;
-	if(joykeys[config.joy_keys[1][6]]) data |= INPUT_LEFT;
-	if(joykeys[config.joy_keys[1][7]]) data |= INPUT_RIGHT;*/
+	data = 0xFFFFFF00;
+	if(joykeys[joyconfig[1][0]]) data |= INPUT_A;
+	if(joykeys[joyconfig[1][1]]) data |= INPUT_B;
+	if(joykeys[joyconfig[1][2]]) data |= INPUT_SELECT;
+	if(joykeys[joyconfig[1][3]]) data |= INPUT_START;
+	if(joykeys[joyconfig[1][4]]) data |= INPUT_UP;
+	if(joykeys[joyconfig[1][5]]) data |= INPUT_DOWN;
+	if(joykeys[joyconfig[1][6]]) data |= INPUT_LEFT;
+	if(joykeys[joyconfig[1][7]]) data |= INPUT_RIGHT;
 	counter = 0;
 }
 

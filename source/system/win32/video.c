@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 #include <windows.h>
-#include "log/log.h"
+#include "misc/log.h"
 #include "palette/palette.h"
 #include "system/video.h"
 

@@ -23,6 +23,16 @@
 
 #include "types.h"
 
+//nes input keys for joypads
+#define INPUT_A		0x01
+#define INPUT_B		0x02
+#define INPUT_SELECT	0x04
+#define INPUT_START	0x08
+#define INPUT_UP		0x10
+#define INPUT_DOWN	0x20
+#define INPUT_LEFT	0x40
+#define INPUT_RIGHT	0x80
+
 #define INPUTDEV(id,read,write,strobe,update) \
 	inputdev_t inputdev##id = {id,read,write,strobe,update}
 

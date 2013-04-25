@@ -121,7 +121,9 @@ static int load_unif_block(cart_t *ret,FILE *fp)
 			break;
 		}
 	}
-	return(block->size + 8);
+	i = block->size + 8;
+	block_destroy(block);
+	return(i);
 }
 
 static void glue_data(data_t *rom,romdata_t *roms)
@@ -135,9 +137,11 @@ static void glue_data(data_t *rom,romdata_t *roms)
 	rom->size = size;
 	rom->data = (u8*)mem_alloc(size);
 	for(pos=0,i=0;i<16;i++) {
-		memcpy(rom->data + pos,roms[i].data,roms[i].size);
-		mem_free(roms[i].data);
-		pos += roms[i].size;
+		if(roms[i].size) {
+			memcpy(rom->data + pos,roms[i].data,roms[i].size);
+			mem_free(roms[i].data);
+			pos += roms[i].size;
+		}
 	}
 }
 

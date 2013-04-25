@@ -116,9 +116,8 @@ void memutil_free(void *ptr,char *file,int line)
 	free(ptr);
 	num_free++;
 	for(i=0;i<MAX_CHUNKS;i++) {
-		if(chunks[i].ptr == ptr) {
-			chunks[i].flags = 0;
-			chunks[i].ptr = 0;
+		if(chunks[i].ptr == ptr && chunks[i].flags) {
+			memset(&chunks[i],0,sizeof(memchunk_t));
 			break;
 		}
 	}

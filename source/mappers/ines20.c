@@ -31,6 +31,7 @@ struct ines20_boardid_s {
 
 INES20_BOARD_START()
 //	INES20_BOARD(0,	1,		B_NROM_SRAM)			//nrom +	save ram
+	INES20_BOARD(4,	1,		B_HxROM)
 	INES20_BOARD(21,	9,		B_VRC4A)
 	INES20_BOARD(25,	1,		B_VRC4B)
 	INES20_BOARD(21,	14,	B_VRC4C)

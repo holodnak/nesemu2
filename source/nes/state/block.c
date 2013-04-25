@@ -19,26 +19,27 @@
  ***************************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <malloc.h>
-#include "nes/state/block.h"
+#include "misc/memutil.h"
 #include "misc/log.h"
+#include "nes/state/block.h"
 
 block_t *block_create(u32 type,u32 size)
 {
-	block_t *ret = (block_t*)malloc(sizeof(block_t));
+	block_t *ret = (block_t*)mem_alloc(sizeof(block_t));
 
 	ret->type = type;
 	ret->size = size;
-	ret->data = (u8*)malloc(size);
+	ret->data = (u8*)mem_alloc(size);
 	memset(ret->data,0,size);
 	return(ret);
 }
 
 void block_destroy(block_t *b)
 {
-	free(b->data);
-	free(b);
+	mem_free(b->data);
+	mem_free(b);
 }
 
 block_t *block_load(FILE *fp)

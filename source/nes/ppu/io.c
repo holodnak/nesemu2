@@ -108,7 +108,8 @@ u8 ppu_read(u32 addr)
 			}
 			TOGGLE = 0;
 			nes.ppu.buf = ret;
-//			if(SCANLINE == 241 && LINECYCLES < 10)	log_printf("ppu_read:  read $2002 called at cycle %d (line %d, frame %d)\n",LINECYCLES,SCANLINE,FRAMES);
+//			if(SCANLINE >= 260)
+//				log_printf("ppu_read:  read $2002 @ cycle %d (line %d, frame %d)\n",LINECYCLES,SCANLINE,FRAMES);
 			break;
 		case 4:
 			nes.ppu.buf = nes.ppu.oam[nes.ppu.oamaddr];
@@ -140,6 +141,10 @@ void ppu_write(u32 addr,u8 data)
 				cpu_set_nmi(1);
 			if(((data & 0x80) == 0) && (SCANLINE == 241) && (LINECYCLES < 4))
 				cpu_set_nmi(0);
+//			if((LINECYCLES < 3) && (SCANLINE == 261) && (data & 0x80))
+//				cpu_set_nmi(1);
+//			if(SCANLINE >= 260)
+//				log_printf("ppu_write:  write $2000 @ %d (line %d, frame %d) (status=%02X, data=%02X, ctrl0=%02X)\n",LINECYCLES,SCANLINE,FRAMES,STATUS,data,CONTROL0);
 			CONTROL0 = data;
 			TMPSCROLL = (TMPSCROLL & 0x73FF) | ((data & 3) << 10);
 			return;

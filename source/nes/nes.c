@@ -65,6 +65,7 @@ void nes_kill()
 	cpu_kill();
 	ppu_kill();
 	apu_kill();
+	cart_unload(nes.cart);
 }
 
 int nes_load_cart(cart_t *c)
@@ -98,7 +99,10 @@ int nes_load(char *filename)
 		return(1);
 	}
 
-	log_printf("nes_load:  loaded file '%s'\n",filename);
+	if(strlen(c->title))
+		log_printf("nes_load:  loaded file '%s' (title = '%s')\n",filename,c->title);
+	else
+		log_printf("nes_load:  loaded file '%s'\n",filename);
 
 	//see if the nes accepts it and return
 	return(nes_load_cart(c));

@@ -60,8 +60,11 @@ set  00      20      40      60      80      a0      c0      e0      mode
 +1f  SLO*    RLA*    SRE*    RRA*    SHA**y) LAX* y) DCP*    ISB*    Absolute,x
 */
 
+//char buf[256];
 static INLINE void cpu_step()
 {
+//	cpu_disassemble(buf,PC);
+//	log_printf("%d\t%04X:  %s\n",(u32)CYCLES,PC,buf);
 	OPADDR = PC;
 	OPCODE = memread(PC++);
 	switch(nes.cpu.opcode) {

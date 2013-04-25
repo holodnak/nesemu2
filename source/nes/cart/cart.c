@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "misc/memutil.h"
 #include "misc/log.h"
 #include "misc/crc32.h"
 #include "nes/cart/cart.h"
@@ -30,7 +31,7 @@
 
 #define FREE(p) {	\
 	if(p) {			\
-		free(p);		\
+		mem_free(p);		\
 		p = 0;		\
 	}					\
 }
@@ -137,7 +138,7 @@ cart_t *cart_load(const char *filename)
 	}
 
 	//allocate memory for struct
-	ret = (cart_t*)malloc(sizeof(cart_t));
+	ret = (cart_t*)mem_alloc(sizeof(cart_t));
 	memset(ret,0,sizeof(cart_t));
 
 	//load the file
@@ -153,9 +154,37 @@ cart_t *cart_load(const char *filename)
 
 	//if error, free data and print error
 	if(n != 0) {
-		free(ret);
+		mem_free(ret);
 		log_printf("cart_load:  error loading '%s'\n",filename);
 		return(0);
+	}
+
+	//tile cache stuff
+	if(ret->chr.size) {
+		//allocate memory for the tile cache
+		ret->cache = (cache_t*)mem_alloc(ret->chr.size);
+		ret->cache_hflip = (cache_t*)mem_alloc(ret->chr.size);
+
+		//convert all chr tiles to cache tiles
+		cache_tiles(ret->chr.data,ret->cache,ret->chr.size / 16,0);
+		cache_tiles(ret->chr.data,ret->cache_hflip,ret->chr.size / 16,1);
+	}
+
+	//see if title exists and clean it up
+	if(strlen(ret->title)) {
+		char *p = ret->title;
+		int i;
+
+		for(i=0;i<512;i++,p++) {
+			if(*p == 0x0D || *p == 0x0A) {
+				*p = ' ';
+				continue;
+			}
+			if(*p == 0x1A) {
+				*p = 0;
+				break;
+			}
+		}
 	}
 
 	//rom loaded ok, create necessary masks and generate crc32's
@@ -187,7 +216,7 @@ void cart_unload(cart_t *r)
 	}
 }
 
-#define ram_alloc(size,ptr)	(u8*)(ptr ? realloc(ptr,size) : malloc(size))
+#define ram_alloc(size,ptr)	(u8*)(ptr ? mem_realloc(ptr,size) : mem_alloc(size))
 
 static void allocdata(data_t *data,int len)
 {
@@ -201,9 +230,9 @@ static void allocdata(data_t *data,int len)
 
 	//allocate (or reallocate) memory
 	if(data->data == 0)
-		data->data = malloc(len);
+		data->data = mem_alloc(len);
 	else
-		data->data = realloc(data->data,len);
+		data->data = mem_realloc(data->data,len);
 
 	//zero out the newly allocated memory
 	memset(data->data,0,len);

@@ -21,9 +21,6 @@
 #ifndef __font_h__
 #define __font_h__
 
-#include "types.h"
-
-extern u8 fontmap[];
-extern u8 fontbits[];
+void font_drawchar(char ch,int x,int y);
 
 #endif

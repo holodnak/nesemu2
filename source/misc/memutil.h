@@ -18,4 +18,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "font.h"
+#ifndef __memutil_h__
+#define __memutil_h__
+
+#define mem_strdup(str)		memutil_strdup(str,__FILE__,__LINE__)
+#define mem_alloc(sz)		memutil_alloc(sz,__FILE__,__LINE__)
+#define mem_realloc(p,sz)	memutil_realloc(p,sz,__FILE__,__LINE__)
+#define mem_free(p)			memutil_free(p,__FILE__,__LINE__)
+
+int memutil_init();
+void memutil_kill();
+//void *mem_alloc(size_t size);
+//void *mem_realloc(void *ptr,size_t size);
+//void mem_free(void *ptr);
+char *memutil_strdup(char *str,char *file,int line);
+void *memutil_alloc(size_t size,char *file,int line);
+void *memutil_realloc(void *ptr,size_t size,char *file,int line);
+void memutil_free(void *ptr,char *file,int line);
+
+#endif

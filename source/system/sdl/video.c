@@ -134,7 +134,7 @@ void video_updateline(int line,u8 *s)
 //this handles palette changes from the nes engine
 void video_updatepalette(u8 addr,u8 data)
 {
-	palettecache[addr & 0x1F] = palette32[data & 0x3F];
+	palettecache[addr] = palette32[data & 0x3F];
 }
 
 void video_setpalette(palette_t *p)

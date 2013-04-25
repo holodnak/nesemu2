@@ -18,4 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "font.h"
+#ifndef __fontdata_h__
+#define __fontdata_h__
+
+#include "types.h"
+
+extern u8 fontmap[];
+extern u8 fontbits[];
+
+#endif

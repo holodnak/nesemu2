@@ -20,6 +20,7 @@
 
 #include "misc/emu.h"
 #include "misc/log.h"
+#include "misc/memutil.h"
 #include "misc/config.h"
 #include "misc/crc32.h"
 #include "system/system.h"
@@ -29,20 +30,22 @@
 #include "nes/nes.h"
 
 #define SUBSYSTEM_START	static subsystem_t subsystems[] = {
-#define SUBSYSTEM(n)		{n ## _init,n ## _kill},
+#define SUBSYSTEM(n)		{"" #n "", n ## _init, n ## _kill},
 #define SUBSYSTEM_END	{0,0}};
 
 typedef int (*initfunc_t)();
 typedef void (*killfunc_t)();
 
 typedef struct subsystem_s {
+	char			*name;
 	initfunc_t	init;
 	killfunc_t	kill;
 } subsystem_t;
 
 SUBSYSTEM_START
-	SUBSYSTEM(config)
 	SUBSYSTEM(log)
+	SUBSYSTEM(memutil)
+	SUBSYSTEM(config)
 	SUBSYSTEM(system)
 	SUBSYSTEM(video)
 	SUBSYSTEM(input)
@@ -76,6 +79,7 @@ void emu_kill()
 
 	//loop thru the subsystem function pointers backwards and kill
 	for(i--;i>=0;i--) {
+//		log_printf("killing '%s'\n",subsystems[i].name);
 		subsystems[i].kill();
 	}
 }

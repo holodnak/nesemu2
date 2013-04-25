@@ -70,7 +70,6 @@ static INLINE void OP_JMP()
 
 static INLINE void OP_JSR()
 {
-//	TMPREG = memread(PC++);
 	PC++;
 	memread(SP | 0x100);
 	push((u8)(PC >> 8));

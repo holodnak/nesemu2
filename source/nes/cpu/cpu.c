@@ -187,7 +187,7 @@ void cpu_write(u32 addr,u8 data)
 	}
 
 	//not handled
-	log_printf("cpu_write:  unhandled write at $%04X\n",addr,data);
+	log_printf("cpu_write:  unhandled write at $%04X = $%02X\n",addr,data);
 }
 
 u8 cpu_getflags()

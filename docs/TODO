@@ -1,6 +1,7 @@
 cpu
  . add the BRK + NMI bug
  . branch + interrupts
+ . timing off somewhere by one cpu cycle (ppu_vbl_nmi test 7 indicates)
  
 ppu
  . $2005/6 masks for internal scroll temp register (bit15 is ok?)

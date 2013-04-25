@@ -19,19 +19,31 @@
  ***************************************************************************/
 
 #include <SDL/SDL.h>
+#include "misc/memutil.h"
+#include "palette/palette.h"
 #include "console.h"
+
+#define CONSOLE_BUF_SIZE	8192
+
+static char *buffer = 0;
 
 int console_init()
 {
+	buffer = mem_alloc(CONSOLE_BUF_SIZE);
 	return(0);
 }
 
 void console_kill()
 {
-
+	mem_free(buffer);
 }
 
 void console_draw(u8 *dest,int w,int h)
+{
+
+}
+
+void console_print(char *str)
 {
 
 }

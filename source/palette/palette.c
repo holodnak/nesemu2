@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "misc/memutil.h"
 #include "misc/log.h"
 #include "palette/palette.h"
 
@@ -67,14 +68,14 @@ palette_t *palette_create()
 {
 	palette_t *ret = 0;
 
-	ret = (palette_t*)malloc(sizeof(palette_t));
+	ret = (palette_t*)mem_alloc(sizeof(palette_t));
 	memset(ret,0,sizeof(palette_t));
 	return(ret);
 }
 
 void palette_destroy(palette_t *p)
 {
-	free(p);
+	mem_free(p);
 }
 
 palette_t *palette_load(char *filename)

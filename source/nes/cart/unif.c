@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "misc/memutil.h"
 #include "misc/log.h"
 #include "misc/crc32.h"
 #include "nes/cart/cart.h"
@@ -36,7 +37,7 @@
 #define block_rom(n,var,name)	\
 	BLOCKFUNCDECL(name##n) {\
 		var[0x##n].size = block->size;\
-		var[0x##n].data = (u8*)malloc(block->size);\
+		var[0x##n].data = (u8*)mem_alloc(block->size);\
 		memcpy(var[0x##n].data,block->data,block->size);\
 	}
 #define block_crc(n,var,name)	\
@@ -132,10 +133,10 @@ static void glue_data(data_t *rom,romdata_t *roms)
 		size += roms[i].size;
 	}
 	rom->size = size;
-	rom->data = (u8*)malloc(size);
+	rom->data = (u8*)mem_alloc(size);
 	for(pos=0,i=0;i<16;i++) {
 		memcpy(rom->data + pos,roms[i].data,roms[i].size);
-		free(roms[i].data);
+		mem_free(roms[i].data);
 		pos += roms[i].size;
 	}
 }
@@ -192,17 +193,6 @@ int cart_load_unif(cart_t *ret,const char *filename)
 	//glue together the prg/chr data
 	glue_data(&ret->prg,prg);
 	glue_data(&ret->chr,chr);
-
-	//tile cache stuff
-	if(ret->chr.size) {
-		//allocate memory for the tile cache
-		ret->cache = (cache_t*)malloc(ret->chr.size);
-		ret->cache_hflip = (cache_t*)malloc(ret->chr.size);
-
-		//convert all chr tiles to cache tiles
-		cache_tiles(ret->chr.data,ret->cache,ret->chr.size / 16,0);
-		cache_tiles(ret->chr.data,ret->cache_hflip,ret->chr.size / 16,1);
-	}
 
 	//show some information
 	log_printf("cart_load_unif:  loaded ok.  %dkb prg, %dkb chr, board '%s'\n",

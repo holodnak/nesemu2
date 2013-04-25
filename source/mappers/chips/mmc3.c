@@ -21,12 +21,14 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/mmc3.h"
 
+static int type;
 static void (*sync)();
 static u8 command;
 static u8 prg[2],chr[8];
 static u8 mirror;
 static u8 sramenabled;
 static u8 irqlatch,irqcounter,irqenabled,irqreload,irqwait;
+static u8 *sram7;
 
 void mmc3_sync()
 {
@@ -96,10 +98,12 @@ void mmc3_syncvram(int a,int o)
 
 void mmc3_syncsram()
 {
-	if(sramenabled)
-		mem_setsram8(6,0);
-	else
-		mem_unsetcpu8(6);
+	if((type & C_MMCNUM) == C_MMC3) {
+		if((sramenabled & 0xC0) == 0x80)
+			mem_setsram8(6,0);
+		else
+			mem_unsetcpu8(6);
+	}
 }
 
 void mmc3_syncmirror()
@@ -107,13 +111,54 @@ void mmc3_syncmirror()
 	mem_setmirroring(mirror);
 }
 
+u8 mmc6_readsram(u32 addr)
+{
+	if(command & 0x20) {
+		if(addr >= 0x7000 && addr < 0x7200 && sramenabled & 0x20) {
+			return(sram7[addr & 0x3FF]);
+		}
+		if(addr >= 0x7200 && addr < 0x7400 && sramenabled & 0x80) {
+			return(sram7[addr & 0x3FF]);
+		}
+	}
+	return(0);
+}
+
+void mmc6_writesram(u32 addr,u8 data)
+{
+	if(command & 0x20) {
+		if(addr >= 0x7000 && addr < 0x7200 && sramenabled & 0x10) {
+			sram7[addr & 0x3FF] = data;
+		}
+		if(addr >= 0x7200 && addr < 0x7400 && sramenabled & 0x40) {
+			sram7[addr & 0x3FF] = data;
+		}
+	}
+}
+
 void mmc3_reset(int t,void (*s)(),int hard)
 {
 	int i;
 
+	type = t;
 	mem_setsramsize(2);
 	for(i=8;i<0x10;i++)
 		mem_setwritefunc(i,mmc3_write);
+	if((type & C_MMCNUM) == C_MMC6) {
+		mem_setsram4(7,0);
+		sram7 = mem_getwriteptr(7);
+		mem_unsetcpu4(7);
+		mem_setreadfunc(6,mmc6_readsram);
+		mem_setreadfunc(7,mmc6_readsram);
+		mem_setwritefunc(6,mmc6_writesram);
+		mem_setwritefunc(7,mmc6_writesram);
+		sramenabled = 0;
+	}
+	else {
+		mem_setsram8(6,0);
+		//keep enabled for now
+		sramenabled = 0x80;
+	}
 	sync = s;
 	command = 0;
 	prg[0] = 0x3C;
@@ -121,7 +166,6 @@ void mmc3_reset(int t,void (*s)(),int hard)
 	for(i=0;i<8;i++)
 		chr[i] = i;
 	mirror = 0;
-	sramenabled = 1;
 	irqcounter = irqlatch = 0;
 	irqenabled = irqreload = 0;
 	irqwait = 0;
@@ -133,6 +177,8 @@ void mmc3_write(u32 addr,u8 data)
 	switch(addr & 0xE001) {
 		case 0x8000:
 			command = data;
+			if((data & 0x20) == 0)
+				sramenabled = 0;
 			sync();
 			break;
 		case 0x8001:
@@ -173,9 +219,16 @@ void mmc3_write(u32 addr,u8 data)
 			sync();
 			break;
 		case 0xA001:
-		//keep enabled all the time for now
-//			sramenabled = data & 0x80;
-//			sync();
+			if(type == C_MMC6) {
+				if(command & 0x20) {
+					sramenabled = data & 0xF0;
+					sync();
+				}
+			}
+			else {
+				sramenabled = data & 0xC0;
+				sync();
+			}
 			break;
 		case 0xC000:
 			irqlatch = data;

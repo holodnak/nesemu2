@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "misc/memutil.h"
 #include "misc/config.h"
 #include "misc/log.h"
 
@@ -62,9 +63,9 @@ void config_kill()
 	while(v) {
 		v2 = v;
 		v = v->next;
-		free(v2->name);
-		free(v2->data);
-		free(v2);
+		mem_free(v2->name);
+		mem_free(v2->data);
+		mem_free(v2);
 	}
 	config = 0;
 }
@@ -132,10 +133,10 @@ void config_add_var(char *name,char *data)
 {
 	configvar_t *v,*var;
 
-	var = (configvar_t*)malloc(sizeof(configvar_t));
+	var = (configvar_t*)mem_alloc(sizeof(configvar_t));
 	memset(var,0,sizeof(configvar_t));
-	var->name = strdup(name);
-	var->data = strdup(data);
+	var->name = mem_strdup(name);
+	var->data = mem_strdup(data);
 	if(config == 0)
 		config = var;
 	else {
@@ -160,9 +161,9 @@ void config_delete_var(char *name)
 			else {
 				prev->next = v->next;
 			}
-			free(v->name);
-			free(v->data);
-			free(v);
+			mem_free(v->name);
+			mem_free(v->data);
+			mem_free(v);
 		}
 		prev = v;
 		v = v->next;
@@ -202,8 +203,8 @@ void config_set_string(char *name,char *data)
 
 	while(v) {
 		if(strcmp(name,v->name) == 0) {
-			free(v->data);
-			v->data = strdup(data);
+			mem_free(v->data);
+			v->data = mem_strdup(data);
 		}
 		v = v->next;
 	}

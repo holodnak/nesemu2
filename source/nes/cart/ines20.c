@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "misc/memutil.h"
 #include "misc/log.h"
 #include "nes/cart/cart.h"
 #include "mappers/mappers.h"
@@ -77,7 +78,7 @@ static int load_chunk(data_t *data,FILE *fp)
 
 	//if this chunk has a size, it exists (parse_ines_header determines this)
 	if(data->size) {
-		data->data = (u8*)malloc(data->size);
+		data->data = (u8*)mem_alloc(data->size);
 		len = (int)fread(data->data,1,data->size,fp);
 	}
 	return(len);
@@ -87,12 +88,18 @@ int cart_load_ines20(cart_t *ret,const char *filename)
 {
 	u8 header[16];
 	FILE *fp;
+	u32 size;
 
 	//open rom file
 	if((fp = fopen(filename,"rb")) == 0) {
 		log_printf("cart_load_ines20:  error opening '%s'\n",filename);
 		return(1);
 	}
+
+	//get length of file
+	fseek(fp,0,SEEK_END);
+	size = ftell(fp);
+	fseek(fp,0,SEEK_SET);
 
 	//read 16 byte header and parse its data
 	fread(header,1,16,fp);
@@ -103,6 +110,10 @@ int cart_load_ines20(cart_t *ret,const char *filename)
 	load_chunk(&ret->prg,fp);
 	load_chunk(&ret->chr,fp);
 	load_chunk(&ret->pc10rom,fp);
+
+	//check for title
+	if((size - ftell(fp)) == 128)
+		fread(ret->title,1,128,fp);
 
 	//close file and return
 	fclose(fp);

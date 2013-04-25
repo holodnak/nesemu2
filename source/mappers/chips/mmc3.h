@@ -23,10 +23,16 @@
 
 #include "types.h"
 
-#define C_MMC3A	0
-#define C_MMC3B	1
-#define C_MMC3C	2
-#define C_MMC6		3
+#define C_MMCNUM		0xF0
+#define C_MMCREV		0x0F
+
+#define C_MMC3			0x30
+#define C_MMC6			0x60
+
+#define C_MMC3A		(0 | C_MMC3)
+#define C_MMC3B		(1 | C_MMC3)
+#define C_MMC3C		(2 | C_MMC3)
+#define C_MMC6B		(0 | C_MMC6)
 
 void mmc3_sync();
 u8 mmc3_getprgbank(int n);

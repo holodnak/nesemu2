@@ -165,6 +165,9 @@
 						<File
 							RelativePath="..\..\source\system\sdl\console\font.c">
 						</File>
+						<File
+							RelativePath="..\..\source\system\sdl\console\fontdata.c">
+						</File>
 					</Filter>
 				</Filter>
 				<Filter
@@ -834,6 +837,9 @@
 				<File
 					RelativePath="..\..\source\misc\log.c">
 				</File>
+				<File
+					RelativePath="..\..\source\misc\memutil.c">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -867,6 +873,19 @@
 				<Filter
 					Name="sdl"
 					Filter="">
+					<Filter
+						Name="console"
+						Filter="">
+						<File
+							RelativePath="..\..\source\system\sdl\console\console.h">
+						</File>
+						<File
+							RelativePath="..\..\source\system\sdl\console\font.h">
+						</File>
+						<File
+							RelativePath="..\..\source\system\sdl\console\fontdata.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="win32"
@@ -991,6 +1010,9 @@
 				</File>
 				<File
 					RelativePath="..\..\source\misc\log.h">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\memutil.h">
 				</File>
 			</Filter>
 			<Filter

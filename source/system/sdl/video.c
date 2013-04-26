@@ -31,6 +31,7 @@
 #include "nes/nes.h"
 #include "system/video.h"
 #include "system/win32/resource.h"
+#include "system/sdl/console/console.h"
 #include "misc/memutil.h"
 #include "misc/config.h"
 
@@ -133,8 +134,17 @@ void video_startframe()
 void video_endframe()
 {
 	u32 t;
+/*	u32 *ptr1 = screen;
+	u32 *ptr2 = screen + 232 * 256;
+
+	for(t=0;t<256*8;t++) {
+		ptr1[t] = palettecache[0];
+		ptr2[t] = palettecache[0];
+	}*/
 
 	drawfunc(surface->pixels,surface->pitch,screen,256*4,256,240);
+
+	console_draw(surface->pixels,surface->pitch,screenh);
 
 	//flip buffers and unlock surface
 	SDL_Flip(surface);

@@ -19,3 +19,42 @@
  ***************************************************************************/
 
 #include "font.h"
+#include "fontdata.h"
+
+#define TEXTCOLOR	0xEEEEEE
+
+static int getindex(char ch)
+{
+	int i;
+
+	for(i=0;fontmap[i];i++) {
+		if(fontmap[i] == ch)
+			return(i);
+	}
+	return(-1);
+}
+
+void font_drawchar(char ch,u32 *dest,int pitch)
+{
+	int x,y,index = getindex(ch);
+	u8 *bits = fontbits;
+
+	if(index == -1)
+		return;
+	bits += index * 8;
+	for(y=0;y<8;y++) {
+		for(x=0;x<8;x++) {
+			if(bits[y] & (1 << x))
+				dest[7 - x] = TEXTCOLOR;
+		}
+		dest += pitch;
+	}
+}
+
+void font_drawstr(char *str,u32 *dest,int pitch)
+{
+	while(*str) {
+		font_drawchar(*str++,dest,pitch);
+		dest += 8;
+	}
+}

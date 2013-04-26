@@ -23,6 +23,7 @@
 
 int log_init();
 void log_kill();
+void log_sethook(void (*hook)(char*));
 void log_print(char *str);
 void log_printf(char *str,...);
 

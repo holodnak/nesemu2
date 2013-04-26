@@ -54,8 +54,6 @@ int mainloop()
 	}
 	video_setpalette(pal);
 
-	log_printf("resetting nes...\n");
-
 	log_printf("starting main loop...\n");
 
 	//main event loop
@@ -63,7 +61,6 @@ int mainloop()
 		t = SDL_GetTicks();
 		if(running)
 			nes_frame();
-		console_draw(video_getscreen(),video_getwidth(),video_getheight());
 		video_startframe();
 		video_endframe();
 		input_poll();

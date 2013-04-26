@@ -29,6 +29,11 @@ SOURCE_PALETTE = source/palette/generator.c source/palette/palette.c
 # sdl system files
 SOURCE_SYSTEM_SDL = source/system/sdl/video.c source/system/sdl/input.c source/system/sdl/sound.c
 SOURCE_SYSTEM_SDL += source/system/sdl/main.c source/system/sdl/system.c
+SOURCE_SYSTEM_SDL += source/system/sdl/console/console.c source/system/sdl/console/font.c
+SOURCE_SYSTEM_SDL += source/system/sdl/console/fontdata.c
+SOURCE_SYSTEM_SDL += source/system/sdl/draw/draw.c source/system/sdl/interpolate/interpolate.c
+SOURCE_SYSTEM_SDL += source/system/sdl/scale2x/scalebit.c source/system/sdl/scale2x/scale2x.c
+SOURCE_SYSTEM_SDL += source/system/sdl/scale2x/scale3x.c
 
 # sdl/win32 system files
 SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c source/system/win32/nesemu2-res.o

@@ -34,6 +34,7 @@
 
 static FILE *logfd = 0;
 static char logfilename[MAX_PATH] = LOGFILENAME;
+static void (*loghook)(char*) = 0;
 
 int log_init()
 {
@@ -57,10 +58,19 @@ void log_kill()
 	logfd = 0;
 }
 
+void log_sethook(void (*hook)(char*))
+{
+	loghook = hook;
+}
+
 void log_print(char *str)
 {
-	//output message to console
+	//output message to stdout
 	printf(str);
+
+	//output message to hook function
+	if(loghook)
+		loghook(str);
 
 	//if log file isnt open, maybe logging is disabled or file isnt opened yet
 	if(logfd == 0)

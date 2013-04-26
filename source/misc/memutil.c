@@ -37,6 +37,20 @@ static memchunk_t chunks[MAX_CHUNKS];
 static int num_alloc;
 static int num_realloc;
 static int num_free;
+static size_t num_bytes;
+
+static char *bytestr(size_t sz)
+{
+	static char str[64];
+
+	if(sz < 1024)
+		sprintf(str,"%db",sz);
+	else if(sz < 1024 * 1024)
+		sprintf(str,"%.2fkb",(double)sz / 1024.0f);
+	else if(sz < 1024 * 1024 * 1024)
+		sprintf(str,"%.2fmb",(double)sz / 1024.0f / 1024.0f);
+	return(str);
+}
 
 int memutil_init()
 {
@@ -44,6 +58,7 @@ int memutil_init()
 	num_alloc = 0;
 	num_realloc = 0;
 	num_free = 0;
+	num_bytes = 0;
 	return(0);
 }
 
@@ -56,7 +71,7 @@ void memutil_kill()
 			log_printf("mem_kill:  memory not free'd in file %s @ line %d\n",chunks[i].file,chunks[i].line);
 		}
 	}
-	log_printf("mem_kill:  num alloc, realloc, free = %d, %d, %d\n",num_alloc,num_realloc,num_free);
+	log_printf("mem_kill:  num alloc, realloc, free = %d, %d, %d (%s was allocated)\n",num_alloc,num_realloc,num_free,bytestr(num_bytes));
 }
 
 char *memutil_strdup(char *str,char *file,int line)
@@ -76,6 +91,7 @@ void *memutil_alloc(size_t size,char *file,int line)
 
 	ret = malloc(size);
 	num_alloc++;
+	num_bytes += size;
 	for(i=0;i<MAX_CHUNKS;i++) {
 		if(chunks[i].flags == 0) {
 			chunks[i].flags |= 1;
@@ -97,6 +113,7 @@ void *memutil_realloc(void *ptr,size_t size,char *file,int line)
 		return(memutil_alloc(size,file,line));
 	ret = realloc(ptr,size);
 	num_realloc++;
+	num_bytes += size;
 	for(i=0;i<MAX_CHUNKS;i++) {
 		if(chunks[i].ptr == ptr) {
 			chunks[i].flags |= 1;

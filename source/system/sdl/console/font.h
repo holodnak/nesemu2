@@ -21,6 +21,12 @@
 #ifndef __font_h__
 #define __font_h__
 
-void font_drawchar(char ch,int x,int y);
+#include "types.h"
+
+//draw character to dest
+void font_drawchar(char ch,u32 *dest,int pitch);
+
+//draw string to dest (make sure it doesnt pass edge of screen!)
+void font_drawstr(char *str,u32 *dest,int pitch);
 
 #endif

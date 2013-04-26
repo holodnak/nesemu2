@@ -18,14 +18,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __console_h__
-#define __console_h__
+#ifndef __draw_h__
+#define __draw_h__
 
 #include "types.h"
 
-int console_init();
-void console_kill();
-void console_draw(u32 *dest,int w,int h);
-void console_update();
+void draw1x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h);
+void draw2x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h);
+void draw3x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h);
+void draw4x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h);
 
 #endif

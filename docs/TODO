@@ -18,7 +18,9 @@ mappers
  . sachen 0036 broken (chr problems!) (taiwan mahjong 16)
  . sachen 0037 broken...why?
  . tengen rambo-1 needs better irq code
- . implemennt different mmc3 types
+ . implement different mmc3 types
+ . mapper 65 (irem h3001) "Daiku no Gen San 2 - Akage no Dan no Gyakushuu" doesnt work, the rest do
+ . mmc4 (mapper 10) not looking correct
 
 misc
  . implement reading of the xml rom databases

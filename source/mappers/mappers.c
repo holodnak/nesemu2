@@ -71,6 +71,12 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_TAITO_X1_005);
 	MAPPER(B_TAITO_X1_005A);
 
+	//irem
+	MAPPER(B_IREM_H3001);
+
+	//jaleco
+	MAPPER(B_JALECO_SS88006);
+
 	//unlicensed
 	//tengen
 	MAPPER(B_TENGEN_800032);

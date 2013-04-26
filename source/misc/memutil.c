@@ -93,6 +93,8 @@ void *memutil_realloc(void *ptr,size_t size,char *file,int line)
 	void *ret;
 	int i;
 
+	if(ptr == 0)
+		return(memutil_alloc(size,file,line));
 	ret = realloc(ptr,size);
 	num_realloc++;
 	for(i=0;i<MAX_CHUNKS;i++) {

@@ -63,7 +63,7 @@ enum boardid_e {
 
 	//jaleco
 	B_74x139x74,
-	B_SS8806,
+	B_JALECO_SS88006,
 
 	//namcot
 	B_NAMCOT_163,
@@ -77,7 +77,7 @@ enum boardid_e {
 	B_74x161x161x32,		//also taito
 
 	//irem
-	B_IREM_H_3001,
+	B_IREM_H3001,
 
 	//taito
 	B_TAITO_X1_005,

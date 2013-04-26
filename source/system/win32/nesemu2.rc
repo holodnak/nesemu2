@@ -52,20 +52,24 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
 CAPTION "About"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    ICON            107,IDC_MYICON,14,9,16,16
+    ICON            107,IDI_MAIN,14,9,20,20
     LTEXT           "nesemu2",IDC_STATIC,49,10,119,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2013",IDC_STATIC,49,20,119,8
     DEFPUSHBUTTON   "OK",IDOK,195,6,30,11,WS_GROUP
 END
 
-IDD_DIALOG1 DIALOGEX 0, 0, 186, 90
+IDD_DEBUGGER DIALOGEX 0, 0, 368, 267
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
-CAPTION "Dialog"
+CAPTION "Debugger"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,129,7,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,129,24,50,14
+    DEFPUSHBUTTON   "Close",IDOK,311,246,50,14
+    GROUPBOX        "CPU",IDC_STATIC,204,7,157,96
+    LTEXT           "A",IDC_STATIC,211,20,8,8
+    LTEXT           "X",IDC_STATIC,214,37,8,8
+    LTEXT           "Y",IDC_STATIC,213,51,8,8
+    EDITTEXT        IDC_EDIT1,223,17,20,14,ES_AUTOHSCROLL
 END
 
 
@@ -105,16 +109,25 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
-    IDD_DIALOG1, DIALOG
+    IDD_DEBUGGER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 179
+        RIGHTMARGIN, 361
         TOPMARGIN, 7
-        BOTTOMMARGIN, 83
+        BOTTOMMARGIN, 260
     END
 END
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAIN                ICON                    "mainicon.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

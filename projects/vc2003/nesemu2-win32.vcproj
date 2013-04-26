@@ -425,6 +425,9 @@
 					<File
 						RelativePath="..\..\source\nes\cart\ines20.c">
 					</File>
+					<File
+						RelativePath="..\..\source\nes\cart\unif.c">
+					</File>
 				</Filter>
 				<Filter
 					Name="state"
@@ -510,13 +513,31 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\axrom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\bxrom.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\cnrom.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\cprom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\dxrom.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\event.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\exrom.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\fxrom.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\gxrom_mxrom.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\hxrom.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\nrom.c">
@@ -561,6 +582,82 @@
 							RelativePath="..\..\source\mappers\boards\taito\x1-005.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="ave"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\ave\nina-001.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="irem"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\irem\h3001.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="jaleco"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\jaleco\ss88006.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="other"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\other\btl-mario1-malee2.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="sachen"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\sachen\sa-003x.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sachen\sa-7200x.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sachen\sachen-74ls374n.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="txc"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\txc\txc-22211.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\txc\txc-mxmdhtwo.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\txc\txc-tw.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="konami"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc2.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc3.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc4.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc6.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\konami\vrc7.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="chips"
@@ -580,30 +677,28 @@
 					<File
 						RelativePath="..\..\source\mappers\chips\mmc4.c">
 					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\mmc5.c">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
-				Name="config"
+				Name="misc"
 				Filter="">
 				<File
-					RelativePath="..\..\source\config\config.c">
-				</File>
-			</Filter>
-			<Filter
-				Name="log"
-				Filter="">
-				<File
-					RelativePath="..\..\source\log\buffer.c">
+					RelativePath="..\..\source\misc\config.c">
 				</File>
 				<File
-					RelativePath="..\..\source\log\log.c">
+					RelativePath="..\..\source\misc\crc32.c">
 				</File>
-			</Filter>
-			<Filter
-				Name="emu"
-				Filter="">
 				<File
-					RelativePath="..\..\source\emu\emu.c">
+					RelativePath="..\..\source\misc\emu.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\log.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\memutil.c">
 				</File>
 			</Filter>
 			<Filter
@@ -638,9 +733,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\source\system\win32\resource.h">
-			</File>
-			<File
 				RelativePath="..\..\source\types.h">
 			</File>
 			<File
@@ -671,6 +763,9 @@
 				<Filter
 					Name="win32"
 					Filter="">
+					<File
+						RelativePath="..\..\source\system\win32\resource.h">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -724,6 +819,9 @@
 					<File
 						RelativePath="..\..\source\nes\cart\ines20.h">
 					</File>
+					<File
+						RelativePath="..\..\source\nes\cart\unif.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="state"
@@ -766,30 +864,28 @@
 					<File
 						RelativePath="..\..\source\mappers\chips\mmc4.h">
 					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\mmc5.h">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
-				Name="config"
+				Name="misc"
 				Filter="">
 				<File
-					RelativePath="..\..\source\config\config.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="log"
-				Filter="">
-				<File
-					RelativePath="..\..\source\log\buffer.h">
+					RelativePath="..\..\source\misc\config.h">
 				</File>
 				<File
-					RelativePath="..\..\source\log\log.h">
+					RelativePath="..\..\source\misc\crc32.h">
 				</File>
-			</Filter>
-			<Filter
-				Name="emu"
-				Filter="">
 				<File
-					RelativePath="..\..\source\emu\emu.h">
+					RelativePath="..\..\source\misc\emu.h">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\log.h">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\memutil.h">
 				</File>
 			</Filter>
 			<Filter
@@ -824,7 +920,7 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
-				RelativePath="..\..\source\system\win32\nesemu2-icon.rc">
+				RelativePath="..\..\source\system\win32\mainicon.ico">
 			</File>
 			<File
 				RelativePath="..\..\source\system\win32\nesemu2.rc">

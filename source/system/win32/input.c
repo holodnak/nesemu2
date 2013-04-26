@@ -27,7 +27,7 @@
 int joyx,joyy;			//x and y coords for paddle/mouse
 u8 joyzap;				//zapper trigger
 u8 joykeys[370];		//keyboard state
-u8 joyconfig[4][8];	//joypad button configuration
+int joyconfig[4][8];	//joypad button configuration
 
 // this will map joystick axises/buttons to unused keyboard buttons
 #define FIRSTJOYSTATEKEY (350) // ideally should be SDLK_LAST
@@ -67,9 +67,25 @@ void input_poll()
 	{
 		joykeys[FIRSTJOYSTATEKEY + i] = joystate[i];
 	}*/
+	GetKeyboardState(joykeys);
 }
 
 void input_update_config()
 {
-	joyconfig[0] = config_get_int();
+	joyconfig[0][0] = config_get_int("input.win32.joypad0.a",		'x');
+	joyconfig[0][1] = config_get_int("input.win32.joypad0.b",		'z');
+	joyconfig[0][2] = config_get_int("input.win32.joypad0.select",	'a');
+	joyconfig[0][3] = config_get_int("input.win32.joypad0.start",	's');
+	joyconfig[0][4] = config_get_int("input.win32.joypad0.up",		VK_UP);
+	joyconfig[0][5] = config_get_int("input.win32.joypad0.down",	VK_DOWN);
+	joyconfig[0][6] = config_get_int("input.win32.joypad0.left",	VK_LEFT);
+	joyconfig[0][7] = config_get_int("input.win32.joypad0.right",	VK_RIGHT);
+	joyconfig[1][0] = config_get_int("input.win32.joypad1.a",		'h');
+	joyconfig[1][1] = config_get_int("input.win32.joypad1.b",		'g');
+	joyconfig[1][2] = config_get_int("input.win32.joypad1.select",	't');
+	joyconfig[1][3] = config_get_int("input.win32.joypad1.start",	'y');
+	joyconfig[1][4] = config_get_int("input.win32.joypad1.up",		'i');
+	joyconfig[1][5] = config_get_int("input.win32.joypad1.down",	'k');
+	joyconfig[1][6] = config_get_int("input.win32.joypad1.left",	'j');
+	joyconfig[1][7] = config_get_int("input.win32.joypad1.right",	'l');
 }

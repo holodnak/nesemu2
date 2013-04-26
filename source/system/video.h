@@ -30,5 +30,9 @@ void video_endframe();
 void video_updateline(int line,u8 *s);
 void video_updatepalette(u8 addr,u8 data);
 void video_setpalette(palette_t *p);
+int video_getwidth();
+int video_getheight();
+int video_getbpp();
+void *video_getscreen();
 
 #endif

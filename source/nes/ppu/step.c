@@ -203,7 +203,6 @@ static INLINE void scanline_prerender()
 		case 340:
 			fetch_ntbyte();
 			skip_cycle();
-			video_startframe();
 			break;
 
 		default:
@@ -392,7 +391,6 @@ static INLINE void scanline_postrender()
 {
 	if(LINECYCLES == 0) {
 //		printf("%s\n",nes.cart->sram.data+4);
-		video_endframe();
 	}
 }
 

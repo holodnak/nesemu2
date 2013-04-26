@@ -85,20 +85,20 @@ void input_poll()
 
 void input_update_config()
 {
-	joyconfig[0][0] = config_get_int("joypad0.a",		'x');
-	joyconfig[0][1] = config_get_int("joypad0.b",		'z');
-	joyconfig[0][2] = config_get_int("joypad0.select",	'a');
-	joyconfig[0][3] = config_get_int("joypad0.start",	's');
-	joyconfig[0][4] = config_get_int("joypad0.up",		273);
-	joyconfig[0][5] = config_get_int("joypad0.down",	274);
-	joyconfig[0][6] = config_get_int("joypad0.left",	276);
-	joyconfig[0][7] = config_get_int("joypad0.right",	275);
-	joyconfig[1][0] = config_get_int("joypad1.a",		'h');
-	joyconfig[1][1] = config_get_int("joypad1.b",		'g');
-	joyconfig[1][2] = config_get_int("joypad1.select",	't');
-	joyconfig[1][3] = config_get_int("joypad1.start",	'y');
-	joyconfig[1][4] = config_get_int("joypad1.up",		'i');
-	joyconfig[1][5] = config_get_int("joypad1.down",	'k');
-	joyconfig[1][6] = config_get_int("joypad1.left",	'j');
-	joyconfig[1][7] = config_get_int("joypad1.right",	'l');
+	joyconfig[0][0] = config_get_int("input.sdl.joypad0.a",			'x');
+	joyconfig[0][1] = config_get_int("input.sdl.joypad0.b",			'z');
+	joyconfig[0][2] = config_get_int("input.sdl.joypad0.select",	'a');
+	joyconfig[0][3] = config_get_int("input.sdl.joypad0.start",	's');
+	joyconfig[0][4] = config_get_int("input.sdl.joypad0.up",		273);
+	joyconfig[0][5] = config_get_int("input.sdl.joypad0.down",		274);
+	joyconfig[0][6] = config_get_int("input.sdl.joypad0.left",		276);
+	joyconfig[0][7] = config_get_int("input.sdl.joypad0.right",	275);
+	joyconfig[1][0] = config_get_int("input.sdl.joypad1.a",			'h');
+	joyconfig[1][1] = config_get_int("input.sdl.joypad1.b",			'g');
+	joyconfig[1][2] = config_get_int("input.sdl.joypad1.select",	't');
+	joyconfig[1][3] = config_get_int("input.sdl.joypad1.start",	'y');
+	joyconfig[1][4] = config_get_int("input.sdl.joypad1.up",		'i');
+	joyconfig[1][5] = config_get_int("input.sdl.joypad1.down",		'k');
+	joyconfig[1][6] = config_get_int("input.sdl.joypad1.left",		'j');
+	joyconfig[1][7] = config_get_int("input.sdl.joypad1.right",	'l');
 }

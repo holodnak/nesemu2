@@ -169,6 +169,36 @@
 							RelativePath="..\..\source\system\sdl\console\fontdata.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="interpolate"
+						Filter="">
+						<File
+							RelativePath="..\..\source\system\sdl\interpolate\interpolate.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="scale2x"
+						Filter="">
+						<File
+							RelativePath="..\..\source\system\sdl\scale2x\scale2x.c">
+						</File>
+						<File
+							RelativePath="..\..\source\system\sdl\scale2x\scale3x.c">
+						</File>
+						<File
+							RelativePath="..\..\source\system\sdl\scale2x\scalebit.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="draw"
+						Filter="">
+						<File
+							RelativePath="..\..\source\system\sdl\draw\draw.c">
+						</File>
+						<File
+							RelativePath="..\..\source\system\sdl\draw\draw.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="common"
@@ -782,6 +812,20 @@
 							RelativePath="..\..\source\mappers\boards\ave\nina-001.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="irem"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\irem\h3001.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="jaleco"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\jaleco\ss88006.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="chips"
@@ -856,6 +900,9 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\source\system\win32\resource.h">
+			</File>
 			<File
 				RelativePath="..\..\source\types.h">
 			</File>
@@ -1057,7 +1104,16 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
-				RelativePath="..\..\source\system\win32\nesemu2-icon.rc">
+				RelativePath="..\..\source\system\win32\mainicon.ico">
+			</File>
+			<File
+				RelativePath="..\..\source\system\win32\nesemu2.rc">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions="SDL"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<File

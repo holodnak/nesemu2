@@ -30,8 +30,10 @@
 #include "palette/palette.h"
 #include "palette/generator.h"
 #include "mappers/mapperid.h"
+#include "system/sdl/console/console.h"
 
 int quit = 0;
+int running = 0;
 char romfilename[1024];
 char statefilename[1024];
 static palette_t *pal = 0;
@@ -42,15 +44,7 @@ int mainloop()
 {
 	u32 t,total = 0,frames = 0;
 
-	//load file into the nes
-	if(nes_load(romfilename) != 0) {
-		return(1);
-	}
-
-	strncpy(statefilename,romfilename,1024);
-	strcat(statefilename,".state");
-
-	nes_set_inputdev(0,I_JOYPAD0);
+	console_init();
 
 	if(strcmp(config_get_string("palette.source","generator"),"file") == 0) {
 		pal = palette_load(config_get_string("palette.filename","roni.pal"));
@@ -62,16 +56,18 @@ int mainloop()
 
 	log_printf("resetting nes...\n");
 
-	//reset the nes
-	nes_reset(1);
-
 	log_printf("starting main loop...\n");
 
 	//main event loop
 	while(quit == 0) {
 		t = SDL_GetTicks();
-		nes_frame();
+		if(running)
+			nes_frame();
+		console_draw(video_getscreen(),video_getwidth(),video_getheight());
+		video_startframe();
+		video_endframe();
 		input_poll();
+		console_update();
 		if(joykeys[SDLK_p]) {
 			keydown |= 1;
 		}
@@ -100,6 +96,9 @@ int mainloop()
 			nes_loadstate(statefilename);
 			keydown &= ~8;
 		}
+		if(joykeys[SDLK_ESCAPE]) {
+			quit++;
+		}
 		system_check_events();
 		total += SDL_GetTicks() - t;
 		frames++;
@@ -108,6 +107,8 @@ int mainloop()
 	log_printf("fps:  %f (%d frames in %f seconds)\n",(double)frames / (double)total * 1000.0f,frames,(double)((double)total / 1000.0f));
 
 	palette_destroy(pal);
+
+	console_kill();
 
 	return(0);
 }
@@ -138,23 +139,37 @@ int main(int argc,char *argv[])
 {
 	int ret;
 
-	if(argc < 2) {
-		log_printf("usage:  %s file.rom\n",argv[0]);
-		return(1);
-	}
+//	if(argc < 2) {
+//		log_printf("usage:  %s file.rom\n",argv[0]);
+//		return(1);
+//	}
 
-	if(strcmp("--mappers",argv[1]) == 0) {
-		showmappers();
-		return(0);
-	}
+	//process command line arguments
+	if(argc > 1) {
+		if(strcmp("--mappers",argv[1]) == 0) {
+			showmappers();
+			return(0);
+		}
 
-	//set rom filename
-	strncpy(romfilename,argv[1],1024);
+		//set rom filename
+		strncpy(romfilename,argv[1],1024);
+	}
 
 	//initialize the emulator
 	if(emu_init() != 0) {
         log_printf("main:  emu_init() failed\n");
         return(2);
+	}
+
+	if(strcmp(romfilename,"") != 0) {
+		//load file into the nes
+		if(nes_load(romfilename) == 0) {
+			nes_set_inputdev(0,I_JOYPAD0);
+			nes_reset(1);
+			strncpy(statefilename,romfilename,1024);
+			strcat(statefilename,".state");
+			running = 1;
+		}
 	}
 
 	//begin the main loop

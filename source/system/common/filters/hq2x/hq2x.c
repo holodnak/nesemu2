@@ -153,7 +153,7 @@ static inline int Diff(unsigned int w1, unsigned int w2)
 
 }
 
-void hq2x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int BpL )
+void hq2x_32( unsigned char * pIn, unsigned int BpL,unsigned char * pOut, unsigned int outpitch, int Xres, int Yres)
 {
   int  i, j, k;
   int  prevline, nextline;
@@ -2900,8 +2900,8 @@ int hq2x_InitLUTs(void)
 {
   int i, j, k, r, g, b, Y, u, v;
 
-  if(!(LUT16to32 = (int*)malloc(65536*sizeof(int)))) return(0); //mbg merge 7/17/06 added cast
-  if(!(RGBtoYUV = (int*)malloc(65536*sizeof(int)))) { free(LUT16to32); return(0); } //mbg merge 7/17/06 added cast
+  if(!(LUT16to32 = (int*)malloc(65536*sizeof(int)))) return(1); //mbg merge 7/17/06 added cast
+  if(!(RGBtoYUV = (int*)malloc(65536*sizeof(int)))) { free(LUT16to32); return(1); } //mbg merge 7/17/06 added cast
 
   for (i=0; i<65536; i++)
     LUT16to32[i] = ((i & 0xF800) << 8) + ((i & 0x07E0) << 5) + ((i & 0x001F) << 3);
@@ -2918,7 +2918,7 @@ int hq2x_InitLUTs(void)
     v = 128 + ((-r + 2*g -b)>>3);
     RGBtoYUV[ (i << 11) + (j << 5) + k ] = (Y<<16) + (u<<8) + v;
   }
- return(1);
+ return(0);
 }
 
 void hq2x_Kill(void)

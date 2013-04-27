@@ -151,30 +151,59 @@
     <ClCompile Include="..\..\source\inputdev\joypad0.c" />
     <ClCompile Include="..\..\source\inputdev\joypad1.c" />
     <ClCompile Include="..\..\source\inputdev\null.c" />
+    <ClCompile Include="..\..\source\mappers\boards\ave\nina-001.c" />
     <ClCompile Include="..\..\source\mappers\boards\camerica\bf909x.c" />
+    <ClCompile Include="..\..\source\mappers\boards\irem\h3001.c" />
+    <ClCompile Include="..\..\source\mappers\boards\jaleco\ss88006.c" />
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc2.c" />
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc3.c" />
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc4.c" />
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc6.c" />
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc7.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\axrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\bxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\cnrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\cprom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\dxrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\event.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\exrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\fxrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\gxrom_mxrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\hxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\pxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\sxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\tqrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\txrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\un1rom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\uxrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\btl-mario1-malee2.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sachen\sa-003x.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sachen\sa-7200x.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-74ls374n.c" />
     <ClCompile Include="..\..\source\mappers\boards\taito\x1-005.c" />
     <ClCompile Include="..\..\source\mappers\boards\tengen\800032.c" />
+    <ClCompile Include="..\..\source\mappers\boards\txc\txc-22211.c" />
+    <ClCompile Include="..\..\source\mappers\boards\txc\txc-mxmdhtwo.c" />
+    <ClCompile Include="..\..\source\mappers\boards\txc\txc-tw.c" />
     <ClCompile Include="..\..\source\mappers\chips\latch.c" />
     <ClCompile Include="..\..\source\mappers\chips\mmc1.c" />
     <ClCompile Include="..\..\source\mappers\chips\mmc2.c" />
     <ClCompile Include="..\..\source\mappers\chips\mmc3.c" />
     <ClCompile Include="..\..\source\mappers\chips\mmc4.c" />
+    <ClCompile Include="..\..\source\mappers\chips\mmc5.c" />
+    <ClCompile Include="..\..\source\misc\config.c" />
+    <ClCompile Include="..\..\source\misc\crc32.c" />
+    <ClCompile Include="..\..\source\misc\emu.c" />
+    <ClCompile Include="..\..\source\misc\log.c" />
+    <ClCompile Include="..\..\source\misc\memutil.c" />
     <ClCompile Include="..\..\source\nes\apu\apu.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\apu\mattapu.c" />
+    <ClCompile Include="..\..\source\nes\cart\unif.c" />
     <ClCompile Include="..\..\source\nes\cpu\helper.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
@@ -192,6 +221,19 @@
     </ClCompile>
     <ClCompile Include="..\..\source\nes\ppu\attribcache.c" />
     <ClCompile Include="..\..\source\nes\ppu\tilecache.c" />
+    <ClCompile Include="..\..\source\nes\state\block.c" />
+    <ClCompile Include="..\..\source\nes\state\state.c" />
+    <ClCompile Include="..\..\source\system\common\filters\draw\draw.c" />
+    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq2x.c" />
+    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq3x.c" />
+    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq4x.c" />
+    <ClCompile Include="..\..\source\system\common\filters\interpolate\interpolate.c" />
+    <ClCompile Include="..\..\source\system\common\filters\scale2x\scale2x.c" />
+    <ClCompile Include="..\..\source\system\common\filters\scale2x\scale3x.c" />
+    <ClCompile Include="..\..\source\system\common\filters\scale2x\scalebit.c" />
+    <ClCompile Include="..\..\source\system\sdl\console\console.c" />
+    <ClCompile Include="..\..\source\system\sdl\console\font.c" />
+    <ClCompile Include="..\..\source\system\sdl\console\fontdata.c" />
     <ClCompile Include="..\..\source\system\sdl\input.c" />
     <ClCompile Include="..\..\source\system\sdl\main.c" />
     <ClCompile Include="..\..\source\system\sdl\sound.c" />
@@ -287,10 +329,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\nintendo\nrom.c" />
-    <ClCompile Include="..\..\source\config\config.c" />
-    <ClCompile Include="..\..\source\log\buffer.c" />
-    <ClCompile Include="..\..\source\log\log.c" />
-    <ClCompile Include="..\..\source\emu\emu.c" />
     <ClCompile Include="..\..\source\palette\generator.c" />
     <ClCompile Include="..\..\source\palette\palette.c" />
   </ItemGroup>
@@ -301,10 +339,23 @@
     <ClInclude Include="..\..\source\mappers\chips\mmc2.h" />
     <ClInclude Include="..\..\source\mappers\chips\mmc3.h" />
     <ClInclude Include="..\..\source\mappers\chips\mmc4.h" />
+    <ClInclude Include="..\..\source\misc\config.h" />
+    <ClInclude Include="..\..\source\misc\crc32.h" />
+    <ClInclude Include="..\..\source\misc\emu.h" />
+    <ClInclude Include="..\..\source\misc\log.h" />
+    <ClInclude Include="..\..\source\misc\memutil.h" />
     <ClInclude Include="..\..\source\nes\apu\apu.h" />
     <ClInclude Include="..\..\source\nes\io.h" />
     <ClInclude Include="..\..\source\nes\ppu\attribcache.h" />
     <ClInclude Include="..\..\source\nes\ppu\tilecache.h" />
+    <ClInclude Include="..\..\source\system\common\filters\draw\draw.h" />
+    <ClInclude Include="..\..\source\system\common\filters\hq2x\hq2x.h" />
+    <ClInclude Include="..\..\source\system\common\filters\hq2x\hq3x.h" />
+    <ClInclude Include="..\..\source\system\common\filters\hq2x\hq4x.h" />
+    <ClInclude Include="..\..\source\system\common\filters\interpolate\interpolate.h" />
+    <ClInclude Include="..\..\source\system\common\filters\scale2x\scale2x.h" />
+    <ClInclude Include="..\..\source\system\common\filters\scale2x\scale3x.h" />
+    <ClInclude Include="..\..\source\system\common\filters\scale2x\scalebit.h" />
     <ClInclude Include="..\..\source\types.h" />
     <ClInclude Include="..\..\source\version.h" />
     <ClInclude Include="..\..\source\system\input.h" />
@@ -322,15 +373,14 @@
     <ClInclude Include="..\..\source\mappers\mapperid.h" />
     <ClInclude Include="..\..\source\mappers\mapperinc.h" />
     <ClInclude Include="..\..\source\mappers\mappers.h" />
-    <ClInclude Include="..\..\source\config\config.h" />
-    <ClInclude Include="..\..\source\log\buffer.h" />
-    <ClInclude Include="..\..\source\log\log.h" />
-    <ClInclude Include="..\..\source\emu\emu.h" />
     <ClInclude Include="..\..\source\palette\generator.h" />
     <ClInclude Include="..\..\source\palette\palette.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\docs\Todo" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\source\system\win32\nesemu2.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

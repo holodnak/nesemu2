@@ -98,12 +98,12 @@ void mmc3_syncvram(int a,int o)
 
 void mmc3_syncsram()
 {
-	if((type & C_MMCNUM) == C_MMC3) {
+/*	if((type & C_MMCNUM) == C_MMC3) {
 		if((sramenabled & 0xC0) == 0x80)
 			mem_setsram8(6,0);
 		else
 			mem_unsetcpu8(6);
-	}
+	}*/
 }
 
 void mmc3_syncmirror()
@@ -153,11 +153,13 @@ void mmc3_reset(int t,void (*s)(),int hard)
 		mem_setwritefunc(6,mmc6_writesram);
 		mem_setwritefunc(7,mmc6_writesram);
 		sramenabled = 0;
+		log_printf("mmc3_reset:  mmc6 reset\n");
 	}
 	else {
 		mem_setsram8(6,0);
 		//keep enabled for now
 		sramenabled = 0x80;
+		log_printf("mmc3_reset:  mmc3 reset\n");
 	}
 	sync = s;
 	command = 0;

@@ -169,40 +169,54 @@
 							RelativePath="..\..\source\system\sdl\console\fontdata.c">
 						</File>
 					</Filter>
-					<Filter
-						Name="interpolate"
-						Filter="">
-						<File
-							RelativePath="..\..\source\system\sdl\interpolate\interpolate.c">
-						</File>
-					</Filter>
-					<Filter
-						Name="scale2x"
-						Filter="">
-						<File
-							RelativePath="..\..\source\system\sdl\scale2x\scale2x.c">
-						</File>
-						<File
-							RelativePath="..\..\source\system\sdl\scale2x\scale3x.c">
-						</File>
-						<File
-							RelativePath="..\..\source\system\sdl\scale2x\scalebit.c">
-						</File>
-					</Filter>
-					<Filter
-						Name="draw"
-						Filter="">
-						<File
-							RelativePath="..\..\source\system\sdl\draw\draw.c">
-						</File>
-						<File
-							RelativePath="..\..\source\system\sdl\draw\draw.h">
-						</File>
-					</Filter>
 				</Filter>
 				<Filter
 					Name="common"
 					Filter="">
+					<Filter
+						Name="filters"
+						Filter="">
+						<Filter
+							Name="draw"
+							Filter="">
+							<File
+								RelativePath="..\..\source\system\common\filters\draw\draw.c">
+							</File>
+						</Filter>
+						<Filter
+							Name="scale2x"
+							Filter="">
+							<File
+								RelativePath="..\..\source\system\common\filters\scale2x\scale2x.c">
+							</File>
+							<File
+								RelativePath="..\..\source\system\common\filters\scale2x\scale3x.c">
+							</File>
+							<File
+								RelativePath="..\..\source\system\common\filters\scale2x\scalebit.c">
+							</File>
+						</Filter>
+						<Filter
+							Name="interpolate"
+							Filter="">
+							<File
+								RelativePath="..\..\source\system\common\filters\interpolate\interpolate.c">
+							</File>
+						</Filter>
+						<Filter
+							Name="hq2x"
+							Filter="">
+							<File
+								RelativePath="..\..\source\system\common\filters\hq2x\hq2x.c">
+							</File>
+							<File
+								RelativePath="..\..\source\system\common\filters\hq2x\hq3x.c">
+							</File>
+							<File
+								RelativePath="..\..\source\system\common\filters\hq2x\hq4x.c">
+							</File>
+						</Filter>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter

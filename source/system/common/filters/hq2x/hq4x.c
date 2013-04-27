@@ -269,6 +269,7 @@ void hq4x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int
   int  i, j, k;
   int  prevline, nextline;
   int  w[10];
+  int pattern,flag;
 
   //   +----+----+----+
   //   |    |    |    |
@@ -318,8 +319,8 @@ void hq4x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int
         w[9] = w[8];
       }
 
-      int pattern = 0;
-      int flag = 1;
+      pattern = 0;
+      flag = 1;
 
       YUV1 = hqxx_RGB_to_YUV(w[5]);
 

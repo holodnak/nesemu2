@@ -75,14 +75,14 @@
 
 #define STATE_U64(dat)			\
 	if(mode == STATE_LOAD) {	\
-		(dat) = *data++;			\
-		(dat) |= *data++ << 8;	\
-		(dat) |= *data++ << 16;	\
-		(dat) |= *data++ << 24;	\
-		(dat) |= *data++ << 32;	\
-		(dat) |= *data++ << 40;		\
-		(dat) |= *data++ << 48;			\
-		(dat) |= *data++ << 56;				\
+		(dat) = (u64)*data++;			\
+		(dat) |= (u64)*data++ << 8;	\
+		(dat) |= (u64)*data++ << 16;	\
+		(dat) |= (u64)*data++ << 24;	\
+		(dat) |= (u64)*data++ << 32;	\
+		(dat) |= (u64)*data++ << 40;		\
+		(dat) |= (u64)*data++ << 48;			\
+		(dat) |= (u64)*data++ << 56;				\
 	}													\
 	else if(mode == STATE_SAVE) {					\
 		*data++ = (u8)((dat) & 0xFF);				\

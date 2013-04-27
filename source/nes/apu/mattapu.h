@@ -277,7 +277,7 @@ void apu_enable();
 void apu_process(void *buffer, int num_samples);
 void apu_reset(int hard);
 
-void apu_setext(apu_t *apu, apuext_t *ext);
+void apu_setext(apuext_t *ext);
 void apu_setfilter(int filter_type);
 void apu_setchan(int chan, bool enabled);
 

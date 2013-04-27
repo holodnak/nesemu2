@@ -31,15 +31,20 @@ SOURCE_SYSTEM_SDL = source/system/sdl/video.c source/system/sdl/input.c source/s
 SOURCE_SYSTEM_SDL += source/system/sdl/main.c source/system/sdl/system.c
 SOURCE_SYSTEM_SDL += source/system/sdl/console/console.c source/system/sdl/console/font.c
 SOURCE_SYSTEM_SDL += source/system/sdl/console/fontdata.c
-SOURCE_SYSTEM_SDL += source/system/sdl/draw/draw.c source/system/sdl/interpolate/interpolate.c
-SOURCE_SYSTEM_SDL += source/system/sdl/scale2x/scalebit.c source/system/sdl/scale2x/scale2x.c
-SOURCE_SYSTEM_SDL += source/system/sdl/scale2x/scale3x.c
+SOURCE_SYSTEM_SDL += source/system/common/filters/draw/draw.c source/system/common/filters/interpolate/interpolate.c
+SOURCE_SYSTEM_SDL += source/system/common/filters/scale2x/scalebit.c source/system/common/filters/scale2x/scale2x.c
+SOURCE_SYSTEM_SDL += source/system/common/filters/scale2x/scale3x.c
+SOURCE_SYSTEM_SDL += source/system/common/filters/hq2x/hq2x.c source/system/common/filters/hq2x/hq3x.c
+SOURCE_SYSTEM_SDL += source/system/common/filters/hq2x/hq4x.c
 
 # sdl/win32 system files
 SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c source/system/win32/nesemu2-res.o
 
 # linux system files
 SOURCE_SYSTEM_LINUX = source/system/linux/stricmp.c
+
+# osx system files
+SOURCE_SYSTEM_OSX = source/system/osx/SDLmain.o
 
 # build list of source files
 SOURCES = $(SOURCE_MISC) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE)
@@ -62,6 +67,11 @@ endif
 
 ifeq ($(OSTARGET),LINUX)
 	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_LINUX)
+	TARGET = $(OUTPUT)
+endif
+
+ifeq ($(OSTARGET),OSX)
+	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_OSX)
 	TARGET = $(OUTPUT)
 endif
 

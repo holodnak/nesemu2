@@ -44,15 +44,6 @@
     <Filter Include="Source Files\mappers\boards\nintendo">
       <UniqueIdentifier>{12ca28b2-4553-4db3-999d-122600f21337}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\config">
-      <UniqueIdentifier>{bf01b9c4-2588-42ab-a21a-c51808a4b351}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\log">
-      <UniqueIdentifier>{862e1157-7344-43bc-b71c-8b5eb19c9458}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\emu">
-      <UniqueIdentifier>{ca5becae-f7f9-4435-a4b6-bf24ee4ed8da}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\palette">
       <UniqueIdentifier>{6f9ea5f6-471c-4d64-b520-74db6ed3786b}</UniqueIdentifier>
     </Filter>
@@ -90,15 +81,6 @@
     <Filter Include="Header Files\mappers">
       <UniqueIdentifier>{6a9053b7-57b1-4724-9dac-b614843538ac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\config">
-      <UniqueIdentifier>{987d4add-9cce-4e33-8dc7-70716911082e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\log">
-      <UniqueIdentifier>{3edd29c1-f009-4574-b8bd-4c5833bc5197}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\emu">
-      <UniqueIdentifier>{7cb2ea0a-32f1-485b-ac05-54a565402e3c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\palette">
       <UniqueIdentifier>{a19cb694-fefd-46b2-8637-4ccf2577784d}</UniqueIdentifier>
     </Filter>
@@ -126,6 +108,69 @@
     </Filter>
     <Filter Include="Source Files\mappers\boards\taito">
       <UniqueIdentifier>{50962921-7d9f-4ca7-9cae-2998dd5b010b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\misc">
+      <UniqueIdentifier>{74169426-1da4-4e8c-86bb-84e2c79f35d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\misc">
+      <UniqueIdentifier>{b3cbd183-4271-42d7-ab9f-57ea65b0f4e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\system\common\filters">
+      <UniqueIdentifier>{d8751ede-31bc-4a8f-97cc-6fc642ca5ff0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\system\common\filters\draw">
+      <UniqueIdentifier>{d006f6fe-c854-4ab5-afb5-eec9a5969e3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\system\common\filters\interpolate">
+      <UniqueIdentifier>{69cace02-0ecd-4408-a8b6-15cd10098fff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\system\common\filters\scale2x">
+      <UniqueIdentifier>{6f34c4b6-473a-4b51-86da-19a788db3130}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\system\common\filters\hq2x">
+      <UniqueIdentifier>{143b0f7d-9ba2-4d68-8b16-15ff47835ef2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\system\common">
+      <UniqueIdentifier>{ce99890e-d71a-406e-ba65-96258830b7ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\system\common\filters">
+      <UniqueIdentifier>{ce218192-02c6-4190-b3c7-53b46581f3b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\system\common\filters\draw">
+      <UniqueIdentifier>{7a5358e4-8fcd-483e-a6a3-bd56c614f90a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\system\common\filters\interpolate">
+      <UniqueIdentifier>{2f79ec79-3246-4173-ab2b-0634dda61916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\system\common\filters\hq2x">
+      <UniqueIdentifier>{bc352a3d-0c1d-43b8-9096-e37909ba5c0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\system\common\filters\scale2x">
+      <UniqueIdentifier>{ddb23fa7-50b1-479c-af49-f3f7bba721fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\boards\konami">
+      <UniqueIdentifier>{1b3223e8-4760-4248-8f7c-b73a460f2aed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\boards\txc">
+      <UniqueIdentifier>{71a895e1-abca-4487-ad2d-68349680374a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\boards\ave">
+      <UniqueIdentifier>{d4c08f19-56a3-4022-8c3d-cbe4d4acbb21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\boards\irem">
+      <UniqueIdentifier>{cf1eee64-12e4-4b8b-96c1-ebdd0541ce25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\boards\jaleco">
+      <UniqueIdentifier>{9bbfd3db-31d4-483a-aa07-b5f30b870e40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\boards\sachen">
+      <UniqueIdentifier>{b8bf3d5c-d015-4888-bafd-b4007a872c96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\boards\other">
+      <UniqueIdentifier>{08af45e0-98f5-4f18-84ba-da59caea017c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\system\sdl\console">
+      <UniqueIdentifier>{10cc06d6-79f6-4fb1-b29c-3a4dd57d501c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -225,18 +270,6 @@
     <ClCompile Include="..\..\source\mappers\boards\nintendo\nrom.c">
       <Filter>Source Files\mappers\boards\nintendo</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\config\config.c">
-      <Filter>Source Files\config</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\log\buffer.c">
-      <Filter>Source Files\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\log\log.c">
-      <Filter>Source Files\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\emu\emu.c">
-      <Filter>Source Files\emu</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\palette\generator.c">
       <Filter>Source Files\palette</Filter>
     </ClCompile>
@@ -330,6 +363,132 @@
     <ClCompile Include="..\..\source\nes\apu\mattapu.c">
       <Filter>Source Files\nes\apu</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\misc\config.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\misc\crc32.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\misc\emu.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\misc\log.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\misc\memutil.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\common\filters\draw\draw.c">
+      <Filter>Source Files\system\common\filters\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\common\filters\scale2x\scale2x.c">
+      <Filter>Source Files\system\common\filters\scale2x</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\common\filters\scale2x\scale3x.c">
+      <Filter>Source Files\system\common\filters\scale2x</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\common\filters\scale2x\scalebit.c">
+      <Filter>Source Files\system\common\filters\scale2x</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq2x.c">
+      <Filter>Source Files\system\common\filters\hq2x</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq3x.c">
+      <Filter>Source Files\system\common\filters\hq2x</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq4x.c">
+      <Filter>Source Files\system\common\filters\hq2x</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\common\filters\interpolate\interpolate.c">
+      <Filter>Source Files\system\common\filters\interpolate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\state\block.c">
+      <Filter>Source Files\nes\state</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\state\state.c">
+      <Filter>Source Files\nes\state</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\ave\nina-001.c">
+      <Filter>Source Files\mappers\boards\ave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\irem\h3001.c">
+      <Filter>Source Files\mappers\boards\irem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\jaleco\ss88006.c">
+      <Filter>Source Files\mappers\boards\jaleco</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\txc\txc-22211.c">
+      <Filter>Source Files\mappers\boards\txc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\txc\txc-mxmdhtwo.c">
+      <Filter>Source Files\mappers\boards\txc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\txc\txc-tw.c">
+      <Filter>Source Files\mappers\boards\txc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sachen\sa-003x.c">
+      <Filter>Source Files\mappers\boards\sachen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sachen\sa-7200x.c">
+      <Filter>Source Files\mappers\boards\sachen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-74ls374n.c">
+      <Filter>Source Files\mappers\boards\sachen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc1.c">
+      <Filter>Source Files\mappers\boards\konami</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc2.c">
+      <Filter>Source Files\mappers\boards\konami</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc3.c">
+      <Filter>Source Files\mappers\boards\konami</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc4.c">
+      <Filter>Source Files\mappers\boards\konami</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc6.c">
+      <Filter>Source Files\mappers\boards\konami</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\konami\vrc7.c">
+      <Filter>Source Files\mappers\boards\konami</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\gxrom_mxrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\hxrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\bxrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\dxrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\event.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\exrom.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\btl-mario1-malee2.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\sdl\console\console.c">
+      <Filter>Source Files\system\sdl\console</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\sdl\console\font.c">
+      <Filter>Source Files\system\sdl\console</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\sdl\console\fontdata.c">
+      <Filter>Source Files\system\sdl\console</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\unif.c">
+      <Filter>Source Files\nes\cart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\chips\mmc5.c">
+      <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">
@@ -383,18 +542,6 @@
     <ClInclude Include="..\..\source\mappers\mappers.h">
       <Filter>Header Files\mappers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\config\config.h">
-      <Filter>Header Files\config</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\log\buffer.h">
-      <Filter>Header Files\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\log\log.h">
-      <Filter>Header Files\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\emu\emu.h">
-      <Filter>Header Files\emu</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\palette\generator.h">
       <Filter>Header Files\palette</Filter>
     </ClInclude>
@@ -431,8 +578,52 @@
     <ClInclude Include="..\..\source\nes\apu\apu.h">
       <Filter>Header Files\nes\apu</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\misc\config.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\misc\crc32.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\misc\emu.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\misc\log.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\misc\memutil.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\system\common\filters\draw\draw.h">
+      <Filter>Header Files\system\common\filters\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\system\common\filters\scale2x\scale2x.h">
+      <Filter>Header Files\system\common\filters\scale2x</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\system\common\filters\scale2x\scale3x.h">
+      <Filter>Header Files\system\common\filters\scale2x</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\system\common\filters\scale2x\scalebit.h">
+      <Filter>Header Files\system\common\filters\scale2x</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\system\common\filters\hq2x\hq2x.h">
+      <Filter>Header Files\system\common\filters\hq2x</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\system\common\filters\hq2x\hq3x.h">
+      <Filter>Header Files\system\common\filters\hq2x</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\system\common\filters\hq2x\hq4x.h">
+      <Filter>Header Files\system\common\filters\hq2x</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\system\common\filters\interpolate\interpolate.h">
+      <Filter>Header Files\system\common\filters\interpolate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\docs\Todo" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\source\system\win32\nesemu2.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

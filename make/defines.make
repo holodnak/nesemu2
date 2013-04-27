@@ -1,6 +1,7 @@
 # defines for nesemu2
 
 # detect os
+OSTARGET = UNKNOWN
 ifeq ($(OS),Windows_NT)
 	OSTARGET = WIN32
 	DEFINES = -DNO_STDIO_REDIRECT
@@ -13,7 +14,9 @@ else
 		OSTARGET = OSX
 	endif
 endif
-OSTARGET ?= LINUX
+ifeq ($(OSTARGET),UNKNOWN)
+	OSTARGET = LINUX
+endif
 
 # setup defines
 ifeq ($(USE_CPU_UNDOC),1)

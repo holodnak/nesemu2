@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "system/sdl/draw/draw.h"
+#include "draw.h"
 
 void draw1x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h)
 {
@@ -28,15 +28,17 @@ void draw1x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h)
 	srcp /= 4;
 	for(y=0;y<h;y++) {
 		for(x=0;x<w;x++) {
-			dest[x + (y * destp)] = src[x + (y * srcp)];
+			dest[x] = src[x];
 		}
+		src += srcp;
+		dest += destp;
 	}
 }
 
 void draw2x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h)
 {
 	u32 x,y;
-	u32 *dest1,*dest2,pixel32;
+	u32 *dest1,*dest2,pixel;
 
 	destp /= 4;
 	srcp /= 4;
@@ -44,11 +46,11 @@ void draw2x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h)
 		dest1 = dest;
 		dest2 = dest + destp;
 		for(x=0;x<w;x++) {
-			pixel32 = src[x];
-			*dest1++ = pixel32;
-			*dest1++ = pixel32;
-			*dest2++ = pixel32;
-			*dest2++ = pixel32;
+			pixel = src[x];
+			*dest1++ = pixel;
+			*dest1++ = pixel;
+			*dest2++ = pixel;
+			*dest2++ = pixel;
 		}
 		src += srcp;
 		dest += destp * 2;

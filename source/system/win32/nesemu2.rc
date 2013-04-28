@@ -34,6 +34,21 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       IDM_EXIT
     END
+    POPUP "&NES"
+    BEGIN
+        MENUITEM "Soft &Reset",                 ID_NES_SOFTRESET
+        MENUITEM "&Hard Reset",                 ID_NES_HARDRESET
+        MENUITEM SEPARATOR
+        MENUITEM "&Load State",                 ID_NES_LOADSTATE
+        MENUITEM "&Save State",                 ID_NES_SAVESTATE
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Debugger...",                ID_VIEW_DEBUGGER
+        MENUITEM "&Memory...",                  ID_VIEW_MEMORY
+        MENUITEM SEPARATOR
+        MENUITEM "&Configuration...",           ID_VIEW_CONFIGURATION
+    END
     POPUP "&Help"
     BEGIN
         MENUITEM "&About ...",                  IDM_ABOUT

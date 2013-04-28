@@ -169,6 +169,45 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
+int filedialog(HWND parent,int type,char *buffer,char *title,char *filter,char *curdir)
+{
+OPENFILENAME dlgdata;
+
+dlgdata.lStructSize = sizeof(OPENFILENAME);
+dlgdata.hwndOwner = parent;
+dlgdata.hInstance = GetModuleHandle(0);
+dlgdata.lpstrFilter = filter;
+dlgdata.lpstrCustomFilter = 0;
+dlgdata.nMaxCustFilter = 0;
+dlgdata.nFilterIndex = 0;
+dlgdata.lpstrFile = buffer;
+dlgdata.nMaxFile = 512;
+dlgdata.lpstrFileTitle = 0;
+dlgdata.nMaxFileTitle = 0;
+dlgdata.lpstrInitialDir = curdir;
+dlgdata.lpstrTitle = title;
+dlgdata.Flags = OFN_FILEMUSTEXIST|OFN_PATHMUSTEXIST|OFN_HIDEREADONLY;
+dlgdata.nFileOffset = 0;
+dlgdata.nFileExtension = 0;
+dlgdata.lpstrDefExt = 0;
+dlgdata.lCustData = 0;
+dlgdata.lpfnHook = 0;
+dlgdata.lpTemplateName = 0;
+switch(type)
+	{
+	default:
+	case 0: //open
+		if(GetOpenFileName(&dlgdata) != 0)
+			return(0);
+		break;
+	case 1: //save
+		if(GetSaveFileName(&dlgdata) != 0)
+			return(0);
+		break;
+	}
+return(1);
+}
+
 //
 //  FUNCTION: WndProc(HWND, unsigned, WORD, LONG)
 //
@@ -184,6 +223,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	int wmId, wmEvent;
 	PAINTSTRUCT ps;
 	HDC hdc;
+	char buffer[1024];
 
 	switch (message) 
 	{
@@ -194,11 +234,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case ID_FILE_OPEN:
-			if(nes_load("smb.nes") == 0) {
+			memset(buffer,0,1024);
+			if(filedialog(hWnd,0,buffer,"Open NES ROM...","NES ROMs (*.nes, *.unf, *.unif)\0*.nes;*.unf;*.unif\0iNES ROMs (*.nes)\0*.nes\0UNIF ROMs (*.unf, *.unif)\0*.unf;*.unif\0",0) != 0)
+//			if(filedialog(hWnd,0,buffer,"Open NES ROM...","iNES ROMs (*.nes)\0*.nes\0",".") != 0)
+				break;
+			log_printf("WndProc:  loading file '%s'\n",buffer);
+			if(nes_load(buffer) == 0) {
+				log_printf("WndProc:  resetting nes...\n");
 				nes_set_inputdev(0,I_JOYPAD0);
 				nes_reset(1);
 				running = 1;
 			}
+			break;
+		case ID_NES_SOFTRESET:
+			nes_reset(0);
+			break;
+		case ID_NES_HARDRESET:
+			nes_reset(1);
+			break;
+		case ID_NES_LOADSTATE:
+//			nes_loadstate();
+			break;
+		case ID_NES_SAVESTATE:
+//			nes_savestate();
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, (LPCTSTR)IDD_ABOUTBOX, hWnd, (DLGPROC)About);

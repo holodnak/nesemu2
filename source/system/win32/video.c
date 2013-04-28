@@ -128,7 +128,6 @@ void video_endframe()
 		s += screenw;
 	}
 	StretchDIBits(hDC,rect.left,rect.top,rect.right,rect.bottom,0,0,screenw,screenh,surface,&bmpinfo,DIB_RGB_COLORS,SRCCOPY);
-
 /*	u32 t;
 
 	//simple frame limiter

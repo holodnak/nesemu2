@@ -45,8 +45,8 @@
 
 extern int joyx,joyy;			//x and y coords for paddle/mouse
 extern u8 joyzap;					//zapper trigger
-extern u8 joykeys[370];			//keyboard state
-extern int joystate[32];		//joypad state
+extern u8 joykeys[];				//keyboard state
+extern u8 joystate[];			//joypad state
 extern int joyconfig[4][8];	//joypad keys
 
 int input_init();

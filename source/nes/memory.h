@@ -53,9 +53,11 @@ void mem_setchr(int banksize,int page,int rombank);
 void mem_setvram(int banksize,int page,int rombank);
 void mem_setsvram(int banksize,int page,int rombank);
 
-//setup sram/vram
+//setup wram/sram/vram/svram
+void mem_setwramsize(int banks);
 void mem_setsramsize(int banks);
 void mem_setvramsize(int banks);
+void mem_setsvramsize(int banks);
 
 //mirroring
 void mem_setmirroring(int t);

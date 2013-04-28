@@ -23,7 +23,7 @@
 #include "misc/memutil.h"
 #include "misc/log.h"
 
-#define MAX_CHUNKS	128
+#define MAX_CHUNKS	1024
 
 typedef struct memchunk_s {
 	void *ptr;

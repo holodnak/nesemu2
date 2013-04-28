@@ -212,6 +212,8 @@ void cart_unload(cart_t *r)
 		FREE(r->cache_hflip);
 		FREE(r->vcache);
 		FREE(r->vcache_hflip);
+		FREE(r->svcache);
+		FREE(r->svcache_hflip);
 		FREE(r);
 	}
 }
@@ -264,4 +266,8 @@ void cart_setsvramsize(cart_t *r,int banks)
 {
 	allocdata(&r->svram,banks * 1024);
 	log_printf("cart_setsvramsize:  svram size set to %dkb\n",banks);
+
+	//tile cache data
+	r->svcache = (cache_t*)ram_alloc(r->svram.size,r->svcache);
+	r->svcache_hflip = (cache_t*)ram_alloc(r->svram.size,r->svcache_hflip);
 }

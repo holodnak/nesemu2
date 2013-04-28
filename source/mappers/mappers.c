@@ -50,6 +50,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_TQROM);
 	MAPPER(B_UxROM);
 	MAPPER(B_UN1ROM);
+	MAPPER(B_UNROM_74HC08);
 	MAPPER(B_EVENT);
 
 	//konami
@@ -73,6 +74,7 @@ static mapper_t *get_mapper(int mapperid)
 
 	//irem
 	MAPPER(B_IREM_H3001);
+	MAPPER(B_IREM_TAM_S1);
 
 	//jaleco
 	MAPPER(B_JALECO_SS88006);
@@ -92,6 +94,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_TXC_22211C);
 	MAPPER(B_TXC_TW);
 	MAPPER(B_TXC_MXMDHTWO);
+	MAPPER(B_TXC_STRIKEWOLF);
 
 	//sachen
 	MAPPER(B_SACHEN_74LS374N);
@@ -106,6 +109,13 @@ static mapper_t *get_mapper(int mapperid)
 
 	//other (unknown)
 	MAPPER(B_MARIO1_MALEE2);
+	MAPPER(B_UNION_BOND_FFV);
+	MAPPER(B_RACERMATE);
+	MAPPER(B_BIOMIRACLEA);
+	MAPPER(B_CALTRON6IN1);
+	MAPPER(B_MAGICSERIES);
+	MAPPER(B_70IN1);
+	MAPPER(B_70IN1B);
 
 	return(0);
 }

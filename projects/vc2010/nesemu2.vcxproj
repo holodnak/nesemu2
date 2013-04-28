@@ -155,6 +155,7 @@
     <ClCompile Include="..\..\source\mappers\boards\ave\nina-001.c" />
     <ClCompile Include="..\..\source\mappers\boards\camerica\bf909x.c" />
     <ClCompile Include="..\..\source\mappers\boards\irem\h3001.c" />
+    <ClCompile Include="..\..\source\mappers\boards\irem\tam-s1.c" />
     <ClCompile Include="..\..\source\mappers\boards\jaleco\ss88006.c" />
     <ClCompile Include="..\..\source\mappers\boards\konami\vrc1.c" />
     <ClCompile Include="..\..\source\mappers\boards\konami\vrc2.c" />
@@ -177,8 +178,15 @@
     <ClCompile Include="..\..\source\mappers\boards\nintendo\tqrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\txrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\un1rom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\unrom_74hc08.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\uxrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-70in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\btl-biomiraclea.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl-mario1-malee2.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\magicseries.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\mlt-caltron6in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\union-bond-ffv.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\unl-racermate.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-003x.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-7200x.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-74ls374n.c" />
@@ -186,6 +194,7 @@
     <ClCompile Include="..\..\source\mappers\boards\tengen\800032.c" />
     <ClCompile Include="..\..\source\mappers\boards\txc\txc-22211.c" />
     <ClCompile Include="..\..\source\mappers\boards\txc\txc-mxmdhtwo.c" />
+    <ClCompile Include="..\..\source\mappers\boards\txc\txc-strikewolf.c" />
     <ClCompile Include="..\..\source\mappers\boards\txc\txc-tw.c" />
     <ClCompile Include="..\..\source\mappers\chips\latch.c" />
     <ClCompile Include="..\..\source\mappers\chips\mmc1.c" />

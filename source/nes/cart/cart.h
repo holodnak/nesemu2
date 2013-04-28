@@ -88,8 +88,9 @@ typedef struct cart_s {
 	char		title[CART_TITLE_LEN];
 
 	//cached tile data
-	cache_t	*cache,*cache_hflip;		//chr cache
-	cache_t	*vcache,*vcache_hflip;	//vram cache
+	cache_t	*cache,*cache_hflip;			//chr cache
+	cache_t	*vcache,*vcache_hflip;		//vram cache
+	cache_t	*svcache,*svcache_hflip;	//svram cache
 
 } cart_t;
 

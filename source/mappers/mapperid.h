@@ -44,6 +44,7 @@ enum boardid_e {
 	B_UxROM,
 	B_TQROM,
 	B_UN1ROM,
+	B_UNROM_74HC08,
 	B_EVENT,
 
 	//konami
@@ -78,6 +79,7 @@ enum boardid_e {
 
 	//irem
 	B_IREM_H3001,
+	B_IREM_TAM_S1,
 
 	//taito
 	B_TAITO_X1_005,
@@ -91,6 +93,12 @@ enum boardid_e {
 	B_BIOMIRACLEA,
 	B_MARIO1_MALEE2,
 	B_MAGICSERIES,
+
+	//union bond ffv
+	B_UNION_BOND_FFV,
+
+	//racermate
+	B_RACERMATE,
 
 	//colordreams + few others
 	B_74x377,

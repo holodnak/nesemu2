@@ -513,6 +513,33 @@
     <ClCompile Include="..\..\source\nes\ppu\step\sprite.c">
       <Filter>Source Files\nes\ppu\step</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\union-bond-ffv.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\unl-racermate.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\unrom_74hc08.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\irem\tam-s1.c">
+      <Filter>Source Files\mappers\boards\irem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\txc\txc-strikewolf.c">
+      <Filter>Source Files\mappers\boards\txc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\mlt-caltron6in1.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\btl-biomiraclea.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\magicseries.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-70in1.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

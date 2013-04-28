@@ -29,6 +29,7 @@
 
 #include "types.h"
 #include "system/main.h"
+#include "system/input.h"
 
 #ifndef _MAX_PATH
 	#define _MAX_PATH 4096
@@ -66,12 +67,12 @@ void system_check_events()
 			case SDL_QUIT:
 				quit++;
 				break;
-/*			case SDL_JOYAXISMOTION:
+			case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
 				if (event.jaxis.axis == 0)
 				{
 					joystate[0] = 0;
 					joystate[1] = 0;
-					if (event.jaxis.value < -3200)
+					if(event.jaxis.value < -3200)
 						joystate[0] = 1;
 					else if (event.jaxis.value > 3200)
 						joystate[1] = 1;
@@ -86,12 +87,12 @@ void system_check_events()
 						joystate[3] = 1;
 				}
 				break;
-			case SDL_JOYBUTTONDOWN:
+			case SDL_JOYBUTTONDOWN:  /* Handle Joystick Button Presses */
 				joystate[event.jbutton.button + 4] = 1;
 				break;
-			case SDL_JOYBUTTONUP:
+			case SDL_JOYBUTTONUP:  /* Handle Joystick Button Releases */
 				joystate[event.jbutton.button + 4] = 0;
-				break;*/
+				break;
 		}
 	}
 }

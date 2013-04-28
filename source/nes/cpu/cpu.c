@@ -142,52 +142,12 @@ void cpu_tick()
 
 u8 cpu_read(u32 addr)
 {
-	u32 page = addr >> 12;
-
-	//check for ram read
-	if(addr < 0x2000) {
-		return(nes.cpu.ram[addr & 0x7FF]);
-	}
-
-	//see if this page is handled by a memory pointer
-	if(nes.cpu.readpages[page] != 0) {
-		return(nes.cpu.readpages[page][addr & 0xFFF]);
-	}
-
-	//see if this page is handled by a read function
-	if(nes.cpu.readfuncs[page] != 0) {
-		return(nes.cpu.readfuncs[page](addr));
-	}
-
-	//not handled
-	log_printf("cpu_read:  unhandled read at $%04X\n",addr);
-	return(0);
+	return(inline_cpu_read(addr));
 }
 
 void cpu_write(u32 addr,u8 data)
 {
-	u32 page = addr >> 12;
-
-	//ram write
-	if(addr < 0x2000) {
-		nes.cpu.ram[addr & 0x7FF] = data;
-		return;
-	}
-
-	//see if this page is handled by a memory pointer
-	if(nes.cpu.writepages[page] != 0) {
-		nes.cpu.writepages[page][addr & 0xFFF] = data;
-		return;
-	}
-
-	//see if this page is handled by a read function
-	if(nes.cpu.writefuncs[page] != 0) {
-		nes.cpu.writefuncs[page](addr,data);
-		return;
-	}
-
-	//not handled
-	log_printf("cpu_write:  unhandled write at $%04X = $%02X\n",addr,data);
+	inline_cpu_write(addr,data);
 }
 
 u8 cpu_getflags()

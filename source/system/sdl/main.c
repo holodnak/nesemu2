@@ -46,6 +46,7 @@ int mainloop()
 
 	console_init();
 
+//this palette crap could be made common to all system targets...palette_init() maybe?
 	if(strcmp(config_get_string("palette.source","generator"),"file") == 0) {
 		pal = palette_load(config_get_string("palette.filename","roni.pal"));
 	}

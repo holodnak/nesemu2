@@ -172,6 +172,12 @@
     <Filter Include="Source Files\system\sdl\console">
       <UniqueIdentifier>{10cc06d6-79f6-4fb1-b29c-3a4dd57d501c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\nes\cpu\opcodes">
+      <UniqueIdentifier>{61f72fee-3b7d-4adf-bb3a-b6794529f08d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\nes\ppu\step">
+      <UniqueIdentifier>{e3f70624-78e6-474f-85f9-70e9953f24af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -208,33 +214,6 @@
       <Filter>Source Files\nes\cpu</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cpu\execute.c">
-      <Filter>Source Files\nes\cpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\cpu\opcodes.c">
-      <Filter>Source Files\nes\cpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\cpu\opcodes_alu.c">
-      <Filter>Source Files\nes\cpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\cpu\opcodes_branch.c">
-      <Filter>Source Files\nes\cpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\cpu\opcodes_compare.c">
-      <Filter>Source Files\nes\cpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\cpu\opcodes_flag.c">
-      <Filter>Source Files\nes\cpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\cpu\opcodes_incdec.c">
-      <Filter>Source Files\nes\cpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\cpu\opcodes_loadstore.c">
-      <Filter>Source Files\nes\cpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\cpu\opcodes_stack.c">
-      <Filter>Source Files\nes\cpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\cpu\opcodes_transfer.c">
       <Filter>Source Files\nes\cpu</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\ppu\io.c">
@@ -278,9 +257,6 @@
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\nintendo\sxrom.c">
       <Filter>Source Files\mappers\boards\nintendo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\cpu\opcodes_undocumented.c">
-      <Filter>Source Files\nes\cpu</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\inputdev\inputdev.c">
       <Filter>Source Files\inputdev</Filter>
@@ -488,6 +464,54 @@
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\chips\mmc5.c">
       <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cpu\opcodes\alu.c">
+      <Filter>Source Files\nes\cpu\opcodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cpu\opcodes\branch.c">
+      <Filter>Source Files\nes\cpu\opcodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cpu\opcodes\compare.c">
+      <Filter>Source Files\nes\cpu\opcodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cpu\opcodes\flag.c">
+      <Filter>Source Files\nes\cpu\opcodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cpu\opcodes\incdec.c">
+      <Filter>Source Files\nes\cpu\opcodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cpu\opcodes\loadstore.c">
+      <Filter>Source Files\nes\cpu\opcodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cpu\opcodes\misc.c">
+      <Filter>Source Files\nes\cpu\opcodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cpu\opcodes\stack.c">
+      <Filter>Source Files\nes\cpu\opcodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cpu\opcodes\transfer.c">
+      <Filter>Source Files\nes\cpu\opcodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cpu\opcodes\undocumented.c">
+      <Filter>Source Files\nes\cpu\opcodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\calc.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\draw.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\fetch.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\misc.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\scroll.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\sprite.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

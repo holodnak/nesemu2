@@ -1,12 +1,24 @@
 #include <windows.h>
 #include "resource.h"
-#include "resource-icon.h"
+#include "misc/log.h"
+#include "misc/config.h"
+#include "misc/emu.h"
+#include "palette/palette.h"
+#include "palette/generator.h"
+#include "system/video.h"
+#include "system/input.h"
+#include "nes/nes.h"
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:
 HINSTANCE hInst;								// current instance
+HWND hWnd;
 CHAR szTitle[MAX_LOADSTRING];					// The title bar text
 CHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
+int quit = 0;
+int running = 0;
+static palette_t *pal = 0;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -14,14 +26,41 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
+void video_resize();
+
+__inline void checkmessages()
+{
+	MSG msg;
+
+	while(PeekMessage(&msg,hWnd,0,0,PM_REMOVE)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+
+int mainloop()
+{
+//	HACCEL hAccelTable;
+
+//	hAccelTable = LoadAccelerators(hInstance,(LPCTSTR)IDC_CRAP);
+	while(quit == 0) {
+		checkmessages();
+		if(running) {
+			nes_frame();
+		}
+		video_startframe();
+		video_endframe();
+		input_poll();
+	}
+	return(0);
+}
+
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPTSTR    lpCmdLine,
                      int       nCmdShow)
 {
- 	// TODO: Place code here.
-	MSG msg;
-//	HACCEL hAccelTable;
+	int ret;
 
 	// Initialize global strings
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -34,22 +73,38 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		return FALSE;
 	}
 
-//	hAccelTable = LoadAccelerators(hInstance, (LPCTSTR)IDC_CRAP);
+	if(emu_init() != 0)
+		return(FALSE);
 
-	// Main message loop:
-	while (GetMessage(&msg, NULL, 0, 0)) 
-	{
-//		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) 
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
+//this palette crap could be made common to all system targets...palette_init() maybe?
+	if(strcmp(config_get_string("palette.source","generator"),"file") == 0) {
+		pal = palette_load(config_get_string("palette.filename","roni.pal"));
 	}
+	if(pal == 0) {
+		pal = palette_generate(config_get_int("palette.generator.hue",-15),config_get_int("palette.generator.saturation",45));
+	}
+	video_setpalette(pal);
 
-	return (int) msg.wParam;
+	log_printf("starting main loop...\n");
+	ret = mainloop();
+//	ret = 0;
+
+	palette_destroy(pal);
+
+	emu_kill();
+
+	log_printf("done!\n");
+	return(ret);
 }
 
+void resizeclient(HWND hwnd,int w,int h)
+{
+	RECT rc,rw;
 
+	GetWindowRect(hwnd,&rw);
+	GetClientRect(hwnd,&rc);
+	SetWindowPos(hwnd,0,0,0,((rw.right - rw.left) - rc.right) + w,((rw.bottom - rw.top) - rc.bottom) + h,SWP_NOZORDER | SWP_NOMOVE);
+}
 
 //
 //  FUNCTION: MyRegisterClass()
@@ -97,9 +152,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
-
-   hInst = hInstance; // Store instance handle in our global variable
+	hInst = hInstance; // Store instance handle in our global variable
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
@@ -109,6 +162,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
 
+	resizeclient(hWnd,256,240);
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
@@ -139,6 +193,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// Parse the menu selections:
 		switch (wmId)
 		{
+		case ID_FILE_OPEN:
+			if(nes_load("smb.nes") == 0) {
+				nes_set_inputdev(0,I_JOYPAD0);
+				nes_reset(1);
+				running = 1;
+			}
+			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, (LPCTSTR)IDD_ABOUTBOX, hWnd, (DLGPROC)About);
 			break;
@@ -155,7 +216,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:
+		quit++;
 		PostQuitMessage(0);
+		break;
+	case WM_SIZE:
+		video_resize();
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

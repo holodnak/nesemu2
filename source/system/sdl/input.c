@@ -43,7 +43,7 @@ int joyconfig[4][8];	//joypad button configuration
 
 // this will map joystick axises/buttons to unused keyboard buttons
 #define FIRSTJOYSTATEKEY (350) // ideally should be SDLK_LAST
-u8 joystate[20];	// dpad + 8 buttons is enuff' for me but let's be sure :-)
+u8 joystate[32];	// dpad + 8 buttons is enuff' for me but let's be sure :-)
 
 int input_init()
 {

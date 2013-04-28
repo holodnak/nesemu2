@@ -11,7 +11,7 @@
     <LocalDebuggerCommandArguments>smb.nes</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
-    <LocalDebuggerCommandArguments>contra.nes</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>smb3.nes</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>..\..\test</LocalDebuggerWorkingDirectory>

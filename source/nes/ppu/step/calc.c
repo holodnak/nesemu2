@@ -18,57 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*static INLINE void calc_ntaddr()
-{
-	nes.ppu.busaddr = 0x2000 | (SCROLL & 0xFFF);
-}
-
-static INLINE void calc_atattr()
-{
-	nes.ppu.busaddr = SCROLL & 0xC00;
-	nes.ppu.busaddr += 0x3C0 + ((SCROLL >> 2) & 7) + (((SCROLL >> (2 + 5)) & 7) << 3);
-	nes.ppu.busaddr |= 0x2000;
-}
-
-static INLINE void calc_pt0addr()
-{
-	nes.ppu.busaddr = (CONTROL0 & 0x10) << 8;
-	nes.ppu.busaddr += nes.ppu.ntbyte * 16;
-	nes.ppu.busaddr += SCROLL >> 12;
-}
-
-static INLINE void calc_pt1addr()
-{
-	nes.ppu.busaddr += 8;
-}
-
-static INLINE void calc_spt0addr()
-{
-	//process 8x16 sprite
-	if(CONTROL0 & 0x20) {
-		//bank to get tile from
-		nes.ppu.busaddr = (sprtemp[nes.ppu.cursprite].tile & 1) << 12;
-
-		//tile offset
-		nes.ppu.busaddr += (sprtemp[nes.ppu.cursprite].tile & 0xFE) * 16;
-	}
-
-	//process 8x8 sprite
-	else {
-		//bank to get tile from
-		nes.ppu.busaddr = (CONTROL0 & 8) << 9;
-
-		//tile offset
-		nes.ppu.busaddr += sprtemp[nes.ppu.cursprite].tile * 16;
-	}
-}
-
-static INLINE void calc_spt1addr()
-{
-	nes.ppu.busaddr += 8;
-	nes.ppu.cursprite++;
-}
-*/
 //calculate nametable byte address
 static INLINE void calc_ntaddr()
 {

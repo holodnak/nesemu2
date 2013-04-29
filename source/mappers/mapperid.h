@@ -97,6 +97,9 @@ enum boardid_e {
 	//union bond ffv
 	B_UNION_BOND_FFV,
 
+	//c&e
+	B_CNE_FSB,
+
 	//racermate
 	B_RACERMATE,
 

@@ -229,6 +229,7 @@ void mem_setmirroring(int m)
 		case MIRROR_1L:mem_setmirroring2(0,0,0,0); break;
 		case MIRROR_1H:mem_setmirroring2(1,1,1,1); break;
 		case MIRROR_4:	mem_setmirroring2(0,1,2,3); break;
+		case MIRROR_MAPPER: break;
 	}
 }
 

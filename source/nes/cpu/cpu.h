@@ -83,6 +83,10 @@ u32 cpu_execute(u32 cycles);
 void cpu_execute_frame();
 u16 cpu_disassemble(char *buffer,u16 opcodepos);
 void cpu_disassemble_init();
+readfunc_t cpu_getreadfunc();
+writefunc_t cpu_getwritefunc();
+void cpu_setreadfunc(readfunc_t readfunc);
+void cpu_setwritefunc(writefunc_t writefunc);
 void cpu_state(int mode,u8 *data);
 
 #endif

@@ -52,6 +52,8 @@
 //temp variable for opcode functions
 static u8 tmp8;
 static int tmpi;
+static readfunc_t cpu_read_func;
+static writefunc_t cpu_write_func;
 
 //include helper functions
 #include "helper.c"
@@ -142,18 +144,83 @@ void cpu_tick()
 
 u8 cpu_read(u32 addr)
 {
-	return(inline_cpu_read(addr));
+	u32 page = addr >> 12;
+
+	//check for rom read, should always be mapped
+	if(addr >= 0x8000) {
+		return(nes.cpu.readpages[page][addr & 0xFFF]);
+	}
+
+	//check for ram read
+	if(addr < 0x2000) {
+		return(nes.cpu.ram[addr & 0x7FF]);
+	}
+
+	//see if this page is handled by a memory pointer
+	if(nes.cpu.readpages[page] != 0) {
+		return(nes.cpu.readpages[page][addr & 0xFFF]);
+	}
+
+	//see if this page is handled by a read function
+	if(nes.cpu.readfuncs[page] != 0) {
+		return(nes.cpu.readfuncs[page](addr));
+	}
+
+	//not handled
+	log_printf("cpu_read:  unhandled read at $%04X\n",addr);
+	return(0);
 }
 
 void cpu_write(u32 addr,u8 data)
 {
-	inline_cpu_write(addr,data);
+	u32 page = addr >> 12;
+
+	//ram write
+	if(addr < 0x2000) {
+		nes.cpu.ram[addr & 0x7FF] = data;
+		return;
+	}
+
+	//see if this page is handled by a memory pointer
+	if(nes.cpu.writepages[page] != 0) {
+		nes.cpu.writepages[page][addr & 0xFFF] = data;
+		return;
+	}
+
+	//see if this page is handled by a read function
+	if(nes.cpu.writefuncs[page] != 0) {
+		nes.cpu.writefuncs[page](addr,data);
+		return;
+	}
+
+	//not handled
+	log_printf("cpu_write:  unhandled write at $%04X = $%02X\n",addr,data);
 }
 
 u8 cpu_getflags()
 {
 	compact_flags();
 	return(P);
+}
+
+readfunc_t cpu_getreadfunc()
+{
+	return(cpu_read_func);
+}
+
+writefunc_t cpu_getwritefunc()
+{
+	return(cpu_write_func);
+}
+
+void cpu_setreadfunc(readfunc_t readfunc)
+{
+	cpu_read_func = readfunc;
+}
+
+void cpu_setwritefunc(writefunc_t writefunc)
+{
+	cpu_write_func = writefunc;
 }
 
 void cpu_state(int mode,u8 *data)

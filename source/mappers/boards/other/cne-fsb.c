@@ -20,106 +20,58 @@
 
 #include "mappers/mapperinc.h"
 
-#define BMC_70IN1		0
-#define BMC_70IN1B	1
-
-static int revision;
-static u8 mode,mirror;
-static u8 bankhi,banklo,chrbank;
-static u8 hwswitch;
-static readfunc_t cpuread;
+static u8 reg[8];
+static u8 *sram6;
 
 static void sync()
 {
-	switch(mode) {
-		case 0x00:
-		case 0x10:
-			mem_setprg16(0x8,bankhi | banklo);
-			mem_setprg16(0xC,bankhi | 7);
-			break;
-		case 0x20:
-			mem_setprg32(0x8,(bankhi | banklo) >> 1);
-			break;
-		case 0x30:
-			mem_setprg16(0x8,bankhi | banklo);
-			mem_setprg16(0xC,bankhi | banklo);
-			break;
-	}
-	if(revision == BMC_70IN1)
-		mem_setchr8(0,chrbank);
-	else
-		mem_setvram8(0,0);
-	mem_setmirroring(mirror);
+	mem_setprg8(0x8,reg[0]);
+	mem_setprg8(0xA,reg[1]);
+	mem_setprg8(0xC,reg[2]);
+	mem_setprg8(0xE,reg[3]);
+	mem_setchr2(0,reg[4]);
+	mem_setchr2(2,reg[5]);
+	mem_setchr2(4,reg[6]);
+	mem_setchr2(6,reg[7]);
 }
 
-static u8 read(u32 addr)
+static u8 read6(u32 addr)
 {
-	if(mode == 0x10) {
-		return(cpuread((addr & 0xFFF0) | hwswitch));
-	}
-	return(cpuread(addr));
+	if(addr >= 0x6800)
+		return(sram6[addr & 0xFFF]);
+	return((u8)(addr >> 8));
 }
 
-static void write(u32 addr,u8 data)
+static void write6(u32 addr,u8 data)
 {
-	if(addr & 0x4000) {
-		mode = addr & 0x30;
-		banklo = addr & 7;
-	}
+	if(addr >= 0x6800)
+		sram6[addr & 0xFFF] = data;
 	else {
-		mirror = ((addr & 0x20) >> 5) ^ 1;
-		if(revision == BMC_70IN1B)
-			bankhi = (addr & 3) << 3;
-		else
-			chrbank = addr & 7;	
+		reg[addr & 7] = data;
+		sync();
 	}
-	sync();
 }
 
-static void reset(int r,int hard)
+static void reset(int hard)
 {
 	int i;
 
-	revision = r;
-//	cpuread = cpu_getreadfunc();
-//	cpu_setreadfunc(read);
-	for(i=8;i<16;i++) {
-		mem_setwritefunc(i,write);
-	}
-	mem_setvramsize(8);
-	mode = 0;
-	bankhi = banklo = 0;
-	if(hard) {
-		if(r == BMC_70IN1)
-			hwswitch = 0xD;
-		else
-			hwswitch = 0xF;
-	}
-	else {
-		hwswitch = (hwswitch + 1) & 0xF;
-	}
+	mem_setsramsize(2);
+	mem_setsram8(6,0);
+	sram6 = mem_getwriteptr(6);
+	mem_unsetcpu8(6);
+	mem_setreadfunc(6,read6);
+	mem_setwritefunc(6,write6);
+	for(i=0;i<8;i++)
+		reg[i] = 0;
+	reg[3] = 0xFF;
 	sync();
-}
-
-static void reset_70in1(int hard)
-{
-	reset(BMC_70IN1,hard);
-}
-
-static void reset_70in1b(int hard)
-{
-	reset(BMC_70IN1B,hard);
 }
 
 static void state(int mode,u8 *data)
 {
-	STATE_U8(mode);
-	STATE_U8(mirror);
-	STATE_U8(bankhi);
-	STATE_U8(banklo);
-	STATE_U8(chrbank);
+	STATE_ARRAY_U8(reg,8);
 	sync();
 }
 
-MAPPER(B_70IN1,reset_70in1,0,0,0,state);
-MAPPER(B_70IN1B,reset_70in1b,0,0,0,state);
+MAPPER(B_CNE_FSB,reset,0,0,0,state);

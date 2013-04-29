@@ -18,68 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-static INLINE u8 inline_cpu_read(u32 addr)
-{
-	u32 page = addr >> 12;
-
-	//check for rom read, should always be mapped
-	if(addr >= 0x8000) {
-		return(nes.cpu.readpages[page][addr & 0xFFF]);
-	}
-
-	//check for ram read
-	if(addr < 0x2000) {
-		return(nes.cpu.ram[addr & 0x7FF]);
-	}
-
-	//see if this page is handled by a memory pointer
-	if(nes.cpu.readpages[page] != 0) {
-		return(nes.cpu.readpages[page][addr & 0xFFF]);
-	}
-
-	//see if this page is handled by a read function
-	if(nes.cpu.readfuncs[page] != 0) {
-		return(nes.cpu.readfuncs[page](addr));
-	}
-
-	//not handled
-	log_printf("cpu_read:  unhandled read at $%04X\n",addr);
-	return(0);
-}
-
-static INLINE void inline_cpu_write(u32 addr,u8 data)
-{
-	u32 page = addr >> 12;
-
-	//ram write
-	if(addr < 0x2000) {
-		nes.cpu.ram[addr & 0x7FF] = data;
-		return;
-	}
-
-	//see if this page is handled by a memory pointer
-	if(nes.cpu.writepages[page] != 0) {
-		nes.cpu.writepages[page][addr & 0xFFF] = data;
-		return;
-	}
-
-	//see if this page is handled by a read function
-	if(nes.cpu.writefuncs[page] != 0) {
-		nes.cpu.writefuncs[page](addr,data);
-		return;
-	}
-
-	//not handled
-	log_printf("cpu_write:  unhandled write at $%04X = $%02X\n",addr,data);
-}
-
 static INLINE u8 memread(u32 addr)
 {
 	//increment cycle counter, check irq lines
 	cpu_tick();
 
 	//read data from address
-	return(inline_cpu_read(addr));
+	return(cpu_read_func(addr));
 }
 
 static INLINE void memwrite(u32 addr,u8 data)
@@ -88,7 +33,7 @@ static INLINE void memwrite(u32 addr,u8 data)
 	cpu_tick();
 
 	//write data to its address
-	inline_cpu_write(addr,data);
+	cpu_write_func(addr,data);
 }
 
 //push data to stack

@@ -19,107 +19,66 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
+#include "mappers/chips/mmc3.h"
 
-#define BMC_70IN1		0
-#define BMC_70IN1B	1
-
-static int revision;
-static u8 mode,mirror;
-static u8 bankhi,banklo,chrbank;
-static u8 hwswitch;
-static readfunc_t cpuread;
+static u8 security[] = {0,3,1,5,6,7,2,4};
+static u8 reg[2];
 
 static void sync()
 {
-	switch(mode) {
-		case 0x00:
-		case 0x10:
-			mem_setprg16(0x8,bankhi | banklo);
-			mem_setprg16(0xC,bankhi | 7);
-			break;
-		case 0x20:
-			mem_setprg32(0x8,(bankhi | banklo) >> 1);
-			break;
-		case 0x30:
-			mem_setprg16(0x8,bankhi | banklo);
-			mem_setprg16(0xC,bankhi | banklo);
-			break;
+	mmc3_syncprg(0xFF,0);
+	mmc3_syncchr(0xFF,0);
+	mmc3_syncsram();
+	mmc3_syncmirror();
+	if(reg[0] & 0x40) {
+		u8 bank = (reg[0] & 5) | ((reg[0] >> 2) & 2) | ((reg[0] >> 2) & 8);
+
+		if(reg[0] & 2)
+			mem_setprg32(8,bank >> 1);
+		else {
+			mem_setprg16(0x8,bank);
+			mem_setprg16(0xC,bank);
+		}
 	}
-	if(revision == BMC_70IN1)
-		mem_setchr8(0,chrbank);
+}
+
+static u8 read5(u32 addr)
+{
+//	log_message("h2288 protection read: $%04X\n",addr);
+	if(addr < 0x5800)
+		return(0xFF);
+	return(((addr >> 8) & 0xFE) | (((~addr >> 8) | addr) & 1));
+}
+
+static void write5(u32 addr,u8 data)
+{
+	if(addr < 0x5800)
+		return;
+//	log_message("h2288 write: $%04X = $%02X\n",addr,data);
+	reg[addr & 1] = data;
+	sync();
+}
+
+static void write_security(u32 addr,u8 data)
+{
+	if(addr & 1)
+		mmc3_write(addr,data);
 	else
-		mem_setvram8(0,0);
-	mem_setmirroring(mirror);
+		mmc3_write(addr,(data & 0xC0) | security[data & 7]);
 }
 
-static u8 read(u32 addr)
+static void reset(int hard)
 {
-	if(mode == 0x10) {
-		return(cpuread((addr & 0xFFF0) | hwswitch));
-	}
-	return(cpuread(addr));
-}
-
-static void write(u32 addr,u8 data)
-{
-	if(addr & 0x4000) {
-		mode = addr & 0x30;
-		banklo = addr & 7;
-	}
-	else {
-		mirror = ((addr & 0x20) >> 5) ^ 1;
-		if(revision == BMC_70IN1B)
-			bankhi = (addr & 3) << 3;
-		else
-			chrbank = addr & 7;	
-	}
-	sync();
-}
-
-static void reset(int r,int hard)
-{
-	int i;
-
-	revision = r;
-//	cpuread = cpu_getreadfunc();
-//	cpu_setreadfunc(read);
-	for(i=8;i<16;i++) {
-		mem_setwritefunc(i,write);
-	}
-	mem_setvramsize(8);
-	mode = 0;
-	bankhi = banklo = 0;
-	if(hard) {
-		if(r == BMC_70IN1)
-			hwswitch = 0xD;
-		else
-			hwswitch = 0xF;
-	}
-	else {
-		hwswitch = (hwswitch + 1) & 0xF;
-	}
-	sync();
-}
-
-static void reset_70in1(int hard)
-{
-	reset(BMC_70IN1,hard);
-}
-
-static void reset_70in1b(int hard)
-{
-	reset(BMC_70IN1B,hard);
+	mem_setreadfunc(5,read5);
+	mem_setwritefunc(5,write5);
+	mmc3_reset(C_MMC3B,mmc3_sync,hard);
+	mem_setwritefunc(8,write_security);
 }
 
 static void state(int mode,u8 *data)
 {
-	STATE_U8(mode);
-	STATE_U8(mirror);
-	STATE_U8(bankhi);
-	STATE_U8(banklo);
-	STATE_U8(chrbank);
-	sync();
+	STATE_ARRAY_U8(reg,2);
+	mmc3_state(mode,data);
 }
 
-MAPPER(B_70IN1,reset_70in1,0,0,0,state);
-MAPPER(B_70IN1B,reset_70in1b,0,0,0,state);
+MAPPER(B_H2288,reset,0,mmc3_ppucycle,0,state);

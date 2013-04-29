@@ -24,6 +24,7 @@
 #include "misc/emu.h"
 #include "misc/config.h"
 #include "nes/nes.h"
+#include "nes/state/state.h"
 #include "system/system.h"
 #include "system/video.h"
 #include "system/input.h"
@@ -93,6 +94,21 @@ int mainloop()
 		else if(keydown & 8) {
 			nes_loadstate(statefilename);
 			keydown &= ~8;
+		}
+
+		if((nes.cart->mapperid & B_TYPEMASK) == B_FDS) {
+			if(joykeys[SDLK_F9] && (keydown & 0x10) == 0) {
+				u8 data[4];
+
+				keydown |= 0x10;
+				data[0] = 0;
+				nes.mapper->state(CFG_LOAD,data);
+				log_printf("disk inserted!  side = %d\n",data[0]);
+			}
+			else if(joykeys[SDLK_F9] == 0) {
+				keydown &= ~0x10;
+			}
+
 		}
 		if(joykeys[SDLK_ESCAPE]) {
 			quit++;

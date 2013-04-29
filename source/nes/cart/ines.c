@@ -92,6 +92,7 @@ int cart_load_ines(cart_t *ret,const char *filename)
 	u8 header[16];
 	FILE *fp;
 	u32 size;
+	int tmp;
 
 	//open rom file
 	if((fp = fopen(filename,"rb")) == 0) {
@@ -106,19 +107,21 @@ int cart_load_ines(cart_t *ret,const char *filename)
 
 	//read 16 byte header and parse its data
 	fread(header,1,16,fp);
-	parse_ines_header(ret,header);
+	if((tmp = parse_ines_header(ret,header)) == 0) {
 
-	//load each chunk from the file
-	load_chunk(&ret->trainer,fp);
-	load_chunk(&ret->prg,fp);
-	load_chunk(&ret->chr,fp);
-	load_chunk(&ret->pc10rom,fp);
+		//load each chunk from the file
+		load_chunk(&ret->trainer,fp);
+		load_chunk(&ret->prg,fp);
+		load_chunk(&ret->chr,fp);
+		load_chunk(&ret->pc10rom,fp);
 
-	//check for title
-	if((size - ftell(fp)) == 128)
-		fread(ret->title,1,128,fp);
+		//check for title
+		if((size - ftell(fp)) == 128)
+			fread(ret->title,1,128,fp);
+
+	}
 
 	//close file and return
 	fclose(fp);
-	return(0);
+	return(tmp);
 }

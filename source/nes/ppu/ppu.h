@@ -52,6 +52,8 @@ typedef struct ppu_s {
 	//sprite rendering
 	u8		oam2[32];
 	u8		oam2pos;
+	u8		oam2read;
+	u8		oam2mode;
 
 	//rendering data, current address the ppu is accessing
 	u32	busaddr;

@@ -18,16 +18,27 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#ifndef QUICK_SPRITES
+
+#define OAM2		nes.ppu.oam2
+#define OAM2POS	nes.ppu.oam2pos
+#define OAM2MODE	nes.ppu.oam2mode
+#define OAM2READ	nes.ppu.oam2read
+
 static INLINE void process_sprites()
 {
+	u32 tmp;
+
 	if(LINECYCLES == 0) {
-		nes.ppu.oam2pos = 0;
+		OAM2POS = 0;
+		OAM2MODE = 0;
 	}
 
 	/* Cycles 1-64: Secondary OAM (32-byte buffer for current sprites on scanline) is
 	   initialized to $FF - attempting to read $2004 will return $FF */
-	else if((LINECYCLES <= 64) && ((LINECYCLES & 1) == 0)) {
-		nes.ppu.oam2[nes.ppu.oam2pos++] = 0xFF;
+	else if(LINECYCLES <= 64) {
+		if(LINECYCLES & 1)
+			OAM2[OAM2POS++] = 0xFF;
 	}
 
 	/* Cycles 65-256: Sprite evaluation
@@ -48,7 +59,64 @@ static INLINE void process_sprites()
 	3b. If the value is not in range, increment n AND m (without carry). If n overflows to 0, go to 4; otherwise go to 3
 	4. Attempt (and fail) to copy OAM[n][0] into the next free slot in secondary OAM, and increment n (repeat until HBLANK is reached) */
 	else if(LINECYCLES <= 256) {
+		//read sprite y coord
+		if(OAM2MODE == 0) {
+			if(LINECYCLES & 1) {
+				//read byte from oam
+				OAM2READ = nes.ppu.oam[nes.ppu.oamaddr];
+			}
+			else {
+				//store y coordinate into oam2
+				OAM2[OAM2POS] = OAM2READ;
 
+				//calculate sprite height
+				tmp = OAM2READ + (8 << ((CONTROL0 & 0x20) >> 5));
+
+				//check if sprite line is visible here
+				if(SCANLINE >= OAM2READ && SCANLINE < tmp) {
+
+					//change mode to fetch the read of teh sprite data
+					OAM2MODE++;
+
+					//increment oam2 offset
+					OAM2POS++;
+				}
+
+				//sprite not visible on this line
+				else {
+
+				}
+			}
+		}
+
+		//fetching the rest of the sprite data
+		else if(OAM2MODE == 1) {
+			if(LINECYCLES & 1) {
+				//read byte from oam
+				OAM2READ = nes.ppu.oam[nes.ppu.oamaddr++];
+			}
+			else {
+				//store byte into oam2
+				OAM2[OAM2POS++] = OAM2READ;
+
+				//see if this is the last fetch for this sprite
+				if((OAM2POS & 3) == 0) {
+
+					//if this is the 8th sprite, go into the strange evaluation mode
+					if(OAM2POS == 32)
+						OAM2MODE++;
+
+					//otherwise fetch next sprite
+					else
+						OAM2MODE = 0;
+				}
+			}
+		}
+
+		//strange sprite evaluation
+		else if(OAM2MODE == 2) {
+
+		}
 	}
 
 	/* Cycles 257-320: Sprite fetches (8 sprites total, 8 cycles per sprite)
@@ -69,6 +137,8 @@ static INLINE void process_sprites()
 
 	}
 }
+
+#else
 
 //process all sprites that belong to the next scanline
 static INLINE void quick_process_sprites()
@@ -168,3 +238,5 @@ static INLINE void quick_process_sprites()
 		}
 	}
 }
+
+#endif

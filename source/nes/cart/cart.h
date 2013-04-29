@@ -74,6 +74,8 @@ typedef struct cart_s {
 	data_t	sram,svram;				//battery backed ram/vram
 	data_t	trainer;					//trainer data
 	data_t	pc10rom;					//pc10 rom data
+	data_t	disk;						//fds disk data
+	data_t	diskoriginal;			//original fds disk data
 
 	//internal mapper id
 	int		mapperid;

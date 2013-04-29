@@ -52,6 +52,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_UN1ROM);
 	MAPPER(B_UNROM_74HC08);
 	MAPPER(B_EVENT);
+	MAPPER(B_FDS);
 
 	//konami
 	MAPPER(B_VRC1);
@@ -136,8 +137,10 @@ mapper_t *mapper_init(int mapperid)
 {
 	mapper_t *ret = get_mapper(mapperid);
 
-	if(ret == 0)
+	if(ret == 0) {
+		log_printf("mapper_init:  get_mapper() failed!  mapperid = %d\n",mapperid);
 		return(0);
+	}
 	check_null(ret->tile,		null_mapper_tile);
 	check_null(ret->ppucycle,	null_mapper_cycle);
 	check_null(ret->cpucycle,	null_mapper_cycle);

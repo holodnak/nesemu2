@@ -148,10 +148,11 @@ enum boardid_e {
 	B_BOARDEND,
 
 	//extra support
-
 	B_NSF =		0x10000000,
-	B_FDS =		0x10000001,
-	B_HLEFDS =	0x10000002,
+	B_FDS =		0x20000000,
+	B_HLEFDS =	0x20000001,
+	B_DRPCJR =	0x30000000,
+	B_TYPEMASK =0xF0000000,
 
 };
 

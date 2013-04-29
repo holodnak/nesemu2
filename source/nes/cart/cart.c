@@ -28,6 +28,7 @@
 #include "nes/cart/ines.h"
 #include "nes/cart/ines20.h"
 #include "nes/cart/unif.h"
+#include "nes/cart/fds.h"
 
 #define FREE(p) {	\
 	if(p) {			\
@@ -146,8 +147,8 @@ cart_t *cart_load(const char *filename)
 		case FORMAT_INES:		n = cart_load_ines(ret,filename);	break;
 		case FORMAT_INES20:	n = cart_load_ines20(ret,filename);	break;
 		case FORMAT_UNIF:		n = cart_load_unif(ret,filename);	break;
-//		case FORMAT_FDS:		n = cart_load_fds(ret,filename);		break;
-//		case FORMAT_RAWFDS:	n = cart_load_fds(ret,filename);		break;
+		case FORMAT_FDS:		n = cart_load_fds(ret,filename);		break;
+		case FORMAT_RAWFDS:	n = cart_load_fds(ret,filename);		break;
 //		case FORMAT_NSF:		n = cart_load_nsf(ret,filename);		break;
 //		case FORMAT_SPLIT:	n = cart_load_split(ret,filename);	break;
 	}
@@ -208,6 +209,8 @@ void cart_unload(cart_t *r)
 		FREE_DATA(r->svram);
 		FREE_DATA(r->trainer);
 		FREE_DATA(r->pc10rom);
+		FREE_DATA(r->disk);
+		FREE_DATA(r->diskoriginal);
 		FREE(r->cache);
 		FREE(r->cache_hflip);
 		FREE(r->vcache);

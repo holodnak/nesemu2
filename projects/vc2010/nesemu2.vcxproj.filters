@@ -178,6 +178,9 @@
     <Filter Include="Source Files\nes\ppu\step">
       <UniqueIdentifier>{e3f70624-78e6-474f-85f9-70e9953f24af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\mappers\boards\namcot">
+      <UniqueIdentifier>{fb436525-1308-4cc1-90df-cb93d930c46b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -318,9 +321,6 @@
     <ClCompile Include="..\..\source\mappers\boards\taito\x1-005.c">
       <Filter>Source Files\mappers\boards\taito</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\tengen\800032.c">
-      <Filter>Source Files\mappers\boards\tengen</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\nes\apu\apu.c">
       <Filter>Source Files\nes\apu</Filter>
     </ClCompile>
@@ -392,15 +392,6 @@
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\jaleco\ss88006.c">
       <Filter>Source Files\mappers\boards\jaleco</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\txc\txc-22211.c">
-      <Filter>Source Files\mappers\boards\txc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\txc\txc-mxmdhtwo.c">
-      <Filter>Source Files\mappers\boards\txc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\txc\txc-tw.c">
-      <Filter>Source Files\mappers\boards\txc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-003x.c">
       <Filter>Source Files\mappers\boards\sachen</Filter>
@@ -525,9 +516,6 @@
     <ClCompile Include="..\..\source\mappers\boards\irem\tam-s1.c">
       <Filter>Source Files\mappers\boards\irem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\txc\txc-strikewolf.c">
-      <Filter>Source Files\mappers\boards\txc</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\other\mlt-caltron6in1.c">
       <Filter>Source Files\mappers\boards\other</Filter>
     </ClCompile>
@@ -539,6 +527,33 @@
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\other\bmc-70in1.c">
       <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\tengen\rambo-1.c">
+      <Filter>Source Files\mappers\boards\tengen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\tengen\mimic-1.c">
+      <Filter>Source Files\mappers\boards\tengen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\txc\22211.c">
+      <Filter>Source Files\mappers\boards\txc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\txc\mxmdhtwo.c">
+      <Filter>Source Files\mappers\boards\txc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\txc\strikewolf.c">
+      <Filter>Source Files\mappers\boards\txc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\txc\tw.c">
+      <Filter>Source Files\mappers\boards\txc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\chips\namcot-108.c">
+      <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\namcot\34x3.c">
+      <Filter>Source Files\mappers\boards\namcot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\namcot\3425.c">
+      <Filter>Source Files\mappers\boards\namcot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -667,6 +682,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\system\common\filters\interpolate\interpolate.h">
       <Filter>Header Files\system\common\filters\interpolate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\mappers\chips\namcot-108.h">
+      <Filter>Header Files\mappers\chips</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

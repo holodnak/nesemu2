@@ -19,11 +19,62 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/namcot-108.h"
 
-static void reset(int hard)
+static void (*sync)();
+static u8 reg[8],index;
+
+u8 namcot108_getindex()
 {
-	namcot108_reset(namcot108_sync,hard);
+	return(index);
 }
 
-MAPPER(B_DxROM,reset,0,0,0,namcot108_state);
+u8 *namcot108_getregs()
+{
+	return(reg);
+}
+
+void namcot108_sync()
+{
+	mem_setchr2(0,reg[0] >> 1);
+	mem_setchr2(2,reg[1] >> 1);
+	mem_setchr1(4,reg[2]);
+	mem_setchr1(5,reg[3]);
+	mem_setchr1(6,reg[4]);
+	mem_setchr1(7,reg[5]);
+	mem_setprg8(0x8,reg[6]);
+	mem_setprg8(0xA,reg[7]);
+	mem_setprg16(0xC,0xFF);
+}
+
+void namcot108_write(u32 addr,u8 data)
+{
+	switch(addr) {
+		case 0x8000:
+			index = data;
+			break;
+		case 0x8001:
+			reg[index & 7] = data;
+			sync();
+			break;
+	}
+}
+
+void namcot108_reset(void (*syncfunc)(),int hard)
+{
+	int i;
+
+	for(i=8;i<16;i++)
+		mem_setwritefunc(i,namcot108_write);
+	for(i=0;i<8;i++)
+		reg[i] = 0;
+	index = 0;
+	sync = syncfunc;
+	sync();
+}
+
+void namcot108_state(int mode,u8 *data)
+{
+	STATE_U8(index);
+	STATE_ARRAY_U8(reg,8);
+	sync();
+}

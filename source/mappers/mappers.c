@@ -79,9 +79,14 @@ static mapper_t *get_mapper(int mapperid)
 	//jaleco
 	MAPPER(B_JALECO_SS88006);
 
+	//namcot
+	MAPPER(B_NAMCOT_34x3);
+	MAPPER(B_NAMCOT_3453);
+	MAPPER(B_NAMCOT_3425);
+
 	//unlicensed
 	//tengen
-	MAPPER(B_TENGEN_800032);
+	MAPPER(B_TENGEN_RAMBO_1);
 
 	//camerica
 	MAPPER(B_CAMERICA_BF9093);

@@ -23,6 +23,8 @@ mappers
  . mapper 65 (irem h3001) "Daiku no Gen San 2 - Akage no Dan no Gyakushuu" doesnt work, the rest do
  . mmc4 (mapper 10) not looking correct
  . finish strikewolf mapper
+ . devil man broken (namcot 3453)
+ . finish the namcot 108 based mappers
 
 misc
  . implement reading of the xml rom databases

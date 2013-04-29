@@ -21,9 +21,30 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/namcot-108.h"
 
-static void reset(int hard)
+static void sync_34x3()
 {
-	namcot108_reset(namcot108_sync,hard);
+	u8 *reg = namcot108_getregs();
+
+	mem_setchr2(0,(reg[0] & 0x3F) >> 1);
+	mem_setchr2(2,(reg[1] & 0x3F) >> 1);
+	mem_setchr1(4,reg[2] | 0x40);
+	mem_setchr1(5,reg[3] | 0x40);
+	mem_setchr1(6,reg[4] | 0x40);
+	mem_setchr1(7,reg[5] | 0x40);
+	mem_setprg8(0x8,reg[6]);
+	mem_setprg8(0xA,reg[7]);
+	mem_setprg16(0xC,0xFF);
 }
 
-MAPPER(B_DxROM,reset,0,0,0,namcot108_state);
+
+static void sync_3453()
+{
+	sync_34x3();
+	mem_setmirroring(MIRROR_1L + ((namcot108_getindex() & 0x40) >> 6));
+}
+
+static void reset_34x3(int hard)	{	namcot108_reset(sync_34x3,hard);	}
+static void reset_3453(int hard)	{	namcot108_reset(sync_3453,hard);	}
+
+MAPPER(B_NAMCOT_34x3,reset_34x3,0,0,0,namcot108_state);
+MAPPER(B_NAMCOT_3453,reset_3453,0,0,0,namcot108_state);

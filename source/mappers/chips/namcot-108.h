@@ -18,12 +18,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mappers/mapperinc.h"
-#include "mappers/chips/namcot-108.h"
+#ifndef __namcot_108_h__
+#define __namcot_108_h__
 
-static void reset(int hard)
-{
-	namcot108_reset(namcot108_sync,hard);
-}
+#include "types.h"
 
-MAPPER(B_DxROM,reset,0,0,0,namcot108_state);
+u8 namcot108_getindex();
+u8 *namcot108_getregs();
+void namcot108_sync();
+void namcot108_reset(void (*syncfunc)(),int hard);
+void namcot108_write(u32 addr,u8 data);
+void namcot108_state(int mode,u8 *data);
+
+#endif

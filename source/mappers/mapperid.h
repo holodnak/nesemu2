@@ -104,9 +104,8 @@ enum boardid_e {
 	B_74x377,
 
 	//tengen
-	B_TENGEN_800008,
-	B_TENGEN_800032,
-	B_TENGEN_800037,
+	B_TENGEN_MIMIC_1,
+	B_TENGEN_RAMBO_1,
 
 	//txc corporation
 	B_TXC_22211A,

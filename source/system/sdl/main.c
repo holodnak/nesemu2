@@ -96,7 +96,7 @@ int mainloop()
 			keydown &= ~8;
 		}
 
-		if((nes.cart->mapperid & B_TYPEMASK) == B_FDS) {
+		if(nes.cart && (nes.cart->mapperid & B_TYPEMASK) == B_FDS) {
 			if(joykeys[SDLK_F9] && (keydown & 0x10) == 0) {
 				u8 data[4];
 

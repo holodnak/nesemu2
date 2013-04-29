@@ -99,6 +99,8 @@ enum boardid_e {
 
 	//c&e
 	B_CNE_FSB,
+	B_CNE_SHLZ,
+	B_CNE_DECATHLON,
 
 	//racermate
 	B_RACERMATE,

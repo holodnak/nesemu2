@@ -852,9 +852,6 @@
 							RelativePath="..\..\source\mappers\boards\other\btl-mario1-malee2.c">
 						</File>
 						<File
-							RelativePath="..\..\source\mappers\boards\other\cne-fsb.c">
-						</File>
-						<File
 							RelativePath="..\..\source\mappers\boards\other\magicseries.c">
 						</File>
 						<File
@@ -902,6 +899,19 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\namcot\34x3.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="cne"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\cne\decathlon.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\cne\fsb.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\cne\shlz.c">
 						</File>
 					</Filter>
 				</Filter>

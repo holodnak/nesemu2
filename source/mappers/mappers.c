@@ -113,6 +113,11 @@ static mapper_t *get_mapper(int mapperid)
 	//ave
 	MAPPER(B_NINA_001);
 
+	//cne
+	MAPPER(B_CNE_FSB);
+	MAPPER(B_CNE_SHLZ);
+	MAPPER(B_CNE_DECATHLON);
+
 	//other (unknown)
 	MAPPER(B_MARIO1_MALEE2);
 	MAPPER(B_UNION_BOND_FFV);
@@ -122,7 +127,6 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_MAGICSERIES);
 	MAPPER(B_70IN1);
 	MAPPER(B_70IN1B);
-	MAPPER(B_CNE_FSB);
 
 	return(0);
 }

@@ -87,6 +87,7 @@ enum boardid_e {
 
 	//unlicensed
 	B_H2288,
+	B_36IN1,
 	B_70IN1,
 	B_70IN1B,
 	B_CALTRON6IN1,

@@ -843,6 +843,9 @@
 						Name="other"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-36in1.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\other\bmc-70in1.c">
 						</File>
 						<File

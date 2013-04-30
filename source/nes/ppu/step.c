@@ -115,13 +115,13 @@ static INLINE void scanline_prerender()
 			fetch_pt1byte();
 			inc_hscroll();
 			inc_vscroll();
-#ifdef QUICK_SPRITES
-			quick_process_sprites();
-#endif
 			break;
 
 		//garbage nametable address calc
 		case 257:
+#ifdef QUICK_SPRITES
+			quick_process_sprites();
+#endif
 			update_hscroll();
 		case 265:	case 273:	case 281:	case 289:	case 297:	case 305:	case 313:
 			calc_ntaddr();
@@ -285,13 +285,13 @@ static INLINE void scanline_visible()
 			update_line();
 //			log_printf("sprites %s (%s)\n",(CONTROL1 & 0x10) ? "enabled" : "disabled",(CONTROL1 & 0x10) ? "8x16" : "8x8");
 			inc_vscroll();
-#ifdef QUICK_SPRITES
-			quick_process_sprites();
-#endif
 			break;
 
 		//garbage nametable address calc
 		case 257:
+#ifdef QUICK_SPRITES
+			quick_process_sprites();
+#endif
 			update_hscroll();
 		case 265:	case 273:	case 281:	case 289:	case 297:	case 305:	case 313:
 			calc_ntaddr();

@@ -23,8 +23,10 @@
 
 #include "types.h"
 
+void mmc5_sync();
+u8 mmc5_read(u32 addr);
+void mmc5_write(u32 addr,u8 data);
 void mmc5_reset(int hard);
-void mmc5_write(u32 addr,u8 value);
 void mmc5_ppucycle();
 void mmc5_state(int mode,u8 *data);
 

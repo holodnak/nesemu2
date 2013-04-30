@@ -157,7 +157,9 @@ void nes_reset(int hard)
 		nes.cpu.readpages[i] = 0;
 		nes.cpu.writefuncs[i] = 0;
 		nes.cpu.writepages[i] = 0;
+		nes.ppu.readfuncs[i] = 0;
 		nes.ppu.readpages[i] = 0;
+		nes.ppu.writefuncs[i] = 0;
 		nes.ppu.writepages[i] = 0;
 	}
 

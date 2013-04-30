@@ -72,6 +72,10 @@ typedef struct ppu_s {
 	u8		*readpages[16];
 	u8		*writepages[16];
 
+	//read/write functions
+	readfunc_t readfuncs[16];
+	writefunc_t writefuncs[16];
+
 	//cached tile pointers
 	cache_t	*cachepages[16];
 	cache_t	*cachepages_hflip[16];

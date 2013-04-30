@@ -26,4 +26,4 @@ static void reset(int hard)
 	mmc5_reset(hard);
 }
 
-MAPPER(B_ExROM,reset,0,0,0,mmc5_state);
+MAPPER(B_ExROM,reset,0,mmc5_ppucycle,0,mmc5_state);

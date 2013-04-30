@@ -26,8 +26,8 @@ u8 ppu_memread(u32 addr)
 {
 	if(nes.ppu.readpages[addr >> 10])
 		return(nes.ppu.readpages[addr >> 10][addr & 0x3FF]);
-//	else if(nes.ppu.readfuncs[addr >> 10])
-//		return(nes.ppu.readfuncs[addr >> 10](addr));
+	else if(nes.ppu.readfuncs[addr >> 10])
+		return(nes.ppu.readfuncs[addr >> 10](addr));
 	log_printf("ppu_memread: read from unmapped memory at $%04X\n",addr);
 	return(0);
 }
@@ -41,8 +41,8 @@ void ppu_memwrite(u32 addr,u8 data)
 		nes.ppu.writepages[page][addr & 0x3FF] = data;
 
 	//see if write function is mapped
-//	else if(nes->ppu.writefuncs[page])
-//		nes->ppu.writefuncs[page](addr,data);
+	else if(nes.ppu.writefuncs[page])
+		nes.ppu.writefuncs[page](addr,data);
 
 	//not mapped, report error
 	else

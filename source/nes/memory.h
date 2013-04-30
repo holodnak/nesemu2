@@ -26,17 +26,25 @@
 int mem_getprgsize();
 int mem_getchrsize();
 
-//page read pointers/functions
-void mem_setreadfunc(int page,readfunc_t readfunc);
+//set/get cpu page read/write pointers/functions
+void mem_setreadfunc(int page,readfunc_t func);
+void mem_setwritefunc(int page,writefunc_t func);
 void mem_setreadptr(int page,u8 *ptr);
-readfunc_t mem_getreadfunc(int page);
-u8 *mem_getreadptr(int page);
-
-//page write pointers/functions
-void mem_setwritefunc(int page,writefunc_t writefunc);
 void mem_setwriteptr(int page,u8 *ptr);
+readfunc_t mem_getreadfunc(int page);
 writefunc_t mem_getwritefunc(int page);
+u8 *mem_getreadptr(int page);
 u8 *mem_getwriteptr(int page);
+
+//set/get ppu page read/write pointers/functions
+void mem_setppureadfunc(int page,readfunc_t func);
+void mem_setppuwritefunc(int page,writefunc_t func);
+void mem_setppureadptr(int page,u8 *ptr);
+void mem_setppuwriteptr(int page,u8 *ptr);
+readfunc_t mem_getppureadfunc(int page);
+writefunc_t mem_getppuwritefunc(int page);
+u8 *mem_getppureadptr(int page);
+u8 *mem_getppuwriteptr(int page);
 
 //unset cpu/ppu memory page
 void mem_unsetcpu(int banksize,int page);
@@ -74,8 +82,10 @@ void mem_setmirroring2(int n0,int n1,int n2,int n3);
 #define mem_setprg32(p,b)		mem_setprg(32,p,b)
 #define mem_setwram4(p,b)		mem_setwram(4,p,b)
 #define mem_setwram8(p,b)		mem_setwram(8,p,b)
+#define mem_setwram16(p,b)		mem_setwram(16,p,b)
 #define mem_setsram4(p,b)		mem_setsram(4,p,b)
 #define mem_setsram8(p,b)		mem_setsram(8,p,b)
+#define mem_setsram16(p,b)		mem_setsram(16,p,b)
 
 //macros for ppu memory
 #define mem_unsetppu1(p)		mem_unsetppu(1,p)

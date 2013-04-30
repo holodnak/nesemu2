@@ -22,53 +22,23 @@
 #include "nes/nes.h"
 #include "misc/log.h"
 
-//set read page function pointer
-void mem_setreadfunc(int page,readfunc_t readfunc)
-{
-	nes.cpu.readfuncs[page] = readfunc;
-}
+void mem_setreadfunc(int page,readfunc_t func)		{	nes.cpu.readfuncs[page] = func;		}
+void mem_setwritefunc(int page,writefunc_t func)	{	nes.cpu.writefuncs[page] = func;		}
+void mem_setreadptr(int page,u8 *ptr)					{	nes.cpu.readpages[page] = ptr;		}
+void mem_setwriteptr(int page,u8 *ptr)					{	nes.cpu.writepages[page] = ptr;		}
+readfunc_t mem_getreadfunc(int page)					{	return(nes.cpu.readfuncs[page]);		}
+writefunc_t mem_getwritefunc(int page)					{	return(nes.cpu.writefuncs[page]);	}
+u8 *mem_getreadptr(int page)								{	return(nes.cpu.readpages[page]);		}
+u8 *mem_getwriteptr(int page)								{	return(nes.cpu.writepages[page]);	}
 
-//set read page data pointer
-void mem_setreadptr(int page,u8 *ptr)
-{
-	nes.cpu.readpages[page] = ptr;
-}
-
-//set write page function pointer
-void mem_setwritefunc(int page,writefunc_t writefunc)
-{
-	nes.cpu.writefuncs[page] = writefunc;
-}
-
-//set write page data pointer
-void mem_setwriteptr(int page,u8 *ptr)
-{
-	nes.cpu.writepages[page] = ptr;
-}
-
-//retreive read page function pointer
-readfunc_t mem_getreadfunc(int page)
-{
-	return(nes.cpu.readfuncs[page]);
-}
-
-//retreive read page data pointer
-u8 *mem_getreadptr(int page)
-{
-	return(nes.cpu.readpages[page]);
-}
-
-//retreive write page function pointer
-writefunc_t mem_getwritefunc(int page)
-{
-	return(nes.cpu.writefuncs[page]);
-}
-
-//retreive write page data pointer
-u8 *mem_getwriteptr(int page)
-{
-	return(nes.cpu.writepages[page]);
-}
+void mem_setppureadfunc(int page,readfunc_t func)		{	nes.ppu.readfuncs[page] = func;		}
+void mem_setppuwritefunc(int page,writefunc_t func)	{	nes.ppu.writefuncs[page] = func;		}
+void mem_setppureadptr(int page,u8 *ptr)					{	nes.ppu.readpages[page] = ptr;		}
+void mem_setppuwriteptr(int page,u8 *ptr)					{	nes.ppu.writepages[page] = ptr;		}
+readfunc_t mem_getppureadfunc(int page)					{	return(nes.ppu.readfuncs[page]);		}
+writefunc_t mem_getppuwritefunc(int page)					{	return(nes.ppu.writefuncs[page]);	}
+u8 *mem_getppureadptr(int page)								{	return(nes.ppu.readpages[page]);		}
+u8 *mem_getppuwriteptr(int page)								{	return(nes.ppu.writepages[page]);	}
 
 void mem_unsetcpu(int banksize,int page)
 {
@@ -199,25 +169,10 @@ void mem_setsvram(int banksize,int page,int bank)
 	}
 }
 
-void mem_setwramsize(int banks)
-{
-	cart_setwramsize(nes.cart,banks);
-}
-
-void mem_setsramsize(int banks)
-{
-	cart_setsramsize(nes.cart,banks);
-}
-
-void mem_setvramsize(int banks)
-{
-	cart_setvramsize(nes.cart,banks);
-}
-
-void mem_setsvramsize(int banks)
-{
-	cart_setsvramsize(nes.cart,banks);
-}
+void mem_setwramsize(int banks)	{	cart_setwramsize(nes.cart,banks);	}
+void mem_setsramsize(int banks)	{	cart_setsramsize(nes.cart,banks);	}
+void mem_setvramsize(int banks)	{	cart_setvramsize(nes.cart,banks);	}
+void mem_setsvramsize(int banks)	{	cart_setsvramsize(nes.cart,banks);	}
 
 void mem_setmirroring(int m)
 {

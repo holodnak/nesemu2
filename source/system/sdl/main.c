@@ -129,24 +129,41 @@ int mainloop()
 
 static void showmappers()
 {
-	int i,n;
+	int i,j,n,n2;
 	const char *str;
 
-	log_printf("supported ines mappers:  0");
-	for(n=1,i=1;i<256;i++) {
+	log_printf("supported ines mappers:  ");
+	for(n=0,i=0;i<256;i++) {
 		if(mapper_get_mapperid_ines(i) >= 0) {
-			log_printf(", %d",i);
+			if(n)
+				log_printf(", ",i);
+			log_printf("%d",i);
 			n++;
 		}
 	}
 
-	log_printf("\nsupported unif mappers:\n");
+	log_printf("\n\nsupported ines20 mappers:  ");
+	for(n2=0,i=0;i<(256 * 16);i++) {
+		for(j=0;j<16;j++) {
+			if(mapper_get_mapperid_ines20(i,j) >= 0) {
+				//skip over mappers without submapper, they supported by regular ines
+				if(j == 0)
+					continue;
+				if(n2)
+					log_printf(", ",i);
+				log_printf("%d.%d",i,j);
+				n2++;
+			}
+		}
+	}
+
+	log_printf("\n\nsupported unif mappers:\n");
 	for(i=0;;i++) {
 		if((str = mapper_get_unif_boardname(i)) == 0)
 			break;
 		log_printf("   %s\n",str);
 	}
-	log_printf("\n%d ines mappers, %d unif mappers, %d internal boards supported\n",n,i,B_BOARDEND);
+	log_printf("\n%d ines, %d ines20, %d unif, %d internal boards supported\n",n,n2,i,B_BOARDEND);
 }
 
 int main(int argc,char *argv[])
@@ -158,7 +175,7 @@ int main(int argc,char *argv[])
 //		return(1);
 //	}
 
-	//process command line arguments
+	//crappily process command line arguments
 	if(argc > 1) {
 		if(strcmp("--mappers",argv[1]) == 0) {
 			showmappers();

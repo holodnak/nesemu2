@@ -54,25 +54,26 @@ static void sync()
 
 static u8 read(u32 addr)
 {
-	if(mode == 0x10) {
+	if(addr >= 0x8000 && mode == 0x10) {
 		return(cpuread((addr & 0xFFF0) | hwswitch));
 	}
 	return(cpuread(addr));
 }
 
-static void write(u32 addr,u8 data)
+static void write_8000(u32 addr,u8 data)
 {
-	if(addr & 0x4000) {
-		mode = addr & 0x30;
-		banklo = addr & 7;
-	}
-	else {
-		mirror = ((addr & 0x20) >> 5) ^ 1;
-		if(revision == BMC_70IN1B)
-			bankhi = (addr & 3) << 3;
-		else
-			chrbank = addr & 7;	
-	}
+	mirror = ((addr & 0x20) >> 5) ^ 1;
+	if(revision == BMC_70IN1B)
+		bankhi = (addr & 3) << 3;
+	else
+		chrbank = addr & 7;	
+	sync();
+}
+
+static void write_C000(u32 addr,u8 data)
+{
+	mode = addr & 0x30;
+	banklo = addr & 7;
 	sync();
 }
 
@@ -81,10 +82,11 @@ static void reset(int r,int hard)
 	int i;
 
 	revision = r;
-//	cpuread = cpu_getreadfunc();
-//	cpu_setreadfunc(read);
-	for(i=8;i<16;i++) {
-		mem_setwritefunc(i,write);
+	cpuread = cpu_getreadfunc();
+	cpu_setreadfunc(read);
+	for(i=0;i<4;i++) {
+		mem_setwritefunc(0x8 + i,write_8000);
+		mem_setwritefunc(0xC + i,write_C000);
 	}
 	mem_setvramsize(8);
 	mode = 0;
@@ -113,6 +115,7 @@ static void reset_70in1b(int hard)
 
 static void state(int mode,u8 *data)
 {
+	CFG_U8(hwswitch);
 	STATE_U8(mode);
 	STATE_U8(mirror);
 	STATE_U8(bankhi);

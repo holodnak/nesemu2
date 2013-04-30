@@ -120,6 +120,7 @@ void *memutil_realloc(void *ptr,size_t size,char *file,int line)
 			strcpy(chunks[i].file,file);
 			chunks[i].line = line;
 			chunks[i].ptr = ret;
+			break;
 		}
 	}
 	if(i == MAX_CHUNKS) {

@@ -12,6 +12,7 @@ ppu
  . sprites need more work (to allow mmc5 to work properly)
 
 mappers
+ ! better method of changing mapper dips
  . find mapper 172/173 games to test (TXC-22211B + TXC-22211C)
  . find mapper 206 (dxrom) games to test
  . mapper 88/206 (dxrom) needs work
@@ -25,7 +26,6 @@ mappers
  . finish strikewolf mapper
  . devil man broken (namcot 3453)
  . finish the namcot 108 based mappers
- . bmc-70in1 needs finishing
  . unl-h2288 (earthworm jim) broken
  . mapper 42 (biomiraclea) has two types of roms, one with chr, one with vram.
  . mmc5 needs finishing (after ppu sprite systems are updated)

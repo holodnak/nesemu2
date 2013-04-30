@@ -4,8 +4,8 @@
 PATH_SOURCE=source
 
 # misc source files
-SOURCE_MISC = source/misc/config.c source/misc/log.c source/misc/emu.c
-SOURCE_MISC += source/misc/crc32.c source/misc/memutil.c
+SOURCE_MISC = source/misc/config.c source/misc/log.c 
+SOURCE_MISC += source/misc/crc32.c source/misc/memutil.c source/misc/emu.c
 
 # search mapper directory for source files
 MAPPER_DIRS=$(shell find $(PATH_SOURCE)/mappers -type d)
@@ -16,7 +16,8 @@ SOURCE_INPUTDEV = $(foreach dir,$(PATH_SOURCE)/inputdev,$(wildcard $(dir)/*.c))
 
 # nes core
 SOURCE_NES = source/nes/memory.c source/nes/nes.c source/nes/io.c
-SOURCE_NES += source/nes/cart/cart.c source/nes/cart/ines.c source/nes/cart/ines20.c source/nes/cart/unif.c
+SOURCE_NES += source/nes/cart/cart.c source/nes/cart/ines.c source/nes/cart/ines20.c
+SOURCE_NES += source/nes/cart/unif.c source/nes/cart/fds.c
 SOURCE_NES += source/nes/state/state.c source/nes/state/block.c
 SOURCE_NES += source/nes/cpu/cpu.c source/nes/cpu/disassemble.c
 SOURCE_NES += source/nes/ppu/io.c source/nes/ppu/ppu.c source/nes/ppu/step.c
@@ -34,8 +35,6 @@ SOURCE_SYSTEM_SDL += source/system/sdl/console/fontdata.c
 SOURCE_SYSTEM_SDL += source/system/common/filters/draw/draw.c source/system/common/filters/interpolate/interpolate.c
 SOURCE_SYSTEM_SDL += source/system/common/filters/scale2x/scalebit.c source/system/common/filters/scale2x/scale2x.c
 SOURCE_SYSTEM_SDL += source/system/common/filters/scale2x/scale3x.c
-SOURCE_SYSTEM_SDL += source/system/common/filters/hq2x/hq2x.c source/system/common/filters/hq2x/hq3x.c
-SOURCE_SYSTEM_SDL += source/system/common/filters/hq2x/hq4x.c
 
 # sdl/win32 system files
 SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c source/system/win32/nesemu2-res.o

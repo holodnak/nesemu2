@@ -179,6 +179,7 @@ int main(int argc,char *argv[])
 		//load file into the nes
 		if(nes_load(romfilename) == 0) {
 			nes_set_inputdev(0,I_JOYPAD0);
+			nes_set_inputdev(1,I_JOYPAD1);
 			nes_reset(1);
 			strncpy(statefilename,romfilename,1024);
 			strcat(statefilename,".state");

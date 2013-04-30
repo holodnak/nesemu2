@@ -20,27 +20,34 @@
 
 #include "mappers/mapperinc.h"
 
-static u8 prg,mirror,irqenabled;
+static u8 prg,chr,mirror,irqenabled;
 static int irqcounter;
 
 static void sync()
 {
 	mem_setprg8(6,prg);
 	mem_setprg32(8,3);
-	mem_setvram8(0,0);
+	if(nes.cart->chr.size)
+		mem_setchr8(0,chr);
+	else
+		mem_setvram8(0,0);
 	mem_setmirroring(mirror);
 }
 
 static void write(u32 addr,u8 data)
 {
-	switch(addr & 3) {
-		case 0:
-			prg = data & 0xF;
+	switch(addr & 0xE003) {
+		case 0x8000:
+		case 0x8001:
+			chr = data;
 			break;
-		case 1:
+		case 0xE000:
+			prg = data;
+			break;
+		case 0xE001:
 			mirror = ((data & 8) >> 3) ^ 1;
 			break;
-		case 2:
+		case 0xE002:
 			if(data & 2)
 				irqenabled = 1;
 			else {
@@ -72,11 +79,13 @@ static void reset(int hard)
 {
 	int i;
 
-	for(i=0xE;i<0x10;i++)
+	for(i=0x8;i<0x10;i++)
 		mem_setwritefunc(i,write);
-	mem_setvramsize(8);
+	if(nes.cart->chr.size == 0)
+		mem_setvramsize(8);
 	prg = 0;
-	mirror = 0;
+	chr = 0;
+	mirror = 1;
 	irqenabled = 0;
 	irqcounter = 0;
 	sync();
@@ -85,6 +94,7 @@ static void reset(int hard)
 static void state(int mode,u8 *data)
 {
 	STATE_U8(prg);
+	STATE_U8(chr);
 	STATE_U8(mirror);
 	STATE_U8(irqenabled);
 	STATE_INT(irqcounter);

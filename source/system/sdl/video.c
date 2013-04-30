@@ -39,8 +39,6 @@
 #include "system/common/filters/draw/draw.h"
 #include "system/common/filters/interpolate/interpolate.h"
 #include "system/common/filters/scale2x/scalebit.h"
-#include "system/common/filters/hq2x/hq2x.h"
-//#include "system/common/filters/hq2x/hq3x.h"
 
 static SDL_Surface *surface = 0;
 static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;// | SDL_NOFRAME;
@@ -58,14 +56,12 @@ enum filters_e {
 	F_NONE,
 	F_INTERPOLATE,
 	F_SCALE,
-	F_HQ,
 };
 
 static int get_filter_int(char *str)
 {
 	if(stricmp("interpolate",str) == 0)	return(F_INTERPOLATE);
 	if(stricmp("scale",str) == 0)			return(F_SCALE);
-	if(stricmp("hq",str) == 0)				return(F_HQ);
 	return(F_NONE);
 }
 
@@ -93,7 +89,6 @@ int video_reinit()
 		if(filter == F_NONE)				drawfunc = draw2x;
 		if(filter == F_INTERPOLATE)	drawfunc = interpolate2x;
 		if(filter == F_SCALE)			drawfunc = scale2x;
-		if(filter == F_HQ)				drawfunc = hq2x_32;
 	}
 	if(screenscale == 3) {
 		if(filter == F_NONE)				drawfunc = draw3x;
@@ -115,7 +110,6 @@ int video_init()
 {
 	int ret = video_reinit();
 
-	ret += hq2x_InitLUTs();
 	return(ret);
 }
 
@@ -125,7 +119,6 @@ void video_kill()
 	if(screen)
 		mem_free(screen);
 	screen = 0;
-	hq2x_Kill();
 }
 
 void video_startframe()

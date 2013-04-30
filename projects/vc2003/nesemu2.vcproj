@@ -203,19 +203,6 @@
 								RelativePath="..\..\source\system\common\filters\interpolate\interpolate.c">
 							</File>
 						</Filter>
-						<Filter
-							Name="hq2x"
-							Filter="">
-							<File
-								RelativePath="..\..\source\system\common\filters\hq2x\hq2x.c">
-							</File>
-							<File
-								RelativePath="..\..\source\system\common\filters\hq2x\hq3x.c">
-							</File>
-							<File
-								RelativePath="..\..\source\system\common\filters\hq2x\hq4x.c">
-							</File>
-						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>
@@ -975,18 +962,78 @@
 				Filter="">
 				<File
 					RelativePath="..\..\source\misc\config.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/misc/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/misc/"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\source\misc\crc32.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/misc/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/misc/"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\source\misc\emu.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/misc/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/misc/"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\source\misc\log.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/misc/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/misc/"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\source\misc\memutil.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/misc/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/misc/"/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 		</Filter>

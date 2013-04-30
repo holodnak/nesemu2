@@ -22,10 +22,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include "misc/log.h"
+#include "misc/config.h"
 #include "nes/nes.h"
 #include "nes/io.h"
 #include "nes/memory.h"
 #include "nes/state/state.h"
+
+//kludge for sure
+int log_unhandled_io;
 
 nes_t nes;
 
@@ -33,15 +37,31 @@ nes_t nes;
 static void mapper_state(int mode,u8 *data)	{	nes.mapper->state(mode,data);		}
 
 //non-kludges
-static void vram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes.cart->vram.data,nes.cart->vram.size);		}
-static void svram_state(int mode,u8 *data)	{	STATE_ARRAY_U8(nes.cart->svram.data,nes.cart->svram.size);	}
 static void wram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes.cart->wram.data,nes.cart->wram.size);		}
 static void sram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes.cart->sram.data,nes.cart->sram.size);		}
+static void vram_state(int mode,u8 *data)
+{
+	STATE_ARRAY_U8(nes.cart->vram.data,nes.cart->vram.size);
+	if(mode == STATE_LOAD) {
+		cache_tiles(nes.cart->vram.data,nes.cart->vcache,nes.cart->vram.size / 16,0);
+		cache_tiles(nes.cart->vram.data,nes.cart->vcache_hflip,nes.cart->vram.size / 16,1);
+	}
+}
+
+static void svram_state(int mode,u8 *data)
+{
+	STATE_ARRAY_U8(nes.cart->svram.data,nes.cart->svram.size);
+	if(mode == STATE_LOAD) {
+		cache_tiles(nes.cart->svram.data,nes.cart->svcache,nes.cart->svram.size / 16,0);
+		cache_tiles(nes.cart->svram.data,nes.cart->svcache_hflip,nes.cart->svram.size / 16,1);
+	}
+}
 
 int nes_init()
 {
 	int ret = 0;
 	
+	log_unhandled_io = config_get_int("log.unhandled_io",1);
 	memset(&nes,0,sizeof(nes_t));
 	nes_set_inputdev(0,I_NULL);
 	nes_set_inputdev(1,I_NULL);
@@ -49,10 +69,10 @@ int nes_init()
 	state_init();
 	state_register(B_NES,nes_state);
 	state_register(B_MAPR,mapper_state);
-	state_register(B_VRAM,vram_state);
-	state_register(B_SVRAM,svram_state);
 	state_register(B_WRAM,wram_state);
 	state_register(B_SRAM,sram_state);
+	state_register(B_VRAM,vram_state);
+	state_register(B_SVRAM,svram_state);
 	ret += cpu_init();
 	ret += ppu_init();
 	ret += apu_init();

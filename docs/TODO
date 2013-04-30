@@ -18,7 +18,6 @@ mappers
  . sachen 74ls374 broken (chess academy)
  . sachen 0036 broken (chr problems!) (taiwan mahjong 16)
  . sachen 0037 broken...why?
- . tengen rambo-1 needs better irq code
  . implement different mmc3 types
  . mapper 65 (irem h3001) "Daiku no Gen San 2 - Akage no Dan no Gyakushuu" doesnt work, the rest do
  . mmc4 (mapper 10) not looking correct
@@ -27,6 +26,7 @@ mappers
  . finish the namcot 108 based mappers
  . bmc-70in1 needs finishing
  . unl-h2288 (earthworm jim) broken
+ . mapper 42 (biomiraclea) has two types of roms, one with chr, one with vram.
 
 misc
  . implement reading of the xml rom databases

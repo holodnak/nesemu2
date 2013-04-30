@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "misc/log.h"
+#include "misc/config.h"
 #include "nes/io.h"
 #include "nes/nes.h"
 #include "system/input.h"
@@ -49,7 +50,8 @@ u8 nes_read_4000(u32 addr)
 			return(nes.inputdev[1]->read());
 
 		default:
-			log_printf("nes_read_4000:  unhandled read at $%04X\n",addr);
+			if(log_unhandled_io)
+				log_printf("nes_read_4000:  unhandled read at $%04X\n",addr);
 			break;
 	}
 	return(0);
@@ -95,7 +97,9 @@ void nes_write_4000(u32 addr,u8 data)
 			break;
 
 		default:
-			log_printf("nes_write_4000:  unhandled write at $%04X = $%02X\n",addr,data);
+			if(log_unhandled_io)
+				log_printf("nes_write_4000:  unhandled write at $%04X = $%02X\n",addr,data);
+			break;
 	}
 }
 

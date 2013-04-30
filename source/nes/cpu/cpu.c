@@ -23,6 +23,7 @@
 #include "nes/nes.h"
 #include "nes/state/state.h"
 #include "misc/log.h"
+#include "misc/config.h"
 
 //defines to make easier reading
 #define PC					nes.cpu.pc
@@ -167,7 +168,8 @@ u8 cpu_read(u32 addr)
 	}
 
 	//not handled
-	log_printf("cpu_read:  unhandled read at $%04X\n",addr);
+	if(log_unhandled_io)
+		log_printf("cpu_read:  unhandled read at $%04X\n",addr);
 	return(0);
 }
 
@@ -194,7 +196,8 @@ void cpu_write(u32 addr,u8 data)
 	}
 
 	//not handled
-	log_printf("cpu_write:  unhandled write at $%04X = $%02X\n",addr,data);
+	if(log_unhandled_io)
+		log_printf("cpu_write:  unhandled write at $%04X = $%02X\n",addr,data);
 }
 
 u8 cpu_getflags()

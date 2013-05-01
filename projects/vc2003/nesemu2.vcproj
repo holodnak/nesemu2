@@ -845,6 +845,9 @@
 							RelativePath="..\..\source\mappers\boards\other\bmc-big7in1.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-contra-function-16.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\other\bmc-fk23c.c">
 						</File>
 						<File
@@ -852,6 +855,9 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\btl-mario1-malee2.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\colordreams.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\magicseries.c">

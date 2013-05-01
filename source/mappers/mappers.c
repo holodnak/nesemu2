@@ -130,6 +130,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_BMC_36IN1);
 	MAPPER(B_BMC_70IN1);
 	MAPPER(B_BMC_70IN1B);
+	MAPPER(B_BMC_BIG7IN1);
 	MAPPER(B_BMC_FK23C);
 
 	//homebrew

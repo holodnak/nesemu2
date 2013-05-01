@@ -20,109 +20,78 @@
 
 #include "mappers/mapperinc.h"
 
-#define BMC_70IN1		0
-#define BMC_70IN1B	1
-
-static int revision;
-static u8 mode,mirror;
-static u8 bankhi,banklo,chrbank;
-static u8 hwswitch;
-static readfunc_t cpuread;
+static u8 select,mode,mirror;
+static u8 outerprg,prg,chr;
 
 static void sync()
 {
-	switch(mode) {
+	switch((mode >> 2) & 3) {
+		case 0:
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+	}
+//	mem_setprg16(0x8,latch_addr & 7);
+//	mem_setprg16(0xC,latch_addr & 7);
+//	mem_setchr8(0,latch_addr & 7);
+	switch(mode & 3) {
+		case 0:	mem_setmirroring(MIRROR_1L);	break;
+		case 1:	mem_setmirroring(MIRROR_1H);	break;
+		case 2:	mem_setmirroring(MIRROR_V);	break;
+		case 3:	mem_setmirroring(MIRROR_H);	break;
+	}
+}
+
+static void write_select(u32 addr,u8 data)
+{
+	select = data;
+}
+
+static void write_register(u32 addr,u8 data)
+{
+	switch(select) {
 		case 0x00:
-		case 0x10:
-			mem_setprg16(0x8,bankhi | banklo);
-			mem_setprg16(0xC,bankhi | 7);
+			chr = data & 3;
+			if((mode & 2) == 0)
+				mode = (mode & 0xFE) | ((data >> 4) & 1);
 			break;
-		case 0x20:
-			mem_setprg32(0x8,(bankhi | banklo) >> 1);
+		case 0x01:
+			prg = data & 0xF;
+			if((mode & 2) == 0)
+				mode = (mode & 0xFE) | ((data >> 4) & 1);
 			break;
-		case 0x30:
-			mem_setprg16(0x8,bankhi | banklo);
-			mem_setprg16(0xC,bankhi | banklo);
+		case 0x80:
+			mode = data;
+			break;
+		case 0x81:
+			outerprg = data & 0x3F;
 			break;
 	}
-	if(revision == BMC_70IN1)
-		mem_setchr8(0,chrbank);
-	else
-		mem_setvram8(0,0);
-	mem_setmirroring(mirror);
 }
 
-static u8 read(u32 addr)
-{
-	if(addr >= 0x8000 && mode == 0x10) {
-		return(cpuread((addr & 0xFFF0) | hwswitch));
-	}
-	return(cpuread(addr));
-}
-
-static void write_8000(u32 addr,u8 data)
-{
-	mirror = ((addr & 0x20) >> 5) ^ 1;
-	if(revision == BMC_70IN1B)
-		bankhi = (addr & 3) << 3;
-	else
-		chrbank = addr & 7;	
-	sync();
-}
-
-static void write_C000(u32 addr,u8 data)
-{
-	mode = addr & 0x30;
-	banklo = addr & 7;
-	sync();
-}
-
-static void reset(int r,int hard)
+static void reset(int hard)
 {
 	int i;
 
-	revision = r;
-	cpuread = cpu_getreadfunc();
-	cpu_setreadfunc(read);
-	for(i=0;i<4;i++) {
-		mem_setwritefunc(0x8 + i,write_8000);
-		mem_setwritefunc(0xC + i,write_C000);
-	}
-	mem_setvramsize(8);
-	mode = 0;
-	bankhi = banklo = 0;
-	if(hard) {
-		if(r == BMC_70IN1)
-			hwswitch = 0xD;
-		else
-			hwswitch = 0xF;
-	}
-	else {
-		hwswitch = (hwswitch + 1) & 0xF;
-	}
-	sync();
-}
-
-static void reset_70in1(int hard)
-{
-	reset(BMC_70IN1,hard);
-}
-
-static void reset_70in1b(int hard)
-{
-	reset(BMC_70IN1B,hard);
+	mem_setwritefunc(5,write_select);
+	for(i=8;i<16;i++)
+		mem_setwritefunc(i,write_register);
+	select = 0;
+	prg = 0;
+	chr = 0;
 }
 
 static void state(int mode,u8 *data)
 {
-	CFG_U8(hwswitch);
+	STATE_U8(select);
 	STATE_U8(mode);
 	STATE_U8(mirror);
-	STATE_U8(bankhi);
-	STATE_U8(banklo);
-	STATE_U8(chrbank);
-	sync();
+	STATE_U8(outerprg);
+	STATE_U8(prg);
+	STATE_U8(chr);
 }
 
-MAPPER(B_BMC_70IN1,reset_70in1,0,0,0,state);
-MAPPER(B_BMC_70IN1B,reset_70in1b,0,0,0,state);
+MAPPER(B_TEPPLES,reset,0,0,0,state);

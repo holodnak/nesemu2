@@ -24,7 +24,7 @@
 static int type;
 static void (*sync)();
 static u8 command;
-static u8 prg[2],chr[8];
+static u8 prg[4],chr[8];
 static u8 mirror;
 static u8 sramenabled;
 static u8 irqlatch,irqcounter,irqenabled,irqreload,irqwait;
@@ -46,15 +46,9 @@ void mmc3_sync()
 
 u8 mmc3_getprgbank(int n)
 {
-	u8 b[4];
-
-	b[0] = prg[0];
-	b[1] = prg[1];
-	b[2] = 0x3E;
-	b[3] = 0x3F;
 	if(n & 1)
-		return(b[n]);
-	return(b[n ^ ((command & 0x40) >> 5)]);
+		return(prg[n]);
+	return(prg[n ^ ((command & 0x40) >> 5)]);
 }
 
 u8 mmc3_getchrbank(int n)
@@ -104,6 +98,8 @@ void mmc3_syncsram()
 		else
 			mem_unsetcpu8(6);
 	}*/
+	if((type & C_MMCNUM) == C_MMC3)
+		mem_setsram8(6,0);
 }
 
 void mmc3_syncmirror()
@@ -155,14 +151,14 @@ void mmc3_reset(int t,void (*s)(),int hard)
 		sramenabled = 0;
 	}
 	else {
-		mem_setsram8(6,0);
+//		mem_setsram8(6,0);
 		//keep enabled for now
 		sramenabled = 0x80;
 	}
 	sync = s;
 	command = 0;
-	prg[0] = 0x3C;
-	prg[1] = 0x3D;
+	for(i=0;i<4;i++)
+		prg[i] = 0x3C + i;
 	for(i=0;i<8;i++)
 		chr[i] = i;
 	mirror = 0;

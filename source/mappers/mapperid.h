@@ -82,18 +82,21 @@ enum boardid_e {
 	B_IREM_TAM_S1,
 
 	//taito
+	B_TAITO_X1_017,
 	B_TAITO_X1_005,
 	B_TAITO_X1_005A,
 
 	//unlicensed
 	B_H2288,
-	B_36IN1,
-	B_70IN1,
-	B_70IN1B,
+	B_BMC_15IN1,
+	B_BMC_36IN1,
+	B_BMC_70IN1,
+	B_BMC_70IN1B,
 	B_CALTRON6IN1,
 	B_BIOMIRACLEA,
 	B_MARIO1_MALEE2,
 	B_MAGICSERIES,
+	B_BMC_FK23C,
 
 	//union bond ffv
 	B_UNION_BOND_FFV,
@@ -146,6 +149,10 @@ enum boardid_e {
 
 	//ave
 	B_NINA_001,
+
+	//homebrew
+	B_TEPPLES,
+	B_DRIPGAME,
 
 	//for getting a count of supported boards
 	B_BOARDEND,

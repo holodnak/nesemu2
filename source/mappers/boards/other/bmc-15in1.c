@@ -19,19 +19,37 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+#include "mappers/chips/mmc3.h"
+
+static u8 reg;
 
 static void sync()
 {
-	mem_setprg16(0x8,latch_addr & 7);
-	mem_setprg16(0xC,latch_addr & 7);
-	mem_setchr8(0,latch_addr & 7);
-	mem_setmirroring(((latch_addr >> 3) & 1) ^ 1);
+	mmc3_syncprg(0x1F >> (reg >> 1),reg << 4);
+	mmc3_syncchr(0xFF >> (reg >> 1),reg << 7);
+	mmc3_syncmirror();
+}
+
+static void write(u32 addr,u8 data)
+{
+	reg = data & 3;
+	printf("205 write $%04X = $%02X\n",addr,data);
+	sync();
 }
 
 static void reset(int hard)
 {
-	latch_init(sync);
+	mem_setwritefunc(6,write);
+	mem_setwritefunc(7,write);
+	reg = 0;
+	mmc3_reset(C_MMC3,sync,hard);
+	mem_unsetcpu8(6);	//mmc3 doesnt need to set this
 }
 
-MAPPER(B_BMC_36IN1,reset,0,0,0,latch_state);
+static void state(int mode,u8 *data)
+{
+	STATE_U8(reg);
+	mmc3_state(mode,data);
+}
+
+MAPPER(B_BMC_15IN1,reset,0,0,mmc3_ppucycle,state);

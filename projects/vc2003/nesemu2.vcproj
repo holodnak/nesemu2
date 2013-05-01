@@ -774,6 +774,9 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\taito\x1-005.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\taito\x1-017.c">
+						</File>
 					</Filter>
 					<Filter
 						Name="txc"
@@ -830,10 +833,16 @@
 						Name="other"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-15in1.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\other\bmc-36in1.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\bmc-70in1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-fk23c.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\btl-biomiraclea.c">
@@ -902,6 +911,16 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\cne\shlz.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="homebrew"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\homebrew\dripgame.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\homebrew\tepples.c">
 						</File>
 					</Filter>
 				</Filter>

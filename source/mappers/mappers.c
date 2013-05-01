@@ -70,6 +70,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_VRC7B);
 
 	//taito
+	MAPPER(B_TAITO_X1_017);
 	MAPPER(B_TAITO_X1_005);
 	MAPPER(B_TAITO_X1_005A);
 
@@ -125,9 +126,15 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_BIOMIRACLEA);
 	MAPPER(B_CALTRON6IN1);
 	MAPPER(B_MAGICSERIES);
-	MAPPER(B_36IN1);
-	MAPPER(B_70IN1);
-	MAPPER(B_70IN1B);
+	MAPPER(B_BMC_15IN1);
+	MAPPER(B_BMC_36IN1);
+	MAPPER(B_BMC_70IN1);
+	MAPPER(B_BMC_70IN1B);
+	MAPPER(B_BMC_FK23C);
+
+	//homebrew
+	MAPPER(B_TEPPLES);
+	MAPPER(B_DRIPGAME);
 
 	return(0);
 }

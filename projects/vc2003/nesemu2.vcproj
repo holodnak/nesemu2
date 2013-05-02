@@ -445,9 +445,6 @@
 					Name="ppu"
 					Filter="">
 					<File
-						RelativePath="..\..\source\nes\ppu\attribcache.c">
-					</File>
-					<File
 						RelativePath="..\..\source\nes\ppu\io.c">
 					</File>
 					<File

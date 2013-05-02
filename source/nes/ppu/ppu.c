@@ -49,10 +49,6 @@ void ppu_sync()
 	for(i=0;i<0x20;i++)
 		ppu_pal_write(i,ppu_pal_read(i));
 
-#ifdef CACHE_ATTRIB
-	for(i=0;i<4;i++)
-		cache_attrib(i);
-#endif
 }
 
 void ppu_state(int mode,u8 *data)

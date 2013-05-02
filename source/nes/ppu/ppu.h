@@ -23,7 +23,6 @@
 
 #include "types.h"
 #include "tilecache.h"
-#include "attribcache.h"
 
 typedef struct ppu_s {
 
@@ -81,12 +80,6 @@ typedef struct ppu_s {
 	//cached tile pointers
 	cache_t	*cachepages[16];
 	cache_t	*cachepages_hflip[16];
-
-#ifdef CACHE_ATTRIB
-	//cached attributes
-	u8		cacheattrib[4][32*32];	//attribute cache for four nametables
-	u8		*attribpages[4];			//attribute cache pointers
-#endif
 
 	//line cycle counter, scanline counter and frame counter
 	u32	linecycles;

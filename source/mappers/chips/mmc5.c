@@ -30,9 +30,16 @@ static u8 filltile,fillattrib;
 static u8 irqtarget,irqenable,irqstatus,irqcounter;
 static u8 *exram;
 static void (*sync)();
+static readfunc_t ppuread;
+
+u8 mmc5_ppuread(u32 addr)
+{
+	return(ppuread(addr));
+}
 
 u8 mmc5_ppureadfill(u32 addr)
 {
+//	log_printf("mmc5:  reading nt fill data!\n");
 	addr &= 0x3FF;
 	if(addr < 0x3C0)
 		return(filltile);
@@ -55,7 +62,7 @@ void mmc5_setprg(int size,int bank,int page)
 		}
 	}
 	else {
-		log_printf("mmc5:  mapping %dkb prg ram sram to %04X\n",size,bank*0x1000);
+//		log_printf("mmc5:  mapping %dkb prg ram sram to %04X\n",size,bank*0x1000);
 		if(size == 16) {
 			mem_setsram16(bank,page);
 		}
@@ -79,11 +86,13 @@ void mmc5_setmirror(int bank,int data)
 		case 2:
 			//map in exram as nametable data
 			if(exrammode < 2) {
+				log_printf("mmc5:  exram mapped into ppu bank %d!\n",bank);
 				mem_setppureadptr(bank,exram);
 				mem_setppuwriteptr(bank,exram);
 			}
 			//map in disabled exram
 			else {
+				log_printf("mmc5:  disabled exram mapped into ppu bank %d!\n",bank);
 				mem_setppureadptr(bank,exram + 0xC00);
 				mem_setppuwriteptr(bank,exram + 0xC00);
 			}
@@ -94,7 +103,6 @@ void mmc5_setmirror(int bank,int data)
 			mem_setppureadfunc(bank,mmc5_ppureadfill);
 			break;
 	}
-//	log_printf("mmc5:  setmirror bank,data = %d,%d\n",bank,data);
 }
 
 void mmc5_syncprg()
@@ -283,7 +291,17 @@ void mmc5_write(u32 addr,u8 data)
 
 		//mirroring mode
 		case 0x5105:
-			mirror = data & 3;
+			mirror = data;
+			break;
+
+		//fill tile
+		case 0x5106:
+			filltile = data & 3;
+			break;
+
+		//fill attribute
+		case 0x5107:
+			fillattrib = data & 3;
 			break;
 
 		//prgram select
@@ -324,6 +342,18 @@ void mmc5_write(u32 addr,u8 data)
 		//high 2 bits of all chr registers
 		case 0x5130:
 			chrhi = data & 3;
+			break;
+
+		//split screen control
+		case 0x5200:
+			break;
+
+		//split screen vscroll
+		case 0x5201:
+			break;
+
+		//split screen chr page
+		case 0x5202:
 			break;
 
 		//irq enable
@@ -370,6 +400,10 @@ void mmc5_reset(int hard)
 	exram = mem_getreadptr(8);
 	mem_unsetcpu8(8);
 
+	//hijack the ppu memory read function
+	ppuread = ppu_getreadfunc();
+	ppu_setreadfunc(mmc5_ppuread);
+
 	//zero out exram (for disabled exram)
 	for(i=0;i<4096;i++)
 		exram[i] = 0;
@@ -379,6 +413,8 @@ void mmc5_reset(int hard)
 		prg[i & 3] = 0;
 		chra[i] = chrb[i] = 0;
 	}
+
+	//setup the registers
 	prg[3] = 0xFF;
 	chrhi = 0;
 	prgram = 0;
@@ -420,8 +456,27 @@ static void scanline_detected()
 void mmc5_ppucycle()
 {
 	if(SCANLINE < 240) {
-		if((CONTROL1 & 0x18) && (LINECYCLES == 337)) {
-			scanline_detected();
+		//see if rendering is enabled
+		if(CONTROL1 & 0x18) {
+
+			//detect scanlines
+			if(LINECYCLES == 337) {
+				scanline_detected();
+			}
+
+			//if 8x16 sprites
+			if(CONTROL0 & 0x20) {
+				//detect when to switch between sprite and bg tiles
+				if(LINECYCLES == 257) {
+					mmc5_syncchra();
+					chrselect = 0;
+				}
+				if(LINECYCLES == 321) {
+					mmc5_syncchrb();
+					chrselect = 1;
+				}
+			}
+
 		}
 	}
 	else {

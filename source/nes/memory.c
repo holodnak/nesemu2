@@ -103,12 +103,6 @@ void mem_setnt(int banksize,int page,int bank)
 		p = page + i;
 		nes.ppu.readpages[p] = nes.ppu.nametables + offset + (i * 1024);
 		nes.ppu.writepages[p] = nes.ppu.nametables + offset + (i * 1024);
-#ifdef CACHE_ATTRIB
-		if(p >= 8) {
-			nes.ppu.attribpages[p & 3] = nes.ppu.cacheattrib[bank];
-			cache_attrib(p & 3);
-		}
-#endif
 	}
 }
 
@@ -122,12 +116,6 @@ void mem_setchr(int banksize,int page,int bank)
 		nes.ppu.writepages[p] = 0;
 		nes.ppu.cachepages[p] = (cache_t*)((u8*)nes.cart->cache + offset + (i * 0x400));
 		nes.ppu.cachepages_hflip[p] = (cache_t*)((u8*)nes.cart->cache_hflip + offset + (i * 0x400));
-#ifdef CACHE_ATTRIB
-		if(p >= 8) {
-			nes.ppu.attribpages[p & 3] = nes.ppu.cacheattrib[bank];
-			cache_attrib(p & 3);
-		}
-#endif
 	}
 }
 
@@ -141,12 +129,6 @@ void mem_setvram(int banksize,int page,int bank)
 		nes.ppu.writepages[p] = nes.cart->vram.data + offset + (i * 1024);
 		nes.ppu.cachepages[p] = (cache_t*)((u8*)nes.cart->vcache + offset + (i * 0x400));
 		nes.ppu.cachepages_hflip[p] = (cache_t*)((u8*)nes.cart->vcache_hflip + offset + (i * 0x400));
-#ifdef CACHE_ATTRIB
-		if(p >= 8) {
-			nes.ppu.attribpages[p & 3] = nes.ppu.cacheattrib[bank];
-			cache_attrib(p & 3);
-		}
-#endif
 	}
 }
 
@@ -160,12 +142,6 @@ void mem_setsvram(int banksize,int page,int bank)
 		nes.ppu.writepages[p] = nes.cart->svram.data + offset + (i * 1024);
 		nes.ppu.cachepages[p] = (cache_t*)((u8*)nes.cart->svcache + offset + (i * 0x400));
 		nes.ppu.cachepages_hflip[p] = (cache_t*)((u8*)nes.cart->svcache_hflip + offset + (i * 0x400));
-#ifdef CACHE_ATTRIB
-		if(p >= 8) {
-			nes.ppu.attribpages[p & 3] = nes.ppu.cacheattrib[bank];
-			cache_attrib(p & 3);
-		}
-#endif
 	}
 }
 

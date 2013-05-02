@@ -28,16 +28,13 @@ static INLINE void calc_ntaddr()
 static INLINE void calc_ataddr()
 {
 	//start with current nametable address
-	nes.ppu.busaddr = SCROLL & 0xC00;
+	nes.ppu.busaddr &= 0x2C00;
 
 	//offset to attributes
 	nes.ppu.busaddr += 0x3C0;
 
 	//calculate the correct attribute byte
 	nes.ppu.busaddr += ((SCROLL >> 2) & 7) + (((SCROLL >> (2 + 5)) & 7) << 3);
-
-	//put us into the nametable region
-	nes.ppu.busaddr |= 0x2000;
 }
 
 //calculate pattern table low byte address
@@ -82,8 +79,6 @@ static INLINE void calc_spt0addr()
 				nes.ppu.busaddr += 16;
 		}
 
-		//tile line offset
-		nes.ppu.busaddr += sprtemp[nes.ppu.cursprite].sprline * 2;
 	}
 
 	//process 8x8 sprite
@@ -93,10 +88,10 @@ static INLINE void calc_spt0addr()
 
 		//tile offset
 		nes.ppu.busaddr += sprtemp[nes.ppu.cursprite].tile * 16;
-
-		//tile line offset
-		nes.ppu.busaddr += sprtemp[nes.ppu.cursprite].sprline * 2;
 	}
+
+	//tile line offset
+	nes.ppu.busaddr += sprtemp[nes.ppu.cursprite].sprline * 2;
 }
 
 //calculate sprite tile pattern table high byte address

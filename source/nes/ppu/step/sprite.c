@@ -187,7 +187,7 @@ static INLINE void quick_process_sprites()
 
 			//if sprite0 check is needed
 			if(i == 0)
-				sprtemp[sprinrange].flags = 2;
+				sprtemp[sprinrange].flags |= 2;
 
 			//small kludge for 8x16 sprites
 			if(CONTROL0 & 0x20) {

@@ -330,7 +330,6 @@ static INLINE void scanline_visible()
 			break;
 
 		//fetch sprite pattern high
-		
 		case 264:	case 272:	case 280:	case 288:	case 296:	case 304:	case 312:	case 320:
 			fetch_spt1byte();
 			break;
@@ -431,14 +430,6 @@ void ppu_step()
 				scanline_visible();
 			else {
 				nes.ppu.busaddr = SCROLL; //hack
-				//kludge
-				if(LINECYCLES <= 256)
-					nes.ppu.fetchpos = (LINECYCLES - 1 / 8) + 2;
-				else if(LINECYCLES < 320)
-					nes.ppu.fetchpos = 0;
-				else
-					nes.ppu.fetchpos = 1;
-				//end kludge
 				if(LINECYCLES == 256) {
 					blankline();
 					video_updateline(SCANLINE,nes.ppu.linebuffer);

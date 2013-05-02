@@ -63,15 +63,6 @@ static void write_ppu_memory(u32 addr,u8 data)
 			cache_tile_hflip(chr + a,cache_hflip + (a / 8));
 		}
 	}
-
-#ifdef CACHE_ATTRIB
-	//check if attribute write
-	else if(addr < 0x3F00) {
-		if((addr & 0x3FF) >= 0x3C0) {
-			cache_attribbyte(addr,data);
-		}
-	}
-#endif
 }
 
 readfunc_t ppu_getreadfunc()

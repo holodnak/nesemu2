@@ -31,16 +31,12 @@ static INLINE void fetch_atbyte()
 	u32 tmp;
 
 	if(CONTROL1 & 0x08) {
-#ifdef CACHE_ATTRIB
-		tmp = SCROLL & 0xFFF;
-		tmp = nes.ppu.attribpages[tmp >> 10][tmp & 0x3FF];
-#else
 		//get attribute byte
 		tmp = ppu_memread(nes.ppu.busaddr);
 
 		//calculate which set of bits to use for attributes here
 		tmp = ((tmp >> (((SCROLL & 2) | (((SCROLL >> 5) & 2) << 1)))) & 3);
-#endif
+
 		//put attributes into the line buffer
 		((u64*)nes.ppu.linebuffer)[nes.ppu.fetchpos] = tmp * 0x0404040404040404LL;
 	}
@@ -69,6 +65,11 @@ static INLINE void fetch_pt0byte()
 		//add the pixels to the line buffer
 		((u64*)nes.ppu.linebuffer)[nes.ppu.fetchpos] += pixels;
 	}
+
+	else
+
+		//clear the line buffer for this time
+		((u64*)nes.ppu.linebuffer)[nes.ppu.fetchpos] = 0;
 }
 
 static INLINE void fetch_pt1byte()
@@ -86,9 +87,9 @@ static INLINE void fetch_spt0byte()
 
 		//get cache bank used by sprite tile
 		if(sprtemp[nes.ppu.cursprite].flags & 0x40)
-			cache = nes.ppu.cachepages_hflip[nes.ppu.busaddr >> 10];
+			cache = nes.ppu.cachepages_hflip[(nes.ppu.busaddr >> 10) & 7];
 		else
-			cache = nes.ppu.cachepages[nes.ppu.busaddr >> 10];
+			cache = nes.ppu.cachepages[(nes.ppu.busaddr >> 10) & 7];
 
 		//perform the read, but throw the data away
 		ppu_memread(nes.ppu.busaddr);

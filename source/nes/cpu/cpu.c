@@ -50,11 +50,13 @@
 #define PREV_NMISTATE	nes.cpu.prev_nmistate
 #define PREV_IRQSTATE	nes.cpu.prev_irqstate
 
+//cpu memory read/write functions
+readfunc_t cpu_read;
+writefunc_t cpu_write;
+
 //temp variable for opcode functions
 static u8 tmp8;
 static int tmpi;
-static readfunc_t cpu_read_func;
-static writefunc_t cpu_write_func;
 
 //include helper functions
 #include "helper.c"
@@ -143,7 +145,7 @@ void cpu_tick()
 	nes.mapper->cpucycle();
 }
 
-u8 cpu_read(u32 addr)
+static u8 read_cpu_memory(u32 addr)
 {
 	u32 page = addr >> 12;
 
@@ -173,7 +175,7 @@ u8 cpu_read(u32 addr)
 	return(0);
 }
 
-void cpu_write(u32 addr,u8 data)
+static void write_cpu_memory(u32 addr,u8 data)
 {
 	u32 page = addr >> 12;
 
@@ -208,22 +210,22 @@ u8 cpu_getflags()
 
 readfunc_t cpu_getreadfunc()
 {
-	return(cpu_read_func);
+	return(cpu_read);
 }
 
 writefunc_t cpu_getwritefunc()
 {
-	return(cpu_write_func);
+	return(cpu_write);
 }
 
 void cpu_setreadfunc(readfunc_t readfunc)
 {
-	cpu_read_func = readfunc;
+	cpu_read = (readfunc == 0) ? read_cpu_memory : readfunc;
 }
 
 void cpu_setwritefunc(writefunc_t writefunc)
 {
-	cpu_write_func = writefunc;
+	cpu_write = (writefunc == 0) ? write_cpu_memory : writefunc;
 }
 
 void cpu_state(int mode,u8 *data)

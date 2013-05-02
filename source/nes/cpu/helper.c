@@ -24,7 +24,7 @@ static INLINE u8 memread(u32 addr)
 	cpu_tick();
 
 	//read data from address
-	return(cpu_read_func(addr));
+	return(cpu_read(addr));
 }
 
 static INLINE void memwrite(u32 addr,u8 data)
@@ -33,7 +33,7 @@ static INLINE void memwrite(u32 addr,u8 data)
 	cpu_tick();
 
 	//write data to its address
-	cpu_write_func(addr,data);
+	cpu_write(addr,data);
 }
 
 //push data to stack

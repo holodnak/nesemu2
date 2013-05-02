@@ -21,6 +21,7 @@
 static INLINE void fetch_ntbyte()
 {
 	if(CONTROL1 & 0x08) {
+		//read byte from ppu memory area
 		nes.ppu.ntbyte = ppu_memread(nes.ppu.busaddr);
 
 		//mapper tile callback
@@ -35,20 +36,26 @@ static INLINE void fetch_atbyte()
 	if(CONTROL1 & 0x08) {
 #ifdef CACHE_ATTRIB
 		tmp = SCROLL & 0xFFF;
-		nes.ppu.attribdata[nes.ppu.fetchpos] = nes.ppu.attribpages[tmp >> 10][tmp & 0x3FF];
+		tmp = nes.ppu.attribpages[tmp >> 10][tmp & 0x3FF];
 #else
-		tmp = ((ppu_memread(nes.ppu.busaddr) >> (((SCROLL & 2) | (((SCROLL >> 5) & 2) << 1)))) & 3);
-		nes.ppu.attribdata[nes.ppu.fetchpos] = tmp;
+		//get attribute byte
+		tmp = ppu_memread(nes.ppu.busaddr);
+
+		//calculate which set of bits to use for attributes here
+		tmp = ((tmp >> (((SCROLL & 2) | (((SCROLL >> 5) & 2) << 1)))) & 3);
 #endif
+		//put attributes into the line buffer
+		((u64*)nes.ppu.linebuffer)[nes.ppu.fetchpos] = tmp * 0x0404040404040404LL;
 	}
 }
 
 static INLINE void fetch_pt0byte()
 {
 	if(CONTROL1 & 0x08) {
-		cache_t *cache,pixels;
+		cache_t *cache,pixels,attribs;
 
-		nes.ppu.tiledata[0][nes.ppu.fetchpos] = ppu_memread(nes.ppu.busaddr);
+		//perform the read, but throw the data away
+		ppu_memread(nes.ppu.busaddr);
 
 		//tile bank cache pointer
 		cache = nes.ppu.cachepages[(nes.ppu.ntbyte >> 6) | ((CONTROL0 & 0x10) >> 2)];
@@ -59,14 +66,19 @@ static INLINE void fetch_pt0byte()
 		//retreive the tile pixels used
 		pixels = *cache >> (((SCROLL >> 12) & 3) << 1);
 
-		nes.ppu.cachedata[nes.ppu.fetchpos] = pixels & CACHE_MASK;
+		//mask off the pixels we need
+		pixels &= CACHE_MASK;
+
+		//add the pixels to the line buffer
+		((u64*)nes.ppu.linebuffer)[nes.ppu.fetchpos] += pixels;
 	}
 }
 
 static INLINE void fetch_pt1byte()
 {
 	if(CONTROL1 & 0x08) {
-		nes.ppu.tiledata[1][nes.ppu.fetchpos] = ppu_memread(nes.ppu.busaddr);
+		//perform the read, but throw the data away
+		ppu_memread(nes.ppu.busaddr);
 	}
 }
 

@@ -174,9 +174,11 @@ void nes_reset(int hard)
 	//set cart mirroring
 	mem_setmirroring(nes.cart->mirroring);
 
-	//setup default cpu read/write funcs
-	cpu_setreadfunc(cpu_read);
-	cpu_setwritefunc(cpu_write);
+	//setup default cpu/ppu read/write funcs
+	cpu_setreadfunc(0);
+	cpu_setwritefunc(0);
+	ppu_setreadfunc(0);
+	ppu_setwritefunc(0);
 
 	//reset the mapper, cpu, and ppu
 	nes.mapper->reset(hard);

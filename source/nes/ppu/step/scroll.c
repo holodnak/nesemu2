@@ -57,20 +57,12 @@ static INLINE void inc_vscroll()
 
 static INLINE void update_hscroll()
 {
-	int i;
-
 	if(CONTROL1 & 0x18) {
 		SCROLL &= ~0x041F;
 		SCROLL |= TMPSCROLL & 0x041F;
 	}
 	nes.ppu.fetchpos = 0;
 	nes.ppu.cursprite = 0;
-	for(i=0;i<(32 + 2);i++) {
-		nes.ppu.attribdata[i] = 0;
-		nes.ppu.cachedata[i] = 0;
-		nes.ppu.tiledata[0][i] = 0;
-		nes.ppu.tiledata[1][i] = 0;
-	}
 }
 
 static INLINE void update_scroll()

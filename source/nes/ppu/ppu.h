@@ -61,9 +61,9 @@ typedef struct ppu_s {
 	//fetched nametable, attribute, tile and cached tile data
 	u8		fetchpos,cursprite;
 	u8		ntbyte;
-	u8		attribdata[32 + 2];
-	u8		tiledata[2][32 + 2];
-	cache_t	cachedata[32 + 2];
+//	u8		attribdata[32 + 2];
+//	u8		tiledata[2][32 + 2];
+//	cache_t	cachedata[32 + 2];
 
 	//line buffer
 	u8		linebuffer[256 + 16];
@@ -93,16 +93,21 @@ typedef struct ppu_s {
 
 } ppu_t;
 
+extern readfunc_t ppu_memread;
+extern writefunc_t ppu_memwrite;
+
 int ppu_init();
 void ppu_kill();
 void ppu_reset(int hard);
 u8 ppu_read(u32 addr);
 void ppu_write(u32 addr,u8 data);
-u8 ppu_memread(u32 addr);
-void ppu_memwrite(u32 addr,u8 data);
 u8 ppu_pal_read(u32 addr);
 void ppu_pal_write(u32 addr,u8 data);
 void ppu_step();
 void ppu_state(int mode,u8 *data);
+readfunc_t ppu_getreadfunc();
+writefunc_t ppu_getwritefunc();
+void ppu_setreadfunc(readfunc_t readfunc);
+void ppu_setwritefunc(writefunc_t writefunc);
 
 #endif

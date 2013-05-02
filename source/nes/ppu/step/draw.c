@@ -28,26 +28,6 @@ static INLINE void blankline()
 	}
 }
 
-static INLINE void drawtileline()
-{
-	u64 *scr64 = (u64*)nes.ppu.linebuffer;
-	u8 *attribptr = nes.ppu.attribdata;
-	cache_t *cacheptr = nes.ppu.cachedata;
-	int i;
-
-	//draw all pixels
-	for(i=0;i<33;i++) {
-		*scr64++ = (*attribptr++ * 0x0404040404040404LL) + *cacheptr++;
-	}
-
-	//hide leftmost 8 pixels
-	if((CONTROL1 & 2) == 0) {
-		for(i=0;i<(8 + nes.ppu.scrollx);i++) {
-			nes.ppu.linebuffer[i] = 0;
-		}
-	}
-}
-
 static INLINE void drawspriteline()
 {
 	u8 spriteline[256 + 8];
@@ -132,7 +112,6 @@ static INLINE void drawspriteline()
 
 static INLINE void update_line()
 {
-	drawtileline();
 	drawspriteline();
 	video_updateline(SCANLINE,nes.ppu.linebuffer + nes.ppu.scrollx);
 }

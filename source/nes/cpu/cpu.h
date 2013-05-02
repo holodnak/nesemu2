@@ -70,6 +70,9 @@ typedef struct cpu_s {
 
 } cpu_t;
 
+extern readfunc_t cpu_read;
+extern writefunc_t cpu_write;
+
 int cpu_init();
 void cpu_kill();
 void cpu_reset(int hard);
@@ -77,8 +80,6 @@ u64 cpu_getcycles();
 void cpu_set_nmi(u8 state);
 void cpu_set_irq(u8 state);
 void cpu_tick();
-u8 cpu_read(u32 addr);
-void cpu_write(u32 addr,u8 data);
 u32 cpu_execute(u32 cycles);
 void cpu_execute_frame();
 u16 cpu_disassemble(char *buffer,u16 opcodepos);

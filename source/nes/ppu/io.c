@@ -22,7 +22,10 @@
 #include "nes/nes.h"
 #include "system/video.h"
 
-u8 ppu_memread(u32 addr)
+readfunc_t ppu_memread;
+writefunc_t ppu_memwrite;
+
+static u8 read_ppu_memory(u32 addr)
 {
 	if(nes.ppu.readpages[addr >> 10])
 		return(nes.ppu.readpages[addr >> 10][addr & 0x3FF]);
@@ -32,7 +35,7 @@ u8 ppu_memread(u32 addr)
 	return(0);
 }
 
-void ppu_memwrite(u32 addr,u8 data)
+static void write_ppu_memory(u32 addr,u8 data)
 {
 	u8 page = (addr >> 10) & 0xF;
 
@@ -69,6 +72,26 @@ void ppu_memwrite(u32 addr,u8 data)
 		}
 	}
 #endif
+}
+
+readfunc_t ppu_getreadfunc()
+{
+	return(ppu_memread);
+}
+
+writefunc_t ppu_getwritefunc()
+{
+	return(ppu_memwrite);
+}
+
+void ppu_setreadfunc(readfunc_t readfunc)
+{
+	ppu_memread = (readfunc == 0) ? read_ppu_memory : readfunc;
+}
+
+void ppu_setwritefunc(writefunc_t writefunc)
+{
+	ppu_memwrite = (writefunc == 0) ? write_ppu_memory : writefunc;
 }
 
 u8 ppu_pal_read(u32 addr)

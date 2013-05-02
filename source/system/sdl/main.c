@@ -143,12 +143,9 @@ static void showmappers()
 	}
 
 	log_printf("\n\nsupported ines20 mappers:  ");
-	for(n2=0,i=0;i<(256 * 16);i++) {
-		for(j=0;j<16;j++) {
+	for(n2=0,i=0;i<(256 * 1);i++) {
+		for(j=1;j<16;j++) {
 			if(mapper_get_mapperid_ines20(i,j) >= 0) {
-				//skip over mappers without submapper, they supported by regular ines
-				if(j == 0)
-					continue;
 				if(n2)
 					log_printf(", ",i);
 				log_printf("%d.%d",i,j);

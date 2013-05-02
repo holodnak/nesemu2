@@ -49,3 +49,15 @@ static INLINE void set_nmi()
 	if(CONTROL0 & 0x80)
 		cpu_set_nmi(1);
 }
+
+static INLINE void mask_bg()
+{
+	int i;
+
+	//hide leftmost 8 pixels
+	if((CONTROL1 & 2) == 0) {
+		for(i=0;i<(8 + nes.ppu.scrollx);i++) {
+			nes.ppu.linebuffer[i] = 0;
+		}
+	}
+}

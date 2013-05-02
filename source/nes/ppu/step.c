@@ -221,6 +221,7 @@ static INLINE void scanline_visible()
 	switch(LINECYCLES) {
 		//the idle cycle
 		case 0:
+			mask_bg();
 			break;
 
 		//nametable byte read

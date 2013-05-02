@@ -26,7 +26,7 @@ struct ines20_boardid_s {
 };
 
 #define INES20_BOARD_START()	static struct ines20_boardid_s boards[] = {
-#define INES20_BOARD_END()		{0,-1}};
+#define INES20_BOARD_END()		{0,0,-1}};
 #define INES20_BOARD(n,s,b)	{n,s,b},
 
 INES20_BOARD_START()

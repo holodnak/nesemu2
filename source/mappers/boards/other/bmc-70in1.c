@@ -124,5 +124,5 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_BMC_70IN1,reset_70in1,0,0,0,state);
-MAPPER(B_BMC_70IN1B,reset_70in1b,0,0,0,state);
+MAPPER(B_BMC_70IN1,reset_70in1,0,0,state);
+MAPPER(B_BMC_70IN1B,reset_70in1b,0,0,state);

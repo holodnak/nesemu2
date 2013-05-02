@@ -27,7 +27,7 @@
 #define C_MMC4		0x40
 
 void mmc2_sync();
-void mmc2_init(int hard);
+void mmc2_reset(int hard);
 void mmc2_write(u32 addr,u8 value);
 void mmc2_tile(int tile);
 void mmc2_state(int mode,u8 *spot);

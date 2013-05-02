@@ -70,6 +70,20 @@ static INLINE void calc_spt0addr()
 
 		//tile offset
 		nes.ppu.busaddr += (sprtemp[nes.ppu.cursprite].tile & 0xFE) * 16;
+
+		//vertical flip offset
+		nes.ppu.busaddr += (sprtemp[nes.ppu.cursprite].flags & 0x80) >> 3;
+
+		//if this is the lower half of an 8x16 sprite
+		if(sprtemp[nes.ppu.cursprite].flags & 0x20) {
+			if(sprtemp[nes.ppu.cursprite].flags & 0x80)
+				nes.ppu.busaddr -= 16;
+			else
+				nes.ppu.busaddr += 16;
+		}
+
+		//tile line offset
+		nes.ppu.busaddr += sprtemp[nes.ppu.cursprite].sprline * 2;
 	}
 
 	//process 8x8 sprite
@@ -79,6 +93,9 @@ static INLINE void calc_spt0addr()
 
 		//tile offset
 		nes.ppu.busaddr += sprtemp[nes.ppu.cursprite].tile * 16;
+
+		//tile line offset
+		nes.ppu.busaddr += sprtemp[nes.ppu.cursprite].sprline * 2;
 	}
 }
 
@@ -87,7 +104,4 @@ static INLINE void calc_spt1addr()
 {
 	//go to upper bits of tile line
 	nes.ppu.busaddr += 8;
-
-	//increase our sprite pointer
-	nes.ppu.cursprite++;
 }

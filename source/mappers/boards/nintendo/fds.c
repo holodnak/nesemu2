@@ -248,4 +248,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_FDS,reset,0,0,cpucycle,state);
+MAPPER(B_FDS,reset,0,cpucycle,state);

@@ -127,4 +127,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_JALECO_SS88006,reset,0,0,cpucycle,state);
+MAPPER(B_JALECO_SS88006,reset,0,cpucycle,state);

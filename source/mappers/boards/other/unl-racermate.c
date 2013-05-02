@@ -81,4 +81,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_RACERMATE,reset,0,0,cpucycle,state);
+MAPPER(B_RACERMATE,reset,0,cpucycle,state);

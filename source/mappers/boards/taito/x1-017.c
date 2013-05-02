@@ -129,4 +129,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_TAITO_X1_017,reset,0,0,0,state);
+MAPPER(B_TAITO_X1_017,reset,0,0,state);

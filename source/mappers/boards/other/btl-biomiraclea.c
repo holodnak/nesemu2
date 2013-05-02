@@ -101,4 +101,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_BIOMIRACLEA,reset,0,0,cpucycle,state);
+MAPPER(B_BIOMIRACLEA,reset,0,cpucycle,state);

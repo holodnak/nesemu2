@@ -1,3 +1,6 @@
+nes
+ . something is wrong with reset!
+
 cpu
  . add the BRK + NMI bug
  . branch + interrupts
@@ -10,6 +13,7 @@ ppu
  . make the other two nametables for four screen handled by cart, not ppu
  ! we are allowing writes to chr-rom because of cache system
  . sprites need more work (to allow mmc5 to work properly)
+ . instead of using the 'fetchpos' variable, calculate where tile data goes
 
 mappers
  ! better method of changing mapper dips
@@ -42,3 +46,4 @@ misc
 
 broken games
  . guardian legend status bar...still broken
+ . famicom wars intro/title screen is broken

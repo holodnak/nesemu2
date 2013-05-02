@@ -55,4 +55,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_UNION_BOND_FFV,reset,0,0,0,state);
+MAPPER(B_UNION_BOND_FFV,reset,0,0,state);

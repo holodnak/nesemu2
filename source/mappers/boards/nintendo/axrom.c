@@ -24,6 +24,7 @@
 static void sync()
 {
 	mem_setprg32(8,latch_reg & 0xF);
+	mem_setvram8(0,0);
 	if(latch_reg & 0x10)
 		mem_setmirroring(MIRROR_1H);
 	else
@@ -34,7 +35,6 @@ static void reset(int hard)
 {
 	mem_setvramsize(8);
 	latch_init(sync);
-	mem_setvram8(0,0);
 }
 
-MAPPER(B_AxROM,reset,0,0,0,latch_state);
+MAPPER(B_AxROM,reset,0,0,latch_state);

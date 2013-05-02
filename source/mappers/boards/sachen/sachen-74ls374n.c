@@ -123,5 +123,5 @@ static void state(int mode,u8 *data)
 static void reset_74ls374n(int hard)	{	reset(B_SACHEN_74LS374N,hard);	}
 //static void reset_74ls374na(int hard)	{	reset(B_SACHEN_74LS374NA,hard);	}
 
-MAPPER(B_SACHEN_74LS374N,reset_74ls374n,0,0,0,state);
-//MAPPER(B_SACHEN_74LS374NA,reset_74ls374na,0,0,0,state);
+MAPPER(B_SACHEN_74LS374N,reset_74ls374n,0,0,state);
+//MAPPER(B_SACHEN_74LS374NA,reset_74ls374na,0,0,state);

@@ -214,8 +214,8 @@ static void reset_vrc4c(int hard)	{	reset(B_VRC4C);	}
 static void reset_vrc4d(int hard)	{	reset(B_VRC4D);	}
 static void reset_vrc4e(int hard)	{	reset(B_VRC4E);	}
 
-MAPPER(B_VRC4A,reset_vrc4a,0,ppucycle,cpucycle,state);
-MAPPER(B_VRC4B,reset_vrc4b,0,ppucycle,cpucycle,state);
-MAPPER(B_VRC4C,reset_vrc4c,0,ppucycle,cpucycle,state);
-MAPPER(B_VRC4D,reset_vrc4d,0,ppucycle,cpucycle,state);
-MAPPER(B_VRC4E,reset_vrc4e,0,ppucycle,cpucycle,state);
+MAPPER(B_VRC4A,reset_vrc4a,ppucycle,cpucycle,state);
+MAPPER(B_VRC4B,reset_vrc4b,ppucycle,cpucycle,state);
+MAPPER(B_VRC4C,reset_vrc4c,ppucycle,cpucycle,state);
+MAPPER(B_VRC4D,reset_vrc4d,ppucycle,cpucycle,state);
+MAPPER(B_VRC4E,reset_vrc4e,ppucycle,cpucycle,state);

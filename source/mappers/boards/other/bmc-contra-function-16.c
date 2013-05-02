@@ -67,4 +67,4 @@ static void reset(int hard)
 	latch_init(sync);
 }
 
-MAPPER(B_BMC_CONTRA_FUNCTION_16,reset,0,0,0,latch_state);
+MAPPER(B_BMC_CONTRA_FUNCTION_16,reset,0,0,latch_state);

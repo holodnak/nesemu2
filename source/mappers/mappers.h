@@ -26,7 +26,6 @@
 typedef struct mapper_s {
 	int boardid;					//internal board id
 	void (*reset)(int);			//mapper reset function
-	void (*tile)(int);			//tile read handler
 	void (*ppucycle)();			//ppu cycle handler
 	void (*cpucycle)();			//cpu cycle handler
 	void (*state)(int,u8*);		//load/save state information

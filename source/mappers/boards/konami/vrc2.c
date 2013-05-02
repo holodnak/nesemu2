@@ -134,5 +134,5 @@ static void state(int mode,u8 *data)
 static void reset_vrc2a(int hard)	{	reset(B_VRC2A);	}
 static void reset_vrc2b(int hard)	{	reset(B_VRC2B);	}
 
-MAPPER(B_VRC2A,reset_vrc2a,0,0,0,state);
-MAPPER(B_VRC2B,reset_vrc2b,0,0,0,state);
+MAPPER(B_VRC2A,reset_vrc2a,0,0,state);
+MAPPER(B_VRC2B,reset_vrc2b,0,0,state);

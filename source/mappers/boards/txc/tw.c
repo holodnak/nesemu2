@@ -67,4 +67,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_TXC_TW,reset,0,mmc3_ppucycle,0,state);
+MAPPER(B_TXC_TW,reset,mmc3_ppucycle,0,state);

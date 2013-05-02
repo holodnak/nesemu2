@@ -24,6 +24,32 @@
 
 static u8 prg,mirroring;
 static u8 latch[2][2],latchstate[2];
+static readfunc_t ppuread;
+
+static u8 readtile(u32 addr)
+{
+	int tile = addr >> 4;
+
+	switch(tile) {
+		case 0x0FD:
+			latchstate[0] = 0;
+			mem_setchr4(0,latch[0][0]);
+			break;
+		case 0x0FE:
+			latchstate[0] = 1;
+			mem_setchr4(0,latch[0][1]);
+			break;
+		case 0x1FD:
+			latchstate[1] = 0;
+			mem_setchr4(4,latch[1][0]);
+			break;
+		case 0x1FE:
+			latchstate[1] = 1;
+			mem_setchr4(4,latch[1][1]);
+			break;
+	}
+	return(ppuread(addr));
+}
 
 void mmc2_sync()
 {
@@ -36,7 +62,7 @@ void mmc2_sync()
 	mem_setmirroring(mirroring);
 }
 
-void mmc2_init(int hard)
+void mmc2_reset(int hard)
 {
 	int i;
 
@@ -47,6 +73,8 @@ void mmc2_init(int hard)
 	latchstate[0] = latchstate[1] = 0;
 	prg = 0;
 	mirroring = 0;
+	ppuread = ppu_getreadfunc();
+	ppu_setreadfunc(readtile);
 	mmc2_sync();
 }
 
@@ -73,28 +101,6 @@ void mmc2_write(u32 addr,u8 data)
 			break;
 	}
 	mmc2_sync();
-}
-
-void mmc2_tile(int tile)
-{
-	switch(tile) {
-		case 0x0FD:
-			latchstate[0] = 0;
-			mem_setchr4(0,latch[0][0]);
-			break;
-		case 0x0FE:
-			latchstate[0] = 1;
-			mem_setchr4(0,latch[0][1]);
-			break;
-		case 0x1FD:
-			latchstate[1] = 0;
-			mem_setchr4(4,latch[1][0]);
-			break;
-		case 0x1FE:
-			latchstate[1] = 1;
-			mem_setchr4(4,latch[1][1]);
-			break;
-	}
 }
 
 void mmc2_state(int mode,u8 *data)

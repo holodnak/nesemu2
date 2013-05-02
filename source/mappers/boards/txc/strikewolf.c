@@ -78,4 +78,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_TXC_STRIKEWOLF,reset,0,ppucycle,0,state);
+MAPPER(B_TXC_STRIKEWOLF,reset,ppucycle,0,state);

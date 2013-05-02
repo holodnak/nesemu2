@@ -21,4 +21,4 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/mmc4.h"
 
-MAPPER(B_FxROM,mmc4_init,mmc4_tile,0,0,mmc4_state);
+MAPPER(B_FxROM,mmc4_init,0,0,mmc4_state);

@@ -32,4 +32,4 @@ static void reset(int hard)
 	latch_init(sync);
 }
 
-MAPPER(B_COLORDREAMS,reset,0,0,0,latch_state);
+MAPPER(B_COLORDREAMS,reset,0,0,latch_state);

@@ -157,4 +157,4 @@ static void state(int mode,u8 *data)
 	STATE_U16(irqcounter);
 }
 
-MAPPER(B_DRIPGAME,reset,0,0,cpucycle,state);
+MAPPER(B_DRIPGAME,reset,0,cpucycle,state);

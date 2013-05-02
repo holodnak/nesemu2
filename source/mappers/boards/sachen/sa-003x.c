@@ -73,5 +73,5 @@ static void state(int mode,u8 *data)
 static void reset_0036(int hard)	{	reset(B_SA_0036,hard);	}
 static void reset_0037(int hard)	{	reset(B_SA_0037,hard);	}
 
-MAPPER(B_SA_0036,reset_0036,0,0,0,state);
-MAPPER(B_SA_0037,reset_0037,0,0,0,state);
+MAPPER(B_SA_0036,reset_0036,0,0,state);
+MAPPER(B_SA_0037,reset_0037,0,0,state);

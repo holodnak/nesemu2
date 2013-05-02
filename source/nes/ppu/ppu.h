@@ -58,15 +58,17 @@ typedef struct ppu_s {
 	//rendering data, current address the ppu is accessing
 	u32	busaddr;
 
-	//fetched nametable, attribute, tile and cached tile data
-	u8		fetchpos,cursprite;
-	u8		ntbyte;
-//	u8		attribdata[32 + 2];
-//	u8		tiledata[2][32 + 2];
-//	cache_t	cachedata[32 + 2];
+	//nametable byte and position we are fetching tile data to
+	u8		ntbyte,fetchpos;
 
-	//line buffer
+	//current sprite we are fetching tile data for
+	u8		cursprite;
+
+	//line buffer (34 tiles)
 	u8		linebuffer[256 + 16];
+
+	//fetchpos gets out of hand and begins to corrupt memory!
+	u8		kludge[1024];
 
 	//read/write pointers
 	u8		*readpages[16];

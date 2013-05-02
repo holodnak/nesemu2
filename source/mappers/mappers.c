@@ -147,7 +147,6 @@ static mapper_t *get_mapper(int mapperid)
 	return(0);
 }
 
-static void null_mapper_tile(int t)			{}
 static void null_mapper_cycle()				{}
 static void null_mapper_state(int m,u8 *d){}
 
@@ -161,7 +160,6 @@ mapper_t *mapper_init(int mapperid)
 		log_printf("mapper_init:  get_mapper() failed!  mapperid = %d\n",mapperid);
 		return(0);
 	}
-	check_null(ret->tile,		null_mapper_tile);
 	check_null(ret->ppucycle,	null_mapper_cycle);
 	check_null(ret->cpucycle,	null_mapper_cycle);
 	check_null(ret->state,		null_mapper_state);

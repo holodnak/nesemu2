@@ -32,4 +32,4 @@ static void reset(int hard)
 	latch_init(sync);
 }
 
-MAPPER(B_MAGICSERIES,reset,0,0,0,latch_state);
+MAPPER(B_MAGICSERIES,reset,0,0,latch_state);

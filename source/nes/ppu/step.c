@@ -28,6 +28,7 @@ typedef struct {
 	u8 x;						//x coord
 	u8 flags;				//flags
 	u8 tile;					//sprite tile index
+	u8 sprline;				//line of sprite bitmap to draw
 	} sprtemp_t;			//sprite temp entry
 
 static sprtemp_t sprtemp[8];
@@ -147,6 +148,7 @@ static INLINE void scanline_prerender()
 
 		//fetch sprite pattern low
 		case 262:	case 270:	case 278:	case 286:	case 294:	case 302:	case 310:	case 318:
+			fetch_spt0byte();
 			break;
 
 		//calculate address of sprite pattern high
@@ -158,6 +160,7 @@ static INLINE void scanline_prerender()
 		case 304:
 			update_scroll();
 		case 264:	case 272:	case 280:	case 288:	case 296:	case 312:	case 320:
+			fetch_spt1byte();
 			break;
 
 		//nametable byte for next scanline
@@ -318,6 +321,7 @@ static INLINE void scanline_visible()
 
 		//fetch sprite pattern low
 		case 262:	case 270:	case 278:	case 286:	case 294:	case 302:	case 310:	case 318:
+			fetch_spt0byte();
 			break;
 
 		//calculate address of sprite pattern high
@@ -328,6 +332,7 @@ static INLINE void scanline_visible()
 		//fetch sprite pattern high
 		
 		case 264:	case 272:	case 280:	case 288:	case 296:	case 304:	case 312:	case 320:
+			fetch_spt1byte();
 			break;
 
 		//nametable byte for next scanline
@@ -426,6 +431,14 @@ void ppu_step()
 				scanline_visible();
 			else {
 				nes.ppu.busaddr = SCROLL; //hack
+				//kludge
+				if(LINECYCLES <= 256)
+					nes.ppu.fetchpos = (LINECYCLES - 1 / 8) + 2;
+				else if(LINECYCLES < 320)
+					nes.ppu.fetchpos = 0;
+				else
+					nes.ppu.fetchpos = 1;
+				//end kludge
 				if(LINECYCLES == 256) {
 					blankline();
 					video_updateline(SCANLINE,nes.ppu.linebuffer);

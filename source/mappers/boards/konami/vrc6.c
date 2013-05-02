@@ -179,5 +179,5 @@ static void state(int mode,u8 *data)
 static void reset_vrc6a(int hard)	{	reset(B_VRC6A,hard);	}
 static void reset_vrc6b(int hard)	{	reset(B_VRC6B,hard);	}
 
-MAPPER(B_VRC6A,reset_vrc6a,0,ppucycle,cpucycle,state);
-MAPPER(B_VRC6B,reset_vrc6b,0,ppucycle,cpucycle,state);
+MAPPER(B_VRC6A,reset_vrc6a,ppucycle,cpucycle,state);
+MAPPER(B_VRC6B,reset_vrc6b,ppucycle,cpucycle,state);

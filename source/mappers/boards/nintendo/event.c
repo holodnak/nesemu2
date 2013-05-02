@@ -85,4 +85,4 @@ static void state(int mode,u8 *data)
 	mmc1_state(mode,data);
 }
 
-MAPPER(B_EVENT,reset,0,0,cpucycle,state);
+MAPPER(B_EVENT,reset,0,cpucycle,state);

@@ -180,4 +180,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_TENGEN_RAMBO_1,reset,0,ppucycle,cpucycle,state);
+MAPPER(B_TENGEN_RAMBO_1,reset,ppucycle,cpucycle,state);

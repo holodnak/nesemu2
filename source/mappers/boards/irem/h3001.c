@@ -121,4 +121,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_IREM_H3001,reset,0,0,cpucycle,state);
+MAPPER(B_IREM_H3001,reset,0,cpucycle,state);

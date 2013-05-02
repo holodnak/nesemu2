@@ -143,7 +143,7 @@ static INLINE void process_sprites()
 //process all sprites that belong to the next scanline
 static INLINE void quick_process_sprites()
 {
-	int i,h,sprinrange;
+	int i,h,sprinrange,sprline;
 	u8 *s;
 
 	//clear the sprite temp memory
@@ -151,6 +151,7 @@ static INLINE void quick_process_sprites()
 		sprtemp[i].line = 0;
 		sprtemp[i].attr = sprtemp[i].x = sprtemp[i].flags = 0;
 		sprtemp[i].tile = 0xFF;
+		sprtemp[i].sprline = 0;
 	}
 
 	//if sprites disabled, return
@@ -162,9 +163,6 @@ static INLINE void quick_process_sprites()
 
 	//loop thru all 64 visible sprites, keeping note of the first eight visible
 	for(sprinrange=0,i=0;i<64;i++) {
-		int sprline;
-		cache_t *cache;
-		u8 patternbank;
 
 		//sprite data pointer
 		s = &nes.ppu.oam[i * 4];
@@ -184,53 +182,27 @@ static INLINE void quick_process_sprites()
 			//copy sprite data to temp memory
 			sprtemp[sprinrange].attr = (s[2] & 3) | ((s[2] & 0x20) >> 3);
 			sprtemp[sprinrange].x = s[3];
-			sprtemp[sprinrange].flags = 1;
+			sprtemp[sprinrange].flags = 1 | (s[2] & 0xC0);
 			sprtemp[sprinrange].tile = s[1];
 
 			//if sprite0 check is needed
 			if(i == 0)
 				sprtemp[sprinrange].flags = 2;
 
-			//call mapper callback
-			nes.mapper->tile((int)s[1] | (CONTROL0 & 8) << 5);
-
-			//determine pattern bank used (upper or lower)
-			if(CONTROL0 & 0x20)
-				patternbank = (s[1] & 1) << 2;
-			else
-				patternbank = (CONTROL0 & 8) >> 1;
-
-			//if sprite is to be flipped horizontally
-			if(s[2] & 0x40)
-				cache = (cache_t*)nes.ppu.cachepages_hflip[(s[1] >> 6) | patternbank];
-			else
-				cache = (cache_t*)nes.ppu.cachepages[(s[1] >> 6) | patternbank];
-
-			//select tile for 8x16 sprites
+			//small kludge for 8x16 sprites
 			if(CONTROL0 & 0x20) {
-				cache += ((s[1] & 0x3E) * 2) + ((s[2] & 0x80) >> 6);
 				if(sprline >= 8) {
-					if(s[2] & 0x80)
-						cache -= 2;
-					else
-						cache += 2;
+					sprtemp[sprinrange].flags |= 0x20;
 					sprline &= 7;
 				}
 			}
-
-			//select tile for 8x8 sprites
-			else
-				cache += (s[1] & 0x3F) * 2;
 
 			//if sprite is to be flipped vertically
 			if((s[2] & 0x80) != 0)
 				sprline = 7 - sprline;
 
-			//select tile line
-			cache += (sprline / 4);
-
-			//store sprite tile line
-			sprtemp[sprinrange].line = *cache >> ((sprline & 3) * 2);
+			//save sprite tile line
+			sprtemp[sprinrange].sprline = sprline;
 
 			//increment sprite in range counter
 			sprinrange++;

@@ -65,4 +65,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_TXC_MXMDHTWO,reset,0,0,0,state);
+MAPPER(B_TXC_MXMDHTWO,reset,0,0,state);

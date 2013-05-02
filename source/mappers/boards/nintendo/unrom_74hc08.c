@@ -34,4 +34,4 @@ static void reset(int hard)
 	latch_init(sync);
 }
 
-MAPPER(B_UNROM_74HC08,reset,0,0,0,latch_state);
+MAPPER(B_UNROM_74HC08,reset,0,0,latch_state);

@@ -26,4 +26,4 @@ static void reset(int hard)
 	namcot108_reset(namcot108_sync,hard);
 }
 
-MAPPER(B_TENGEN_MIMIC_1,reset,0,0,0,namcot108_state);
+MAPPER(B_TENGEN_MIMIC_1,reset,0,0,namcot108_state);

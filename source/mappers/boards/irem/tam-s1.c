@@ -40,4 +40,4 @@ static void reset(int hard)
 	latch_init(sync);
 }
 
-MAPPER(B_IREM_TAM_S1,reset,0,0,0,latch_state);
+MAPPER(B_IREM_TAM_S1,reset,0,0,latch_state);

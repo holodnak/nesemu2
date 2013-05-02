@@ -41,4 +41,4 @@ static void reset(int hard)
 	namcot108_reset(sync,hard);
 }
 
-MAPPER(B_NAMCOT_3425,reset,0,0,0,namcot108_state);
+MAPPER(B_NAMCOT_3425,reset,0,0,namcot108_state);

@@ -55,4 +55,4 @@ static void reset(int hard)
 	mem_setwritefunc(7,write7);
 }
 
-MAPPER(B_MARIO1_MALEE2,reset,0,0,0,0);
+MAPPER(B_MARIO1_MALEE2,reset,0,0,0);

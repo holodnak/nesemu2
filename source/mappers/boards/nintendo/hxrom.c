@@ -26,4 +26,4 @@ static void reset(int hard)
 	mmc3_reset(C_MMC6,mmc3_sync,hard);
 }
 
-MAPPER(B_HxROM,reset,0,mmc3_ppucycle,0,mmc3_state);
+MAPPER(B_HxROM,reset,mmc3_ppucycle,0,mmc3_state);

@@ -94,4 +94,4 @@ static void state(int mode,u8 *data)
 	STATE_U8(chr);
 }
 
-MAPPER(B_TEPPLES,reset,0,0,0,state);
+MAPPER(B_TEPPLES,reset,0,0,state);

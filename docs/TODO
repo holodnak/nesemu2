@@ -34,9 +34,11 @@ mappers
  . finish mapper 205 (should be working?)
  . fk23c mapper is nightmare!  need documents!
  . mapper 82 (taito x1-017) working except for "Kyuukyoku Harikiri Stadium 3"
+ . mapper 47 (nes-qj) needs $A001 register write disable
 
 misc
  . implement reading of the xml rom databases
+ . go thru and fix the hard/soft reset code, not everything checks for hard
 
 broken games
  . guardian legend status bar...still broken

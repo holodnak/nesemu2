@@ -52,7 +52,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_UN1ROM);
 	MAPPER(B_UNROM_74HC08);
 	MAPPER(B_EVENT);
-	MAPPER(B_FDS);
+	MAPPER(B_QJ);
 
 	//konami
 	MAPPER(B_VRC1);
@@ -134,10 +134,15 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_BMC_FK23C);
 	MAPPER(B_COLORDREAMS);
 	MAPPER(B_BMC_CONTRA_FUNCTION_16);
+	MAPPER(B_RUMBLESTATION);
 
 	//homebrew
 	MAPPER(B_TEPPLES);
 	MAPPER(B_DRIPGAME);
+
+	//others
+	MAPPER(B_FDS);
+//	MAPPER(B_NSF);
 
 	return(0);
 }

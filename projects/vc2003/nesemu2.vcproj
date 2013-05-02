@@ -733,6 +733,9 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\pxrom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\qj.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\sxrom.c">
 						</File>
 						<File
@@ -864,6 +867,9 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\mlt-caltron6in1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\rumblestation.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\union-bond-ffv.c">

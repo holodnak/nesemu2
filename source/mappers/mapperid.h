@@ -46,6 +46,7 @@ enum boardid_e {
 	B_UN1ROM,
 	B_UNROM_74HC08,
 	B_EVENT,
+	B_QJ,
 
 	//konami
 	B_VRC1,
@@ -100,6 +101,7 @@ enum boardid_e {
 	B_MARIO1_MALEE2,
 	B_MAGICSERIES,
 	B_COLORDREAMS,
+	B_RUMBLESTATION,
 
 	//union bond ffv
 	B_UNION_BOND_FFV,

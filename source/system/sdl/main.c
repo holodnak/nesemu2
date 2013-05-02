@@ -98,10 +98,14 @@ int mainloop()
 
 		if(nes.cart && (nes.cart->mapperid & B_TYPEMASK) == B_FDS) {
 			if(joykeys[SDLK_F9] && (keydown & 0x10) == 0) {
-				u8 data[4];
+				u8 data[4] = {0,0,0,0};
 
 				keydown |= 0x10;
-				data[0] = 0;
+				nes.mapper->state(CFG_SAVE,data);
+				if(data[0] == 0xFF)
+					data[0] = 0;
+				else
+					data[0] ^= 1;
 				nes.mapper->state(CFG_LOAD,data);
 				log_printf("disk inserted!  side = %d\n",data[0]);
 			}

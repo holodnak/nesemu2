@@ -25,15 +25,17 @@
 
 static readfunc_t read4;
 static writefunc_t write4;
+static u8 mirror,newdiskside;
 static u8 diskside,diskread,writeskip;
 static u8 diskirq,timerirq;
 static u8 irqenable,ioenable,control,status;
 static u16 irqcounter,irqlatch;
 static int diskaddr;
+static int diskflip;
 
 static void sync()
 {
-	mem_setmirroring(((control & 8) >> 3) ^ 1);
+	mem_setmirroring(mirror);
 }
 
 static void setirq(u8 mask)
@@ -58,15 +60,13 @@ static u8 read(u32 addr)
 	if(addr < 0x4020)
 		return(read4(addr));
 
-	log_printf("fds.c:  read:  $%04X\n",addr);
-
 	//fds read
 	switch(addr) {
 
-		//disk status register
+		//status register
 		case 0x4030:
 			ret = status;
-			clearirq(IRQ_TIMER | IRQ_DISK);
+			clearirq(IRQ_DISK | IRQ_TIMER);
 			return(ret);
 
 		//read data register
@@ -78,13 +78,14 @@ static u8 read(u32 addr)
 
 			//get byte read from disk
 			diskread = nes.cart->disk.data[(diskside * 65500) + diskaddr];
+//			log_printf("fds.c:  $4031 read:  side = %d, diskaddr = %d, diskdata = $%02X\n",diskside,diskaddr,diskread);
 
 			//increment disk data address
 			if(diskaddr < 64999)
 				diskaddr++;
 
 			//setup disk irq cycles
-			diskirq = 150;
+			diskirq = 100;
 
 			//clear irq status
 			clearirq(IRQ_DISK);
@@ -107,6 +108,7 @@ static u8 read(u32 addr)
 		//external connector read
 		case 0x4033:
 			return(0x80);
+
 	}
 	return((u8)(addr >> 8));
 }
@@ -118,7 +120,7 @@ static void write(u32 addr,u8 data)
 		return;
 	}
 
-	log_printf("fds.c:  write:  $%04X = $%02X\n",addr,data);
+//	log_printf("fds.c:  write:  $%04X = $%02X\n",addr,data);
 
 	switch(addr) {
 
@@ -148,7 +150,7 @@ static void write(u32 addr,u8 data)
 
 		//write data
 		case 0x4024:
-			if(diskside != 0xFF && (control & 4) == 0 || (ioenable & 1)) {
+			if(diskside != 0xFF && (control & 4) == 0 && (ioenable & 1)) {
 				if(diskaddr >= 0 && diskaddr < 65500)
 					if(writeskip)
 						writeskip--;
@@ -167,20 +169,24 @@ static void write(u32 addr,u8 data)
 			if((data & 0x40) == 0) {
 				if((control & 0x40) && (data & 0x10) == 0) {
 					diskaddr -= 2;
-					diskirq = 200;
+					diskirq = 150;
 				}
 				if(diskaddr < 0)
 					diskaddr = 0;
 			}
 			if(data & 2) {
 				diskaddr = 0;
-				diskirq = 200;
+				diskirq = 150;
+//				log_printf("fds.c:  transfer reset!  $4025.1 set\n");
 			}
 			if((data & 4) == 0) {
 				writeskip = 2;
+//				log_printf("fds.c:  write mode!  writeskip = 2\n");
 			}
-			if(data & 0x40)
-				diskirq = 200;
+			if(data & 0x40) {
+				diskirq = 150;
+//				log_printf("fds.c:  read/write start!  diskirq = %d\n",diskirq);
+			}
 			control = data;
 			break;
 
@@ -215,11 +221,17 @@ static void reset(int hard)
 	irqenable = 0;
 	diskirq = 0;
 	writeskip = 0;
+	diskflip = 0;
 	sync();
 }
 
 static void cpucycle()
 {
+	if(diskflip) {
+		diskflip--;
+		if(diskflip == 0)
+			diskside = newdiskside;
+	}
 	if((irqenable & 2) && irqcounter) {
 		irqcounter--;
 		if(irqcounter == 0) {
@@ -228,21 +240,28 @@ static void cpucycle()
 			else
 				irqenable &= 1;
 			setirq(IRQ_TIMER);
-			log_printf("IRQ!  timer!\n");
+//			log_printf("fds.c:  IRQ!  timer!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
 		}
 	}
 	if(diskirq) {
 		diskirq--;
-		if(diskirq == 0) {
+		if(diskirq == 0 && (control & 0x80)) {
 			setirq(IRQ_DISK);
-			log_printf("IRQ!  disk!\n");
+//			log_printf("fds.c:  IRQ!  disk!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
 		}
 	}
 }
 
 static void state(int mode,u8 *data)
 {
+	int olddiskside = diskside;
+
 	CFG_U8(diskside);
+	if(diskside != olddiskside) {
+		diskflip = 113 * 60;
+		newdiskside = diskside;
+		diskside = 0xFF;
+	}
 	STATE_U16(irqcounter);
 	STATE_U8(irqenable);
 	sync();

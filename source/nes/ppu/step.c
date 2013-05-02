@@ -56,7 +56,7 @@ static INLINE void scanline_prerender()
 		//nametable byte read
 		case 1:
 			//clear ppu status register
-			clear_nmi();
+			clear_nmi_flag();
 		case 9:		case 17:		case 25:		case 33:		case 41:		case 49:		case 57:
 		case 65:		case 73:		case 81:		case 89:		case 97:		case 105:	case 113:	case 121:
 		case 129:	case 137:	case 145:	case 153:	case 161:	case 169:	case 177:	case 185:
@@ -71,7 +71,9 @@ static INLINE void scanline_prerender()
 			break;
 
 		//attribute table byte read
-		case 3:		case 11:		case 19:		case 27:		case 35:		case 43:		case 51:		case 59:
+		case 3:
+			clear_nmi_line();
+		case 11:		case 19:		case 27:		case 35:		case 43:		case 51:		case 59:
 		case 67:		case 75:		case 83:		case 91:		case 99:		case 107:	case 115:	case 123:
 		case 131:	case 139:	case 147:	case 155:	case 163:	case 171:	case 179:	case 187:
 		case 195:	case 203:	case 211:	case 219:	case 227:	case 235:	case 243:	case 251:
@@ -197,15 +199,19 @@ static INLINE void scanline_prerender()
 			break;
 
 		//garbage nametable fetches
-		case 337:	case 339:
+		case 337:
 			calc_ntaddr();
 			break;
-		case 338:	
-			fetch_ntbyte();
+		case 339:
+//			calc_ntaddr();
+			skip_cycle();
+			break;
+		case 338:
+//			fetch_ntbyte();
 			break;
 		case 340:
-			fetch_ntbyte();
-			skip_cycle();
+//			fetch_ntbyte();
+//			skip_cycle();
 			break;
 
 		default:
@@ -368,11 +374,17 @@ static INLINE void scanline_visible()
 			break;
 
 		//garbage nametable fetches
-		case 337:	case 339:
+		case 337:
 			calc_ntaddr();
 			break;
-		case 338:	case 340:
-			fetch_ntbyte();
+		case 339:
+//			calc_ntaddr();
+			break;
+		case 338:
+//			fetch_ntbyte();
+			break;
+		case 340:
+//			fetch_ntbyte();
 			break;
 
 		default:
@@ -453,3 +465,4 @@ void ppu_step()
 		nes.mapper->ppucycle();
 	inc_linecycles();
 }
+

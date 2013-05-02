@@ -37,9 +37,13 @@ static INLINE void skip_cycle()
 		inc_linecycles();
 }
 
-static INLINE void clear_nmi()
+static INLINE void clear_nmi_flag()
 {
 	STATUS = 0;
+}
+
+static INLINE void clear_nmi_line()
+{
 	cpu_set_nmi(0);
 }
 

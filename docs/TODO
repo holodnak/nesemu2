@@ -4,7 +4,6 @@ nes
 cpu
  . add the BRK + NMI bug
  . branch + interrupts
- ! timing off somewhere by one cpu cycle (ppu_vbl_nmi test 7 indicates)
  
 ppu
  . $2005/6 masks for internal scroll temp register (bit15 is ok?)
@@ -12,7 +11,6 @@ ppu
  . dirty buffer system for cache + vram...NECESSARY ASAP (wizards & warriors)
  . make the other two nametables for four screen handled by cart, not ppu
  ! we are allowing writes to chr-rom because of cache system
- . sprites need more work (to allow mmc5 to work properly)
  . instead of using the 'fetchpos' variable, calculate where tile data goes
 
 mappers
@@ -26,7 +24,6 @@ mappers
  . sachen 0037 broken...why?
  . implement different mmc3 types
  . mapper 65 (irem h3001) "Daiku no Gen San 2 - Akage no Dan no Gyakushuu" doesnt work, the rest do
- . mmc4 (mapper 10) not looking correct
  . finish strikewolf mapper
  . devil man broken (namcot 3453)
  . finish the namcot 108 based mappers
@@ -47,3 +44,4 @@ misc
 broken games
  . guardian legend status bar...still broken
  . famicom wars intro/title screen is broken
+ . ms. pac-man (tengen)

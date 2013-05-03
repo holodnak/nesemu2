@@ -40,8 +40,22 @@ static void write_ppu_memory(u32 addr,u8 data)
 	u8 page = (addr >> 10) & 0xF;
 
 	//check if mapped to memory pointer
-	if(nes.ppu.writepages[page])
+	if(nes.ppu.writepages[page]) {
 		nes.ppu.writepages[page][addr & 0x3FF] = data;
+
+		//if address is in chr ram, update the cache
+		if(addr < 0x2000) {
+		/*	if((addr & 0xF) == 0xF)*/ {
+				cache_t *cache = nes.ppu.cachepages[page];
+				cache_t *cache_hflip = nes.ppu.cachepages_hflip[page];
+				u8 *chr = nes.ppu.readpages[page];
+				u32 a = addr & 0x3F0;
+
+				cache_tile(chr + a,cache + (a / 8));
+				cache_tile_hflip(chr + a,cache_hflip + (a / 8));
+			}
+		}
+	}
 
 	//see if write function is mapped
 	else if(nes.ppu.writefuncs[page])
@@ -50,19 +64,6 @@ static void write_ppu_memory(u32 addr,u8 data)
 	//not mapped, report error
 	else
 		log_printf("ppu_memwrite: write to unmapped memory at $%04X = $%02X\n",addr,data);
-
-	//if address is in chr ram, update the cache
-	if(addr < 0x2000) {
-/*		if((addr & 0xF) == 0xF)*/ {
-			cache_t *cache = nes.ppu.cachepages[page];
-			cache_t *cache_hflip = nes.ppu.cachepages_hflip[page];
-			u8 *chr = nes.ppu.readpages[page];
-			u32 a = addr & 0x3F0;
-
-			cache_tile(chr + a,cache + (a / 8));
-			cache_tile_hflip(chr + a,cache_hflip + (a / 8));
-		}
-	}
 }
 
 readfunc_t ppu_getreadfunc()
@@ -163,6 +164,9 @@ void ppu_write(u32 addr,u8 data)
 			TMPSCROLL = (TMPSCROLL & 0x73FF) | ((data & 3) << 10);
 			return;
 		case 1:
+//			if((CONTROL1 & 0x18) == 0 && (data & 0x18)) {
+//				FRAMES = 0;
+//			}
 			CONTROL1 = data;
 			return;
 		case 3:

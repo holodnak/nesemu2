@@ -106,6 +106,7 @@ static void reset(int hard)
 		chr[i] = i;
 	irqcounter = 0;
 	irqenabled = 0;
+	irqlatch = 0;
 	mirror = 0;
 	sync();
 }

@@ -98,6 +98,7 @@ static INLINE void fetch_spt0byte()
 
 		//store sprite tile line
 		sprtemp[nes.ppu.cursprite].line = *cache >> (nes.ppu.busaddr & 6);
+		sprtemp[nes.ppu.cursprite].line &= CACHE_MASK;
 	}
 }
 

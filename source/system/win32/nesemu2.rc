@@ -15,18 +15,20 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
+// English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
+#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDC_MAIN MENU
+IDC_MAIN MENU 
 BEGIN
     POPUP "&File"
     BEGIN
@@ -61,28 +63,35 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 22, 17, 230, 75
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    ICON            107,IDI_MAIN,14,9,20,20
-    LTEXT           "nesemu2",IDC_STATIC,49,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2013",IDC_STATIC,49,20,119,8
-    DEFPUSHBUTTON   "OK",IDOK,195,6,30,11,WS_GROUP
-END
-
-IDD_DEBUGGER DIALOGEX 0, 0, 368, 267
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_DEBUGGER DIALOGEX 0, 0, 368, 254
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 CAPTION "Debugger"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Close",IDOK,311,246,50,14
+    DEFPUSHBUTTON   "Close",IDOK,311,233,50,14
     GROUPBOX        "CPU",IDC_STATIC,204,7,157,96
     LTEXT           "A",IDC_STATIC,211,20,8,8
-    LTEXT           "X",IDC_STATIC,214,37,8,8
-    LTEXT           "Y",IDC_STATIC,213,51,8,8
-    EDITTEXT        IDC_EDIT1,223,17,20,14,ES_AUTOHSCROLL
+    LTEXT           "X",IDC_STATIC,211,36,8,8
+    LTEXT           "Y",IDC_STATIC,211,51,8,8
+    EDITTEXT        IDC_EDIT1,222,18,20,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,222,34,20,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT3,222,49,20,13,ES_AUTOHSCROLL
+    LISTBOX         IDC_DISASM,7,7,135,240,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    SCROLLBAR       IDC_DISASM_SCROLL,142,7,10,240,SBS_VERT
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 125, 90
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "About nesemu2"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,35,69,50,14
+    LTEXT           "nesemu2",IDC_STATIC,49,10,68,8,SS_NOPREFIX
+    LTEXT           "Copyright 2013",IDC_STATIC,49,20,69,8
+    ICON            IDI_MAIN,IDC_STATIC,7,7,21,20
 END
 
 
@@ -120,14 +129,23 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO
+GUIDELINES DESIGNINFO 
 BEGIN
     IDD_DEBUGGER, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 361
+        VERTGUIDE, 142
         TOPMARGIN, 7
-        BOTTOMMARGIN, 260
+        BOTTOMMARGIN, 247
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 118
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 83
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -147,13 +165,13 @@ IDI_MAIN                ICON                    "mainicon.ico"
 // String Table
 //
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_APP_TITLE           "nesemu2"
     IDC_MAIN                "NESEMU2"
 END
 
-#endif    // English (United States) resources
+#endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

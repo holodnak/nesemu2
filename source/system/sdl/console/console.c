@@ -26,16 +26,12 @@
 #include "system/video.h"
 #include "system/sdl/console/console.h"
 #include "system/sdl/console/font.h"
+#include "system/sdl/console/linebuffer.h"
 
 #define YPOS_STEP 13
 
-#define CONSOLE_BUF_SIZE	8192
-
 #define CONSOLE_BGCOLOR		0x0F0FC0
 #define CONSOLE_BORDER		0x0F0F80
-
-//console text buffer
-static char *buffer = 0;
 
 //showing flag
 static int showing;
@@ -52,36 +48,41 @@ static int ypos;
 //cursor position
 static int cursorpos = 0;
 
+//last message outputted
 static char statusmsg[1024];
 static int statustime = 0;
 
 void console_loghook(char *str)
 {
+	linebuffer_add(str);
 	strncpy(statusmsg,str,1024);
 	statustime = 60 * 3;
 }
 
 int console_init()
 {
-	buffer = mem_alloc(CONSOLE_BUF_SIZE);
+	int ret = 0;
+	
 	showing = 0;
 	width = video_getwidth();
-	height = video_getheight() * 3 / 5;
+	height = video_getheight() * 3 / 5 + 4;
 	screen = mem_alloc(width * height * sizeof(u32));
+	ret += linebuffer_init((width - 8) / 8);
 	log_sethook(console_loghook);
-	printf("console init'd:  width, height = %d, %d\n",width,height);
-	return(0);
+	log_printf("console init'd:  width, height = %d, %d\n",width,height);
+	return(ret);
 }
 
 void console_kill()
 {
-	mem_free(buffer);
+	log_sethook(0);
+	linebuffer_kill();
 	mem_free(screen);
 }
 
 void console_draw(u32 *dest,int w,int h)
 {
-	int x,y;
+	int x,y,i,n;
 	u32 *src = screen;
 	u32 pixel;
 
@@ -93,15 +94,41 @@ void console_draw(u32 *dest,int w,int h)
 		}
 		src += width;
 	}
+
+	//draw faded line at the bottom
 	for(y=0;y<4;y++) {
-		pixel = CONSOLE_BGCOLOR - 0x20 * y;
+		pixel = CONSOLE_BGCOLOR - (0x10 * y);
 		for(x=0;x<width;x++) {
 			src[x] = pixel;
 		}
 		src += width;
 	}
 
-	font_drawstr("nesemu2!",screen + (width * 100),width);
+	//draw the seperator
+	src = screen + (height - 11) * width;
+	for(y=0;y<1;y++) {
+		pixel = 0xbbbbbb;
+		for(x=3;x<(width-3);x++) {
+			src[x] = pixel;
+		}
+		src += width;
+	}
+
+#define MIN(a,b) (((a) < (b)) ? (a) : (b))
+
+	//output the text
+	n = MIN((height / 8) - 1,linebuffer_count());
+	y = (height / 8) - 2;
+	for(i=0;i<n;i++) {
+		char *str = linebuffer_getrelative(i);
+
+		if(str)
+			font_drawstr(str,screen + 4 + (y * width * 8),width);
+		y--;
+	}
+
+	//draw the prompt
+	font_drawchar(']',screen + 2 + ((height - 9) * width),width);
 
 	src = screen;
 	//copy newly rendered screen to dest

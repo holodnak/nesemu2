@@ -138,6 +138,11 @@ static INLINE void process_sprites()
 	}
 }
 
+static INLINE draw_sprites()
+{
+
+}
+
 #else
 
 //process all sprites that belong to the next scanline
@@ -145,6 +150,7 @@ static INLINE void quick_process_sprites()
 {
 	int i,h,sprinrange,sprline;
 	u8 *s;
+	int line = SCANLINE == 261 ? -1 : SCANLINE;	//kludge
 
 	//clear the sprite temp memory
 	for(i=0;i<8;i++) {
@@ -155,8 +161,8 @@ static INLINE void quick_process_sprites()
 	}
 
 	//if sprites disabled, return
-	if((CONTROL1 & 0x10) == 0)
-		return;
+//	if((CONTROL1 & 0x10) == 0)
+//		return;
 
 	//determine sprite height
 	h = 8 + ((CONTROL0 & 0x20) >> 2);
@@ -168,7 +174,7 @@ static INLINE void quick_process_sprites()
 		s = &nes.ppu.oam[i * 4];
 
 		//get the sprite tile line to draw
-		sprline = SCANLINE - s[0];
+		sprline = line - s[0];
 
 		//check for visibility on this line
 		if(sprline >= 0 && sprline < h) {
@@ -186,7 +192,7 @@ static INLINE void quick_process_sprites()
 			sprtemp[sprinrange].tile = s[1];
 
 			//if sprite0 check is needed
-			if(i == 0)
+			if(i == 0 && (STATUS & 0x40) == 0)
 				sprtemp[sprinrange].flags |= 2;
 
 			//small kludge for 8x16 sprites
@@ -210,5 +216,39 @@ static INLINE void quick_process_sprites()
 		}
 	}
 }
+
+#ifdef ACCURATE_SPRITE0
+
+static INLINE void sprite0_hit_check()
+{
+	int i;
+	sprtemp_t *spr = (sprtemp_t*)sprtemp + 7;
+	u8 *dest = nes.ppu.linebuffer;
+	u8 *line;
+	int xpos;
+	int x = LINECYCLES - 1;
+
+	if(x > 255)
+		return;
+	for(i=0;i<8;i++,spr--) {
+		if((spr->flags & 2) == 0)
+			continue;
+		xpos = x - spr->x;
+//		log_printf("sprite 0 'xpos' = %d (x = %d) (%d, %d)\n",xpos,spr->x,LINECYCLES,SCANLINE);
+		if(xpos >= 0 && xpos < 8) {
+			if(((CONTROL1 & 4) == 0 && spr->x == 0) || spr->x == 255 || x == 255)
+				break;
+			dest += nes.ppu.scrollx + x;
+			line = (u8*)&spr->line;
+			if(*dest && line[xpos]) {
+				STATUS |= 0x40;
+				spr->flags = 0;
+//				log_printf("found sprite 0 hit at %d, %d\n",LINECYCLES,SCANLINE);
+			}
+		}
+	}
+}
+
+#endif
 
 #endif

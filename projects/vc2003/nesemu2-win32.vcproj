@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\source"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;QUICK_SPRITES"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -68,7 +68,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\source"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;QUICK_SPRITES"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -376,9 +376,6 @@
 					Name="ppu"
 					Filter="">
 					<File
-						RelativePath="..\..\source\nes\ppu\attribcache.c">
-					</File>
-					<File
 						RelativePath="..\..\source\nes\ppu\io.c">
 					</File>
 					<File
@@ -418,15 +415,78 @@
 					Filter="">
 					<File
 						RelativePath="..\..\source\nes\cart\cart.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cart\fds.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\source\nes\cart\ines.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\source\nes\cart\ines20.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\source\nes\cart\unif.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
 					</File>
 				</Filter>
 				<Filter
@@ -531,6 +591,9 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\exrom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\fds.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\fxrom.c">
 						</File>
 						<File
@@ -546,6 +609,9 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\pxrom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\qj.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\sxrom.c">
 						</File>
 						<File
@@ -558,6 +624,9 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\un1rom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\unrom_74hc08.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\uxrom.c">
 						</File>
 					</Filter>
@@ -565,7 +634,10 @@
 						Name="tengen"
 						Filter="">
 						<File
-							RelativePath="..\..\source\mappers\boards\tengen\800032.c">
+							RelativePath="..\..\source\mappers\boards\tengen\mimic-1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\tengen\rambo-1.c">
 						</File>
 					</Filter>
 					<Filter
@@ -581,6 +653,9 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\taito\x1-005.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\taito\x1-017.c">
+						</File>
 					</Filter>
 					<Filter
 						Name="ave"
@@ -595,6 +670,9 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\irem\h3001.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\irem\tam-s1.c">
+						</File>
 					</Filter>
 					<Filter
 						Name="jaleco"
@@ -607,7 +685,49 @@
 						Name="other"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-15in1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-36in1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-70in1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-big7in1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-contra-function-16.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-fk23c.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\btl-biomiraclea.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\other\btl-mario1-malee2.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\colordreams.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\magicseries.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\mlt-caltron6in1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\rumblestation.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\union-bond-ffv.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\unl-h2288.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\unl-racermate.c">
 						</File>
 					</Filter>
 					<Filter
@@ -627,13 +747,16 @@
 						Name="txc"
 						Filter="">
 						<File
-							RelativePath="..\..\source\mappers\boards\txc\txc-22211.c">
+							RelativePath="..\..\source\mappers\boards\txc\22211.c">
 						</File>
 						<File
-							RelativePath="..\..\source\mappers\boards\txc\txc-mxmdhtwo.c">
+							RelativePath="..\..\source\mappers\boards\txc\mxmdhtwo.c">
 						</File>
 						<File
-							RelativePath="..\..\source\mappers\boards\txc\txc-tw.c">
+							RelativePath="..\..\source\mappers\boards\txc\strikewolf.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\txc\tw.c">
 						</File>
 					</Filter>
 					<Filter
@@ -658,6 +781,39 @@
 							RelativePath="..\..\source\mappers\boards\konami\vrc7.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="homebrew"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\homebrew\dripgame.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\homebrew\tepples.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="namcot"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\namcot\3425.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\namcot\34x3.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="cne"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\cne\decathlon.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\cne\fsb.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\cne\shlz.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="chips"
@@ -679,6 +835,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\mmc5.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\namcot-108.c">
 					</File>
 				</Filter>
 			</Filter>
@@ -790,9 +949,6 @@
 				<Filter
 					Name="ppu"
 					Filter="">
-					<File
-						RelativePath="..\..\source\nes\ppu\attribcache.h">
-					</File>
 					<File
 						RelativePath="..\..\source\nes\ppu\ppu.h">
 					</File>

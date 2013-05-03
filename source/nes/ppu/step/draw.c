@@ -30,11 +30,11 @@ static INLINE void blankline()
 
 static INLINE void drawspriteline()
 {
-	u8 spriteline[256 + 8];
+	static u8 spriteline[256 + 8];
 	sprtemp_t *spr = (sprtemp_t*)sprtemp + 7;
 	u64 *spriteline64 = (u64*)spriteline;
 	u8 *dest = nes.ppu.linebuffer;
-	int n,j,x;
+	int n;
 
 	//adjust for fine scroll x
 	dest += nes.ppu.scrollx;
@@ -58,13 +58,15 @@ static INLINE void drawspriteline()
 
 		//setup to draw the pixel
 		offs = spr->attr * 0x0404040404040404LL;
-		sp0 = sp1 = spr->line & CACHE_MASK;
+		sp0 = sp1 = spr->line;
 		pmask0 = pmask1 = (0x8080808080808080LL - sp0) >> 2;
 
+#ifndef ACCURATE_SPRITE0
 		//sprite is sprite 0, check for hit
 		if(spr->flags & 2) {
 			u64 sprtileline;
 			u8 *sprtileline8,*bg;
+			int j,x;
 
 			sprtileline = sp0 & pmask0;
 			sprtileline8 = ((u8*)&sprtileline);
@@ -79,6 +81,7 @@ static INLINE void drawspriteline()
 				}
 			}
 		}
+#endif
 
 		//render pixel to sprite line buffer
 #ifdef __GNUC__
@@ -112,6 +115,9 @@ static INLINE void drawspriteline()
 
 static INLINE void update_line()
 {
-	drawspriteline();
+#ifdef QUICK_SPRITES
+	if(CONTROL1 & 0x10)
+		drawspriteline();
+#endif
 	video_updateline(SCANLINE,nes.ppu.linebuffer + nes.ppu.scrollx);
 }

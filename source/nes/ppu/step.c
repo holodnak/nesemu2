@@ -51,6 +51,7 @@ static INLINE void scanline_prerender()
 
 		//the idle cycle
 		case 0:
+			clear_sp0hit_flag();
 			break;
 
 		//nametable byte read
@@ -204,14 +205,13 @@ static INLINE void scanline_prerender()
 			break;
 		case 339:
 //			calc_ntaddr();
-			skip_cycle();
 			break;
 		case 338:
 //			fetch_ntbyte();
 			break;
 		case 340:
 //			fetch_ntbyte();
-//			skip_cycle();
+			skip_cycle();
 			break;
 
 		default:
@@ -224,7 +224,7 @@ static INLINE void scanline_prerender()
 #endif
 }
 
-//scanlines 21-260
+//scanlines 0-239
 static INLINE void scanline_visible()
 {
 	switch(LINECYCLES) {
@@ -393,6 +393,11 @@ static INLINE void scanline_visible()
 	}
 #ifndef QUICK_SPRITES
 	process_sprites();
+	draw_sprites();
+#else
+	#ifdef ACCURATE_SPRITE0
+		sprite0_hit_check();
+	#endif
 #endif
 }
 
@@ -465,4 +470,3 @@ void ppu_step()
 		nes.mapper->ppucycle();
 	inc_linecycles();
 }
-

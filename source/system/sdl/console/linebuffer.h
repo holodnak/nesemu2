@@ -18,55 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-static INLINE void inc_linecycles()
-{
-	LINECYCLES++;
-	if(LINECYCLES >= 341) {
-		LINECYCLES = 0;
-		SCANLINE++;
-		if(SCANLINE >= 262) {
-			SCANLINE = 0;
-			FRAMES++;
-		}
-	}
-}
+#ifndef __linebuffer_h__
+#define __linebuffer_h__
 
-static INLINE void skip_cycle()
-{
-	if(((FRAMES & 1) != 0) && (CONTROL1 & 0x18))
-		inc_linecycles();
-}
+int linebuffer_init(int len);
+void linebuffer_kill();
+void linebuffer_add(char *str);
+void linebuffer_clear();
+char *linebuffer_get(int index);
+char *linebuffer_getrelative(int index);
+int linebuffer_count();
 
-static INLINE void clear_sp0hit_flag()
-{
-	STATUS &= ~(0x40 | 0x20);
-}
-
-static INLINE void clear_nmi_flag()
-{
-	STATUS &= ~0x80;
-}
-
-static INLINE void clear_nmi_line()
-{
-	cpu_set_nmi(0);
-}
-
-static INLINE void set_nmi()
-{
-	STATUS |= 0x80;
-	if(CONTROL0 & 0x80)
-		cpu_set_nmi(1);
-}
-
-static INLINE void mask_bg()
-{
-	int i;
-
-	//hide leftmost 8 pixels
-	if((CONTROL1 & 2) == 0) {
-		for(i=0;i<(8 + nes.ppu.scrollx);i++) {
-			nes.ppu.linebuffer[i] = 0;
-		}
-	}
-}
+#endif

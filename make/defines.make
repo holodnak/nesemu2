@@ -31,6 +31,9 @@ endif
 ifeq ($(USE_QUICK_SPRITES),1)
 	DEFINES += -DQUICK_SPRITES
 endif
+ifeq ($(USE_ACCURATE_SPRITE0),1)
+	DEFINES += -DACCURATE_SPRITE0
+endif
 
 # compiler/linker programs
 CC = gcc

@@ -22,7 +22,7 @@
 				InlineFunctionExpansion="2"
 				OptimizeForProcessor="3"
 				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CPU_UNDOC;QUICK_SPRITES"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CPU_UNDOC;QUICK_SPRITES;ACCURATE_SPRITE0"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -167,6 +167,9 @@
 						</File>
 						<File
 							RelativePath="..\..\source\system\sdl\console\fontdata.c">
+						</File>
+						<File
+							RelativePath="..\..\source\system\sdl\console\linebuffer.c">
 						</File>
 					</Filter>
 				</Filter>
@@ -1113,6 +1116,9 @@
 						</File>
 						<File
 							RelativePath="..\..\source\system\sdl\console\fontdata.h">
+						</File>
+						<File
+							RelativePath="..\..\source\system\sdl\console\linebuffer.h">
 						</File>
 					</Filter>
 				</Filter>

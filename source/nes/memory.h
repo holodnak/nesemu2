@@ -83,9 +83,11 @@ void mem_setmirroring2(int n0,int n1,int n2,int n3);
 #define mem_setwram4(p,b)		mem_setwram(4,p,b)
 #define mem_setwram8(p,b)		mem_setwram(8,p,b)
 #define mem_setwram16(p,b)		mem_setwram(16,p,b)
+#define mem_setwram32(p,b)		mem_setwram(32,p,b)
 #define mem_setsram4(p,b)		mem_setsram(4,p,b)
 #define mem_setsram8(p,b)		mem_setsram(8,p,b)
 #define mem_setsram16(p,b)		mem_setsram(16,p,b)
+#define mem_setsram32(p,b)		mem_setsram(32,p,b)
 
 //macros for ppu memory
 #define mem_unsetppu1(p)		mem_unsetppu(1,p)

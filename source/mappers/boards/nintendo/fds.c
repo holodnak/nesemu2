@@ -23,6 +23,9 @@
 #define IRQ_TIMER	1
 #define IRQ_DISK	2
 
+#define SHORTIRQ	150
+#define LONGIRQ	200
+
 static readfunc_t read4;
 static writefunc_t write4;
 static u8 mirror,newdiskside;
@@ -49,6 +52,7 @@ static void clearirq(u8 mask)
 	status &= ~mask;
 	if((status & 3) == 0) {
 		cpu_set_irq(0);
+//		log_printf("ack irq!\n");
 	}
 }
 
@@ -85,7 +89,7 @@ static u8 read(u32 addr)
 				diskaddr++;
 
 			//setup disk irq cycles
-			diskirq = 100;
+			diskirq = SHORTIRQ;
 
 			//clear irq status
 			clearirq(IRQ_DISK);
@@ -151,11 +155,13 @@ static void write(u32 addr,u8 data)
 		//write data
 		case 0x4024:
 			if(diskside != 0xFF && (control & 4) == 0 && (ioenable & 1)) {
+//				clearirq(IRQ_DISK);
 				if(diskaddr >= 0 && diskaddr < 65500)
 					if(writeskip)
 						writeskip--;
 					else if(diskaddr >= 2) {
 						nes.cart->disk.data[(diskside * 65500) + (diskaddr - 2)] = data;
+//						log_printf("fds.c:  writing data to disk %d addr (%d - 2) data $%02X\n",diskside,diskaddr,data);
 					}
 			}
 			break;
@@ -169,14 +175,14 @@ static void write(u32 addr,u8 data)
 			if((data & 0x40) == 0) {
 				if((control & 0x40) && (data & 0x10) == 0) {
 					diskaddr -= 2;
-					diskirq = 150;
+					diskirq = LONGIRQ;
 				}
 				if(diskaddr < 0)
 					diskaddr = 0;
 			}
 			if(data & 2) {
 				diskaddr = 0;
-				diskirq = 150;
+				diskirq = LONGIRQ;
 //				log_printf("fds.c:  transfer reset!  $4025.1 set\n");
 			}
 			if((data & 4) == 0) {
@@ -184,7 +190,7 @@ static void write(u32 addr,u8 data)
 //				log_printf("fds.c:  write mode!  writeskip = 2\n");
 			}
 			if(data & 0x40) {
-				diskirq = 150;
+				diskirq = LONGIRQ;
 //				log_printf("fds.c:  read/write start!  diskirq = %d\n",diskirq);
 			}
 			control = data;
@@ -202,12 +208,9 @@ static void reset(int hard)
 	write4 = mem_getwritefunc(4);
 	mem_setreadfunc(4,read);
 	mem_setwritefunc(4,write);
-	mem_setsramsize(8);
+	mem_setwramsize(8);
 	mem_setvramsize(8);
-	mem_setsram8(0x6,0);
-	mem_setsram8(0x8,1);
-	mem_setsram8(0xA,2);
-	mem_setsram8(0xC,3);
+	mem_setwram32(6,0);
 	mem_setprg8(0xE,0);
 	mem_setvram8(0,0);
 	if(hard) {
@@ -227,6 +230,67 @@ static void reset(int hard)
 
 static void cpucycle()
 {
+	//debugging the bios calls!
+	static u16 lastopaddr = 0;
+	static struct {u16 addr;char *name;} funcaddrs[] = {
+		{0xe1f8,"LoadFiles"},
+		{0xe237,"AppendFile"},
+		{0xe239,"WriteFile"},
+		{0xe2b7,"CheckFileCount"},
+		{0xe2bb,"AdjustFileCount"},
+		{0xe301,"SetFileCount1"},
+		{0xe305,"SetFileCount"},
+		{0xe32a,"GetDiskInfo"},
+		{0xe149,"Delay132"},
+		{0xe153,"Delayms"},
+		{0xe161,"DisPFObj"},
+		{0xe16b,"EnPFObj"},
+		{0xe170,"DisObj"},
+		{0xe178,"EnObj"},
+		{0xe17e,"DisPF"},
+		{0xe185,"EnPF"},
+		{0xe1b2,"VINTWait"},
+		{0xe7bb,"VRAMStructWrite"},
+		{0xe844,"FetchDirectPtr"},
+		{0xe86a,"WriteVRAMBuffer"},
+		{0xe8b3,"ReadVRAMBuffer"},
+		{0xe8d2,"PrepareVRAMString"},
+		{0xe8e1,"PrepareVRAMStrings"},
+		{0xe94f,"GetVRAMBufferByte"},
+		{0xe97d,"Pixel2NamConv"},
+		{0xe997,"Nam2PixelConv"},
+		{0xe9b1,"Random"},
+		{0xe9c8,"SpriteDMA"},
+		{0xe9d3,"CounterLogic"},
+		{0xe9eb,"ReadPads"},
+		{0xea1a,"ReadDownPads"},
+		{0xea1f,"ReadOrDownPads"},
+		{0xea36,"ReadDownVerifyPads"},
+		{0xea4c,"ReadOrDownVerifyPads"},
+		{0xea68,"ReadDownExpPads"},
+		{0xea84,"VRAMFill"},
+		{0xead2,"MemFill"},
+		{0xeaea,"SetScroll"},
+		{0xeafd,"JumpEngine"},
+		{0xeb13,"ReadKeyboard"},
+		{0xeb66,"LoadTileset"},
+		{0,0}
+	};
+	if(lastopaddr != nes.cpu.opaddr) {
+		lastopaddr = nes.cpu.opaddr;
+		//in bios?
+		if(lastopaddr >= 0xE000) {
+			int i;
+
+			for(i=0;funcaddrs[i].addr;i++) {
+				if(i >= 8) continue;
+				if(funcaddrs[i].addr == lastopaddr) {
+					log_printf("fds.c:  bios %s:  calling $%04X ('%s')\n",(i < 8) ? "DISK" : "UTIL",funcaddrs[i].addr,funcaddrs[i].name);
+				}
+			}
+		}
+	}
+////////////////////////////////////////////////////////////////////
 	if(diskflip) {
 		diskflip--;
 		if(diskflip == 0)
@@ -237,8 +301,11 @@ static void cpucycle()
 		if(irqcounter == 0) {
 			if(irqenable & 1)
 				irqcounter = irqlatch;
-			else
-				irqenable &= 1;
+			else {
+				irqenable &= ~2;
+				irqcounter = 0;
+				irqlatch = 0;
+			}
 			setirq(IRQ_TIMER);
 //			log_printf("fds.c:  IRQ!  timer!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
 		}

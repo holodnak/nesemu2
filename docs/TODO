@@ -31,7 +31,7 @@ mappers
  ? mapper 42 (biomiraclea) has two types of roms, one with chr, one with vram.
  . mmc5 needs finishing (just breed fails)
  . get roms to test the homebrew 'tepples' mapper and finish it
- . dripgame sort of works.  needs sound?
+ . dripgame mostly works.  need to add sound and remove the hack.
  . finish mapper 205 (should be working?)
  . fk23c mapper is nightmare!  need documents!
  . mapper 82 (taito x1-017) working except for "Kyuukyoku Harikiri Stadium 3"

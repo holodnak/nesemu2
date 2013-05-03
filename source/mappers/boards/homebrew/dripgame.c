@@ -21,16 +21,30 @@
 #include "mappers/mapperinc.h"
 
 static const u8 mirrormap[4] = {MIRROR_V,MIRROR_H,MIRROR_1L,MIRROR_1H};
+static const u8 ntmap[4][4] = {
+	{0,1,0,1},
+	{0,0,1,1},
+	{0,0,0,0},
+	{1,1,1,1}
+};
+static const u8 attribs[4] = {0x00,0x55,0xAA,0xFF};
 static u8 control,prg,chr[4];
 static u8 irqenable,irqlatch;
 static u16 irqcounter;
-static readfunc_t read4;
+static readfunc_t read4,ppuread;
 static u8 *exram[2];
+static u32 prevbusaddr,busaddr;
 
 //extended attributes
-static u8 ppuread(u32 addr)
+static u8 ppu_dripread(u32 addr)
 {
-	return(0);
+	int nt = (addr >> 10) & 3;
+	int offset = addr & 0x3FF;
+
+	if(offset >= 0x3C0) {
+		return(attribs[exram[ntmap[control & 3][(addr >> 10) & 3]][prevbusaddr & 0x3FF]]);
+	}
+	return(ppuread(addr));
 }
 
 static void sync()
@@ -43,10 +57,10 @@ static void sync()
 	mem_setchr2(6,chr[3]);
 	mem_setmirroring(mirrormap[control & 3]);
 	if(control & 4) {
-//		log_printf("extended attributes enabled\n");
+		ppu_setreadfunc(ppu_dripread);
 	}
 	else {
-
+		ppu_setreadfunc(0);
 	}
 	if(control & 8)
 		mem_setsram8(6,0);
@@ -58,17 +72,17 @@ static u8 read_4000(u32 addr)
 {
 	if(addr < 0x4800)
 		return(read4(addr));
-	return('d' | 0x80);
+	return('d');
 }
 
 static u8 read_5000(u32 addr)
 {
 	static u8 hack = 0;
 
-	hack++;
-	if(hack == 0)
+	hack += 3;
+	if(hack < 20)
 		return(0x40);
-	if(hack == 128)
+	if(hack > 200)
 		return(0x80);
 //	log_printf("reading drip sound:  $%04X\n",addr);
 	return(0);
@@ -76,8 +90,8 @@ static u8 read_5000(u32 addr)
 
 static void write_8000(u32 addr,u8 data)
 {
-	if(addr >= 0x8010)
-		log_printf("dripgame.c:  write to $%04x = $%02X\n",addr,data);
+//	if(addr >= 0x8010)
+//		log_printf("dripgame.c:  write to $%04x = $%02X\n",addr,data);
 	addr &= 0xF;
 	switch(addr) {
 		case 0x8:
@@ -107,11 +121,11 @@ static void write_8000(u32 addr,u8 data)
 static void write_C000(u32 addr,u8 data)
 {
 //	log_printf("dripgame.c:  write to $%04x = $%02X\n",addr,data);
-	addr &= 0x7FF;
+	addr &= 0xFFF;
 	if(addr < 0x400)
-		exram[0][addr] = data & 3;
-	else
-		exram[1][addr] = data & 3;
+		exram[0][addr & 0x3FF] = data & 3;
+	else if(addr < 0x800)
+		exram[1][addr & 0x3FF] = data & 3;
 }
 
 static void reset(int hard)
@@ -127,6 +141,8 @@ static void reset(int hard)
 	read4 = mem_getreadfunc(4);
 	mem_setreadfunc(4,read_4000);
 	mem_setreadfunc(5,read_5000);
+	ppuread = ppu_getreadfunc();
+	ppu_setreadfunc(ppu_dripread);
 	for(i=0;i<4;i++) {
 		mem_setwritefunc(0x8 + i,write_8000);
 		mem_setwritefunc(0xC + i,write_C000);
@@ -147,6 +163,12 @@ static void cpucycle()
 	}
 }
 
+static void ppucycle()
+{
+	prevbusaddr = busaddr;
+	busaddr = nes.ppu.busaddr;
+}
+
 static void state(int mode,u8 *data)
 {
 	STATE_U8(control);
@@ -157,4 +179,4 @@ static void state(int mode,u8 *data)
 	STATE_U16(irqcounter);
 }
 
-MAPPER(B_DRIPGAME,reset,0,cpucycle,state);
+MAPPER(B_DRIPGAME,reset,ppucycle,cpucycle,state);

@@ -23,7 +23,8 @@ mappers
  . sachen 0036 broken (chr problems!) (taiwan mahjong 16)
  . sachen 0037 broken...why?
  . implement different mmc3 types
- . mapper 65 (irem h3001) "Daiku no Gen San 2 - Akage no Dan no Gyakushuu" doesnt work, the rest do
+ . mapper 65 (irem h3001) "Daiku no Gen San 2 - Akage no Dan no Gyakushuu" graphical garbage.
+   --possibly related to bad timing?  mapper seems implemented ok.
  . finish strikewolf mapper
  . devil man broken (namcot 3453)
  . finish the namcot 108 based mappers
@@ -36,6 +37,9 @@ mappers
  . fk23c mapper is nightmare!  need documents!
  . mapper 82 (taito x1-017) working except for "Kyuukyoku Harikiri Stadium 3"
  . mapper 47 (nes-qj) needs $A001 register write disable
+
+mappers working
+ . perfect:  0, 1, 2, 3, 4, 42
 
 misc
  . implement reading of the xml rom databases

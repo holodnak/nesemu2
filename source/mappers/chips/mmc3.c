@@ -138,6 +138,8 @@ void mmc3_reset(int t,void (*s)(),int hard)
 
 	type = t;
 	mem_setsramsize(2);
+	if(nes.cart->chr.size == 0)
+		mem_setvramsize(8);
 	for(i=8;i<0x10;i++)
 		mem_setwritefunc(i,mmc3_write);
 	if((type & C_MMCNUM) == C_MMC6) {

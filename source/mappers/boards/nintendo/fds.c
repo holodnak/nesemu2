@@ -23,8 +23,8 @@
 #define IRQ_TIMER	1
 #define IRQ_DISK	2
 
-#define SHORTIRQ	150
-#define LONGIRQ	200
+#define SHORTIRQ	100
+#define LONGIRQ	150
 
 static readfunc_t read4;
 static writefunc_t write4;

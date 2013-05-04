@@ -154,6 +154,11 @@
     <ClCompile Include="..\..\source\inputdev\null.c" />
     <ClCompile Include="..\..\source\mappers\boards\ave\nina-001.c" />
     <ClCompile Include="..\..\source\mappers\boards\camerica\bf909x.c" />
+    <ClCompile Include="..\..\source\mappers\boards\cne\decathlon.c" />
+    <ClCompile Include="..\..\source\mappers\boards\cne\fsb.c" />
+    <ClCompile Include="..\..\source\mappers\boards\cne\shlz.c" />
+    <ClCompile Include="..\..\source\mappers\boards\homebrew\dripgame.c" />
+    <ClCompile Include="..\..\source\mappers\boards\homebrew\tepples.c" />
     <ClCompile Include="..\..\source\mappers\boards\irem\h3001.c" />
     <ClCompile Include="..\..\source\mappers\boards\irem\tam-s1.c" />
     <ClCompile Include="..\..\source\mappers\boards\jaleco\ss88006.c" />
@@ -172,27 +177,38 @@
     <ClCompile Include="..\..\source\mappers\boards\nintendo\dxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\event.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\exrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\fds.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\fxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\gxrom_mxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\hxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\pxrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\qj.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\sxrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\tqrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\txrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\un1rom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\unrom_74hc08.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\uxrom.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-15in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-36in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc-70in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-big7in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-contra-function-16.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-fk23c.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl-biomiraclea.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl-mario1-malee2.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\colordreams.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\magicseries.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\mlt-caltron6in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\rumblestation.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\union-bond-ffv.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\unl-h2288.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl-racermate.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-003x.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-7200x.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-74ls374n.c" />
     <ClCompile Include="..\..\source\mappers\boards\taito\x1-005.c" />
+    <ClCompile Include="..\..\source\mappers\boards\taito\x1-017.c" />
     <ClCompile Include="..\..\source\mappers\boards\tengen\mimic-1.c" />
     <ClCompile Include="..\..\source\mappers\boards\tengen\rambo-1.c" />
     <ClCompile Include="..\..\source\mappers\boards\txc\22211.c" />
@@ -217,7 +233,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\source\nes\cart\unif.c" />
+    <ClCompile Include="..\..\source\nes\cart\fds.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\unif.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\source\nes\cpu\helper.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
@@ -278,7 +303,7 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">$(IntDir)/nes/</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\source\nes\ppu\attribcache.c" />
+    <ClCompile Include="..\..\source\nes\ppu\io.c" />
     <ClCompile Include="..\..\source\nes\ppu\step\calc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
@@ -313,9 +338,6 @@
     <ClCompile Include="..\..\source\nes\state\block.c" />
     <ClCompile Include="..\..\source\nes\state\state.c" />
     <ClCompile Include="..\..\source\system\common\filters\draw\draw.c" />
-    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq2x.c" />
-    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq3x.c" />
-    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq4x.c" />
     <ClCompile Include="..\..\source\system\common\filters\interpolate\interpolate.c" />
     <ClCompile Include="..\..\source\system\common\filters\scale2x\scale2x.c" />
     <ClCompile Include="..\..\source\system\common\filters\scale2x\scale3x.c" />
@@ -323,6 +345,7 @@
     <ClCompile Include="..\..\source\system\sdl\console\console.c" />
     <ClCompile Include="..\..\source\system\sdl\console\font.c" />
     <ClCompile Include="..\..\source\system\sdl\console\fontdata.c" />
+    <ClCompile Include="..\..\source\system\sdl\console\linebuffer.c" />
     <ClCompile Include="..\..\source\system\sdl\input.c" />
     <ClCompile Include="..\..\source\system\sdl\main.c" />
     <ClCompile Include="..\..\source\system\sdl\sound.c" />
@@ -346,12 +369,23 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\source\nes\ppu\io.c" />
     <ClCompile Include="..\..\source\nes\ppu\ppu.c" />
     <ClCompile Include="..\..\source\nes\ppu\step.c" />
-    <ClCompile Include="..\..\source\nes\cart\cart.c" />
-    <ClCompile Include="..\..\source\nes\cart\ines.c" />
-    <ClCompile Include="..\..\source\nes\cart\ines20.c" />
+    <ClCompile Include="..\..\source\nes\cart\cart.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\ines.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\ines20.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\source\mappers\ines.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">$(IntDir)mappers/</ObjectFileName>

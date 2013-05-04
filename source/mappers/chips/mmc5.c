@@ -411,7 +411,7 @@ void mmc5_reset(int hard)
 	//clear the registers
 	for(i=0;i<8;i++) {
 		prg[i & 3] = 0;
-		chra[i] = chrb[i] = 0;
+		chra[i] = chrb[i & 3] = 0;
 	}
 
 	//setup the registers

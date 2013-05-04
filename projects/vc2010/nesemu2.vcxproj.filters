@@ -127,9 +127,6 @@
     <Filter Include="Source Files\system\common\filters\scale2x">
       <UniqueIdentifier>{6f34c4b6-473a-4b51-86da-19a788db3130}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\system\common\filters\hq2x">
-      <UniqueIdentifier>{143b0f7d-9ba2-4d68-8b16-15ff47835ef2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\system\common">
       <UniqueIdentifier>{ce99890e-d71a-406e-ba65-96258830b7ce}</UniqueIdentifier>
     </Filter>
@@ -181,6 +178,12 @@
     <Filter Include="Source Files\mappers\boards\namcot">
       <UniqueIdentifier>{fb436525-1308-4cc1-90df-cb93d930c46b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\mappers\boards\cne">
+      <UniqueIdentifier>{da90ada2-8d4f-43ff-9387-73f6c3154a61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\boards\homebrew">
+      <UniqueIdentifier>{655aac3a-a9bf-4b1e-8163-4c285b01b477}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -218,9 +221,6 @@
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cpu\execute.c">
       <Filter>Source Files\nes\cpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\ppu\io.c">
-      <Filter>Source Files\nes\ppu</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\ppu\ppu.c">
       <Filter>Source Files\nes\ppu</Filter>
@@ -277,9 +277,6 @@
       <Filter>Source Files\nes</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\ppu\tilecache.c">
-      <Filter>Source Files\nes\ppu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\nes\ppu\attribcache.c">
       <Filter>Source Files\nes\ppu</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\nintendo\uxrom.c">
@@ -365,15 +362,6 @@
     </ClCompile>
     <ClCompile Include="..\..\source\system\common\filters\scale2x\scalebit.c">
       <Filter>Source Files\system\common\filters\scale2x</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq2x.c">
-      <Filter>Source Files\system\common\filters\hq2x</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq3x.c">
-      <Filter>Source Files\system\common\filters\hq2x</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\system\common\filters\hq2x\hq4x.c">
-      <Filter>Source Files\system\common\filters\hq2x</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\system\common\filters\interpolate\interpolate.c">
       <Filter>Source Files\system\common\filters\interpolate</Filter>
@@ -554,6 +542,63 @@
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\namcot\3425.c">
       <Filter>Source Files\mappers\boards\namcot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\io.c">
+      <Filter>Source Files\nes\ppu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\cne\decathlon.c">
+      <Filter>Source Files\mappers\boards\cne</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\cne\fsb.c">
+      <Filter>Source Files\mappers\boards\cne</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\cne\shlz.c">
+      <Filter>Source Files\mappers\boards\cne</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\fds.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\qj.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\homebrew\dripgame.c">
+      <Filter>Source Files\mappers\boards\homebrew</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\homebrew\tepples.c">
+      <Filter>Source Files\mappers\boards\homebrew</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-15in1.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-36in1.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-big7in1.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-contra-function-16.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc-fk23c.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\colordreams.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\rumblestation.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\unl-h2288.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\taito\x1-017.c">
+      <Filter>Source Files\mappers\boards\taito</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\sdl\console\linebuffer.c">
+      <Filter>Source Files\system\sdl\console</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\fds.c">
+      <Filter>Source Files\nes\cart</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -28,22 +28,20 @@ static readfunc_t ppuread;
 
 static u8 readtile(u32 addr)
 {
-	int tile = addr >> 4;
-
-	switch(tile) {
-		case 0x0FD:
+	switch(addr & 0xFFF8) {
+		case 0x0FD8:
 			latchstate[0] = 0;
 			mem_setchr4(0,latch[0][0]);
 			break;
-		case 0x0FE:
+		case 0x0FE8:
 			latchstate[0] = 1;
 			mem_setchr4(0,latch[0][1]);
 			break;
-		case 0x1FD:
+		case 0x1FD8:
 			latchstate[1] = 0;
 			mem_setchr4(4,latch[1][0]);
 			break;
-		case 0x1FE:
+		case 0x1FE8:
 			latchstate[1] = 1;
 			mem_setchr4(4,latch[1][1]);
 			break;

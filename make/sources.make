@@ -21,7 +21,7 @@ SOURCE_NES += source/nes/cart/unif.c source/nes/cart/fds.c
 SOURCE_NES += source/nes/state/state.c source/nes/state/block.c
 SOURCE_NES += source/nes/cpu/cpu.c source/nes/cpu/disassemble.c
 SOURCE_NES += source/nes/ppu/io.c source/nes/ppu/ppu.c source/nes/ppu/step.c
-SOURCE_NES += source/nes/ppu/tilecache.c source/nes/ppu/attribcache.c
+SOURCE_NES += source/nes/ppu/tilecache.c
 SOURCE_NES += source/nes/apu/apu.c
 
 # palette
@@ -31,7 +31,7 @@ SOURCE_PALETTE = source/palette/generator.c source/palette/palette.c
 SOURCE_SYSTEM_SDL = source/system/sdl/video.c source/system/sdl/input.c source/system/sdl/sound.c
 SOURCE_SYSTEM_SDL += source/system/sdl/main.c source/system/sdl/system.c
 SOURCE_SYSTEM_SDL += source/system/sdl/console/console.c source/system/sdl/console/font.c
-SOURCE_SYSTEM_SDL += source/system/sdl/console/fontdata.c
+SOURCE_SYSTEM_SDL += source/system/sdl/console/fontdata.c source/system/sdl/console/linebuffer.c
 SOURCE_SYSTEM_SDL += source/system/common/filters/draw/draw.c source/system/common/filters/interpolate/interpolate.c
 SOURCE_SYSTEM_SDL += source/system/common/filters/scale2x/scalebit.c source/system/common/filters/scale2x/scale2x.c
 SOURCE_SYSTEM_SDL += source/system/common/filters/scale2x/scale3x.c

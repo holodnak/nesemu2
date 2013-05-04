@@ -47,11 +47,11 @@ static INLINE void fetch_pt0byte()
 	if(CONTROL1 & 0x08) {
 		cache_t *cache,pixels;
 
-		//tile bank cache pointer
-		cache = nes.ppu.cachepages[(nes.ppu.ntbyte >> 6) | ((CONTROL0 & 0x10) >> 2)];
-
 		//perform the read, but throw the data away
 		ppu_memread(nes.ppu.busaddr);
+
+		//tile bank cache pointer
+		cache = nes.ppu.cachepages[(nes.ppu.ntbyte >> 6) | ((CONTROL0 & 0x10) >> 2)];
 
 		//index to the tile data start, then the tile half (upper or lower half)
 		cache += ((nes.ppu.ntbyte & 0x3F) * 2) + ((SCROLL >> 14) & 1);
@@ -85,14 +85,14 @@ static INLINE void fetch_spt0byte()
 	if(CONTROL1 & 0x10) {
 		cache_t *cache;
 
+		//perform the read, but throw the data away
+		ppu_memread(nes.ppu.busaddr);
+
 		//get cache bank used by sprite tile
 		if(sprtemp[nes.ppu.cursprite].flags & 0x40)
 			cache = nes.ppu.cachepages_hflip[(nes.ppu.busaddr >> 10) & 7];
 		else
 			cache = nes.ppu.cachepages[(nes.ppu.busaddr >> 10) & 7];
-
-		//perform the read, but throw the data away
-		ppu_memread(nes.ppu.busaddr);
 
 		cache += (nes.ppu.busaddr & 0x3FF) / 8;
 

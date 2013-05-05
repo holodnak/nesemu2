@@ -20,7 +20,7 @@
 
 #include "mappers/mapperinc.h"
 
-static void reset(int hard)
+static void reset_nrom(int hard)
 {
 	mem_setprg16(0x8,0);
 	mem_setprg16(0xC,-1);
@@ -30,4 +30,12 @@ static void reset(int hard)
 		mem_setvram8(0,0);
 }
 
-MAPPER(B_NROM,reset,0,0,0);
+static void reset_nrom_sram(int hard)
+{
+	reset_nrom(hard);
+	mem_setsramsize(2);
+	mem_setsram8(6,0);
+}
+
+MAPPER(B_NROM,reset_nrom,0,0,0);
+MAPPER(B_NROM_SRAM,reset_nrom_sram,0,0,0);

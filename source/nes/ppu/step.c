@@ -203,15 +203,15 @@ static INLINE void scanline_prerender()
 		case 337:
 			calc_ntaddr();
 			break;
+		case 338:
+			fetch_ntbyte();
+			skip_cycle();
+			break;
 		case 339:
 //			calc_ntaddr();
 			break;
-		case 338:
-//			fetch_ntbyte();
-			break;
 		case 340:
-//			fetch_ntbyte();
-			skip_cycle();
+			fetch_ntbyte();
 			break;
 
 		default:
@@ -377,14 +377,14 @@ static INLINE void scanline_visible()
 		case 337:
 			calc_ntaddr();
 			break;
+		case 338:
+			fetch_ntbyte();
+			break;
 		case 339:
 //			calc_ntaddr();
 			break;
-		case 338:
-//			fetch_ntbyte();
-			break;
 		case 340:
-//			fetch_ntbyte();
+			fetch_ntbyte();
 			break;
 
 		default:
@@ -411,9 +411,7 @@ static INLINE void scanline_startvblank()
 
 static INLINE void scanline_postrender()
 {
-	if(LINECYCLES == 0) {
-//		printf("%s\n",nes.cart->sram.data+4);
-	}
+
 }
 
 void ppu_step()
@@ -446,15 +444,17 @@ void ppu_step()
 			if(CONTROL1 & 0x18)
 				scanline_visible();
 			else {
-				nes.ppu.busaddr = SCROLL; //hack
-				if(LINECYCLES == 256) {
+//				nes.ppu.busaddr = SCROLL; //hack
+				if(LINECYCLES < 256)
+					nes.ppu.linebuffer[LINECYCLES] = 0;
+				else if(LINECYCLES == 256) {
 					blankline();
 					video_updateline(SCANLINE,nes.ppu.linebuffer);
 				}
 			}
 			break;
 		case 240:
-			scanline_postrender();
+//			scanline_postrender();
 			break;
 		case 241:
 			scanline_startvblank();

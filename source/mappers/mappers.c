@@ -44,6 +44,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_GxROM_MxROM);
 	MAPPER(B_HxROM);
 	MAPPER(B_NROM);
+	MAPPER(B_NROM_SRAM);
 	MAPPER(B_PxROM);
 	MAPPER(B_SxROM);
 	MAPPER(B_TxROM);

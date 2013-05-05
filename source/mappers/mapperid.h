@@ -47,6 +47,7 @@ enum boardid_e {
 	B_UNROM_74HC08,
 	B_EVENT,
 	B_QJ,
+	B_NROM_SRAM,
 
 	//konami
 	B_VRC1,

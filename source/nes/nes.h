@@ -24,8 +24,11 @@
 #include "types.h"
 #include "nes/cpu/cpu.h"
 #include "nes/ppu/ppu.h"
+#ifndef MATTAPU
 #include "nes/apu/apu.h"
-//#include "nes/apu/mattapu.h"
+#else
+#include "nes/apu/mattapu.h"
+#endif
 #include "nes/cart/cart.h"
 #include "mappers/mappers.h"
 #include "inputdev/inputdev.h"

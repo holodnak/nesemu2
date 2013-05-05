@@ -158,15 +158,10 @@ void ppu_write(u32 addr,u8 data)
 				cpu_set_nmi(1);
 			if(((data & 0x80) == 0) && (SCANLINE == 241) && (LINECYCLES < 4))
 				cpu_set_nmi(0);
-//			if(SCANLINE >= 260)
-//				log_printf("ppu_write:  write $2000 @ %d (line %d, frame %d) (status=%02X, data=%02X, ctrl0=%02X)\n",LINECYCLES,SCANLINE,FRAMES,STATUS,data,CONTROL0);
 			CONTROL0 = data;
 			TMPSCROLL = (TMPSCROLL & 0x73FF) | ((data & 3) << 10);
 			return;
 		case 1:
-//			if((CONTROL1 & 0x18) == 0 && (data & 0x18)) {
-//				FRAMES = 0;
-//			}
 			CONTROL1 = data;
 			return;
 		case 3:
@@ -189,7 +184,7 @@ void ppu_write(u32 addr,u8 data)
 			return;
 		case 6:				//vram addr
 			if(TOGGLE == 0) { //first write
-				TMPSCROLL = (TMPSCROLL & ~0xFF00) | ((data & 0x3F) << 8);
+				TMPSCROLL = (TMPSCROLL & ~0xFF00) | ((data & 0x7F) << 8);
 				TOGGLE = 1;
 			}
 			else { //second write

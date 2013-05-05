@@ -18,6 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#ifndef MATTAPU
+
 #include "nes/nes.h"
 #include "nes/state/state.h"
 #include "misc/log.h"
@@ -82,3 +84,5 @@ void apu_setext(apuext_t *e)
 {
 	ext = e;
 }
+
+#endif

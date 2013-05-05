@@ -23,6 +23,8 @@
 ** $Id: nes_apu.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
+#ifdef MATTAPU
+
 #include <string.h>
 #include <stdlib.h>
 //#include <noftypes.h>
@@ -33,7 +35,7 @@
 
 #include "nes/nes.h"
 
-//void nes_burn(u32 cycles);
+#define ppu_tick ppu_step
 
 #define nes6502_getbyte	cpu_read
 //#define nes6502_burn(n)	cpu_tick()
@@ -905,6 +907,7 @@ void apu_process(void *buffer, int num_samples)
    s16 *buf16;
    u8 *buf8;
 
+//	log_printf("processing apu at cycle %d, line %d, frame %d\n",LINECYCLES,SCANLINE,FRAMES);
    if (NULL != buffer)
    {
       /* bleh */
@@ -1114,6 +1117,8 @@ void apu_setext(apuext_t *ext)
 //		apu = *src_apu;
    }
 }
+
+#endif
 
 /*
 ** $Log: nes_apu.c,v $

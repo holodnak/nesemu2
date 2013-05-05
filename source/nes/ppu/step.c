@@ -470,4 +470,3 @@ void ppu_step()
 		nes.mapper->ppucycle();
 	inc_linecycles();
 }
-

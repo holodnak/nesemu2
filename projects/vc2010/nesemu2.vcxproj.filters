@@ -29,9 +29,6 @@
     <Filter Include="Source Files\nes\apu">
       <UniqueIdentifier>{22e9888f-ed4b-48b7-b967-a8f97957d058}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\nes\cart">
-      <UniqueIdentifier>{e6fb2024-8279-4dd4-be7a-b340a3feb6fd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\nes\state">
       <UniqueIdentifier>{4d52bfd0-1dc5-4930-a2c4-dc0e026d7f15}</UniqueIdentifier>
     </Filter>
@@ -184,6 +181,9 @@
     <Filter Include="Source Files\mappers\boards\homebrew">
       <UniqueIdentifier>{655aac3a-a9bf-4b1e-8163-4c285b01b477}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\nes\cpu\cart">
+      <UniqueIdentifier>{e6fb2024-8279-4dd4-be7a-b340a3feb6fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -229,13 +229,13 @@
       <Filter>Source Files\nes\ppu</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\cart.c">
-      <Filter>Source Files\nes\cart</Filter>
+      <Filter>Source Files\nes\cpu\cart</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\ines.c">
-      <Filter>Source Files\nes\cart</Filter>
+      <Filter>Source Files\nes\cpu\cart</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\ines20.c">
-      <Filter>Source Files\nes\cart</Filter>
+      <Filter>Source Files\nes\cpu\cart</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\ines.c">
       <Filter>Source Files\mappers</Filter>
@@ -439,7 +439,7 @@
       <Filter>Source Files\system\sdl\console</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\unif.c">
-      <Filter>Source Files\nes\cart</Filter>
+      <Filter>Source Files\nes\cpu\cart</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\chips\mmc5.c">
       <Filter>Source Files\mappers\chips</Filter>
@@ -598,7 +598,7 @@
       <Filter>Source Files\system\sdl\console</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\fds.c">
-      <Filter>Source Files\nes\cart</Filter>
+      <Filter>Source Files\nes\cpu\cart</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

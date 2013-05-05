@@ -46,8 +46,8 @@ static int screenw,screenh,screenbpp;
 static int screenscale;
 static u32 palette32[256];
 static u32 palettecache[32];
-static u32 interval = 1000 / 60;
-static u32 lasttime = 0;
+static double interval = 0;
+static u64 lasttime = 0;
 static palette_t *palette = 0;
 static u32 *screen = 0;
 static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
@@ -65,9 +65,47 @@ static int get_filter_int(char *str)
 	return(F_NONE);
 }
 
+#ifdef WIN32
+static u64 timer_gettick()
+{
+	LARGE_INTEGER li;
+
+	QueryPerformanceCounter(&li);
+	return(li.QuadPart);
+}
+
+static int timer_init()
+{
+	LARGE_INTEGER li;
+
+	if(QueryPerformanceFrequency(&li) == 0)
+		return(1);
+	interval = ((double)li.QuadPart) / 60.0f;
+	lasttime = timer_gettick();
+	return(0);
+}
+#else
+static u64 timer_gettick()
+{
+	return(SDL_GetTicks());
+}
+
+static int timer_init()
+{
+	interval = 1000.0f / 60.0f;
+	lasttime = timer_gettick();
+	return(0);
+}
+#endif
 int video_reinit()
 {
 	int filter = get_filter_int(config_get_string("video.filter","none"));
+
+	//setup timer to limit frames
+	if(timer_init() != 0) {
+		log_printf("video_reinit:  timer_init() failed!\n");
+		return(1);
+	}
 
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
@@ -129,7 +167,7 @@ void video_startframe()
 
 void video_endframe()
 {
-	u32 t;
+	u64 t;
 /*	u32 *ptr1 = screen;
 	u32 *ptr2 = screen + 232 * 256;
 
@@ -147,16 +185,16 @@ void video_endframe()
 	SDL_UnlockSurface(surface);
 
 	//simple frame limiter
-	t = SDL_GetTicks();
 #ifdef FRAMELIMIT
-	while((t - lasttime) < interval) {
+	t = timer_gettick();
+	while((double)(t - lasttime) < interval) {
 #ifdef WIN32
 //		Sleep(interval - (t - lasttime) + 0);
 #endif
-		t = SDL_GetTicks();
+		t = timer_gettick();
 	}
-#endif
 	lasttime = t;
+#endif
 }
 
 //this handles lines coming directly from the nes engine

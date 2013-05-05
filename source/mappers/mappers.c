@@ -87,6 +87,11 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_NAMCOT_3453);
 	MAPPER(B_NAMCOT_3425);
 
+	//sunsoft
+	MAPPER(B_SUNSOFT_3);
+	MAPPER(B_SUNSOFT_4);
+	MAPPER(B_SUNSOFT_5B);
+
 	//unlicensed
 	//tengen
 	MAPPER(B_TENGEN_RAMBO_1);

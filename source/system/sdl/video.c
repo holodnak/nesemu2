@@ -45,7 +45,7 @@ static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;// | SDL_NOFRAME;
 static int screenw,screenh,screenbpp;
 static int screenscale;
 static u32 palette32[256];
-static u32 palettecache[32];
+static u32 palettecache[256];
 static double interval = 0;
 static u64 lasttime = 0;
 static palette_t *palette = 0;
@@ -107,6 +107,7 @@ int video_reinit()
 		return(1);
 	}
 
+	memset(palettecache,0,256*sizeof(u32));
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
 	flags |= config_get_int("video.fullscreen",0) ? SDL_FULLSCREEN : 0;

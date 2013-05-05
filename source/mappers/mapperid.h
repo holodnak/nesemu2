@@ -88,6 +88,11 @@ enum boardid_e {
 	B_TAITO_X1_005,
 	B_TAITO_X1_005A,
 
+	//sunsoft
+	B_SUNSOFT_3,
+	B_SUNSOFT_4,
+	B_SUNSOFT_5B,
+
 	//unlicensed
 	B_H2288,
 	B_BMC_15IN1,

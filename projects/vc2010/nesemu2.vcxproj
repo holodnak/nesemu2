@@ -208,6 +208,9 @@
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-003x.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-7200x.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-74ls374n.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-3.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-4.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-5b.c" />
     <ClCompile Include="..\..\source\mappers\boards\taito\x1-005.c" />
     <ClCompile Include="..\..\source\mappers\boards\taito\x1-017.c" />
     <ClCompile Include="..\..\source\mappers\boards\tengen\mimic-1.c" />

@@ -184,6 +184,9 @@
     <Filter Include="Source Files\nes\cpu\cart">
       <UniqueIdentifier>{e6fb2024-8279-4dd4-be7a-b340a3feb6fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\mappers\boards\sunsoft">
+      <UniqueIdentifier>{bec70d57-b76a-4b0d-9bd1-b5f186a30be5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -599,6 +602,15 @@
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\fds.c">
       <Filter>Source Files\nes\cpu\cart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-3.c">
+      <Filter>Source Files\mappers\boards\sunsoft</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-4.c">
+      <Filter>Source Files\mappers\boards\sunsoft</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-5b.c">
+      <Filter>Source Files\mappers\boards\sunsoft</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

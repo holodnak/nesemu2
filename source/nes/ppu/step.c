@@ -448,7 +448,6 @@ void ppu_step()
 				if(LINECYCLES < 256)
 					nes.ppu.linebuffer[LINECYCLES] = 0;
 				else if(LINECYCLES == 256) {
-					blankline();
 					video_updateline(SCANLINE,nes.ppu.linebuffer);
 				}
 			}

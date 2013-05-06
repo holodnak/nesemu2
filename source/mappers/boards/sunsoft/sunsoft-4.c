@@ -24,6 +24,10 @@ static u8 prg,chr[4],nt[2],mirror;
 
 static void sync()
 {
+	if(prg & 0x10)
+		mem_setsram8(6,0);
+	else
+		mem_unsetcpu8(6);
 	mem_setprg16(0x8,prg);
 	mem_setprg16(0xC,0xFF);
 	mem_setchr2(0,chr[0]);
@@ -75,6 +79,7 @@ static void reset(int hard)
 {
 	int i;
 
+	mem_setsramsize(2);
 	for(i=8;i<16;i++)
 		mem_setwritefunc(i,write);
 	if(hard) {

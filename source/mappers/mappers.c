@@ -88,6 +88,8 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_NAMCOT_3425);
 
 	//sunsoft
+	MAPPER(B_SUNSOFT_1);
+	MAPPER(B_SUNSOFT_2);
 	MAPPER(B_SUNSOFT_3);
 	MAPPER(B_SUNSOFT_4);
 	MAPPER(B_SUNSOFT_5B);

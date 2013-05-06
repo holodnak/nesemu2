@@ -23,15 +23,23 @@
 
 static void sync()
 {
-	mem_setvram4(0,0);
-	mem_setvram4(4,latch_reg & 3);
+	mem_setprg16(0x8,(latch_reg >> 4) & 7);
+	mem_setprg16(0xC,0xFF);
+	if(nes.cart->chr.size == 0) {
+		mem_setvram8(0,0);
+	}
+	else {
+		mem_setchr8(0,(latch_reg & 7) | ((latch_reg >> 4) & 8));
+		mem_setmirroring(MIRROR_1L + ((latch_reg >> 3) & 1));
+	}
 }
 
 static void reset(int hard)
 {
-	mem_setvramsize(16);
+	if(nes.cart->chr.size == 0) {
+		mem_setvramsize(8);
+	}
 	latch_init(sync);
-	mem_setprg32(8,0);
 }
 
-MAPPER(B_CPROM,reset,0,0,latch_state);
+MAPPER(B_SUNSOFT_2,reset,0,0,latch_state);

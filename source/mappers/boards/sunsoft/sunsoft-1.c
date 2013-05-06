@@ -23,15 +23,20 @@
 
 static void sync()
 {
-	mem_setvram4(0,0);
-	mem_setvram4(4,latch_reg & 3);
+	mem_setprg32(8,0);
+	mem_setchr4(0,latch_reg & 7);
+	mem_setchr4(4,((latch_reg >> 4) & 7) | 4);
 }
 
 static void reset(int hard)
 {
-	mem_setvramsize(16);
+	int i;
+
 	latch_init(sync);
-	mem_setprg32(8,0);
+	for(i=8;i<16;i++)
+		mem_setwritefunc(i,0);
+	mem_setwritefunc(6,latch_write);
+	mem_setwritefunc(7,latch_write);
 }
 
-MAPPER(B_CPROM,reset,0,0,latch_state);
+MAPPER(B_SUNSOFT_1,reset,0,0,latch_state);

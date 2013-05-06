@@ -612,6 +612,12 @@
     <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-5b.c">
       <Filter>Source Files\mappers\boards\sunsoft</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-2.c">
+      <Filter>Source Files\mappers\boards\sunsoft</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-1.c">
+      <Filter>Source Files\mappers\boards\sunsoft</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

@@ -100,7 +100,7 @@ static void write_8000(u32 addr,u8 data)
 		case 0x9:
 			irqcounter = ((data & 0x7F) << 8) | irqlatch;
 			irqenable = data & 0x80;
-			cpu_set_irq(0);
+			cpu_clear_irq(IRQ_MAPPER);
 			break;
 		case 0xA:
 			control = data & 0xF;
@@ -159,7 +159,7 @@ static void cpucycle()
 	if(irqenable) {
 		irqcounter--;
 		if(irqcounter == 0)
-			cpu_set_irq(1);
+			cpu_set_irq(IRQ_MAPPER);
 	}
 }
 

@@ -77,8 +77,8 @@ static void write(u32 addr,u8 data)
 		case 0xE001: irqlatch = (irqlatch & 0xFF0F) | ((data & 0xF) << 4); break;
 		case 0xE002: irqlatch = (irqlatch & 0xF0FF) | ((data & 0xF) << 8); break;
 		case 0xE003: irqlatch = (irqlatch & 0x0FFF) | ((data & 0xF) << 12); break;
-		case 0xF000: irqcounter = irqlatch; cpu_set_irq(0); break;
-		case 0xF001: irqcontrol = data & 0xF; cpu_set_irq(0); break;
+		case 0xF000: irqcounter = irqlatch; cpu_clear_irq(IRQ_MAPPER); break;
+		case 0xF001: irqcontrol = data & 0xF; cpu_clear_irq(IRQ_MAPPER); break;
 		case 0xF002: mirror = data & 3; break;
 		case 0xF003: break;
 	}
@@ -107,7 +107,7 @@ static void cpucycle()
 {
 	if(irqcontrol & 1) {
 		if((irqcounter & irqmask) == 0) {
-			cpu_set_irq(1);
+			cpu_set_irq(IRQ_MAPPER);
 			irqcounter = 0;
 			irqcounter += irqmask + 1;
 		}

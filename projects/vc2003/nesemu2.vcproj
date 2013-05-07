@@ -22,7 +22,7 @@
 				InlineFunctionExpansion="2"
 				OptimizeForProcessor="3"
 				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CPU_UNDOC;QUICK_SPRITES;ACCURATE_SPRITE0"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;QUICK_SPRITES;ACCURATE_SPRITE0"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -79,7 +79,7 @@
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;QUICK_SPRITES"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CPU_UNDOC;QUICK_SPRITES;ACCURATE_SPRITE0"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -560,21 +560,25 @@
 					<File
 						RelativePath="..\..\source\nes\apu\apu.c">
 					</File>
-					<File
-						RelativePath="..\..\source\nes\apu\mattapu.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-					</File>
+					<Filter
+						Name="units"
+						Filter="">
+						<File
+							RelativePath="..\..\source\nes\apu\units\dpcm.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\frame.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\noise.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\square.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\triangle.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="cart"
@@ -938,6 +942,25 @@
 							RelativePath="..\..\source\mappers\boards\homebrew\tepples.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="sunsoft"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\sunsoft\sunsoft-1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sunsoft\sunsoft-2.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sunsoft\sunsoft-3.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sunsoft\sunsoft-4.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sunsoft\sunsoft-5b.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="chips"
@@ -1165,9 +1188,25 @@
 					<File
 						RelativePath="..\..\source\nes\apu\apu.h">
 					</File>
-					<File
-						RelativePath="..\..\source\nes\apu\mattapu.h">
-					</File>
+					<Filter
+						Name="units"
+						Filter="">
+						<File
+							RelativePath="..\..\source\nes\apu\units\dpcm.h">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\frame.h">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\noise.h">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\square.h">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\triangle.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="cart"

@@ -49,14 +49,14 @@ static INLINE void clear_nmi_flag()
 
 static INLINE void clear_nmi_line()
 {
-	cpu_set_nmi(0);
+	cpu_clear_nmi();
 }
 
 static INLINE void set_nmi()
 {
 	STATUS |= 0x80;
 	if(CONTROL0 & 0x80)
-		cpu_set_nmi(1);
+		cpu_set_nmi();
 }
 
 static INLINE void mask_bg()

@@ -61,7 +61,7 @@ static void write(u32 addr,u8 data)
 		case 0xD800:
 			irqenable = data & 0x10;
 			irqtoggle = 0;
-			cpu_set_irq(0);
+			cpu_clear_irq(IRQ_MAPPER);
 			break;
 		case 0xE800:
 			mirror = data & 3;
@@ -95,7 +95,7 @@ static void cpucycle()
 		return;
 	if(irqcounter == 0) {
 		irqenable = 0;
-		cpu_set_irq(1);
+		cpu_set_irq(IRQ_MAPPER);
 	}
 	irqcounter--;
 }

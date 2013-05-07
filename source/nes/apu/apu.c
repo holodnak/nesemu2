@@ -18,13 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef MATTAPU
+//this code is based upon nintendulator's apu
 
 #include "nes/nes.h"
 #include "nes/state/state.h"
 #include "misc/log.h"
 
-static apuext_t *ext = 0;
+static apu_external_t *ext = 0;
 static u8 regs[0x20];
 
 static u8 lengths[32] = {
@@ -58,21 +58,47 @@ void apu_kill()
 
 void apu_reset(int hard)
 {
+	if(hard) {
+		cpu_clear_irq(IRQ_FRAME | IRQ_DPCM);
+	}
+	apu_frame_reset(hard);
 }
 
 u8 apu_read(u32 addr)
 {
-//	log_printf("apu_read: $%04X\n",addr);
+	u8 ret = 0;
+
+	switch(addr) {
+		case 0x4015:
+			ret = 0;
+			if(nes.cpu.irqstate & IRQ_FRAME)
+				ret |= 0x40;
+			if(nes.cpu.irqstate & IRQ_DPCM)
+				ret |= 0x80;
+			cpu_clear_irq(IRQ_FRAME);
+			log_printf("apu_read:  ret = %02X (cycle %d, line %d, frame %d)\n",ret,LINECYCLES,SCANLINE,FRAMES);
+			return(ret);
+	}
+	log_printf("apu_read: $%04X\n",addr);
 	return(0);
 }
 
 void apu_write(u32 addr,u8 data)
 {
 //	log_printf("apu_write: $%04X = $%02X\n",addr,data);
+	switch(addr) {
+		case 0x4017:
+			apu_frame_write(addr,data);
+			break;
+		default:
+			log_printf("apu_write:  unhandled write $%04X = $%02X\n",addr,data);
+			break;
+	}
 }
 
-void apu_frame()
+void apu_step()
 {
+	apu_frame_step();
 }
 
 void apu_state(int mode,u8 *data)
@@ -80,9 +106,7 @@ void apu_state(int mode,u8 *data)
 	STATE_ARRAY_U8(regs,0x20);
 }
 
-void apu_setext(apuext_t *e)
+void apu_setext(apu_external_t *e)
 {
 	ext = e;
 }
-
-#endif

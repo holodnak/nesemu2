@@ -121,13 +121,13 @@ static void write(u32 addr,u8 data)
 						irqcounter = irqlatch;
 						irqprescaler = 341;
 					}
-					cpu_set_irq(0);
+					cpu_clear_irq(IRQ_MAPPER);
 					break;
 				case 2:
 					irqlatch = (irqlatch & 0x0F) | ((data & 0xF) << 4);
 					break;
 				case 3:
-					cpu_set_irq(0);
+					cpu_clear_irq(IRQ_MAPPER);
 					irqcontrol |= (irqcontrol & 1) << 1;
 					break;
 			}
@@ -140,7 +140,7 @@ static void clockirq()
 {
 	if(irqcounter >= 0xFF) {
 		irqcounter = irqlatch;
-		cpu_set_irq(1);
+		cpu_set_irq(IRQ_MAPPER);
 	}
 	else
 		irqcounter++;

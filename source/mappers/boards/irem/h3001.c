@@ -49,11 +49,11 @@ static void write_reg(u32 addr,u8 data)
 			break;
 		case 0x9003:
 			irqenabled = data >> 7;
-			cpu_set_irq(0);
+			cpu_clear_irq(IRQ_MAPPER);
 			break;
 		case 0x9004:
 			irqcounter = irqlatch;
-			cpu_set_irq(0);
+			cpu_clear_irq(IRQ_MAPPER);
 			break;
 		case 0x9005:
 			irqlatch = (data << 8) | (irqlatch & 0xFF);
@@ -88,7 +88,7 @@ static void cpucycle()
 	irqcounter--;
 	if(irqcounter == 0) {
 		irqenabled = 0;
-		cpu_set_irq(1);
+		cpu_set_irq(IRQ_MAPPER);
 	}
 }
 

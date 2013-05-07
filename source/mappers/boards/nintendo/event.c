@@ -35,7 +35,7 @@ static void sync()
 	if(reg1 & 0x10) {
 		irqenabled = 0;
 		irqcounter = 0;
-		cpu_set_irq(0);
+		cpu_clear_irq(IRQ_MAPPER);
 	}
 	else
 		irqenabled = 1;
@@ -71,7 +71,7 @@ static void cpucycle()
 		return;
 	irqcounter++;
 	if(irqcounter >= irqmax)
-		cpu_set_irq(1);
+		cpu_set_irq(IRQ_MAPPER);
 }
 
 static void state(int mode,u8 *data)

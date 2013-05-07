@@ -118,14 +118,24 @@ u64 cpu_getcycles()
 	return(nes.cpu.cycles);
 }
 
-void cpu_set_nmi(u8 state)
+void cpu_set_nmi()
 {
-	NMISTATE = state;
+	NMISTATE = 1;
+}
+
+void cpu_clear_nmi()
+{
+	NMISTATE = 0;
 }
 
 void cpu_set_irq(u8 state)
 {
-	IRQSTATE = state;
+	IRQSTATE |= state;
+}
+
+void cpu_clear_irq(u8 state)
+{
+	IRQSTATE &= ~state;
 }
 
 void cpu_tick()
@@ -138,10 +148,15 @@ void cpu_tick()
 	//increment cycle counter for every memory access
 	CYCLES++;
 
+	//catch up the ppu
 	ppu_step();
 	ppu_step();
 	ppu_step();
 
+	//catch up the apu
+	apu_step();
+
+	//call the mapper callback
 	nes.mapper->cpucycle();
 }
 

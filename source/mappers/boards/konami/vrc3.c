@@ -53,7 +53,7 @@ static void write(u32 addr,u8 data)
 			if(data & 2)
 				irqcounter = irqreload;
 		case 0xD000:
-			cpu_set_irq(0);
+			cpu_clear_irq(IRQ_MAPPER);
 			irqcontrol |= (irqcontrol & 1) << 1;
 			break;
 		case 0xF000:
@@ -88,7 +88,7 @@ static void cpucycle()
 	if((irqcontrol & 4) == 0) {
 		if(irqcounter == 0xFFFF) {
 			irqcounter = irqreload;
-			cpu_set_irq(1);
+			cpu_set_irq(IRQ_MAPPER);
 		}
 		else
 			irqcounter++;
@@ -98,7 +98,7 @@ static void cpucycle()
 	else {
 		if((irqcounter & 0xFF) == 0xFF) {
 			irqcounter = (irqcounter & 0xFF00) | (irqreload & 0xFF);
-			cpu_set_irq(1);
+			cpu_set_irq(IRQ_MAPPER);
 		}
 		else
 			irqcounter++;

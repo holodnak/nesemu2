@@ -86,7 +86,7 @@ static void write(u32 addr,u8 data)
 			break;
 		case 0xE000:
 			irqenabled = 0;
-			cpu_set_irq(0);
+			cpu_clear_irq(IRQ_MAPPER);
 			break;
 		case 0xE001:
 			irqenabled = 1;
@@ -134,7 +134,7 @@ static void ppucycle()
 {
 	if(irqsource == 0) {
 		if(needirq && (--needirq) == 0) {
-			cpu_set_irq(1);
+			cpu_set_irq(IRQ_MAPPER);
 		}
 		if(irqwait) {
 			irqwait--;
@@ -157,7 +157,7 @@ static void cpucycle()
 			clockirq();
 			if(needirq) {
 				needirq = 0;
-				cpu_set_irq(1);
+				cpu_set_irq(IRQ_MAPPER);
 			}
 		}
 	}

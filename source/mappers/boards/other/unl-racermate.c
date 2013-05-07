@@ -43,7 +43,7 @@ static void write(u32 addr,u8 data)
 			chr = data & 0xF;
 			break;
 		case 0xC000:
-			cpu_set_irq(0);
+			cpu_clear_irq(IRQ_MAPPER);
 			break;
 	}
 	sync();
@@ -69,7 +69,7 @@ static void cpucycle()
 	irqcounter++;
 	if(irqcounter == 1024) {
 		irqcounter = 0;
-		cpu_set_irq(1);
+		cpu_set_irq(IRQ_MAPPER);
 	}
 }
 

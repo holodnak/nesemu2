@@ -125,7 +125,7 @@ static void write_F000(u32 addr,u8 data)
 	if(addr & 0x18) {
 		irqcontrol &= ~2;
 		irqcontrol |= (irqcontrol & 1) << 1;
-		cpu_set_irq(0);
+		cpu_clear_irq(IRQ_MAPPER);
 	}
 	else {
 		irqcontrol = data & 7;
@@ -140,7 +140,7 @@ static void clockirq()
 {
 	if(irqcounter >= 0xFF) {
 		irqcounter = irqlatch;
-		cpu_set_irq(1);
+		cpu_set_irq(IRQ_MAPPER);
 	}
 	else
 		irqcounter++;

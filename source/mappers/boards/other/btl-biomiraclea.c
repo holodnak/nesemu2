@@ -51,7 +51,7 @@ static void write(u32 addr,u8 data)
 			if(data & 2)
 				irqenabled = 1;
 			else {
-				cpu_set_irq(0);
+				cpu_clear_irq(IRQ_MAPPER);
 				irqenabled = 0;
 				irqcounter = 0;
 			}
@@ -69,9 +69,9 @@ static void cpucycle()
 	irqcounter++;
 	if((irqcounter & 0x6000) != (prev & 0x6000)) {
 		if((irqcounter & 0x6000) == 0x6000)
-				cpu_set_irq(1);
+				cpu_set_irq(IRQ_MAPPER);
 		else
-			cpu_set_irq(0);
+			cpu_clear_irq(IRQ_MAPPER);
 	}
 }
 

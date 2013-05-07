@@ -228,7 +228,7 @@ u8 mmc5_read(u32 addr)
 
 			//acknowledge the irq
 			irqstatus &= ~0x80;
-			cpu_set_irq(0);
+			cpu_clear_irq(IRQ_MAPPER);
 			return(ret);
 
 		//low 8 bits of product
@@ -435,7 +435,7 @@ static void scanline_detected()
 		irqcounter++;
 		if(irqcounter == irqtarget && irqenable) {
 			irqstatus |= 0x80;
-			cpu_set_irq(1);
+			cpu_set_irq(IRQ_MAPPER);
 		}
 	}
 
@@ -445,7 +445,7 @@ static void scanline_detected()
 
 		//clear irq pending flag
 		irqstatus &= ~0x80;
-		cpu_set_irq(0);
+		cpu_clear_irq(IRQ_MAPPER);
 
 		//reset counter
 		irqcounter = 0;

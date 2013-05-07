@@ -116,10 +116,10 @@ u8 ppu_read(u32 addr)
 			if(SCANLINE == 241) {
 				if(LINECYCLES == 1) {
 					ret &= 0x7F;
-					cpu_set_nmi(0);
+					cpu_clear_nmi();
 				}
 				if(LINECYCLES < 4 && LINECYCLES > 1) {
-					cpu_set_nmi(0);
+					cpu_clear_nmi();
 				}
 			}
 
@@ -156,9 +156,9 @@ void ppu_write(u32 addr,u8 data)
 	switch(addr & 7) {
 		case 0:
 			if((STATUS & 0x80) && (data & 0x80) && ((CONTROL0 & 0x80) == 0))
-				cpu_set_nmi(1);
+				cpu_set_nmi();
 			if(((data & 0x80) == 0) && (SCANLINE == 241) && (LINECYCLES < 4))
-				cpu_set_nmi(0);
+				cpu_clear_nmi();
 			CONTROL0 = data;
 			TMPSCROLL = (TMPSCROLL & 0x73FF) | ((data & 3) << 10);
 			return;

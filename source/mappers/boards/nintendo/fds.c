@@ -20,9 +20,6 @@
 
 #include "mappers/mapperinc.h"
 
-#define IRQ_TIMER	1
-#define IRQ_DISK	2
-
 #define SHORTIRQ	100
 #define LONGIRQ	150
 
@@ -41,21 +38,6 @@ static void sync()
 	mem_setmirroring(mirror);
 }
 
-static void setirq(u8 mask)
-{
-	status |= mask;
-	cpu_set_irq(1);
-}
-
-static void clearirq(u8 mask)
-{
-	status &= ~mask;
-	if((status & 3) == 0) {
-		cpu_set_irq(0);
-//		log_printf("ack irq!\n");
-	}
-}
-
 static u8 read(u32 addr)
 {
 	u8 ret = 0;
@@ -70,7 +52,7 @@ static u8 read(u32 addr)
 		//status register
 		case 0x4030:
 			ret = status;
-			clearirq(IRQ_DISK | IRQ_TIMER);
+			cpu_clear_irq(IRQ_DISK | IRQ_TIMER);
 			return(ret);
 
 		//read data register
@@ -92,7 +74,7 @@ static u8 read(u32 addr)
 			diskirq = SHORTIRQ;
 
 			//clear irq status
-			clearirq(IRQ_DISK);
+			cpu_clear_irq(IRQ_DISK);
 
 			return(diskread);
 
@@ -103,7 +85,7 @@ static u8 read(u32 addr)
 				ret |= 5;
 			}
 			if((diskside == 0xFF) || ((control & 1) == 0) || (control & 2)) {
-//				log_printf("fds_read:  disk not inserted.  (diskside = $%02X, control = $%02X)\n",diskside,control);
+				log_printf("fds_read:  disk not inserted.  (diskside = $%02X, control = $%02X)\n",diskside,control);
 				ret |= 2;
 			}
 //			log_printf("fds.c:  read:  status = $%02X\n",ret);
@@ -130,19 +112,19 @@ static void write(u32 addr,u8 data)
 
 		//irq latch low
 		case 0x4020:
-			clearirq(IRQ_TIMER);
+			cpu_clear_irq(IRQ_TIMER);
 			irqlatch = (irqlatch & 0xFF00) | data;
 			break;
 
 		//irq latch high
 		case 0x4021:
-			clearirq(IRQ_TIMER);
+			cpu_clear_irq(IRQ_TIMER);
 			irqlatch = (irqlatch & 0x00FF) | (data << 8);
 			break;
 
 		//irq enable
 		case 0x4022:
-			clearirq(IRQ_TIMER);
+			cpu_clear_irq(IRQ_TIMER);
 			irqenable = data;
 			irqcounter = irqlatch;
 			break;
@@ -168,7 +150,7 @@ static void write(u32 addr,u8 data)
 
 		//fds control
 		case 0x4025:
-			clearirq(IRQ_DISK);
+			cpu_clear_irq(IRQ_DISK);
 			mem_setmirroring(((data & 8) >> 3) ^ 1);
 			if(diskside == 0xFF)
 				break;
@@ -306,14 +288,14 @@ static void cpucycle()
 				irqcounter = 0;
 				irqlatch = 0;
 			}
-			setirq(IRQ_TIMER);
+			cpu_set_irq(IRQ_TIMER);
 //			log_printf("fds.c:  IRQ!  timer!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
 		}
 	}
 	if(diskirq) {
 		diskirq--;
 		if(diskirq == 0 && (control & 0x80)) {
-			setirq(IRQ_DISK);
+			cpu_set_irq(IRQ_DISK);
 //			log_printf("fds.c:  IRQ!  disk!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
 		}
 	}
@@ -325,7 +307,7 @@ static void state(int mode,u8 *data)
 
 	CFG_U8(diskside);
 	if(diskside != olddiskside) {
-		diskflip = 113 * 60;
+		diskflip = (341 * 262 / 3) * 15;		//15 frames
 		newdiskside = diskside;
 		diskside = 0xFF;
 	}

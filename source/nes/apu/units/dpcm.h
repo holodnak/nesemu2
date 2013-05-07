@@ -18,43 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __nes__apu_h__
-#define __nes__apu_h__
+#ifndef __nes__apu__dpcm_h__
+#define __nes__apu__dpcm_h__
 
-#include "nes/apu/units/frame.h"
-#include "nes/apu/units/square.h"
-#include "nes/apu/units/triangle.h"
-#include "nes/apu/units/noise.h"
-#include "nes/apu/units/dpcm.h"
-
-//external sound
-typedef struct apu_external_s
-{
-   void (*init)();
-   void (*kill)();
-   void (*reset)();
-   int (*process)(int);
-	void (*state)(int,u8*);
-} apu_external_t;
-
-//apu informations
-typedef struct apu_s {
-	//sound channels
-	square_t		square[2];
-	triangle_t	triangle;
-	noise_t		noise;
-	dpcm_t		dpcm;
-
-	//frame counter
-	frame_t		frame;
-} apu_t;
-
-int apu_init();
-void apu_kill();
-void apu_reset(int hard);
-void apu_step();
-u8 apu_read(u32 addr);
-void apu_write(u32 addr,u8 data);
-void apu_state(int mode,u8 *data);
+//apu dpcm
+typedef struct dpcm_s {
+	u8 length;
+} dpcm_t;
 
 #endif

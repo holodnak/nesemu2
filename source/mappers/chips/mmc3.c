@@ -240,7 +240,7 @@ void mmc3_write(u32 addr,u8 data)
 		case 0xE000:
 //			log_printf("mmc3_write:  WRITE!  irq disable/ack (frame %d, line %d, pixel %d)\n",FRAMES,SCANLINE,LINECYCLES);
 			irqenabled = 0;
-			cpu_set_irq(0);
+			cpu_clear_irq(IRQ_MAPPER);
 			break;
 		case 0xE001:
 			irqenabled = 1;
@@ -264,7 +264,7 @@ void mmc3_ppucycle()
 			irqcounter--;
 			log_printf("mmc3_cycle:  CLOCKED!  irq counter = %d (frame %d, line %d, pixel %d)\n",irqcounter,FRAMES,SCANLINE,LINECYCLES);
 			if(irqcounter == 0 && irqenabled) {
-				cpu_set_irq(1);
+				cpu_set_irq(IRQ_MAPPER);
 				log_printf("mmc3_cycle:  IRQ!  (frame %d, line %d, pixel %d)\n",FRAMES,SCANLINE,LINECYCLES);
 			}
 		}*/
@@ -278,7 +278,7 @@ void mmc3_ppucycle()
 //			log_printf("mmc3_cycle:  CLOCKED!  irq counter = %d (frame %d, line %d, pixel %d)\n",irqcounter,FRAMES,SCANLINE,LINECYCLES);
 		}
 		if((tmp || irqreload) && (irqcounter == 0) && irqenabled) {
-			cpu_set_irq(1);
+			cpu_set_irq(IRQ_MAPPER);
 //			log_printf("mmc3_cycle:  IRQ!  (frame %d, line %d, pixel %d)\n",FRAMES,SCANLINE,LINECYCLES);
 		}
 		irqreload = 0;

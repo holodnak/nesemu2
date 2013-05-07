@@ -19,22 +19,73 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+
+static u8 prg,irqenable;
+static u16 irqcounter;
+static writefunc_t write4;
 
 static void sync()
 {
-	mem_setprg32(8,latch_reg & 0xF);
-	mem_setvram8(0,0);
-	if(latch_reg & 0x10)
-		mem_setmirroring(MIRROR_1H);
-	else
-		mem_setmirroring(MIRROR_1L);
+	mem_setprg8(0x6,0xF);
+	mem_setprg8(0x8,0x8);
+	mem_setprg8(0xA,0x9);
+	mem_setprg8(0xC,prg);
+	mem_setprg8(0xE,0xB);
+}
+
+static void write(u32 addr,u8 data)
+{
+	if(addr < 0x4020) {
+		write4(addr,data);
+		return;
+	}
+	switch(addr & 0x4120) {
+		case 0x4020:
+			prg = (data >> 1) & 3;	//low
+			prg |= (data & 1) << 2;	//middle
+			prg |= data & 8;			//high
+			sync();
+			break;
+		case 0x4120:
+			irqenable = data;
+			if((data & 1) == 0) {
+				irqcounter = 0;
+				cpu_clear_irq(IRQ_MAPPER);
+			}
+			break;
+	}
 }
 
 static void reset(int hard)
 {
+	write4 = mem_getwritefunc(4);
+	mem_setwritefunc(4,write);
+	mem_setwritefunc(5,write);
 	mem_setvramsize(8);
-	latch_init(sync);
+	mem_setvram8(0,0);
+	if(hard) {
+		prg = 0;
+		irqenable = 0;
+		irqcounter = 0;
+	}
+	sync();
 }
 
-MAPPER(B_NINTENDO_AxROM,reset,0,0,latch_state);
+static void cpucycle()
+{
+	if(irqenable == 0)
+		return;
+	irqcounter++;
+	if(irqcounter == 0x1000)
+		cpu_set_irq(IRQ_MAPPER);
+}
+
+static void state(int mode,u8 *data)
+{
+	STATE_U8(prg);
+	STATE_U8(irqenable);
+	STATE_U16(irqcounter);
+	sync();
+}
+
+MAPPER(B_BTL_SMB2B,reset,0,cpucycle,state);

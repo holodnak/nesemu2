@@ -37,5 +37,5 @@ static void reset_nrom_sram(int hard)
 	mem_setsram8(6,0);
 }
 
-MAPPER(B_NROM,reset_nrom,0,0,0);
-MAPPER(B_NROM_SRAM,reset_nrom_sram,0,0,0);
+MAPPER(B_NINTENDO_NROM,reset_nrom,0,0,0);
+MAPPER(B_NINTENDO_NROM_SRAM,reset_nrom_sram,0,0,0);

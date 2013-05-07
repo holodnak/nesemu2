@@ -32,9 +32,10 @@
 //irq masks
 #define IRQ_TIMER		0x01		//fds
 #define IRQ_DISK		0x02		//fds
-#define IRQ_FRAME		0x10		//apu
-#define IRQ_DPCM		0x20		//apu
-#define IRQ_MAPPER	0x40		//mappers
+#define IRQ_MAPPER	0x10		//mappers
+#define IRQ_MAPPER2	0x20		//mappers
+#define IRQ_FRAME		0x40		//apu
+#define IRQ_DPCM		0x80		//apu
 
 //timing
 #define LINECYCLES	nes.ppu.linecycles

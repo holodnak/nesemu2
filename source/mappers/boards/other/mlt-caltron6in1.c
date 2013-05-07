@@ -54,4 +54,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_CALTRON6IN1,reset,0,0,state);
+MAPPER(B_MLT_CALTRON6IN1,reset,0,0,state);

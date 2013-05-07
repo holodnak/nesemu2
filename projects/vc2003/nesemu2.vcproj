@@ -782,6 +782,12 @@
 						Name="taito"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\taito\tc0190fmc.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\taito\tc0190fmc_pal16r4.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\taito\x1-005.c">
 						</File>
 						<File
@@ -865,6 +871,9 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\btl-mario1-malee2.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\btl-smb2b.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\colordreams.c">
@@ -964,6 +973,13 @@
 							RelativePath="..\..\source\mappers\boards\sunsoft\sunsoft-5b.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="kaiser"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\kaiser\ks202.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="chips"
@@ -989,6 +1005,13 @@
 					<File
 						RelativePath="..\..\source\mappers\chips\namcot-108.c">
 					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\taito-tc0190fmc.c">
+					</File>
+				</Filter>
+				<Filter
+					Name="sound"
+					Filter="">
 				</Filter>
 			</Filter>
 			<Filter
@@ -1279,6 +1302,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\mmc5.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\taito-tc0190fmc.h">
 					</File>
 				</Filter>
 			</Filter>

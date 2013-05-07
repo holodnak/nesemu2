@@ -91,4 +91,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_VRC1,reset,0,0,state);
+MAPPER(B_KONAMI_VRC1,reset,0,0,state);

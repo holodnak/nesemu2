@@ -181,7 +181,7 @@ static void reset(int revision,int hard)
 	mem_setwritefunc(0xD,write_D000);
 	mem_setwritefunc(0xE,write_E000);
 	mem_setwritefunc(0xF,write_F000);
-	if(revision == B_VRC7A) {		//lagrange point
+	if(revision == B_KONAMI_VRC7A) {		//lagrange point
 		mem_setvramsize(8);
 		mem_setvram8(0,0);
 	}
@@ -213,8 +213,8 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-static void reset_vrc7a(int hard)	{	reset(B_VRC7A,hard);	}
-static void reset_vrc7b(int hard)	{	reset(B_VRC7B,hard);	}
+static void reset_vrc7a(int hard)	{	reset(B_KONAMI_VRC7A,hard);	}
+static void reset_vrc7b(int hard)	{	reset(B_KONAMI_VRC7B,hard);	}
 
-MAPPER(B_VRC7A,reset_vrc7a,ppucycle,cpucycle,state);
-MAPPER(B_VRC7B,reset_vrc7b,ppucycle,cpucycle,state);
+MAPPER(B_KONAMI_VRC7A,reset_vrc7a,ppucycle,cpucycle,state);
+MAPPER(B_KONAMI_VRC7B,reset_vrc7b,ppucycle,cpucycle,state);

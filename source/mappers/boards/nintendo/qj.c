@@ -51,4 +51,4 @@ static void state(int mode,u8 *data)
 	mmc3_state(mode,data);
 }
 
-MAPPER(B_QJ,reset,0,mmc3_ppucycle,state);
+MAPPER(B_NINTENDO_QJ,reset,0,mmc3_ppucycle,state);

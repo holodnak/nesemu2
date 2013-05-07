@@ -26,4 +26,4 @@ static void reset(int hard)
 	mmc3_reset(C_MMC3B,mmc3_sync,hard);
 }
 
-MAPPER(B_TxROM,reset,mmc3_ppucycle,0,mmc3_state);
+MAPPER(B_NINTENDO_TxROM,reset,mmc3_ppucycle,0,mmc3_state);

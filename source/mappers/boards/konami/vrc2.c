@@ -107,8 +107,8 @@ static void reset(int revision)
 
 	switch(revision) {
 		default:
-		case B_VRC2A: map = vrc2a_map; break;
-		case B_VRC2B: map = vrc2b_map; break;
+		case B_KONAMI_VRC2A: map = vrc2a_map; break;
+		case B_KONAMI_VRC2B: map = vrc2b_map; break;
 	}
 	mem_setreadfunc(6,read_latch);
 	mem_setwritefunc(6,write_latch);
@@ -131,8 +131,8 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-static void reset_vrc2a(int hard)	{	reset(B_VRC2A);	}
-static void reset_vrc2b(int hard)	{	reset(B_VRC2B);	}
+static void reset_vrc2a(int hard)	{	reset(B_KONAMI_VRC2A);	}
+static void reset_vrc2b(int hard)	{	reset(B_KONAMI_VRC2B);	}
 
-MAPPER(B_VRC2A,reset_vrc2a,0,0,state);
-MAPPER(B_VRC2B,reset_vrc2b,0,0,state);
+MAPPER(B_KONAMI_VRC2A,reset_vrc2a,0,0,state);
+MAPPER(B_KONAMI_VRC2B,reset_vrc2b,0,0,state);

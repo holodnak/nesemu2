@@ -145,7 +145,7 @@ static void reset(int revision,int hard)
 
 	for(i=8;i<16;i++)
 		mem_setwritefunc(i,write);
-	if(revision == B_VRC6B) {
+	if(revision == B_KONAMI_VRC6B) {
 		map = vrc6b_map;
 		mem_setsramsize(2);
 		mem_setsram8(0x6,0);
@@ -176,8 +176,8 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-static void reset_vrc6a(int hard)	{	reset(B_VRC6A,hard);	}
-static void reset_vrc6b(int hard)	{	reset(B_VRC6B,hard);	}
+static void reset_vrc6a(int hard)	{	reset(B_KONAMI_VRC6A,hard);	}
+static void reset_vrc6b(int hard)	{	reset(B_KONAMI_VRC6B,hard);	}
 
-MAPPER(B_VRC6A,reset_vrc6a,ppucycle,cpucycle,state);
-MAPPER(B_VRC6B,reset_vrc6b,ppucycle,cpucycle,state);
+MAPPER(B_KONAMI_VRC6A,reset_vrc6a,ppucycle,cpucycle,state);
+MAPPER(B_KONAMI_VRC6B,reset_vrc6b,ppucycle,cpucycle,state);

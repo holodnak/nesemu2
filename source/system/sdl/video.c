@@ -18,8 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-//#define FRAMELIMIT
-
 #ifdef WIN32
 	#include <windows.h>
 	#include "../win32/resource.h"
@@ -51,6 +49,7 @@ static u64 lasttime = 0;
 static palette_t *palette = 0;
 static u32 *screen = 0;
 static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
+static int framelimit = 0;
 
 enum filters_e {
 	F_NONE,
@@ -106,8 +105,11 @@ int video_reinit()
 		log_printf("video_reinit:  timer_init() failed!\n");
 		return(1);
 	}
+	framelimit = config_get_int("video.framelimit",1);
 
+	//clear palette cache
 	memset(palettecache,0,256*sizeof(u32));
+
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
 	flags |= config_get_int("video.fullscreen",0) ? SDL_FULLSCREEN : 0;
@@ -168,9 +170,8 @@ void video_startframe()
 
 void video_endframe()
 {
-#ifdef FRAMELIMIT
 	u64 t;
-#endif
+
 /*	u32 *ptr1 = screen;
 	u32 *ptr2 = screen + 232 * 256;
 
@@ -188,16 +189,16 @@ void video_endframe()
 	SDL_UnlockSurface(surface);
 
 	//simple frame limiter
-#ifdef FRAMELIMIT
-	t = timer_gettick();
-	while((double)(t - lasttime) < interval) {
-#ifdef WIN32
-//		Sleep(interval - (t - lasttime) + 0);
-#endif
+	if(framelimit) {
 		t = timer_gettick();
-	}
-	lasttime = t;
+		while((double)(t - lasttime) < interval) {
+#ifdef WIN32
+//			Sleep(interval - (t - lasttime) + 0);
 #endif
+			t = timer_gettick();
+		}
+		lasttime = t;
+	}
 }
 
 //this handles lines coming directly from the nes engine

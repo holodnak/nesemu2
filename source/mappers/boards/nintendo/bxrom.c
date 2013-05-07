@@ -33,4 +33,4 @@ static void reset(int hard)
 	latch_init(sync);
 }
 
-MAPPER(B_BxROM,reset,0,0,latch_state);
+MAPPER(B_NINTENDO_BxROM,reset,0,0,latch_state);

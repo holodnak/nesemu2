@@ -43,4 +43,4 @@ static void reset(int hard)
 	mmc3_reset(C_MMC3A,sync,hard);
 }
 
-MAPPER(B_TQROM,reset,mmc3_ppucycle,0,mmc3_state);
+MAPPER(B_NINTENDO_TQROM,reset,mmc3_ppucycle,0,mmc3_state);

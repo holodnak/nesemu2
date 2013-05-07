@@ -34,4 +34,4 @@ static void reset(int hard)
 	mem_setprg32(8,0);
 }
 
-MAPPER(B_CPROM,reset,0,0,latch_state);
+MAPPER(B_NINTENDO_CPROM,reset,0,0,latch_state);

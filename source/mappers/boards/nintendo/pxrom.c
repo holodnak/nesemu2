@@ -21,4 +21,4 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/mmc2.h"
 
-MAPPER(B_PxROM,mmc2_reset,0,0,mmc2_state);
+MAPPER(B_NINTENDO_PxROM,mmc2_reset,0,0,mmc2_state);

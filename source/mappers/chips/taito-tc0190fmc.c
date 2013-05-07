@@ -19,22 +19,66 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
 
-static void sync()
+static u8 prg[2],chr[6];
+static u8 mirror;
+
+void tc0190fmc_sync()
 {
-	mem_setprg32(8,latch_reg & 0xF);
-	mem_setvram8(0,0);
-	if(latch_reg & 0x10)
-		mem_setmirroring(MIRROR_1H);
-	else
-		mem_setmirroring(MIRROR_1L);
+	mem_setprg8(0x8,prg[0]);
+	mem_setprg8(0xA,prg[1]);
+	mem_setprg16(0xC,0xFF);
+	mem_setchr2(0,chr[0]);
+	mem_setchr2(2,chr[1]);
+	mem_setchr1(4,chr[2]);
+	mem_setchr1(5,chr[3]);
+	mem_setchr1(6,chr[4]);
+	mem_setchr1(7,chr[5]);
+	mem_setmirroring(mirror);
 }
 
-static void reset(int hard)
+void tc0190fmc_write(u32 addr,u8 data)
 {
-	mem_setvramsize(8);
-	latch_init(sync);
+	switch(addr & 0xA003) {
+		case 0x8000:
+			prg[0] = data & 0x3F;
+			mirror = ((data >> 6) & 1) ^ 1;
+			break;
+		case 0x8001:
+			prg[1] = data;
+			break;
+		case 0x8002:
+		case 0x8003:
+			chr[addr & 1] = data;
+			break;
+		case 0xA000:
+		case 0xA001:
+		case 0xA002:
+		case 0xA003:
+			chr[(addr & 3) + 2] = data;
+			break;
+	}
+	tc0190fmc_sync();
 }
 
-MAPPER(B_NINTENDO_AxROM,reset,0,0,latch_state);
+void tc0190fmc_reset(int hard)
+{
+	int i;
+
+	for(i=8;i<0xC;i++)
+		mem_setwritefunc(i,tc0190fmc_write);
+	prg[0] = prg[1] = 0;
+	for(i=0;i<6;i++) {
+		chr[i] = 0;
+	}
+	mirror = 0;
+	tc0190fmc_sync();
+}
+
+void tc0190fmc_state(int mode,u8 *data)
+{
+	STATE_ARRAY_U8(prg,2);
+	STATE_ARRAY_U8(chr,6);
+	STATE_U8(mirror);
+	tc0190fmc_sync();
+}

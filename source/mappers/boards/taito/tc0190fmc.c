@@ -19,22 +19,6 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+#include "mappers/chips/taito-tc0190fmc.h"
 
-static void sync()
-{
-	mem_setprg32(8,latch_reg & 0xF);
-	mem_setvram8(0,0);
-	if(latch_reg & 0x10)
-		mem_setmirroring(MIRROR_1H);
-	else
-		mem_setmirroring(MIRROR_1L);
-}
-
-static void reset(int hard)
-{
-	mem_setvramsize(8);
-	latch_init(sync);
-}
-
-MAPPER(B_NINTENDO_AxROM,reset,0,0,latch_state);
+MAPPER(B_TAITO_TC0190FMC,tc0190fmc_reset,0,0,tc0190fmc_state);

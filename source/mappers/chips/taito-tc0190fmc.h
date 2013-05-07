@@ -18,23 +18,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+#ifndef __taito_tc0190fmc_h__
+#define __taito_tc0190fmc_h__
 
-static void sync()
-{
-	mem_setprg32(8,latch_reg & 0xF);
-	mem_setvram8(0,0);
-	if(latch_reg & 0x10)
-		mem_setmirroring(MIRROR_1H);
-	else
-		mem_setmirroring(MIRROR_1L);
-}
+#include "types.h"
 
-static void reset(int hard)
-{
-	mem_setvramsize(8);
-	latch_init(sync);
-}
+void tc0190fmc_sync();
+void tc0190fmc_reset(int hard);
+void tc0190fmc_write(u32 addr,u8 data);
+void tc0190fmc_state(int mode,u8 *data);
 
-MAPPER(B_NINTENDO_AxROM,reset,0,0,latch_state);
+#endif

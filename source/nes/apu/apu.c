@@ -88,7 +88,7 @@ u8 apu_read(u32 addr)
 //			log_printf("apu_read:  $4015:  ret = %02X (cycle %d, line %d, frame %d)\n",ret,LINECYCLES,SCANLINE,FRAMES);
 			return(ret);
 	}
-	log_printf("apu_read: $%04X\n",addr);
+//	log_printf("apu_read: $%04X\n",addr);
 	return(0);
 }
 

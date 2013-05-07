@@ -114,4 +114,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_VRC3,reset,0,cpucycle,state);
+MAPPER(B_KONAMI_VRC3,reset,0,cpucycle,state);

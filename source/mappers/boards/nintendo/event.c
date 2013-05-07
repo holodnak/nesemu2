@@ -76,7 +76,7 @@ static void cpucycle()
 
 static void state(int mode,u8 *data)
 {
-	if(mode >= 2)log_printf("mapper:  B_EVENT:  mode = %d, dip = %X\n",mode,*data);
+	if(mode >= 2)log_printf("mapper:  B_NINTENDO_EVENT:  mode = %d, dip = %X\n",mode,*data);
 	CFG_U8(dip);
 	STATE_U8(dip);
 	STATE_U8(prglock);
@@ -85,4 +85,4 @@ static void state(int mode,u8 *data)
 	mmc1_state(mode,data);
 }
 
-MAPPER(B_EVENT,reset,0,cpucycle,state);
+MAPPER(B_NINTENDO_EVENT,reset,0,cpucycle,state);

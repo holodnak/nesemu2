@@ -175,11 +175,11 @@ static void reset(int revision)
 
 	switch(revision) {
 		default:
-		case B_VRC4A: map = vrc4a_map; break;
-		case B_VRC4B: map = vrc4b_map; break;
-		case B_VRC4C: map = vrc4c_map; break;
-		case B_VRC4D: map = vrc4d_map; break;
-		case B_VRC4E: map = vrc4e_map; break;
+		case B_KONAMI_VRC4A: map = vrc4a_map; break;
+		case B_KONAMI_VRC4B: map = vrc4b_map; break;
+		case B_KONAMI_VRC4C: map = vrc4c_map; break;
+		case B_KONAMI_VRC4D: map = vrc4d_map; break;
+		case B_KONAMI_VRC4E: map = vrc4e_map; break;
 	}
 	mem_setsramsize(2);
 	for(i=8;i<0x10;i++)
@@ -208,14 +208,14 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-static void reset_vrc4a(int hard)	{	reset(B_VRC4A);	}
-static void reset_vrc4b(int hard)	{	reset(B_VRC4B);	}
-static void reset_vrc4c(int hard)	{	reset(B_VRC4C);	}
-static void reset_vrc4d(int hard)	{	reset(B_VRC4D);	}
-static void reset_vrc4e(int hard)	{	reset(B_VRC4E);	}
+static void reset_vrc4a(int hard)	{	reset(B_KONAMI_VRC4A);	}
+static void reset_vrc4b(int hard)	{	reset(B_KONAMI_VRC4B);	}
+static void reset_vrc4c(int hard)	{	reset(B_KONAMI_VRC4C);	}
+static void reset_vrc4d(int hard)	{	reset(B_KONAMI_VRC4D);	}
+static void reset_vrc4e(int hard)	{	reset(B_KONAMI_VRC4E);	}
 
-MAPPER(B_VRC4A,reset_vrc4a,ppucycle,cpucycle,state);
-MAPPER(B_VRC4B,reset_vrc4b,ppucycle,cpucycle,state);
-MAPPER(B_VRC4C,reset_vrc4c,ppucycle,cpucycle,state);
-MAPPER(B_VRC4D,reset_vrc4d,ppucycle,cpucycle,state);
-MAPPER(B_VRC4E,reset_vrc4e,ppucycle,cpucycle,state);
+MAPPER(B_KONAMI_VRC4A,reset_vrc4a,ppucycle,cpucycle,state);
+MAPPER(B_KONAMI_VRC4B,reset_vrc4b,ppucycle,cpucycle,state);
+MAPPER(B_KONAMI_VRC4C,reset_vrc4c,ppucycle,cpucycle,state);
+MAPPER(B_KONAMI_VRC4D,reset_vrc4d,ppucycle,cpucycle,state);
+MAPPER(B_KONAMI_VRC4E,reset_vrc4e,ppucycle,cpucycle,state);

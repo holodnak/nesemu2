@@ -19,22 +19,74 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+#include "mappers/chips/taito-tc0190fmc.h"
 
-static void sync()
+static u8 irqlatch,irqcounter;
+static u8 irqreload,irqenabled;
+static u8 irqwait,needirq;
+
+static void write(u32 addr,u8 data)
 {
-	mem_setprg32(8,latch_reg & 0xF);
-	mem_setvram8(0,0);
-	if(latch_reg & 0x10)
-		mem_setmirroring(MIRROR_1H);
-	else
-		mem_setmirroring(MIRROR_1L);
+	switch(addr & 0xE003) {
+		case 0xC000:
+			irqlatch = data ^ 0xFF;
+			break;
+		case 0xC001:
+			irqcounter = 0;
+			irqreload = 1;
+			break;
+		case 0xC002:
+			irqenabled = 0;
+			cpu_clear_irq(IRQ_MAPPER);
+			break;
+		case 0xC003:
+			irqenabled = 1;
+			break;
+	}
 }
 
 static void reset(int hard)
 {
-	mem_setvramsize(8);
-	latch_init(sync);
+	tc0190fmc_reset(hard);
+	mem_setwritefunc(0xC,write);
+	mem_setwritefunc(0xD,write);
+	irqcounter = irqlatch = 0;
+	irqenabled = irqreload = 0;
+	irqwait = needirq = 0;
 }
 
-MAPPER(B_NINTENDO_AxROM,reset,0,0,latch_state);
+static void ppucycle()
+{
+	u8 tmp;
+
+	if(needirq && (--needirq) == 0)
+		cpu_set_irq(IRQ_MAPPER);
+	if(irqwait)
+		irqwait--;
+	if((irqwait == 0) && (nes.ppu.busaddr & 0x1000)) {
+		tmp = irqcounter;
+		if((irqcounter == 0) || irqreload)
+			irqcounter = irqlatch;
+		else
+			irqcounter--;
+		if((tmp || irqreload) && (irqcounter == 0) && irqenabled)
+			needirq = 12;
+		irqreload = 0;
+	}
+	if(nes.ppu.busaddr & 0x1000) {
+		irqwait = 8;
+	}
+}
+
+static void state(int mode,u8 *data)
+{
+	tc0190fmc_state(mode,data);
+	STATE_U8(irqlatch);
+	STATE_U8(irqcounter);
+	STATE_U8(irqreload);
+	STATE_U8(irqenabled);
+	STATE_U8(irqwait);
+	STATE_U8(needirq);
+}
+
+MAPPER(B_TAITO_TC0190FMC_PAL16R4,reset,ppucycle,0,state);

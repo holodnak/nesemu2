@@ -23,7 +23,18 @@
 
 //apu dpcm
 typedef struct dpcm_s {
-	u8 length;
+	u8 freq, wavehold, doirq, pcmdata, addr, len;
+	u32 CurAddr, SampleLen;	// short
+	u8 silenced, bufempty, fetching;
+	u8 shiftreg, outbits, buffer;
+	u32 LengthCtr;
+	u32 Cycles;
+	s32 Pos;
 } dpcm_t;
+
+void apu_dpcm_reset(int hard);
+void apu_dpcm_write(u32 addr,u8 data);
+void apu_dpcm_step();
+void apu_dpcm_fetch();
 
 #endif

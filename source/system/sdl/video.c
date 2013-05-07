@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#define FRAMELIMIT
+//#define FRAMELIMIT
 
 #ifdef WIN32
 	#include <windows.h>
@@ -168,7 +168,9 @@ void video_startframe()
 
 void video_endframe()
 {
+#ifdef FRAMELIMIT
 	u64 t;
+#endif
 /*	u32 *ptr1 = screen;
 	u32 *ptr2 = screen + 232 * 256;
 

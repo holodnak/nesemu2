@@ -158,3 +158,28 @@ static INLINE void OP_SXA()
 	if((Y + memread(OPADDR + 1)) <= 0xFF)
 		memwrite(EFFADDR,tmp8);
 }
+
+static INLINE void OP_LAR()
+{
+	tmp8 = memread(EFFADDR) & SP;
+	A = X = SP = tmp8;
+}
+
+static INLINE void OP_AXA()
+{
+	tmp8 = (A & X) & 7;
+	memwrite(EFFADDR,tmp8);
+}
+
+static INLINE void OP_XAS()
+{
+	SP = A & X;
+	tmp8 = SP & (EFFADDR >> 8);
+	memwrite(EFFADDR,tmp8);
+}
+
+static INLINE void OP_XAA()
+{
+	A = (A | 0xEE) & X & memread(EFFADDR);
+	checknz(A);
+}

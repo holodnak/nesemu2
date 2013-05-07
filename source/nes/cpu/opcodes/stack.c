@@ -91,6 +91,7 @@ BRK
 */
 static INLINE void OP_BRK()
 {
+	memread(EFFADDR);
 	push((u8)(PC >> 8));
 	push((u8)PC);
 	compact_flags();

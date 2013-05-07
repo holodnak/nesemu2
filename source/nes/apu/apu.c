@@ -18,16 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-//this code is based upon nintendulator's apu
+//this code is ported from nintendulator's c++ apu
 
 #include "nes/nes.h"
 #include "nes/state/state.h"
 #include "misc/log.h"
 
-static apu_external_t *ext = 0;
-static u8 regs[0x20];
-
-static u8 lengths[32] = {
+u8 LengthCounts[32] = {
 	0x0A,0xFE,
 	0x14,0x02,
 	0x28,0x04,
@@ -36,6 +33,7 @@ static u8 lengths[32] = {
 	0x3C,0x0A,
 	0x0E,0x0C,
 	0x1A,0x0E,
+
 	0x0C,0x10,
 	0x18,0x12,
 	0x30,0x14,
@@ -45,6 +43,8 @@ static u8 lengths[32] = {
 	0x10,0x1C,
 	0x20,0x1E
 };
+
+static u8 regs[0x20];
 
 int apu_init()
 {
@@ -62,6 +62,12 @@ void apu_reset(int hard)
 		cpu_clear_irq(IRQ_FRAME | IRQ_DPCM);
 	}
 	apu_frame_reset(hard);
+	apu_race_reset(hard);
+	apu_square0_reset(hard);
+	apu_square1_reset(hard);
+	apu_triangle_reset(hard);
+	apu_noise_reset(hard);
+	apu_dpcm_reset(hard);
 }
 
 u8 apu_read(u32 addr)
@@ -71,12 +77,15 @@ u8 apu_read(u32 addr)
 	switch(addr) {
 		case 0x4015:
 			ret = 0;
-			if(nes.cpu.irqstate & IRQ_FRAME)
-				ret |= 0x40;
-			if(nes.cpu.irqstate & IRQ_DPCM)
-				ret |= 0x80;
+			if(nes.apu.square[0].LengthCtr)	ret |= 0x01;
+			if(nes.apu.square[1].LengthCtr)	ret |= 0x02;
+			if(nes.apu.triangle.LengthCtr)	ret |= 0x04;
+			if(nes.apu.noise.LengthCtr)		ret |= 0x08;
+			if(nes.apu.dpcm.LengthCtr)			ret |= 0x10;
+			if(nes.cpu.irqstate & IRQ_FRAME)	ret |= 0x40;
+			if(nes.cpu.irqstate & IRQ_DPCM)	ret |= 0x80;
 			cpu_clear_irq(IRQ_FRAME);
-			log_printf("apu_read:  ret = %02X (cycle %d, line %d, frame %d)\n",ret,LINECYCLES,SCANLINE,FRAMES);
+//			log_printf("apu_read:  $4015:  ret = %02X (cycle %d, line %d, frame %d)\n",ret,LINECYCLES,SCANLINE,FRAMES);
 			return(ret);
 	}
 	log_printf("apu_read: $%04X\n",addr);
@@ -86,7 +95,45 @@ u8 apu_read(u32 addr)
 void apu_write(u32 addr,u8 data)
 {
 //	log_printf("apu_write: $%04X = $%02X\n",addr,data);
+	regs[addr & 0x1F] = data;
 	switch(addr) {
+		case 0x4000:
+		case 0x4001:
+		case 0x4002:
+		case 0x4003:
+			apu_square0_write(addr & 3,data);
+			break;
+		case 0x4004:
+		case 0x4005:
+		case 0x4006:
+		case 0x4007:
+			apu_square1_write(addr & 3,data);
+			break;
+		case 0x4008:
+		case 0x4009:
+		case 0x400A:
+		case 0x400B:
+			apu_triangle_write(addr & 3,data);
+			break;
+		case 0x400C:
+		case 0x400D:
+		case 0x400E:
+		case 0x400F:
+			apu_noise_write(addr & 3,data);
+			break;
+		case 0x4010:
+		case 0x4011:
+		case 0x4012:
+		case 0x4013:
+			apu_dpcm_write(addr & 3,data);
+			break;
+		case 0x4015:
+			apu_square0_write(4,data & 1);
+			apu_square1_write(4,data & 2);
+			apu_triangle_write(4,data & 4);
+			apu_noise_write(4,data & 8);
+			apu_dpcm_write(4,data & 0x10);
+			break;
 		case 0x4017:
 			apu_frame_write(addr,data);
 			break;
@@ -99,14 +146,15 @@ void apu_write(u32 addr,u8 data)
 void apu_step()
 {
 	apu_frame_step();
+	apu_race_step();
+	apu_square0_step();
+	apu_square1_step();
+	apu_triangle_step();
+	apu_noise_step();
+	apu_dpcm_step();
 }
 
 void apu_state(int mode,u8 *data)
 {
 	STATE_ARRAY_U8(regs,0x20);
-}
-
-void apu_setext(apu_external_t *e)
-{
-	ext = e;
 }

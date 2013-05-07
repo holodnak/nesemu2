@@ -23,7 +23,23 @@
 
 //apu noise
 typedef struct noise_s {
-	u8 length;
+	u8 volume, envelope, wavehold, datatype;
+	u32 freq;
+	u32 CurD;
+	u8 Vol;
+	u8 LengthCtr;
+	u8 EnvCtr, Envelope;
+	u8 Enabled;
+	u8 EnvClk;
+	u32 Cycles;
+	s32 Pos;
+	race_t race;
 } noise_t;
+
+void apu_noise_reset(int hard);
+void apu_noise_write(u32 addr,u8 data);
+void apu_noise_step();
+void apu_noise_quarter();
+void apu_noise_half();
 
 #endif

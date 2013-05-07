@@ -21,21 +21,13 @@
 #ifndef __nes__apu_h__
 #define __nes__apu_h__
 
+#include "nes/apu/race.h"
 #include "nes/apu/units/frame.h"
 #include "nes/apu/units/square.h"
 #include "nes/apu/units/triangle.h"
 #include "nes/apu/units/noise.h"
 #include "nes/apu/units/dpcm.h"
-
-//external sound
-typedef struct apu_external_s
-{
-   void (*init)();
-   void (*kill)();
-   void (*reset)();
-   int (*process)(int);
-	void (*state)(int,u8*);
-} apu_external_t;
+#include "nes/apu/units/external.h"
 
 //apu informations
 typedef struct apu_s {
@@ -44,10 +36,13 @@ typedef struct apu_s {
 	triangle_t	triangle;
 	noise_t		noise;
 	dpcm_t		dpcm;
+	external_t	*external;
 
 	//frame counter
 	frame_t		frame;
 } apu_t;
+
+extern u8 LengthCounts[];
 
 int apu_init();
 void apu_kill();

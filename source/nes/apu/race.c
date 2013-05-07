@@ -18,40 +18,53 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __nes__apu__square_h__
-#define __nes__apu__square_h__
+#include "nes/nes.h"
 
-typedef struct square_s {
-	u8 volume,envelope,wavehold,duty;
-	u8 swpspeed,swpdir,swpstep,swpenab;
-	u32 freq;
-	u8 Vol;
-	u8 CurD;
-	u8 LengthCtr;
-	u8 EnvCtr, Envelope, BendCtr;
-	u8 Enabled, ValidFreq, Active;
-	u8 EnvClk, SwpClk;
-	u32 Cycles;
-	s32 Pos;
-	race_t race;
-} square_t;
+static void race_reset(race_t *r)
+{
+	r->wavehold = 0;
+	r->LengthCtr1 = r->LengthCtr2 = 0;
+}
 
-void apu_square_reset(square_t *sq,int hard);
-void apu_square_write(square_t *sq,u32 addr,u8 data);
-void apu_square_step(square_t *sq);
-void apu_square_quarter(square_t *sq);
-void apu_square_half(square_t *sq);
+void apu_race_reset(int hard)
+{
+	race_reset(&nes.apu.square[0].race);
+	race_reset(&nes.apu.square[1].race);
+//	race_reset(&nes.apu.triangle.race);
+//	race_reset(&nes.apu.noise.race);
+}
 
-#define apu_square0_reset(hard)			apu_square_reset(&nes.apu.square[0],hard)
-#define apu_square0_write(addr,data)	apu_square_write(&nes.apu.square[0],addr,data)
-#define apu_square0_step()					apu_square_step(&nes.apu.square[0])
-#define apu_square0_quarter()				apu_square_quarter(&nes.apu.square[0])
-#define apu_square0_half()					apu_square_half(&nes.apu.square[0])
+void apu_race_step()
+{
+	nes.apu.square[0].wavehold = nes.apu.square[0].race.wavehold;
+	if (nes.apu.square[0].race.LengthCtr1)
+	{
+		if (nes.apu.square[0].LengthCtr == nes.apu.square[0].race.LengthCtr2)
+			nes.apu.square[0].LengthCtr = nes.apu.square[0].race.LengthCtr1;
+		nes.apu.square[0].race.LengthCtr1 = 0;
+	}
 
-#define apu_square1_reset(hard)			apu_square_reset(&nes.apu.square[1],hard)
-#define apu_square1_write(addr,data)	apu_square_write(&nes.apu.square[1],addr,data)
-#define apu_square1_step()					apu_square_step(&nes.apu.square[1])
-#define apu_square1_quarter()				apu_square_quarter(&nes.apu.square[1])
-#define apu_square1_half()					apu_square_half(&nes.apu.square[1])
+	nes.apu.square[1].wavehold = nes.apu.square[1].race.wavehold;
+	if (nes.apu.square[1].race.LengthCtr1)
+	{
+		if (nes.apu.square[1].LengthCtr == nes.apu.square[1].race.LengthCtr2)
+			nes.apu.square[1].LengthCtr = nes.apu.square[1].race.LengthCtr1;
+		nes.apu.square[1].race.LengthCtr1 = 0;
+	}
 
-#endif
+	nes.apu.triangle.wavehold = nes.apu.triangle.race.wavehold;
+	if (nes.apu.triangle.race.LengthCtr1)
+	{
+		if (nes.apu.triangle.LengthCtr == nes.apu.triangle.race.LengthCtr2)
+			nes.apu.triangle.LengthCtr = nes.apu.triangle.race.LengthCtr1;
+		nes.apu.triangle.race.LengthCtr1 = 0;
+	}
+
+	nes.apu.noise.wavehold = nes.apu.noise.race.wavehold;
+	if (nes.apu.noise.race.LengthCtr1)
+	{
+		if (nes.apu.noise.LengthCtr == nes.apu.noise.race.LengthCtr2)
+			nes.apu.noise.LengthCtr = nes.apu.noise.race.LengthCtr1;
+		nes.apu.noise.race.LengthCtr1 = 0;
+	}
+}

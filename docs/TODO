@@ -4,7 +4,9 @@ nes
 cpu
  . add the BRK + NMI bug
  . branch + interrupts
- 
+ . cpu_execute() and cpu_tick() both check status of FLAG_I.  fix.
+ . LAR, AXA, XAS need verification.
+
 ppu
  . $2005/6 masks for internal scroll temp register (bit15 is ok?)
  . dirty buffer system for cache + vram...NECESSARY ASAP (wizards & warriors)

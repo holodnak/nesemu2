@@ -23,7 +23,21 @@
 
 //apu triangle
 typedef struct triangle_s {
-	u8 length;
+	u8 linear, wavehold;
+	u32 freq;
+	u8 CurD;
+	u8 LengthCtr, LinCtr;
+	u8 Enabled, Active;
+	u8 LinClk;
+	u32 Cycles;
+	s32 Pos;
+	race_t race;
 } triangle_t;
+
+void apu_triangle_reset(int hard);
+void apu_triangle_write(u32 addr,u8 data);
+void apu_triangle_step();
+void apu_triangle_quarter();
+void apu_triangle_half();
 
 #endif

@@ -51,7 +51,7 @@ void apu_frame_write(u32 addr,u8 data)
 	if(data & 0x40) {
 		cpu_clear_irq(IRQ_FRAME);
 	}
-	log_printf("apu_frame_write:  lengthcounter = %02X (cycle %d, line %d, frame %d)\n",data,LINECYCLES,SCANLINE,FRAMES);
+//	log_printf("apu_frame_write:  lengthcounter = %02X (cycle %d, line %d, frame %d)\n",data,LINECYCLES,SCANLINE,FRAMES);
 }
 
 void apu_frame_step()
@@ -81,20 +81,21 @@ void apu_frame_step()
 	}
 	FRAME_CYCLES++;
 	if(FRAME_QUARTER && --FRAME_QUARTER == 0) {
-//		Square0::QuarterFrame();
-//		Square1::QuarterFrame();
-//		Triangle::QuarterFrame();
-//		Noise::QuarterFrame();
+		apu_square0_quarter();
+		apu_square1_quarter();
+		apu_triangle_quarter();
+		apu_noise_quarter();
 	}
 	if(FRAME_HALF && --FRAME_HALF == 0) {
-//		Square0::HalfFrame();
-//		Square1::HalfFrame();
-//		Triangle::HalfFrame();
-//		Noise::HalfFrame();
+		apu_square0_half();
+		apu_square1_half();
+		apu_triangle_half();
+		apu_noise_half();
 	}
 	if(FRAME_IRQ) {
 		if(FRAME_REG == 0) {
-			log_printf("apu_frame_step:  frame irq!  cycle %d, line %d, frame %d\n",LINECYCLES,SCANLINE,FRAMES);
+//			if(nes.cpu.flags.i == 0)
+//				log_printf("apu_frame_step:  frame irq!  cycle %d, line %d, frame %d\n",LINECYCLES,SCANLINE,FRAMES);
 			cpu_set_irq(IRQ_FRAME);
 		}
 		FRAME_IRQ--;

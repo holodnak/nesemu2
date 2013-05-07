@@ -23,8 +23,8 @@
 
 static void sync()
 {
-	mem_setprg32(8,latch_reg & 0xF);
-	mem_setchr8(0,(latch_reg >> 4) & 0xF);
+	mem_setprg32(8,latch_data & 0xF);
+	mem_setchr8(0,(latch_data >> 4) & 0xF);
 }
 
 static void reset(int hard)

@@ -25,8 +25,8 @@ static void sync()
 {
 	int bank,banks[4],x;
 
-	bank = (latch_reg << 1) & 0x7E;
-	x = (latch_reg >> 7) & 1;
+	bank = (latch_data << 1) & 0x7E;
+	x = (latch_data >> 7) & 1;
 	switch(latch_addr & 3) {
 		case 0:
 			banks[0] = bank | 0;
@@ -57,7 +57,7 @@ static void sync()
 	mem_setprg8(0xA,banks[1] ^ x);
 	mem_setprg8(0xC,banks[2] ^ x);
 	mem_setprg8(0xE,banks[3] ^ x);
-	mem_setmirroring((latch_reg & 0x40) ? MIRROR_H : MIRROR_V);
+	mem_setmirroring((latch_data & 0x40) ? MIRROR_H : MIRROR_V);
 }
 
 static void reset(int hard)

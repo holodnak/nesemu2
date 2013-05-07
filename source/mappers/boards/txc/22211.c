@@ -30,7 +30,7 @@ static void sync()
 {
 	mem_setprg32(8,(reg[2] >> 2) & 3);
 	if(revision == B_TXC_22211B)
-		mem_setchr8(0,(((latch_reg ^ reg[2]) >> 3) & 2) | (((latch_reg ^ reg[2]) >> 5) & 1));
+		mem_setchr8(0,(((latch_data ^ reg[2]) >> 3) & 2) | (((latch_data ^ reg[2]) >> 5) & 1));
 	else
 		mem_setchr8(0,reg[2] & 3);
 }

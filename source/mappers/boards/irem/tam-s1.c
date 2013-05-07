@@ -24,9 +24,9 @@
 static void sync()
 {
 	mem_setprg16(0x8,0xFF);
-	mem_setprg16(0xC,latch_reg);
+	mem_setprg16(0xC,latch_data);
 	mem_setvram8(0,0);
-	switch(latch_reg >> 6) {
+	switch(latch_data >> 6) {
 		case 0: mem_setmirroring(MIRROR_1L);	break;
 		case 1: mem_setmirroring(MIRROR_H);		break;
 		case 2: mem_setmirroring(MIRROR_V);		break;

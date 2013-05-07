@@ -18,14 +18,28 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __latch_h__
-#define __latch_h__
+#include "mappers/mapperinc.h"
+#include "mappers/chips/latch.h"
 
-extern u8 latch_data;
-extern u32 latch_addr;
+static void sync()
+{
+	u8 prg;
 
-void latch_write(u32 addr,u8 data);
-void latch_init(void (*sync)());
-void latch_state(int mode,u8 *data);
+	prg = ((latch_addr >> 8) & 0x3F) | (latch_addr & 0x40);
+	if(latch_addr & 0x20) {
+		mem_setprg16(0x8,prg);
+		mem_setprg16(0xC,prg);
+	}
+	else {
+		mem_setprg32(8,prg >> 1);
+	}
+	mem_setchr8(0,(latch_data & 3) | ((latch_addr & 0x3F) << 2));
+	mem_setmirroring(((latch_addr >> 7) & 1) ^ 1);
+}
 
-#endif
+static void reset(int hard)
+{
+	latch_init(sync);
+}
+
+MAPPER(B_BMC_SUPER700IN1,reset,0,0,latch_state);

@@ -867,6 +867,12 @@
 							RelativePath="..\..\source\mappers\boards\other\bmc-fk23c.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-mario7in1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-super700in1.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\other\btl-biomiraclea.c">
 						</File>
 						<File
@@ -978,6 +984,13 @@
 						Filter="">
 						<File
 							RelativePath="..\..\source\mappers\boards\kaiser\ks202.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="waixing"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\waixing\sgz.c">
 						</File>
 					</Filter>
 				</Filter>

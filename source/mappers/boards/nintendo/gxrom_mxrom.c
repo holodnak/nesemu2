@@ -23,9 +23,9 @@
 
 static void sync()
 {
-	mem_setprg32(8,(latch_reg & 0xF0) >> 4);
+	mem_setprg32(8,(latch_data & 0xF0) >> 4);
 	if(nes.cart->chr.size)
-		mem_setchr8(0,latch_reg & 0xF);
+		mem_setchr8(0,latch_data & 0xF);
 	else
 		mem_setvram8(0,0);
 }

@@ -23,7 +23,7 @@
 
 static void sync()
 {
-	mem_setprg32(8,latch_reg);
+	mem_setprg32(8,latch_data);
 	mem_setvram8(0,0);
 }
 

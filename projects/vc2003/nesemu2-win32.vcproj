@@ -395,20 +395,27 @@
 						RelativePath="..\..\source\nes\apu\apu.c">
 					</File>
 					<File
-						RelativePath="..\..\source\nes\apu\mattapu.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
+						RelativePath="..\..\source\nes\apu\race.c">
 					</File>
+					<Filter
+						Name="units"
+						Filter="">
+						<File
+							RelativePath="..\..\source\nes\apu\units\dpcm.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\frame.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\noise.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\square.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\apu\units\triangle.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="cart"
@@ -651,6 +658,12 @@
 						Name="taito"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\taito\tc0190fmc.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\taito\tc0190fmc_pal16r4.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\taito\x1-005.c">
 						</File>
 						<File
@@ -703,10 +716,19 @@
 							RelativePath="..\..\source\mappers\boards\other\bmc-fk23c.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-mario7in1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\bmc-super700in1.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\other\btl-biomiraclea.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\btl-mario1-malee2.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\btl-smb2b.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\colordreams.c">
@@ -814,6 +836,39 @@
 							RelativePath="..\..\source\mappers\boards\cne\shlz.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="kaiser"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\kaiser\ks202.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="waixing"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\waixing\sgz.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="sunsoft"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\sunsoft\sunsoft-1.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sunsoft\sunsoft-2.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sunsoft\sunsoft-3.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sunsoft\sunsoft-4.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sunsoft\sunsoft-5b.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="chips"
@@ -838,6 +893,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\namcot-108.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\taito-tc0190fmc.c">
 					</File>
 				</Filter>
 			</Filter>

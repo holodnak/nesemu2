@@ -24,8 +24,8 @@
 static void sync()
 {
 	mem_setprg32(8,0);
-	mem_setchr4(0,latch_reg & 7);
-	mem_setchr4(4,((latch_reg >> 4) & 7) | 4);
+	mem_setchr4(0,latch_data & 7);
+	mem_setchr4(4,((latch_data >> 4) & 7) | 4);
 }
 
 static void reset(int hard)

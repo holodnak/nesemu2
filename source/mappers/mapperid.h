@@ -104,6 +104,8 @@ enum boardid_e {
 	B_BMC_BIG7IN1,
 	B_BMC_FK23C,
 	B_BMC_CONTRA_FUNCTION_16,
+	B_BMC_MARIO7IN1,
+	B_BMC_SUPER700IN1,
 	B_MLT_CALTRON6IN1,
 	B_BTL_BIOMIRACLEA,
 	B_BTL_MARIO1_MALEE2,
@@ -166,6 +168,9 @@ enum boardid_e {
 
 	//kaiser
 	B_KAISER_KS202,
+
+	//waixing
+	B_WAIXING_SGZ,
 
 	//homebrew
 	B_TEPPLES,

@@ -24,7 +24,7 @@
 static void sync()
 {
 	mem_setvram4(0,0);
-	mem_setvram4(4,latch_reg & 3);
+	mem_setvram4(4,latch_data & 3);
 }
 
 static void reset(int hard)

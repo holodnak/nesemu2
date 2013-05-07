@@ -39,9 +39,11 @@ mappers
  . mapper 47 (nes-qj) needs $A001 register write disable
  . test mappers 67/68/69 more
  . mapper48 games to test
+ . mmc3 sram enable/disable
+ . mapper 252 graphical glitches
 
 mappers working
- . perfect:  0, 1, 2, 3, 4, 42
+ . perfect:  0, 1, 2, 3, 4, 42, 52, 62
 
 misc
  . implement reading of the xml rom databases

@@ -131,6 +131,9 @@ static mapper_t *get_mapper(int mapperid)
 	//kaiser
 	MAPPER(B_KAISER_KS202);
 
+	//waixing
+	MAPPER(B_WAIXING_SGZ);
+
 	//other (unknown)
 	MAPPER(B_MLT_CALTRON6IN1);
 	MAPPER(B_BMC_15IN1);
@@ -140,6 +143,8 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_BMC_BIG7IN1);
 	MAPPER(B_BMC_FK23C);
 	MAPPER(B_BMC_CONTRA_FUNCTION_16);
+	MAPPER(B_BMC_MARIO7IN1);
+	MAPPER(B_BMC_SUPER700IN1);
 	MAPPER(B_BTL_MARIO1_MALEE2);
 	MAPPER(B_BTL_BIOMIRACLEA);
 	MAPPER(B_BTL_SMB2B);

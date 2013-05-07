@@ -23,14 +23,14 @@
 
 static void sync()
 {
-	mem_setprg16(0x8,(latch_reg >> 4) & 7);
+	mem_setprg16(0x8,(latch_data >> 4) & 7);
 	mem_setprg16(0xC,0xFF);
 	if(nes.cart->chr.size == 0) {
 		mem_setvram8(0,0);
 	}
 	else {
-		mem_setchr8(0,(latch_reg & 7) | ((latch_reg >> 4) & 8));
-		mem_setmirroring(MIRROR_1L + ((latch_reg >> 3) & 1));
+		mem_setchr8(0,(latch_data & 7) | ((latch_data >> 4) & 8));
+		mem_setmirroring(MIRROR_1L + ((latch_data >> 3) & 1));
 	}
 }
 

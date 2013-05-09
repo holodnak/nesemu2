@@ -50,9 +50,6 @@ __inline void checkmessages()
 
 int mainloop()
 {
-//	HACCEL hAccelTable;
-
-//	hAccelTable = LoadAccelerators(hInstance,(LPCTSTR)IDC_CRAP);
 	while(quit == 0) {
 		checkmessages();
 		if(running) {

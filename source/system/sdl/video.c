@@ -110,6 +110,12 @@ int video_reinit()
 	//clear palette cache
 	memset(palettecache,0,256*sizeof(u32));
 
+	//debugging colors
+	palettecache[0x80] = 0xFFFFFF;
+	palettecache[0x81] = 0xFF0000;
+	palettecache[0x82] = 0x00FF00;
+	palettecache[0x83] = 0x0000FF;
+
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
 	flags |= config_get_int("video.fullscreen",0) ? SDL_FULLSCREEN : 0;

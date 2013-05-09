@@ -22,7 +22,6 @@
 #include "misc/log.h"
 #include "misc/memutil.h"
 #include "misc/config.h"
-#include "misc/config.h"
 #include "misc/crc32.h"
 #include "system/system.h"
 #include "system/video.h"

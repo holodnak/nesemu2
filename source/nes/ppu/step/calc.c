@@ -34,7 +34,7 @@ static INLINE void calc_ataddr()
 	nes.ppu.busaddr += 0x3C0;
 
 	//calculate the correct attribute byte
-	nes.ppu.busaddr += ((SCROLL >> 2) & 7) + (((SCROLL >> (2 + 5)) & 7) << 3);
+	nes.ppu.busaddr += ((SCROLL >> 2) & 7) + ((SCROLL >> 4) & 0x38);
 }
 
 //calculate pattern table low byte address

@@ -18,67 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mappers/mapperinc.h"
+#ifndef __dialogs_h__
+#define __dialogs_h__
 
-static u8 prg,chr;
-static u32 irqcounter;
+LRESULT CALLBACK AboutDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK MappersDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK ConfigurationDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK DebuggerDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+VOID ConfigurationPropertySheet(HWND hWnd);
 
-static void sync()
-{
-	mem_setprg16(0x8,prg);
-	mem_setprg16(0xC,0xFF);
-	mem_setsvram4(0,0);
-	mem_setvram4(4,chr);
-}
-
-static void write_cic(u32 addr,u8 data)
-{
-}
-
-static void write(u32 addr,u8 data)
-{
-	switch(addr & 0xC000) {
-		case 0x8000:
-			prg = data >> 6;
-			chr = data & 0xF;
-			break;
-		case 0xC000:
-			cpu_clear_irq(IRQ_MAPPER);
-			break;
-	}
-	sync();
-}
-
-static void reset(int hard)
-{
-	int i;
-
-	mem_setwritefunc(6,write_cic);
-	for(i=8;i<16;i++)
-		mem_setwritefunc(i,write);
-	mem_setvramsize(64);
-	mem_setsvramsize(4);
-	prg = 0;
-	chr = 0;
-	irqcounter = 0;
-	sync();
-}
-
-static void cpucycle()
-{
-	irqcounter++;
-	if(irqcounter == 1024) {
-		irqcounter = 0;
-		cpu_set_irq(IRQ_MAPPER);
-	}
-}
-
-static void state(int mode,u8 *data)
-{
-	STATE_U8(prg);
-	STATE_U8(chr);
-	STATE_U32(irqcounter);
-	sync();
-}
-
-MAPPER(B_RACERMATE,reset,0,cpucycle,state);
+#endif

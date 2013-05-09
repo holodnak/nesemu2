@@ -18,64 +18,67 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-static INLINE void inc_hscroll()
+#include "mappers/mapperinc.h"
+#include "mappers/chips/mmc3.h"
+
+static u8 security[] = {0,3,1,5,6,7,2,4};
+static u8 reg[2];
+
+static void sync()
 {
-	if(CONTROL1 & 0x18) {
-		/*	The first one, the horizontal scroll counter, consists of 6 bits, and is
-		made up by daisy-chaining the HT counter to the H counter. The HT counter is
-		then clocked every 8 pixel dot clocks (or every 8/3 CPU clock cycles). */
-		if((SCROLL & 0x1F) == 0x1F) {		//see if HT counter creates carry
-			SCROLL ^= 0x41F;					//yes, clear lower 5 bits and toggle H counter
+	mmc3_syncprg(0xFF,0);
+	mmc3_syncchr(0xFF,0);
+	mmc3_syncsram();
+	mmc3_syncmirror();
+	if(reg[0] & 0x40) {
+		u8 bank = (reg[0] & 5) | ((reg[0] >> 2) & 2) | ((reg[0] >> 2) & 8);
+
+		if(reg[0] & 2)
+			mem_setprg32(8,bank >> 1);
+		else {
+			mem_setprg16(0x8,bank);
+			mem_setprg16(0xC,bank);
 		}
-		else
-			SCROLL++;							//no, increment address
-	}
-	nes.ppu.fetchpos++;
-}
-
-static INLINE void inc_vscroll()
-{
-	int n;
-
-	if(CONTROL1 & 0x18) {
-		//update y coordinate
-		if((SCROLL >> 12) == 7) {
-			SCROLL &= ~0x7000;
-			n = (SCROLL >> 5) & 0x1F;
-			if(n == 29) {
-				SCROLL &= ~0x03E0;
-				SCROLL ^= 0x0800;
-			}
-			else if(n == 31)
-				SCROLL &= ~0x03E0;
-			else
-				SCROLL += 0x20;
-		}
-		else
-			SCROLL += 0x1000;
 	}
 }
 
-static INLINE void update_hscroll()
+static u8 read5(u32 addr)
 {
-	if(CONTROL1 & 0x18) {
-		SCROLL &= ~0x041F;
-		SCROLL |= TMPSCROLL & 0x041F;
-	}
-	nes.ppu.fetchpos = 0;
-	nes.ppu.cursprite = 0;
+//	log_message("h2288 protection read: $%04X\n",addr);
+	if(addr < 0x5800)
+		return(0xFF);
+	return(((addr >> 8) & 0xFE) | (((~addr >> 8) | addr) & 1));
 }
 
-static INLINE void update_vscroll()
+static void write5(u32 addr,u8 data)
 {
-	if(CONTROL1 & 0x18) {
-		SCROLL &= ~0x7BE0;
-		SCROLL |= TMPSCROLL & 0x7BE0;
-	}
+	if(addr < 0x5800)
+		return;
+//	log_message("h2288 write: $%04X = $%02X\n",addr,data);
+	reg[addr & 1] = data;
+	sync();
 }
 
-static INLINE void update_scroll()
+static void write_security(u32 addr,u8 data)
 {
-	if(CONTROL1 & 0x18)
-		SCROLL = TMPSCROLL;
+	if(addr & 1)
+		mmc3_write(addr,data);
+	else
+		mmc3_write(addr,(data & 0xC0) | security[data & 7]);
 }
+
+static void reset(int hard)
+{
+	mem_setreadfunc(5,read5);
+	mem_setwritefunc(5,write5);
+	mmc3_reset(C_MMC3B,mmc3_sync,hard);
+	mem_setwritefunc(8,write_security);
+}
+
+static void state(int mode,u8 *data)
+{
+	STATE_ARRAY_U8(reg,2);
+	mmc3_state(mode,data);
+}
+
+MAPPER(B_UNL_H2288,reset,mmc3_ppucycle,0,state);

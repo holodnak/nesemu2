@@ -18,64 +18,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-static INLINE void inc_hscroll()
-{
-	if(CONTROL1 & 0x18) {
-		/*	The first one, the horizontal scroll counter, consists of 6 bits, and is
-		made up by daisy-chaining the HT counter to the H counter. The HT counter is
-		then clocked every 8 pixel dot clocks (or every 8/3 CPU clock cycles). */
-		if((SCROLL & 0x1F) == 0x1F) {		//see if HT counter creates carry
-			SCROLL ^= 0x41F;					//yes, clear lower 5 bits and toggle H counter
-		}
-		else
-			SCROLL++;							//no, increment address
-	}
-	nes.ppu.fetchpos++;
-}
+#include <windows.h>
 
-static INLINE void inc_vscroll()
+LRESULT CALLBACK AboutDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	int n;
+	switch(message) {
 
-	if(CONTROL1 & 0x18) {
-		//update y coordinate
-		if((SCROLL >> 12) == 7) {
-			SCROLL &= ~0x7000;
-			n = (SCROLL >> 5) & 0x1F;
-			if(n == 29) {
-				SCROLL &= ~0x03E0;
-				SCROLL ^= 0x0800;
+		case WM_INITDIALOG:
+			return(TRUE);
+
+		case WM_COMMAND:
+			if(LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+				EndDialog(hDlg,LOWORD(wParam));
+				return(TRUE);
 			}
-			else if(n == 31)
-				SCROLL &= ~0x03E0;
-			else
-				SCROLL += 0x20;
-		}
-		else
-			SCROLL += 0x1000;
-	}
-}
+			break;
 
-static INLINE void update_hscroll()
-{
-	if(CONTROL1 & 0x18) {
-		SCROLL &= ~0x041F;
-		SCROLL |= TMPSCROLL & 0x041F;
 	}
-	nes.ppu.fetchpos = 0;
-	nes.ppu.cursprite = 0;
-}
-
-static INLINE void update_vscroll()
-{
-	if(CONTROL1 & 0x18) {
-		SCROLL &= ~0x7BE0;
-		SCROLL |= TMPSCROLL & 0x7BE0;
-	}
-}
-
-static INLINE void update_scroll()
-{
-	if(CONTROL1 & 0x18)
-		SCROLL = TMPSCROLL;
+	return(FALSE);
 }

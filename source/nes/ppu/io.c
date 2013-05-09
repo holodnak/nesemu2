@@ -174,7 +174,7 @@ void ppu_write(u32 addr,u8 data)
 			return;
 		case 5:				//scroll
 //			log_printf("ppu_write:  write to $%04X (tog=%d) @ cycle %d, line %d, frame %d\n",addr,TOGGLE,LINECYCLES,SCANLINE,FRAMES);
-//			nes.ppu.linebuffer[LINECYCLES] = 0x82 + TOGGLE;
+			nes.ppu.linebuffer[LINECYCLES] = 0x82 + TOGGLE;
 			if(TOGGLE == 0) { //first write
 				TMPSCROLL = (TMPSCROLL & ~0x001F) | (data >> 3);
 				SCROLLX = data & 7;
@@ -188,7 +188,7 @@ void ppu_write(u32 addr,u8 data)
 			return;
 		case 6:				//vram addr
 //			log_printf("ppu_write:  write to $%04X (tog=%d) @ cycle %d, line %d, frame %d\n",addr,TOGGLE,LINECYCLES,SCANLINE,FRAMES);
-//			nes.ppu.linebuffer[LINECYCLES] = 0x80 + TOGGLE;
+			nes.ppu.linebuffer[LINECYCLES] = 0x80 + TOGGLE;
 			if(TOGGLE == 0) { //first write
 				TMPSCROLL = (TMPSCROLL & ~0xFF00) | ((data & 0x7F) << 8);
 				TOGGLE = 1;
@@ -196,6 +196,8 @@ void ppu_write(u32 addr,u8 data)
 			else { //second write
 				SCROLL = TMPSCROLL = (TMPSCROLL & ~0x00FF) | data;
 				TOGGLE = 0;
+				//kludge
+				nes.ppu.busaddr = SCROLL;
 			}
 			return;
 		case 7:				//vram data

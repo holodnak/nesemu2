@@ -38,6 +38,8 @@ static inputdev_t *get_inputdev(int inputdevid)
 	//standard input devices
 	INPUTDEV(I_JOYPAD0);
 	INPUTDEV(I_JOYPAD1);
+	INPUTDEV(I_ZAPPER);
+	INPUTDEV(I_POWERPAD);
 
 	return(0);
 }

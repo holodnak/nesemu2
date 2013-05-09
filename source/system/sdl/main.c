@@ -140,7 +140,7 @@ static void showmappers()
 	for(n=0,i=0;i<256;i++) {
 		if(mapper_get_mapperid_ines(i) >= 0) {
 			if(n)
-				log_printf(", ",i);
+				log_printf(", ");
 			log_printf("%d",i);
 			n++;
 		}
@@ -151,7 +151,7 @@ static void showmappers()
 		for(j=1;j<16;j++) {
 			if(mapper_get_mapperid_ines20(i,j) >= 0) {
 				if(n2)
-					log_printf(", ",i);
+					log_printf(", ");
 				log_printf("%d.%d",i,j);
 				n2++;
 			}

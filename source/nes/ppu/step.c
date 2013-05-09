@@ -161,7 +161,7 @@ static INLINE void scanline_prerender()
 
 		//fetch sprite pattern high (update scroll registers on cycle 304)
 		case 304:
-			update_scroll();
+			update_vscroll();
 		case 264:	case 272:	case 280:	case 288:	case 296:	case 312:	case 320:
 			fetch_spt1byte();
 			break;
@@ -212,10 +212,6 @@ static INLINE void scanline_prerender()
 			break;
 		case 340:
 			fetch_ntbyte();
-			break;
-
-		default:
-//			log_printf("scanline_20:  unhandled cycle %d\n",LINECYCLES);
 			break;
 	}
 #ifndef QUICK_SPRITES
@@ -386,10 +382,6 @@ static INLINE void scanline_visible()
 		case 340:
 			fetch_ntbyte();
 			break;
-
-		default:
-//			log_printf("scanline_visible:  unhandled cycle %d\n",LINECYCLES);
-			break;
 	}
 #ifndef QUICK_SPRITES
 	process_sprites();
@@ -411,7 +403,14 @@ static INLINE void scanline_startvblank()
 
 static INLINE void scanline_postrender()
 {
+	if(LINECYCLES == 0) {
+		u8 *sram = nes.cart->sram.size ? nes.cart->sram.data : 0;
 
+		if(sram && sram[0] == 3 && sram[1] == 0xDE && sram[2] == 0xB0 && sram[3] == 0x61) {
+			sram[0] = 0;
+			printf("%s",sram + 4);
+		}
+	}
 }
 
 void ppu_step()
@@ -444,7 +443,6 @@ void ppu_step()
 			if(CONTROL1 & 0x18)
 				scanline_visible();
 			else {
-//				nes.ppu.busaddr = SCROLL; //hack
 				if(LINECYCLES < 256)
 					nes.ppu.linebuffer[LINECYCLES] = 0;
 				else if(LINECYCLES == 256) {
@@ -453,7 +451,7 @@ void ppu_step()
 			}
 			break;
 		case 240:
-//			scanline_postrender();
+			scanline_postrender();
 			break;
 		case 241:
 			scanline_startvblank();

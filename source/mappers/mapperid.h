@@ -96,7 +96,7 @@ enum boardid_e {
 	B_SUNSOFT_5B,
 
 	//unlicensed
-	B_H2288,
+	B_UNL_H2288,
 	B_BMC_15IN1,
 	B_BMC_36IN1,
 	B_BMC_70IN1,
@@ -106,6 +106,11 @@ enum boardid_e {
 	B_BMC_CONTRA_FUNCTION_16,
 	B_BMC_MARIO7IN1,
 	B_BMC_SUPER700IN1,
+	B_BMC_76IN1,
+	B_BMC_72IN1,
+	B_BMC_21IN1,
+	B_BMC_35IN1,
+	B_BMC_150IN1,
 	B_MLT_CALTRON6IN1,
 	B_BTL_BIOMIRACLEA,
 	B_BTL_MARIO1_MALEE2,
@@ -123,7 +128,7 @@ enum boardid_e {
 	B_CNE_DECATHLON,
 
 	//racermate
-	B_RACERMATE,
+	B_UNL_RACERMATE,
 
 	//colordreams + few others
 	B_74x377,
@@ -171,6 +176,9 @@ enum boardid_e {
 
 	//waixing
 	B_WAIXING_SGZ,
+
+	//ntdec
+	B_NTDEC_TC112,
 
 	//homebrew
 	B_TEPPLES,

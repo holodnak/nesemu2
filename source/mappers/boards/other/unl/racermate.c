@@ -19,66 +19,66 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/mmc3.h"
 
-static u8 security[] = {0,3,1,5,6,7,2,4};
-static u8 reg[2];
+static u8 prg,chr;
+static u32 irqcounter;
 
 static void sync()
 {
-	mmc3_syncprg(0xFF,0);
-	mmc3_syncchr(0xFF,0);
-	mmc3_syncsram();
-	mmc3_syncmirror();
-	if(reg[0] & 0x40) {
-		u8 bank = (reg[0] & 5) | ((reg[0] >> 2) & 2) | ((reg[0] >> 2) & 8);
+	mem_setprg16(0x8,prg);
+	mem_setprg16(0xC,0xFF);
+	mem_setsvram4(0,0);
+	mem_setvram4(4,chr);
+}
 
-		if(reg[0] & 2)
-			mem_setprg32(8,bank >> 1);
-		else {
-			mem_setprg16(0x8,bank);
-			mem_setprg16(0xC,bank);
-		}
+static void write_cic(u32 addr,u8 data)
+{
+}
+
+static void write(u32 addr,u8 data)
+{
+	switch(addr & 0xC000) {
+		case 0x8000:
+			prg = data >> 6;
+			chr = data & 0xF;
+			break;
+		case 0xC000:
+			cpu_clear_irq(IRQ_MAPPER);
+			break;
 	}
-}
-
-static u8 read5(u32 addr)
-{
-//	log_message("h2288 protection read: $%04X\n",addr);
-	if(addr < 0x5800)
-		return(0xFF);
-	return(((addr >> 8) & 0xFE) | (((~addr >> 8) | addr) & 1));
-}
-
-static void write5(u32 addr,u8 data)
-{
-	if(addr < 0x5800)
-		return;
-//	log_message("h2288 write: $%04X = $%02X\n",addr,data);
-	reg[addr & 1] = data;
 	sync();
-}
-
-static void write_security(u32 addr,u8 data)
-{
-	if(addr & 1)
-		mmc3_write(addr,data);
-	else
-		mmc3_write(addr,(data & 0xC0) | security[data & 7]);
 }
 
 static void reset(int hard)
 {
-	mem_setreadfunc(5,read5);
-	mem_setwritefunc(5,write5);
-	mmc3_reset(C_MMC3B,mmc3_sync,hard);
-	mem_setwritefunc(8,write_security);
+	int i;
+
+	mem_setwritefunc(6,write_cic);
+	for(i=8;i<16;i++)
+		mem_setwritefunc(i,write);
+	mem_setvramsize(64);
+	mem_setsvramsize(4);
+	prg = 0;
+	chr = 0;
+	irqcounter = 0;
+	sync();
+}
+
+static void cpucycle()
+{
+	irqcounter++;
+	if(irqcounter == 1024) {
+		irqcounter = 0;
+		cpu_set_irq(IRQ_MAPPER);
+	}
 }
 
 static void state(int mode,u8 *data)
 {
-	STATE_ARRAY_U8(reg,2);
-	mmc3_state(mode,data);
+	STATE_U8(prg);
+	STATE_U8(chr);
+	STATE_U32(irqcounter);
+	sync();
 }
 
-MAPPER(B_H2288,reset,mmc3_ppucycle,0,state);
+MAPPER(B_UNL_RACERMATE,reset,0,cpucycle,state);

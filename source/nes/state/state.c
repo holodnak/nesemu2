@@ -93,7 +93,7 @@ int state_load(FILE *fp)
 		if((block = block_load(fp)) == 0)
 			break;
 		size += 8 + block->size;
-		log_printf("state_load:  loaded block '%4s' (%08X) (%d bytes)\n",&block->type,block->type,block->size);
+//		log_printf("state_load:  loaded block '%4s' (%08X) (%d bytes)\n",&block->type,block->type,block->size);
 		for(i=0;blockinfo[i].type;i++) {
 			if(blockinfo[i].type == block->type) {
 				blockinfo[i].func(STATE_LOAD,block->data);

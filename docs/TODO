@@ -41,9 +41,19 @@ mappers
  . mapper48 games to test
  . mmc3 sram enable/disable
  . mapper 252 graphical glitches
+ . mapper 225 some games not working (110 in 1)
+ . mapper 202 needs work
 
-mappers working
- . perfect:  0, 1, 2, 3, 4, 42, 52, 62
+submappers
+ . which needs?
+
+roms
+ . need mapper 104 (golden five) roms
+ . need mapper 194 (Dai-2-Ji - Super Robot Taisen (As)) roms
+ . need mapper 195 roms
+
+input
+ . input device code is crap
 
 misc
  . implement reading of the xml rom databases

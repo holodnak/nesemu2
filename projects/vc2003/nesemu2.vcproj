@@ -849,39 +849,6 @@
 						Name="other"
 						Filter="">
 						<File
-							RelativePath="..\..\source\mappers\boards\other\bmc-15in1.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\bmc-36in1.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\bmc-70in1.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\bmc-big7in1.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\bmc-contra-function-16.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\bmc-fk23c.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\bmc-mario7in1.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\bmc-super700in1.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\btl-biomiraclea.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\btl-mario1-malee2.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\btl-smb2b.c">
-						</File>
-						<File
 							RelativePath="..\..\source\mappers\boards\other\colordreams.c">
 						</File>
 						<File
@@ -896,12 +863,72 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\other\union-bond-ffv.c">
 						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\unl-h2288.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\unl-racermate.c">
-						</File>
+						<Filter
+							Name="bmc"
+							Filter="">
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\150in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\15in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\21in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\35in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\36in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\70in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\72in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\76in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\big7in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\contra-function-16.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\fk23c.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\mario7in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\super700in1.c">
+							</File>
+						</Filter>
+						<Filter
+							Name="btl"
+							Filter="">
+							<File
+								RelativePath="..\..\source\mappers\boards\other\btl\biomiraclea.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\btl\mario1-malee2.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\btl\smb2b.c">
+							</File>
+						</Filter>
+						<Filter
+							Name="unl"
+							Filter="">
+							<File
+								RelativePath="..\..\source\mappers\boards\other\unl\h2288.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\unl\racermate.c">
+							</File>
+						</Filter>
 					</Filter>
 					<Filter
 						Name="ave"
@@ -993,6 +1020,13 @@
 							RelativePath="..\..\source\mappers\boards\waixing\sgz.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="ntdec"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\ntdec\tc-112.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="chips"
@@ -1051,6 +1085,12 @@
 				</File>
 				<File
 					RelativePath="..\..\source\inputdev\null.c">
+				</File>
+				<File
+					RelativePath="..\..\source\inputdev\powerpad.c">
+				</File>
+				<File
+					RelativePath="..\..\source\inputdev\zapper.c">
 				</File>
 			</Filter>
 			<Filter

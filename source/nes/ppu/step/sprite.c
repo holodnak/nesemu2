@@ -238,7 +238,7 @@ static INLINE void sprite0_hit_check()
 		if(xpos >= 0 && xpos < 8) {
 			if(((CONTROL1 & 4) == 0 && spr->x == 0) || spr->x == 255 || x == 255)
 				break;
-			dest += nes.ppu.scrollx + x;
+			dest += x;
 			line = (u8*)&spr->line;
 			if(*dest && line[xpos]) {
 				STATUS |= 0x40;

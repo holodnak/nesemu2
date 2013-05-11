@@ -38,7 +38,7 @@ static INLINE void fetch_atbyte()
 		tmp = ((tmp >> (((SCROLL & 2) | (((SCROLL >> 5) & 2) << 1)))) & 3);
 
 		//put attributes into the line buffer
-		((u64*)nes.ppu.linebuffer)[nes.ppu.fetchpos] = tmp * 0x0404040404040404LL;
+		((u64*)nes.ppu.tilebuffer)[nes.ppu.fetchpos] = tmp * 0x0404040404040404LL;
 	}
 }
 
@@ -63,13 +63,13 @@ static INLINE void fetch_pt0byte()
 		pixels &= CACHE_MASK;
 
 		//add the pixels to the line buffer
-		((u64*)nes.ppu.linebuffer)[nes.ppu.fetchpos] += pixels;
+		((u64*)nes.ppu.tilebuffer)[nes.ppu.fetchpos] += pixels;
 	}
 
 	else
 
 		//clear the line buffer for this time
-		((u64*)nes.ppu.linebuffer)[nes.ppu.fetchpos] = 0;
+		((u64*)nes.ppu.tilebuffer)[nes.ppu.fetchpos] = 0;
 }
 
 static INLINE void fetch_pt1byte()

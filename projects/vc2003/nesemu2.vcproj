@@ -1172,6 +1172,13 @@
 					</FileConfiguration>
 				</File>
 			</Filter>
+			<Filter
+				Name="cartdb"
+				Filter="">
+				<File
+					RelativePath="..\..\source\cartdb\cartdb.c">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -1404,6 +1411,13 @@
 				</File>
 				<File
 					RelativePath="..\..\source\inputdev\null.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="cartdb"
+				Filter="">
+				<File
+					RelativePath="..\..\source\cartdb\cartdb.h">
 				</File>
 			</Filter>
 		</Filter>

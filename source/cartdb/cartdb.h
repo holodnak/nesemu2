@@ -18,43 +18,35 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-static INLINE void inc_linecycles()
-{
-	LINECYCLES++;
-	if(LINECYCLES >= 341) {
-		LINECYCLES = 0;
-		SCANLINE++;
-		if(SCANLINE >= 262) {
-			SCANLINE = 0;
-			FRAMES++;
-		}
-	}
-}
+#ifndef __cartdb_h__
+#define __cartdb_h__
 
-static INLINE void skip_cycle()
-{
-	if(((FRAMES & 1) != 0) && (CONTROL1 & 0x18))
-		inc_linecycles();
-}
+#include "types.h"
 
-static INLINE void clear_sp0hit_flag()
-{
-	STATUS &= ~(0x40 | 0x20);
-}
+typedef struct cart_s {
+	char	*system;
+	u32	crc;
+	char	*sha1;
+	int	dump;
+	char	*dumper,*datedumped;
+} cart_t;
 
-static INLINE void clear_nmi_flag()
-{
-	STATUS &= ~0x80;
-}
+typedef struct game_s {
+	struct game_s *next;
+	struct cart_s *child;
+	struct {
+		char	*name,*altname;
+		char	*cls,*catalog,*publisher,*developer;
+		char	*region;
+		int	players;
+		char	*date;
+	} info;
+} game_t;
 
-static INLINE void clear_nmi_line()
-{
-	cpu_clear_nmi();
-}
+typedef struct cartdb_s {
+	char *version;
+	char *author;
+	char *timestamp;
+} cartdb_t;
 
-static INLINE void set_nmi()
-{
-	STATUS |= 0x80;
-	if(CONTROL0 & 0x80)
-		cpu_set_nmi();
-}
+#endif

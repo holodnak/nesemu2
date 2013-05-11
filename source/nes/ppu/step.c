@@ -226,7 +226,6 @@ static INLINE void scanline_visible()
 	switch(LINECYCLES) {
 		//the idle cycle
 		case 0:
-			mask_bg();
 			break;
 
 		//nametable byte read
@@ -235,12 +234,14 @@ static INLINE void scanline_visible()
 		case 129:	case 137:	case 145:	case 153:	case 161:	case 169:	case 177:	case 185:
 		case 193:	case 201:	case 209:	case 217:	case 225:	case 233:	case 241:	case 249:
 			calc_ntaddr();
+			drawpixel();
 			break;
 		case 2:		case 10:		case 18:		case 26:		case 34:		case 42:		case 50:		case 58:
 		case 66:		case 74:		case 82:		case 90:		case 98:		case 106:	case 114:	case 122:
 		case 130:	case 138:	case 146:	case 154:	case 162:	case 170:	case 178:	case 186:
 		case 194:	case 202:	case 210:	case 218:	case 226:	case 234:	case 242:	case 250:
 			fetch_ntbyte();
+			drawpixel();
 			break;
 
 		//attribute table byte read
@@ -249,12 +250,14 @@ static INLINE void scanline_visible()
 		case 131:	case 139:	case 147:	case 155:	case 163:	case 171:	case 179:	case 187:
 		case 195:	case 203:	case 211:	case 219:	case 227:	case 235:	case 243:	case 251:
 			calc_ataddr();
+			drawpixel();
 			break;
 		case 4:		case 12:		case 20:		case 28:		case 36:		case 44:		case 52:		case 60:
 		case 68:		case 76:		case 84:		case 92:		case 100:	case 108:	case 116:	case 124:
 		case 132:	case 140:	case 148:	case 156:	case 164:	case 172:	case 180:	case 188:
 		case 196:	case 204:	case 212:	case 220:	case 228:	case 236:	case 244:	case 252:
 			fetch_atbyte();
+			drawpixel();
 			break;
 
 		//pattern table byte 0 read
@@ -263,12 +266,14 @@ static INLINE void scanline_visible()
 		case 133:	case 141:	case 149:	case 157:	case 165:	case 173:	case 181:	case 189:
 		case 197:	case 205:	case 213:	case 221:	case 229:	case 237:	case 245:	case 253:
 			calc_pt0addr();
+			drawpixel();
 			break;
 		case 6:		case 14:		case 22:		case 30:		case 38:		case 46:		case 54:		case 62:
 		case 70:		case 78:		case 86:		case 94:		case 102:	case 110:	case 118:	case 126:
 		case 134:	case 142:	case 150:	case 158:	case 166:	case 174:	case 182:	case 190:
 		case 198:	case 206:	case 214:	case 222:	case 230:	case 238:	case 246:	case 254:
 			fetch_pt0byte();
+			drawpixel();
 			break;
 
 		//pattern table byte 1 read
@@ -277,19 +282,21 @@ static INLINE void scanline_visible()
 		case 135:	case 143:	case 151:	case 159:	case 167:	case 175:	case 183:	case 191:
 		case 199:	case 207:	case 215:	case 223:	case 231:	case 239:	case 247:	case 255:
 			calc_pt1addr();
+			drawpixel();
 			break;
 		case 8:		case 16:		case 24:		case 32:		case 40:		case 48:		case 56:		case 64:
 		case 72:		case 80:		case 88:		case 96:		case 104:	case 112:	case 120:	case 128:
 		case 136:	case 144:	case 152:	case 160:	case 168:	case 176:	case 184:	case 192:
 		case 200:	case 208:	case 216:	case 224:	case 232:	case 240:	case 248:
 			fetch_pt1byte();
+			drawpixel();
 			inc_hscroll();
 			break;
 		case 256:
 			fetch_pt1byte();
+			drawpixel();
 			inc_hscroll();
 			update_line();
-//			log_printf("sprites %s (%s)\n",(CONTROL1 & 0x10) ? "enabled" : "disabled",(CONTROL1 & 0x10) ? "8x16" : "8x8");
 			inc_vscroll();
 			break;
 
@@ -401,20 +408,17 @@ static INLINE void scanline_startvblank()
 	}
 }
 
-static INLINE void scanline_postrender()
+void ppu_step()
 {
-	if(LINECYCLES == 0) {
+//blargg test debug output
+/*	if(SCANLINE == 0 && LINECYCLES == 0) {
 		u8 *sram = nes.cart->sram.size ? nes.cart->sram.data : 0;
 
 		if(sram && sram[0] == 3 && sram[1] == 0xDE && sram[2] == 0xB0 && sram[3] == 0x61) {
 			sram[0] = 0;
 			printf("%s",sram + 4);
 		}
-	}
-}
-
-void ppu_step()
-{
+	}*/
 	switch(SCANLINE) {
 		case 0:		case 1:		case 2:		case 3:		case 4:		case 5:		case 6:		case 7:		case 8:		case 9:
 		case 10:		case 11:		case 12:		case 13:		case 14:		case 15:		case 16:		case 17:		case 18:		case 19:
@@ -440,18 +444,9 @@ void ppu_step()
 		case 210:	case 211:	case 212:	case 213:	case 214:	case 215:	case 216:	case 217:	case 218:	case 219:
 		case 220:	case 221:	case 222:	case 223:	case 224:	case 225:	case 226:	case 227:	case 228:	case 229:
 		case 230:	case 231:	case 232:	case 233:	case 234:	case 235:	case 236:	case 237:	case 238:	case 239:
-			if(CONTROL1 & 0x18)
-				scanline_visible();
-			else {
-				if(LINECYCLES < 256)
-					nes.ppu.linebuffer[LINECYCLES] = 0;
-				else if(LINECYCLES == 256) {
-					video_updateline(SCANLINE,nes.ppu.linebuffer);
-				}
-			}
+			scanline_visible();
 			break;
 		case 240:
-			scanline_postrender();
 			break;
 		case 241:
 			scanline_startvblank();

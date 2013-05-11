@@ -70,7 +70,7 @@
       <ProgramDatabaseFile>$(OutDir)nesemu2-win32.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);comctl32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -91,12 +91,82 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);comctl32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\inputdev\powerpad.c" />
+    <ClCompile Include="..\..\source\inputdev\zapper.c" />
+    <ClCompile Include="..\..\source\mappers\boards\cne\decathlon.c" />
+    <ClCompile Include="..\..\source\mappers\boards\cne\fsb.c" />
+    <ClCompile Include="..\..\source\mappers\boards\cne\shlz.c" />
+    <ClCompile Include="..\..\source\mappers\boards\homebrew\dripgame.c" />
+    <ClCompile Include="..\..\source\mappers\boards\homebrew\tepples.c" />
+    <ClCompile Include="..\..\source\mappers\boards\irem\tam-s1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\kaiser\ks202.c" />
+    <ClCompile Include="..\..\source\mappers\boards\namcot\3425.c" />
+    <ClCompile Include="..\..\source\mappers\boards\namcot\34x3.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\fds.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\qj.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\unrom_74hc08.c" />
+    <ClCompile Include="..\..\source\mappers\boards\ntdec\tc-112.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\150in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\15in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\21in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\35in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\36in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\70in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\72in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\76in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\big7in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\contra-function-16.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\fk23c.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\mario7in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\super700in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\btl\biomiraclea.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\btl\mario1-malee2.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\btl\smb2b.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\colordreams.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\magicseries.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\mlt-caltron6in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\rumblestation.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\union-bond-ffv.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\unl\h2288.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\unl\racermate.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-2.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-3.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-4.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-5b.c" />
+    <ClCompile Include="..\..\source\mappers\boards\taito\tc0190fmc.c" />
+    <ClCompile Include="..\..\source\mappers\boards\taito\tc0190fmc_pal16r4.c" />
+    <ClCompile Include="..\..\source\mappers\boards\taito\x1-017.c" />
+    <ClCompile Include="..\..\source\mappers\boards\tengen\mimic-1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\tengen\rambo-1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\txc\22211.c" />
+    <ClCompile Include="..\..\source\mappers\boards\txc\mxmdhtwo.c" />
+    <ClCompile Include="..\..\source\mappers\boards\txc\strikewolf.c" />
+    <ClCompile Include="..\..\source\mappers\boards\txc\tw.c" />
+    <ClCompile Include="..\..\source\mappers\boards\waixing\sgz.c" />
+    <ClCompile Include="..\..\source\mappers\chips\namcot-108.c" />
+    <ClCompile Include="..\..\source\mappers\chips\taito-tc0190fmc.c" />
+    <ClCompile Include="..\..\source\nes\apu\race.c" />
+    <ClCompile Include="..\..\source\nes\apu\units\dpcm.c" />
+    <ClCompile Include="..\..\source\nes\apu\units\frame.c" />
+    <ClCompile Include="..\..\source\nes\apu\units\noise.c" />
+    <ClCompile Include="..\..\source\nes\apu\units\square.c" />
+    <ClCompile Include="..\..\source\nes\apu\units\triangle.c" />
+    <ClCompile Include="..\..\source\nes\cart\fds.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\dialogs\about.c" />
+    <ClCompile Include="..\..\source\system\win32\dialogs\configuration.c" />
+    <ClCompile Include="..\..\source\system\win32\dialogs\debugger.c" />
+    <ClCompile Include="..\..\source\system\win32\dialogs\mappers.c" />
     <ClCompile Include="..\..\source\system\win32\input.c" />
     <ClCompile Include="..\..\source\system\win32\main.c" />
+    <ClCompile Include="..\..\source\system\win32\mainwnd.c" />
     <ClCompile Include="..\..\source\system\win32\sound.c" />
     <ClCompile Include="..\..\source\system\win32\system.c" />
     <ClCompile Include="..\..\source\system\win32\video.c" />
@@ -162,16 +232,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\source\nes\ppu\attribcache.c" />
     <ClCompile Include="..\..\source\nes\ppu\io.c" />
     <ClCompile Include="..\..\source\nes\ppu\ppu.c" />
     <ClCompile Include="..\..\source\nes\ppu\step.c" />
     <ClCompile Include="..\..\source\nes\ppu\tilecache.c" />
     <ClCompile Include="..\..\source\nes\apu\apu.c" />
-    <ClCompile Include="..\..\source\nes\apu\mattapu.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\cart.c" />
     <ClCompile Include="..\..\source\nes\cart\ines.c" />
     <ClCompile Include="..\..\source\nes\cart\ines20.c" />
@@ -211,19 +276,14 @@
     <ClCompile Include="..\..\source\mappers\boards\nintendo\txrom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\un1rom.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\uxrom.c" />
-    <ClCompile Include="..\..\source\mappers\boards\tengen\800032.c" />
     <ClCompile Include="..\..\source\mappers\boards\camerica\bf909x.c" />
     <ClCompile Include="..\..\source\mappers\boards\taito\x1-005.c" />
     <ClCompile Include="..\..\source\mappers\boards\ave\nina-001.c" />
     <ClCompile Include="..\..\source\mappers\boards\irem\h3001.c" />
     <ClCompile Include="..\..\source\mappers\boards\jaleco\ss88006.c" />
-    <ClCompile Include="..\..\source\mappers\boards\other\btl-mario1-malee2.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-003x.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-7200x.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-74ls374n.c" />
-    <ClCompile Include="..\..\source\mappers\boards\txc\txc-22211.c" />
-    <ClCompile Include="..\..\source\mappers\boards\txc\txc-mxmdhtwo.c" />
-    <ClCompile Include="..\..\source\mappers\boards\txc\txc-tw.c" />
     <ClCompile Include="..\..\source\mappers\boards\konami\vrc1.c" />
     <ClCompile Include="..\..\source\mappers\boards\konami\vrc2.c" />
     <ClCompile Include="..\..\source\mappers\boards\konami\vrc3.c" />

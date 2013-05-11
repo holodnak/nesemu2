@@ -18,14 +18,25 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-static INLINE void blankline()
+static INLINE void drawpixel()
 {
-	u64 *scr64 = (u64*)nes.ppu.linebuffer;
-	int i;
+	u8 *dest = nes.ppu.linebuffer;
+	u8 *src = nes.ppu.tilebuffer;
+	int pos = LINECYCLES - 1;
 
-	for(i=0;i<33;i++) {
-		*scr64++ = 0;
-	}
+	if(pos >= 8 || (nes.ppu.control1 & 2))
+		dest[pos] = src[pos + nes.ppu.scrollx];
+	else
+		dest[pos] = 0;
+}
+
+static INLINE void drawpixelclipped()
+{
+	u8 *dest = nes.ppu.linebuffer;
+	u8 *src = nes.ppu.tilebuffer;
+	int pos = LINECYCLES - 1;
+
+	dest[pos] = src[pos + nes.ppu.scrollx];
 }
 
 static INLINE void drawspriteline()
@@ -35,9 +46,6 @@ static INLINE void drawspriteline()
 	u64 *spriteline64 = (u64*)spriteline;
 	u8 *dest = nes.ppu.linebuffer;
 	int n;
-
-	//adjust for fine scroll x
-	dest += nes.ppu.scrollx;
 
 	//clear sprite line
 	for(n=0;n<(256 / 8);n++)
@@ -119,5 +127,5 @@ static INLINE void update_line()
 	if(CONTROL1 & 0x10)
 		drawspriteline();
 #endif
-	video_updateline(SCANLINE,nes.ppu.linebuffer + nes.ppu.scrollx);
+	video_updateline(SCANLINE,nes.ppu.linebuffer);
 }

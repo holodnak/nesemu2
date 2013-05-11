@@ -66,7 +66,10 @@ typedef struct ppu_s {
 	//line buffer (34 tiles)
 	u8		linebuffer[256 + 16];
 
-	//fetchpos gets out of hand and begins to corrupt memory!
+	//tile buffer (34 tiles)
+	u8		tilebuffer[256 + 16];
+
+	//fetchpos gets out of hand and begins to corrupt memory!  fix it quick!
 	u8		kludge[1024];
 
 	//read/write pointers

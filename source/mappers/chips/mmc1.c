@@ -30,15 +30,8 @@ void mmc1_sync()
 {
 	mmc1_syncmirror();
 	if(nes.cart->prg.size > 0x40000) {
-		u8 lo,hi;
-
-		lo = (mmc1_getlowprg() & 0xf) | (mmc1_getlowchr() & 0x10);
-		hi = (mmc1_gethighprg() & 0xf) | (mmc1_getlowchr() & 0x10);
-		log_printf("mmc1_sync:  lo = %d, hi = %d\n",lo,hi);
-		mem_setprg16(0x8,lo);
-		mem_setprg16(0xC,hi);
-//		mem_setprg16(0x8,(mmc1_getlowprg() & 0xf) | (mmc1_getlowchr() & 0x10));
-//		mem_setprg16(0xC,(mmc1_gethighprg() & 0xf) | (mmc1_getlowchr() & 0x10));
+		mem_setprg16(0x8,(mmc1_getlowprg() & 0xf) | (mmc1_getlowchr() & 0x10));
+		mem_setprg16(0xC,(mmc1_gethighprg() & 0xf) | (mmc1_getlowchr() & 0x10));
 	}
 	else
 		mmc1_syncprg(0xF,0);
@@ -145,15 +138,8 @@ void mmc1_syncmirror()
 
 void mmc1_syncprg(int aand,int oor)
 {
-	u8 lo,hi;
-
-	lo = (mmc1_getlowprg() & aand) | oor;
-	hi = (mmc1_gethighprg() & aand) | oor;
-	log_printf("mmc1_sync:  lo = %d, hi = %d\n",lo,hi);
-	mem_setprg16(0x8,lo);
-	mem_setprg16(0xC,hi);
-//	mem_setprg16(0x8,(mmc1_getlowprg() & aand) | oor);
-//	mem_setprg16(0xC,(mmc1_gethighprg() & aand) | oor);
+	mem_setprg16(0x8,(mmc1_getlowprg() & aand) | oor);
+	mem_setprg16(0xC,(mmc1_gethighprg() & aand) | oor);
 }
 
 void mmc1_syncchr(int aand,int oor)

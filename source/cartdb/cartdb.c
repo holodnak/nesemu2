@@ -18,43 +18,4 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-static INLINE void inc_linecycles()
-{
-	LINECYCLES++;
-	if(LINECYCLES >= 341) {
-		LINECYCLES = 0;
-		SCANLINE++;
-		if(SCANLINE >= 262) {
-			SCANLINE = 0;
-			FRAMES++;
-		}
-	}
-}
-
-static INLINE void skip_cycle()
-{
-	if(((FRAMES & 1) != 0) && (CONTROL1 & 0x18))
-		inc_linecycles();
-}
-
-static INLINE void clear_sp0hit_flag()
-{
-	STATUS &= ~(0x40 | 0x20);
-}
-
-static INLINE void clear_nmi_flag()
-{
-	STATUS &= ~0x80;
-}
-
-static INLINE void clear_nmi_line()
-{
-	cpu_clear_nmi();
-}
-
-static INLINE void set_nmi()
-{
-	STATUS |= 0x80;
-	if(CONTROL0 & 0x80)
-		cpu_set_nmi();
-}
+#include "cartdb/cartdb.h"

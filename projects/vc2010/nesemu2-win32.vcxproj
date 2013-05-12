@@ -154,6 +154,12 @@
     <ClCompile Include="..\..\source\mappers\boards\waixing\sgz.c" />
     <ClCompile Include="..\..\source\mappers\chips\namcot-108.c" />
     <ClCompile Include="..\..\source\mappers\chips\taito-tc0190fmc.c" />
+    <ClCompile Include="..\..\source\mappers\sound\s_FDS.c" />
+    <ClCompile Include="..\..\source\mappers\sound\s_FME7.c" />
+    <ClCompile Include="..\..\source\mappers\sound\s_MMC5.c" />
+    <ClCompile Include="..\..\source\mappers\sound\s_N106.c" />
+    <ClCompile Include="..\..\source\mappers\sound\s_VRC6.c" />
+    <ClCompile Include="..\..\source\mappers\sound\s_VRC7.c" />
     <ClCompile Include="..\..\source\nes\apu\race.c" />
     <ClCompile Include="..\..\source\nes\apu\units\dpcm.c" />
     <ClCompile Include="..\..\source\nes\apu\units\frame.c" />

@@ -75,15 +75,20 @@ static void apu_callback(void *data,int len)
 
 int apu_init()
 {
+	int i;
+
 	state_register(B_APU,apu_state);
 	sound_setcallback(apu_callback);
 	soundbuf = (s16*)mem_alloc(sizeof(s16) * soundbufsize);
-	memset(soundbuf,0,sizeof(s16) * soundbufsize);
+	for(i=0;i<soundbufsize;i++)
+		soundbuf[i] = 0;
 	return(0);
 }
 
 void apu_kill()
 {
+	if(nes.apu.external)
+		nes.apu.external->kill();
 	if(soundbuf) {
 		mem_free(soundbuf);
 		soundbuf = 0;
@@ -103,6 +108,8 @@ void apu_reset(int hard)
 	apu_triangle_reset(hard);
 	apu_noise_reset(hard);
 	apu_dpcm_reset(hard);
+	if(nes.apu.external)
+		nes.apu.external->reset();
 	cycles = 0;
 }
 
@@ -195,12 +202,14 @@ void apu_step()
 	pos = SOUND_HZ * cycles++ / NES_HZ;
 	if(pos != oldpos) {
 		if(soundbuflen >= soundbufsize) {
-			log_printf("soundbuffer overflow!  %d! (cycles = %d)\n",soundbuflen,cycles);
+//			log_printf("soundbuffer overflow!  %d! (cycles = %d)\n",soundbuflen,cycles);
 			return;
 		}
 		oldpos = pos;
 		sample = nes.apu.square[0].Pos + nes.apu.square[1].Pos + nes.apu.triangle.Pos + nes.apu.noise.Pos + nes.apu.dpcm.Pos;
 		sample *= 64;
+		if(nes.apu.external)
+			sample += nes.apu.external->process(40);
 		if(sample < -0x8000)
 			sample = -0x8000;
 		if(sample > 0x7FFF)
@@ -208,6 +217,14 @@ void apu_step()
 		n = (soundbuflen++ + soundbufpos) % soundbufsize;
 		soundbuf[n] = (s16)sample;
 	}
+}
+
+void apu_setexternal(external_t *ext)
+{
+	if(nes.apu.external)
+		nes.apu.external->kill();
+	nes.apu.external = ext;
+	ext->init();
 }
 
 void apu_state(int mode,u8 *data)

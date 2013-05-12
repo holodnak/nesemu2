@@ -214,6 +214,9 @@
     <Filter Include="Source Files\emu\commands">
       <UniqueIdentifier>{3880ac25-0990-4d8e-a23d-6ee2797d3010}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\mappers\sound">
+      <UniqueIdentifier>{912bb246-db91-4c7b-a126-7cff92b7dd9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -716,6 +719,24 @@
     </ClCompile>
     <ClCompile Include="..\..\source\emu\commands\nes.c">
       <Filter>Source Files\emu\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_FDS.c">
+      <Filter>Source Files\mappers\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_FME7.c">
+      <Filter>Source Files\mappers\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_MMC5.c">
+      <Filter>Source Files\mappers\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_N106.c">
+      <Filter>Source Files\mappers\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_VRC6.c">
+      <Filter>Source Files\mappers\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_VRC7.c">
+      <Filter>Source Files\mappers\sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

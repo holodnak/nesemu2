@@ -42,6 +42,8 @@ typedef struct apu_s {
 	frame_t		frame;
 } apu_t;
 
+typedef external_t apu_external_t;
+
 extern u8 LengthCounts[];
 
 int apu_init();
@@ -50,6 +52,7 @@ void apu_reset(int hard);
 void apu_step();
 u8 apu_read(u32 addr);
 void apu_write(u32 addr,u8 data);
+void apu_setexternal(external_t *ext);
 void apu_state(int mode,u8 *data);
 
 #endif

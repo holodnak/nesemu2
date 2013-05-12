@@ -19,14 +19,16 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
+#include "mappers/sound/s_VRC7.h"
+#include "nes/nes.h"
 
-/*static apuext_t vrc7 = {
+static apu_external_t vrc7 = {
 	VRC7sound_Load,
 	VRC7sound_Unload,
 	VRC7sound_Reset,
 	VRC7sound_Get,
 	0
-};*/
+};
 
 static u8 prg[3],chr[8],mirror;
 static u8 irqlatch,irqcontrol,irqcounter;
@@ -68,7 +70,7 @@ static void write_8000(u32 addr,u8 data)
 static void write_9000(u32 addr,u8 data)
 {
 	if(addr & 0x18) {
-//		VRC7sound_Write(addr,data);
+		VRC7sound_Write(addr,data);
 	}
 	else {
 		prg[2] = data;
@@ -197,7 +199,7 @@ static void reset(int revision,int hard)
 	irqcontrol = 0;
 	irqcounter = 0;
 	irqprescaler = 341;
-//	apu_setext(nes.apu,&vrc7);
+	apu_setexternal(&vrc7);
 	sync();
 }
 

@@ -19,9 +19,18 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
+#include "mappers/sound/s_FDS.h"
 
 #define SHORTIRQ	100
 #define LONGIRQ	150
+
+static apu_external_t fdssound = {
+	FDSsound_Load,
+	FDSsound_Unload,
+	FDSsound_Reset,
+	FDSsound_Get,
+	0
+};
 
 static readfunc_t read4;
 static writefunc_t write4;
@@ -207,6 +216,7 @@ static void reset(int hard)
 	diskirq = 0;
 	writeskip = 0;
 	diskflip = 0;
+	apu_setexternal(&fdssound);
 	sync();
 }
 

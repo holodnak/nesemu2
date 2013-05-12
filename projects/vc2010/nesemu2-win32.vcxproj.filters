@@ -178,6 +178,9 @@
     <Filter Include="Source Files\emu\commands">
       <UniqueIdentifier>{ccead6ca-acd5-4741-8a94-3435a6a316c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\mappers\sound">
+      <UniqueIdentifier>{e4f89b71-fe49-4185-b21c-6a62a5b2868b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\win32\input.c">
@@ -668,6 +671,24 @@
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\dialogs\console.c">
       <Filter>Source Files\system\win32\dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_FDS.c">
+      <Filter>Source Files\mappers\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_FME7.c">
+      <Filter>Source Files\mappers\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_MMC5.c">
+      <Filter>Source Files\mappers\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_N106.c">
+      <Filter>Source Files\mappers\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_VRC6.c">
+      <Filter>Source Files\mappers\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_VRC7.c">
+      <Filter>Source Files\mappers\sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

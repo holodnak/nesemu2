@@ -19,15 +19,16 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
+#include "mappers/sound/s_VRC6.h"
+#include "nes/nes.h"
 
-/*static apuext_t vrc6 = {
+static apu_external_t vrc6 = {
 	VRC6sound_Load,
 	VRC6sound_Unload,
 	VRC6sound_Reset,
 	VRC6sound_Get,
-	0,
 	0
-};*/
+};
 
 static u8 vrc6a_map[] = {0,1,2,3};
 static u8 vrc6b_map[] = {0,2,1,3};

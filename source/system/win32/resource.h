@@ -17,6 +17,7 @@
 #define IDD_CONFIG_GENERAL1             133
 #define IDD_CONFIG_GENERAL2             134
 #define IDD_CONSOLE                     135
+#define IDD_CONFIG_GENERAL3             136
 #define IDC_EDIT1                       1000
 #define IDC_AEDIT                       1000
 #define IDC_DATAPATHEDIT                1000
@@ -44,9 +45,12 @@
 #define IDC_SRAMPATHEDIT                1019
 #define IDC_EXECUTEBUTTON               1019
 #define IDC_PATCHPATHEDIT               1020
-#define IDC_EDIT2                       1020
 #define IDC_COMMANDEDIT                 1020
 #define IDC_PALETTEPATHEDIT             1021
+#define IDC_NESCHECK                    1021
+#define IDC_UNIFCHECK                   1022
+#define IDC_FDSCHECK                    1023
+#define IDC_CHECK1                      1025
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -78,7 +82,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        136
 #define _APS_NEXT_COMMAND_VALUE         32793
-#define _APS_NEXT_CONTROL_VALUE         1021
+#define _APS_NEXT_CONTROL_VALUE         1026
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

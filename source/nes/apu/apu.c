@@ -23,6 +23,11 @@
 #include "nes/nes.h"
 #include "nes/state/state.h"
 #include "misc/log.h"
+#include "misc/memutil.h"
+#include "system/sound.h"
+
+#define SOUND_HZ	44100
+#define NES_HZ		1789773
 
 u8 LengthCounts[32] = {
 	0x0A,0xFE,
@@ -45,15 +50,45 @@ u8 LengthCounts[32] = {
 };
 
 static u8 regs[0x20];
+static int cycles = 0;
+static const int soundbufsize = 1024 * 3;
+static s16 *soundbuf = 0;
+static u16 soundbuflen = 0;
+static u16 soundbufpos = 0;
+
+static void apu_callback(void *data,int len)
+{
+	s16 *dest = (s16*)data;
+	int i,pos;
+
+	len = ((len > soundbuflen) ? soundbuflen : len);
+	pos = soundbufpos;
+	for(i=0;i<len;i++) {
+		*dest++ = soundbuf[pos];
+		pos = (pos + 1) % soundbufsize;
+	}
+	soundbuflen -= len;
+	soundbufpos = (soundbufpos + len) % soundbufsize;
+	cycles = 0;
+//	printf("apu_callback:  need %d bytes, have %d ready (pixel %d, line %d, frame %d)\n",len,soundbuflen,LINECYCLES,SCANLINE,FRAMES);
+}
 
 int apu_init()
 {
 	state_register(B_APU,apu_state);
+	sound_setcallback(apu_callback);
+	soundbuf = (s16*)mem_alloc(sizeof(s16) * soundbufsize);
+	memset(soundbuf,0,sizeof(s16) * soundbufsize);
 	return(0);
 }
 
 void apu_kill()
 {
+	if(soundbuf) {
+		mem_free(soundbuf);
+		soundbuf = 0;
+	}
+	sound_setcallback(0);
 }
 
 void apu_reset(int hard)
@@ -68,6 +103,7 @@ void apu_reset(int hard)
 	apu_triangle_reset(hard);
 	apu_noise_reset(hard);
 	apu_dpcm_reset(hard);
+	cycles = 0;
 }
 
 u8 apu_read(u32 addr)
@@ -143,8 +179,12 @@ void apu_write(u32 addr,u8 data)
 	}
 }
 
+//this is called every cycle
 void apu_step()
 {
+	static int oldpos = -1;
+	int pos,sample,n;
+
 	apu_frame_step();
 	apu_race_step();
 	apu_square0_step();
@@ -152,6 +192,22 @@ void apu_step()
 	apu_triangle_step();
 	apu_noise_step();
 	apu_dpcm_step();
+	pos = SOUND_HZ * cycles++ / NES_HZ;
+	if(pos != oldpos) {
+		if(soundbuflen >= soundbufsize) {
+			log_printf("soundbuffer overflow!  %d! (cycles = %d)\n",soundbuflen,cycles);
+			return;
+		}
+		oldpos = pos;
+		sample = nes.apu.square[0].Pos + nes.apu.square[1].Pos + nes.apu.triangle.Pos + nes.apu.noise.Pos + nes.apu.dpcm.Pos;
+		sample *= 64;
+		if(sample < -0x8000)
+			sample = -0x8000;
+		if(sample > 0x7FFF)
+			sample = 0x7FFF;
+		n = (soundbuflen++ + soundbufpos) % soundbufsize;
+		soundbuf[n] = (s16)sample;
+	}
 }
 
 void apu_state(int mode,u8 *data)

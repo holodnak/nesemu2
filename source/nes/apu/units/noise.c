@@ -48,7 +48,7 @@ void apu_noise_write(u32 addr,u8 data)
 	{
 	case 0:	noi.volume = data & 0x0F;
 		noi.envelope = data & 0x10;
-//		Race::Noise_wavehold = Val & 0x20;
+		noi.race.wavehold = data & 0x20;
 		noi.Vol = noi.envelope ? noi.volume : noi.Envelope;
 		if (noi.LengthCtr)
 			noi.Pos = ((noi.CurD & 0x4000) ? -2 : 2) * noi.Vol;
@@ -58,8 +58,8 @@ void apu_noise_write(u32 addr,u8 data)
 		break;
 	case 3:	if (noi.Enabled)
 		{
-//			Race::Noise_LengthCtr1 = LengthCounts[(Val >> 3) & 0x1F];
-//			Race::Noise_LengthCtr2 = LengthCtr;
+			noi.race.LengthCtr1 = LengthCounts[(data >> 3) & 0x1F];
+			noi.race.LengthCtr2 = noi.LengthCtr;
 		}
 		noi.EnvClk = 1;
 		break;

@@ -54,7 +54,7 @@ void apu_triangle_write(u32 addr,u8 data)
 	switch (addr)
 	{
 	case 0:	tri.linear = data & 0x7F;
-//		Race::Triangle_wavehold = (data >> 7) & 0x1;
+		tri.race.wavehold = (data >> 7) & 0x1;
 		break;
 	case 2:	tri.freq &= 0x700;
 		tri.freq |= data;
@@ -63,8 +63,8 @@ void apu_triangle_write(u32 addr,u8 data)
 		tri.freq |= (data & 0x7) << 8;
 		if (tri.Enabled)
 		{
-//			Race::Triangle_LengthCtr1 = LengthCounts[(Val >> 3) & 0x1F];
-//			Race::Triangle_LengthCtr2 = LengthCtr;
+			tri.race.LengthCtr1 = LengthCounts[(data >> 3) & 0x1F];
+			tri.race.LengthCtr2 = tri.LengthCtr;
 		}
 		tri.LinClk = 1;
 		break;

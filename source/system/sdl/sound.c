@@ -24,7 +24,7 @@
 
 static int sound_bps = 16;
 static int sound_samplerate = 44100;
-static int sound_fragsize = 1024;//SOUND_HZ / 60;
+static int sound_fragsize = 44100/60;//1024;
 static void (*audio_callback)(void *buffer, int length) = 0;
 static int soundinited = 0;
 
@@ -38,7 +38,7 @@ static void sdl_audio_player(void *udata, unsigned char *stream, int len)
 
 int sound_init()
 {
-	SDL_AudioSpec wanted,obtained;
+	SDL_AudioSpec wanted;
 	unsigned int bufferSize;
 
 	soundinited = 0;
@@ -51,17 +51,11 @@ int sound_init()
 	wanted.samples = sound_fragsize;
 	wanted.callback = sdl_audio_player;
 	wanted.userdata = 0;
-	if(SDL_OpenAudio(&wanted,&obtained) < 0) {
+	if(SDL_OpenAudio(&wanted,NULL) < 0) {
 		log_printf("sound_init:  couldn't open audio: %s\n", SDL_GetError());
 		return(1);
 	}
-	if(AUDIO_S16 != obtained.format) {
-		log_printf("sound_init:  could not get correct audio output format\n");
-		return(1);
-	}
-	sound_bps = (obtained.format == AUDIO_U8) ? 8 : 16;
-	sound_samplerate = obtained.freq;
-	bufferSize = (sound_bps / 8) * obtained.samples * 2;
+	bufferSize = (sound_bps / 8) * wanted.samples * 2;
 	SDL_PauseAudio(0);
 	soundinited = 1;
 	log_printf("sdl sound init ok, %dhz, %d bits\n",sound_samplerate,sound_bps);

@@ -161,7 +161,7 @@ static void reset(int revision,int hard)
 	irqlatch = 0;
 	irqcounter = 0;
 	irqcontrol = 0;
-//	apu_setext(nes->apu,&vrc6);
+	apu_setexternal(&vrc6);
 	sync();
 }
 

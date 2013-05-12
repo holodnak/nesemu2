@@ -19,6 +19,15 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
+#include "mappers/sound/s_DRIP.h"
+
+static apu_external_t drip = {
+	DRIPsound_Load,
+	DRIPsound_Unload,
+	DRIPsound_Reset,
+	DRIPsound_Get,
+	0
+};
 
 static const u8 mirrormap[4] = {MIRROR_V,MIRROR_H,MIRROR_1L,MIRROR_1H};
 static const u8 ntmap[4][4] = {
@@ -77,7 +86,7 @@ static u8 read_4000(u32 addr)
 
 static u8 read_5000(u32 addr)
 {
-	static u8 hack = 0;
+/*	static u8 hack = 0;
 
 	hack += 3;
 	if(hack < 20)
@@ -85,7 +94,8 @@ static u8 read_5000(u32 addr)
 	if(hack > 200)
 		return(0x80);
 //	log_printf("reading drip sound:  $%04X\n",addr);
-	return(0);
+	return(0);*/
+	return((u8)DRIPsound_Read(addr));
 }
 
 static void write_8000(u32 addr,u8 data)
@@ -94,6 +104,16 @@ static void write_8000(u32 addr,u8 data)
 //		log_printf("dripgame.c:  write to $%04x = $%02X\n",addr,data);
 	addr &= 0xF;
 	switch(addr) {
+		case 0x0:
+		case 0x1:
+		case 0x2:
+		case 0x3:
+		case 0x4:
+		case 0x5:
+		case 0x6:
+		case 0x7:
+			DRIPsound_Write(addr,data);
+			break;
 		case 0x8:
 			irqlatch = data;
 			break;
@@ -151,6 +171,7 @@ static void reset(int hard)
 	prg = 0;
 	for(i=0;i<4;i++)
 		chr[i] = i;
+	apu_setexternal(&drip);
 	sync();
 }
 

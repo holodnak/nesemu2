@@ -56,21 +56,21 @@ static s16 *soundbuf = 0;
 static u16 soundbuflen = 0;
 static u16 soundbufpos = 0;
 
-static void apu_callback(void *data,int len)
+static void apu_callback(void *data,int length)
 {
 	s16 *dest = (s16*)data;
-	int i,pos;
+	int i,pos,len;
 
-	len = ((len > soundbuflen) ? soundbuflen : len);
+//	printf("apu_callback:  need %d bytes, have %d ready (pixel %d, line %d, frame %d)\n",length,soundbuflen,LINECYCLES,SCANLINE,FRAMES);
+	len = ((length > soundbuflen) ? soundbuflen : length);
 	pos = soundbufpos;
-	for(i=0;i<len;i++) {
+	for(i=0;i<length;i++) {
 		*dest++ = soundbuf[pos];
 		pos = (pos + 1) % soundbufsize;
 	}
 	soundbuflen -= len;
 	soundbufpos = (soundbufpos + len) % soundbufsize;
 	cycles = 0;
-//	printf("apu_callback:  need %d bytes, have %d ready (pixel %d, line %d, frame %d)\n",len,soundbuflen,LINECYCLES,SCANLINE,FRAMES);
 }
 
 int apu_init()

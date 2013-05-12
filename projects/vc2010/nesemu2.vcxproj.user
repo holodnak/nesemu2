@@ -8,7 +8,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommandArguments>lp.nes smb.nes</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>smb3.nes lp.nes smb.nes</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LocalDebuggerCommandArguments>smb3.nes</LocalDebuggerCommandArguments>

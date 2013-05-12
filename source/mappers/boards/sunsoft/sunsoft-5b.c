@@ -19,6 +19,16 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
+#include "mappers/sound/s_FME7.h"
+#include "nes/nes.h"
+
+static apu_external_t fme7 = {
+	FME7sound_Load,
+	FME7sound_Unload,
+	FME7sound_Reset,
+	FME7sound_Get,
+	0
+};
 
 static u8 prg[4],chr[8],mirror;
 static u16 irqcounter;
@@ -116,6 +126,7 @@ static void reset(int hard)
 		irqcontrol = 0;
 		command = 0;
 	}
+	apu_setexternal(&fme7);
 	sync();
 }
 

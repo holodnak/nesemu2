@@ -169,6 +169,15 @@
     <Filter Include="Source Files\mappers\boards\namcot">
       <UniqueIdentifier>{845a8cbe-5ea1-4ab2-8dba-a9260e9612fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\nes\ppu\step">
+      <UniqueIdentifier>{a4cae8dc-e286-4cdd-af3b-959e935d3f66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emu">
+      <UniqueIdentifier>{a97109ec-cdfc-4fb6-8fc4-23a2c8147be7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emu\commands">
+      <UniqueIdentifier>{ccead6ca-acd5-4741-8a94-3435a6a316c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\win32\input.c">
@@ -402,9 +411,6 @@
     <ClCompile Include="..\..\source\misc\crc32.c">
       <Filter>Source Files\misc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\misc\emu.c">
-      <Filter>Source Files\misc</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\misc\log.c">
       <Filter>Source Files\misc</Filter>
     </ClCompile>
@@ -630,6 +636,39 @@
     <ClCompile Include="..\..\source\system\win32\mainwnd.c">
       <Filter>Source Files\system\win32</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\calc.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\draw.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\fetch.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\misc.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\scroll.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\sprite.c">
+      <Filter>Source Files\nes\ppu\step</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\emu\commands\general.c">
+      <Filter>Source Files\emu\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\emu\commands\nes.c">
+      <Filter>Source Files\emu\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\emu\commands.c">
+      <Filter>Source Files\emu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\emu\emu.c">
+      <Filter>Source Files\emu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\dialogs\console.c">
+      <Filter>Source Files\system\win32\dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">
@@ -757,6 +796,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\inputdev\null.h">
       <Filter>Header Files\inputdev</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\system\win32\dialogs.h">
+      <Filter>Header Files\system\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\system\win32\mainwnd.h">
+      <Filter>Header Files\system\win32</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

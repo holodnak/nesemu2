@@ -18,14 +18,39 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __mainwnd_h__
-#define __mainwnd_h__
+#ifndef __commands_h__
+#define __commands_h__
 
-extern HINSTANCE hInst;
-extern HWND hWnd;
-extern HWND hConsole;
+#include "types.h"
 
-ATOM MyRegisterClass(HINSTANCE hInstance);
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow);
+#define CHECK_ARGS(num,msg)	\
+	if(argc < (num)) {			\
+		log_printf(msg);			\
+		return(1);					\
+	}
+
+#define CHECK_CART()							\
+	if(nes.cart == 0) {						\
+		log_printf("no rom loaded!\n");	\
+		return(1);								\
+	}
+
+#define COMMAND_FUNC(n)	int command_ ## n (int argc,char **argv)
+#define COMMAND_DECL(n)	COMMAND_FUNC(n);
+
+//general commands
+COMMAND_DECL(mappers);
+
+//nes commands
+COMMAND_DECL(load);
+COMMAND_DECL(unload);
+COMMAND_DECL(reset);
+COMMAND_DECL(hardreset);
+COMMAND_DECL(readcpu);
+COMMAND_DECL(writecpu);
+COMMAND_DECL(loadstate);
+COMMAND_DECL(savestate);
+
+int command_execute(char *str);
 
 #endif

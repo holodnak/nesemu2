@@ -28,6 +28,9 @@ static INLINE void drawpixel()
 		dest[pos] = src[pos + nes.ppu.scrollx];
 	else
 		dest[pos] = 0;
+#ifdef ACCURATE_SPRITE0
+	sprite0_hit_check();
+#endif
 }
 
 static INLINE void drawpixelclipped()

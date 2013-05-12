@@ -37,8 +37,8 @@ static sprtemp_t sprtemp[8];
 #include "step/fetch.c"
 #include "step/scroll.c"
 #include "step/misc.c"
-#include "step/draw.c"
 #include "step/sprite.c"
+#include "step/draw.c"
 
 static INLINE void scanline_prerender()
 {
@@ -393,10 +393,6 @@ static INLINE void scanline_visible()
 #ifndef QUICK_SPRITES
 	process_sprites();
 	draw_sprites();
-#else
-	#ifdef ACCURATE_SPRITE0
-		sprite0_hit_check();
-	#endif
 #endif
 }
 
@@ -462,3 +458,4 @@ void ppu_step()
 		nes.mapper->ppucycle();
 	inc_linecycles();
 }
+

@@ -18,68 +18,44 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "misc/emu.h"
+#include "emu/commands.h"
 #include "misc/log.h"
-#include "misc/memutil.h"
-#include "misc/config.h"
-#include "misc/crc32.h"
-#include "system/system.h"
-#include "system/video.h"
-#include "system/input.h"
-#include "system/sound.h"
-#include "nes/nes.h"
+#include "mappers/mappers.h"
+#include "mappers/mapperid.h"
 
-#define SUBSYSTEM_START	static subsystem_t subsystems[] = {
-#define SUBSYSTEM(n)		{"" #n "", n ## _init, n ## _kill},
-#define SUBSYSTEM_END	{0,0}};
-
-typedef int (*initfunc_t)();
-typedef void (*killfunc_t)();
-
-typedef struct subsystem_s {
-	char			*name;
-	initfunc_t	init;
-	killfunc_t	kill;
-} subsystem_t;
-
-SUBSYSTEM_START
-	SUBSYSTEM(log)
-	SUBSYSTEM(memutil)
-	SUBSYSTEM(config)
-	SUBSYSTEM(system)
-	SUBSYSTEM(video)
-	SUBSYSTEM(input)
-	SUBSYSTEM(sound)
-	SUBSYSTEM(nes)
-SUBSYSTEM_END
-
-int emu_init()
+COMMAND_FUNC(mappers)
 {
-	int i;
+	int i,j,n,n2;
+	const char *str;
 
-	//generate crc32 table
-	crc32_gentab();
-
-	//loop thru the subsystem function pointers and init
-	for(i=0;subsystems[i].init;i++) {
-		if(subsystems[i].init() != 0) {
-			emu_kill();
-			return(1);
+	log_printf("supported ines mappers:  ");
+	for(n=0,i=0;i<256;i++) {
+		if(mapper_get_mapperid_ines(i) >= 0) {
+			if(n)
+				log_printf(", ");
+			log_printf("%d",i);
+			n++;
 		}
 	}
-	return(0);
-}
 
-void emu_kill()
-{
-	int i;
-
-	//find the end of the pointer list ('i' will equal last one + 1)
-	for(i=0;subsystems[i].kill;i++);
-
-	//loop thru the subsystem function pointers backwards and kill
-	for(i--;i>=0;i--) {
-//		log_printf("killing '%s'\n",subsystems[i].name);
-		subsystems[i].kill();
+	log_printf("\n\nsupported ines20 mappers:  ");
+	for(n2=0,i=0;i<(256 * 1);i++) {
+		for(j=1;j<16;j++) {
+			if(mapper_get_mapperid_ines20(i,j) >= 0) {
+				if(n2)
+					log_printf(", ");
+				log_printf("%d.%d",i,j);
+				n2++;
+			}
+		}
 	}
+
+	log_printf("\n\nsupported unif mappers:\n");
+	for(i=0;;i++) {
+		if((str = mapper_get_unif_boardname(i)) == 0)
+			break;
+		log_printf("   %s\n",str);
+	}
+	log_printf("\n%d ines, %d ines20, %d unif, %d internal boards supported\n",n,n2,i,B_BOARDEND);
+	return(0);
 }

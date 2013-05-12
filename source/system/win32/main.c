@@ -19,10 +19,11 @@
  ***************************************************************************/
 
 #include <windows.h>
+#include <windowsx.h>
 #include "resource.h"
+#include "emu/emu.h"
 #include "misc/log.h"
 #include "misc/config.h"
-#include "misc/emu.h"
 #include "palette/palette.h"
 #include "palette/generator.h"
 #include "system/video.h"
@@ -42,9 +43,11 @@ __inline void checkmessages()
 {
 	MSG msg;
 
-	while(PeekMessage(&msg,hWnd,0,0,PM_REMOVE)) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+	while(PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
+		if(IsDialogMessage(hConsole,&msg) == FALSE) {
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
 }
 
@@ -52,7 +55,7 @@ int mainloop()
 {
 	while(quit == 0) {
 		checkmessages();
-		if(running) {
+		if(running && nes.cart) {
 			nes_frame();
 		}
 		video_startframe();
@@ -60,6 +63,15 @@ int mainloop()
 		input_poll();
 	}
 	return(0);
+}
+
+static void console_loghook(char *str)
+{
+	HWND hCtrl = GetDlgItem(hConsole,IDC_CONSOLEEDIT);
+	int index = GetWindowTextLength(hCtrl);
+
+	Edit_SetSel(hCtrl,index,index);
+	Edit_ReplaceSel(hCtrl,str);
 }
 
 int APIENTRY WinMain(HINSTANCE hInstance,
@@ -77,8 +89,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		return FALSE;
 	}
 
+	log_sethook(console_loghook);
+
 	if(emu_init() != 0)
 		return(FALSE);
+
+	//this is temporary
+	nes_set_inputdev(0,I_JOYPAD0);
 
 //this palette crap could be made common to all system targets...palette_init() maybe?
 	if(strcmp(config_get_string("palette.source","generator"),"file") == 0) {

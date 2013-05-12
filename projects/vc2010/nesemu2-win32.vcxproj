@@ -52,7 +52,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);QUICK_SPRITES</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);QUICK_SPRITES;ACCURATE_SPRITE0</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -95,6 +95,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\emu\commands.c" />
+    <ClCompile Include="..\..\source\emu\commands\general.c" />
+    <ClCompile Include="..\..\source\emu\commands\nes.c" />
+    <ClCompile Include="..\..\source\emu\emu.c" />
     <ClCompile Include="..\..\source\inputdev\powerpad.c" />
     <ClCompile Include="..\..\source\inputdev\zapper.c" />
     <ClCompile Include="..\..\source\mappers\boards\cne\decathlon.c" />
@@ -160,8 +164,33 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\calc.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\draw.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\fetch.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\misc.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\scroll.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\ppu\step\sprite.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\source\system\win32\dialogs\about.c" />
     <ClCompile Include="..\..\source\system\win32\dialogs\configuration.c" />
+    <ClCompile Include="..\..\source\system\win32\dialogs\console.c" />
     <ClCompile Include="..\..\source\system\win32\dialogs\debugger.c" />
     <ClCompile Include="..\..\source\system\win32\dialogs\mappers.c" />
     <ClCompile Include="..\..\source\system\win32\input.c" />
@@ -175,7 +204,10 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)nes/</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\memory.c" />
-    <ClCompile Include="..\..\source\nes\nes.c" />
+    <ClCompile Include="..\..\source\nes\nes.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\source\nes\cpu\addrmodes.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -298,7 +330,6 @@
     <ClCompile Include="..\..\source\mappers\chips\mmc5.c" />
     <ClCompile Include="..\..\source\misc\config.c" />
     <ClCompile Include="..\..\source\misc\crc32.c" />
-    <ClCompile Include="..\..\source\misc\emu.c" />
     <ClCompile Include="..\..\source\misc\log.c" />
     <ClCompile Include="..\..\source\misc\memutil.c" />
     <ClCompile Include="..\..\source\palette\generator.c" />
@@ -309,6 +340,8 @@
     <ClCompile Include="..\..\source\inputdev\null.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\system\win32\dialogs.h" />
+    <ClInclude Include="..\..\source\system\win32\mainwnd.h" />
     <ClInclude Include="..\..\source\types.h" />
     <ClInclude Include="..\..\source\version.h" />
     <ClInclude Include="..\..\source\system\input.h" />

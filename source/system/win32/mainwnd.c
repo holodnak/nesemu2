@@ -20,6 +20,8 @@
 
 #include <windows.h>
 #include "resource.h"
+#include "misc/log.h"
+#include "misc/config.h"
 #include "nes/nes.h"
 #include "system/win32/dialogs.h"
 
@@ -27,8 +29,11 @@
 
 HINSTANCE hInst;									//current instance
 HWND hWnd;											//main window
+HWND hConsole;										//console/debug message window
 CHAR szTitle[MAX_LOADSTRING];					//title bar text
 CHAR szWindowClass[MAX_LOADSTRING];			//the main window class name
+
+int consoleshowing = 0;
 
 //defined in main.c
 extern int quit,running;
@@ -95,9 +100,8 @@ static void file_open(HWND hWnd)
 	log_printf("WndProc:  loading file '%s'\n",buffer);
 	if(nes_load(buffer) == 0) {
 		log_printf("WndProc:  resetting nes...\n");
-		nes_set_inputdev(0,I_JOYPAD0);
 		nes_reset(1);
-		running = 1;
+		running = config_get_int("nes.pause_on_load",0) ? 0 : 1;
 	}
 }
 
@@ -116,6 +120,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	int wmId, wmEvent;
 	PAINTSTRUCT ps;
 	HDC hdc;
+	HMENU hMenu;
 
 	switch (message) 
 	{
@@ -147,6 +152,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case ID_CONFIGURATION_GENERAL:
 			ConfigurationPropertySheet(hWnd);
 			break;
+		case ID_VIEW_CONSOLE:
+			if(consoleshowing == 0) {
+				ShowWindow(hConsole,SW_SHOW);
+			}
+			else {
+				ShowWindow(hConsole,SW_HIDE);
+			}
+			hMenu = GetMenu(hWnd);
+			consoleshowing ^= 1;
+			CheckMenuItem(hMenu,ID_VIEW_CONSOLE,consoleshowing ? MF_CHECKED : MF_UNCHECKED);
+			break;
 		case IDM_ABOUT:
 			DialogBox(hInst,(LPCTSTR)IDD_ABOUT,hWnd,(DLGPROC)AboutDlg);
 			break;
@@ -167,6 +183,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_DESTROY:
 		quit++;
+		DestroyWindow(hConsole);
 		PostQuitMessage(0);
 		break;
 	case WM_SIZE:
@@ -233,6 +250,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
+	hConsole = CreateDialog(hInstance,MAKEINTRESOURCE(IDD_CONSOLE),hWnd,ConsoleProc);
+	if(consoleshowing)
+		ShowWindow(hConsole,SW_SHOW);
    if (!hWnd)
    {
       return FALSE;

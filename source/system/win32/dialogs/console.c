@@ -18,14 +18,51 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __mainwnd_h__
-#define __mainwnd_h__
+#include <windows.h>
+#include "misc/memutil.h"
+#include "misc/log.h"
+#include "emu/commands.h"
+#include "system/win32/mainwnd.h"
+#include "system/win32/resource.h"
 
-extern HINSTANCE hInst;
-extern HWND hWnd;
-extern HWND hConsole;
+BOOL CALLBACK ConsoleProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	char *str;
+	int len;
+	HWND hEdit;
 
-ATOM MyRegisterClass(HINSTANCE hInstance);
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow);
+	switch(message) {
+		case WM_INITDIALOG:
+			hEdit = GetDlgItem(hwnd,IDC_COMMANDEDIT);
+			SetFocus(hEdit);
+			return(TRUE);
+		case WM_SYSCOMMAND:
+			switch(LOWORD(wParam)) {
+				case SC_CLOSE:
+					SendMessage(hWnd,WM_COMMAND,ID_VIEW_CONSOLE,0);
+					return(TRUE);
+			}
+			break;
+		case WM_COMMAND:
+		    switch(LOWORD(wParam)) {
+				case IDC_EXECUTEBUTTON:
+					hEdit = GetDlgItem(hwnd,IDC_COMMANDEDIT);
+					if((len = SendMessage(hEdit, WM_GETTEXTLENGTH, 0, 0))) {
+						str = (char*)mem_alloc(len + 1);
+						memset(str,0,len + 1);
+						SendMessage(hEdit,WM_GETTEXT,len + 1,(LPARAM)str);
+						log_printf("> %s\n",str);
+						SetWindowText(hEdit,"");
+						command_execute(str);
+						mem_free(str);
+					}
+					return(TRUE);
+				 case IDOK:
+				 case IDCANCEL:
+					 return(TRUE);
+			 }
+			break;
 
-#endif
+	}
+	return(FALSE);
+}

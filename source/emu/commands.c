@@ -18,14 +18,67 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __mainwnd_h__
-#define __mainwnd_h__
+#include <string.h>
+#include "emu/commands.h"
+#include "misc/log.h"
 
-extern HINSTANCE hInst;
-extern HWND hWnd;
-extern HWND hConsole;
+#define COMMAND_START	static command_t commands[] = {
+#define COMMAND(n)		{"" #n "", command_ ## n},
+#define COMMAND_END		{0,0}};
 
-ATOM MyRegisterClass(HINSTANCE hInstance);
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow);
+typedef int (*cmdfunc_t)(int argc,char **argv);
 
-#endif
+typedef struct command_s {
+	char *name;
+	cmdfunc_t func;
+} command_t;
+
+COMMAND_START
+	COMMAND(mappers)
+	COMMAND(load)
+	COMMAND(unload)
+	COMMAND(reset)
+	COMMAND(hardreset)
+	COMMAND(readcpu)
+	COMMAND(writecpu)
+COMMAND_END
+
+int command_init()
+{
+	return(0);
+}
+
+void command_kill()
+{
+
+}
+
+int command_execute(char *str)
+{
+	int i,argc = 0;
+	char *argv[64];		//not more than 64 args!
+
+	//eat whitespace in front
+	while(*str == ' ') {
+		str++;
+	}
+
+	//split up the command line (needs improvement)
+	argv[argc] = strtok(str," \t");
+	while(argv[argc] != 0) {
+		argv[++argc] = strtok(0," \t");
+	}
+//	log_printf("command is:  '%s' -- %d args\n",str,argc);
+
+	//try to execute the command
+	for(i=0;commands[i].name;i++) {
+		if(strcmp(argv[0],commands[i].name) == 0) {
+			commands[i].func(argc,argv);
+			return(0);
+		}
+	}
+
+	//bad command or file name!
+	log_printf("invalid command '%s'\n",argv[0]);
+	return(1);
+}

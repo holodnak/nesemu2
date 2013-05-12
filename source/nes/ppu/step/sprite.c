@@ -228,8 +228,6 @@ static INLINE void sprite0_hit_check()
 	int xpos;
 	int x = LINECYCLES - 1;
 
-	if(x > 255)
-		return;
 	for(i=0;i<8;i++,spr--) {
 		if((spr->flags & 2) == 0)
 			continue;
@@ -243,7 +241,7 @@ static INLINE void sprite0_hit_check()
 			if(*dest && line[xpos]) {
 				STATUS |= 0x40;
 				spr->flags = 0;
-//				log_printf("found sprite 0 hit at %d, %d\n",LINECYCLES,SCANLINE);
+//				log_printf("found sprite 0 hit at pixel %d, scanline %d (frame %d)\n",LINECYCLES,SCANLINE,FRAMES);
 			}
 		}
 	}

@@ -20,8 +20,9 @@
 
 #include <SDL/SDL.h>
 #include <stdio.h>
+#include "emu/emu.h"
+#include "emu/commands.h"
 #include "misc/log.h"
-#include "misc/emu.h"
 #include "misc/config.h"
 #include "nes/nes.h"
 #include "nes/state/state.h"
@@ -131,42 +132,6 @@ int mainloop()
 	return(0);
 }
 
-static void showmappers()
-{
-	int i,j,n,n2;
-	const char *str;
-
-	log_printf("supported ines mappers:  ");
-	for(n=0,i=0;i<256;i++) {
-		if(mapper_get_mapperid_ines(i) >= 0) {
-			if(n)
-				log_printf(", ");
-			log_printf("%d",i);
-			n++;
-		}
-	}
-
-	log_printf("\n\nsupported ines20 mappers:  ");
-	for(n2=0,i=0;i<(256 * 1);i++) {
-		for(j=1;j<16;j++) {
-			if(mapper_get_mapperid_ines20(i,j) >= 0) {
-				if(n2)
-					log_printf(", ");
-				log_printf("%d.%d",i,j);
-				n2++;
-			}
-		}
-	}
-
-	log_printf("\n\nsupported unif mappers:\n");
-	for(i=0;;i++) {
-		if((str = mapper_get_unif_boardname(i)) == 0)
-			break;
-		log_printf("   %s\n",str);
-	}
-	log_printf("\n%d ines, %d ines20, %d unif, %d internal boards supported\n",n,n2,i,B_BOARDEND);
-}
-
 int main(int argc,char *argv[])
 {
 	int ret;
@@ -179,7 +144,7 @@ int main(int argc,char *argv[])
 	//crappily process command line arguments
 	if(argc > 1) {
 		if(strcmp("--mappers",argv[1]) == 0) {
-			showmappers();
+			command_execute("mappers");
 			return(0);
 		}
 
@@ -212,8 +177,5 @@ int main(int argc,char *argv[])
 	emu_kill();
 
 	//return to os
-#if defined(WIN32) && defined(DEBUG)
-	system("pause");
-#endif
 	return(ret);
 }

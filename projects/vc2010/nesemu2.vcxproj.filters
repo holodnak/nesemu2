@@ -208,6 +208,12 @@
     <Filter Include="Source Files\nes\apu\units">
       <UniqueIdentifier>{9aa574fa-11a2-4a0c-b3c6-2c770e75d627}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emu">
+      <UniqueIdentifier>{8400347b-88bc-439a-ba3a-6cf68ab51177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emu\commands">
+      <UniqueIdentifier>{3880ac25-0990-4d8e-a23d-6ee2797d3010}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -361,9 +367,6 @@
       <Filter>Source Files\misc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\misc\crc32.c">
-      <Filter>Source Files\misc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\misc\emu.c">
       <Filter>Source Files\misc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\misc\log.c">
@@ -701,6 +704,18 @@
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\chips\taito-tc0190fmc.c">
       <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\emu\commands.c">
+      <Filter>Source Files\emu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\emu\emu.c">
+      <Filter>Source Files\emu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\emu\commands\general.c">
+      <Filter>Source Files\emu\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\emu\commands\nes.c">
+      <Filter>Source Files\emu\commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -149,6 +149,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\emu\commands.c" />
+    <ClCompile Include="..\..\source\emu\commands\general.c" />
+    <ClCompile Include="..\..\source\emu\commands\nes.c" />
+    <ClCompile Include="..\..\source\emu\emu.c" />
     <ClCompile Include="..\..\source\inputdev\inputdev.c" />
     <ClCompile Include="..\..\source\inputdev\joypad0.c" />
     <ClCompile Include="..\..\source\inputdev\joypad1.c" />
@@ -246,7 +250,6 @@
     <ClCompile Include="..\..\source\mappers\chips\taito-tc0190fmc.c" />
     <ClCompile Include="..\..\source\misc\config.c" />
     <ClCompile Include="..\..\source\misc\crc32.c" />
-    <ClCompile Include="..\..\source\misc\emu.c" />
     <ClCompile Include="..\..\source\misc\log.c" />
     <ClCompile Include="..\..\source\misc\memutil.c" />
     <ClCompile Include="..\..\source\nes\apu\apu.c" />
@@ -376,7 +379,11 @@
     <ClCompile Include="..\..\source\system\sdl\video.c" />
     <ClCompile Include="..\..\source\system\sdl\win32\SDL_win32_main.c" />
     <ClCompile Include="..\..\source\nes\memory.c" />
-    <ClCompile Include="..\..\source\nes\nes.c" />
+    <ClCompile Include="..\..\source\nes\nes.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">$(IntDir)/nes/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\source\nes\cpu\addrmodes.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>

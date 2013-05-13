@@ -213,8 +213,15 @@ void video_updateline(int line,u8 *s)
 	u32 *dest = screen + (line * 256);
 	int i;
 
-	for(i=0;i<256;i++) {
-		*dest++ = palettecache[*s++];
+	if(line >= 8 && line < 232) {
+		for(i=0;i<256;i++) {
+			*dest++ = palettecache[*s++];
+		}
+	}
+	else {
+		for(i=0;i<256;i++) {
+			*dest++ = 0;
+		}
 	}
 }
 

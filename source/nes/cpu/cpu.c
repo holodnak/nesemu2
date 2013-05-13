@@ -58,6 +58,9 @@ writefunc_t cpu_write;
 static u8 tmp8;
 static int tmpi;
 
+//for stopping execution when invalid opcodes are encountered (kludge)
+extern int running;
+
 //include helper functions
 #include "helper.c"
 
@@ -163,11 +166,6 @@ void cpu_tick()
 static u8 read_cpu_memory(u32 addr)
 {
 	u32 page = addr >> 12;
-
-	//check for rom read, should always be mapped
-	if(addr >= 0x8000) {
-		return(nes.cpu.readpages[page][addr & 0xFFF]);
-	}
 
 	//check for ram read
 	if(addr < 0x2000) {

@@ -150,6 +150,9 @@
 							RelativePath="..\..\source\system\win32\dialogs\configuration.c">
 						</File>
 						<File
+							RelativePath="..\..\source\system\win32\dialogs\console.c">
+						</File>
+						<File
 							RelativePath="..\..\source\system\win32\dialogs\debugger.c">
 						</File>
 						<File
@@ -165,6 +168,15 @@
 			<Filter
 				Name="nes"
 				Filter="">
+				<File
+					RelativePath="..\..\source\nes\genie.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
+				</File>
 				<File
 					RelativePath="..\..\source\nes\io.c">
 					<FileConfiguration
@@ -182,9 +194,21 @@
 				</File>
 				<File
 					RelativePath="..\..\source\nes\memory.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\source\nes\nes.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
 				</File>
 				<Filter
 					Name="cpu"
@@ -1047,6 +1071,31 @@
 						RelativePath="..\..\source\mappers\chips\taito-tc0190fmc.c">
 					</File>
 				</Filter>
+				<Filter
+					Name="sound"
+					Filter="">
+					<File
+						RelativePath="..\..\source\mappers\sound\s_DRIP.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_FDS.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_FME7.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_MMC5.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_N106.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_VRC6.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_VRC7.c">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="misc"
@@ -1056,9 +1105,6 @@
 				</File>
 				<File
 					RelativePath="..\..\source\misc\crc32.c">
-				</File>
-				<File
-					RelativePath="..\..\source\misc\emu.c">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\log.c">
@@ -1097,6 +1143,33 @@
 				</File>
 				<File
 					RelativePath="..\..\source\inputdev\zapper.c">
+				</File>
+			</Filter>
+			<Filter
+				Name="emu"
+				Filter="">
+				<File
+					RelativePath="..\..\source\emu\commands.c">
+				</File>
+				<File
+					RelativePath="..\..\source\emu\emu.c">
+				</File>
+				<Filter
+					Name="commands"
+					Filter="">
+					<File
+						RelativePath="..\..\source\emu\commands\general.c">
+					</File>
+					<File
+						RelativePath="..\..\source\emu\commands\nes.c">
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="cartdb"
+				Filter="">
+				<File
+					RelativePath="..\..\source\cartdb\cartdb.c">
 				</File>
 			</Filter>
 		</Filter>

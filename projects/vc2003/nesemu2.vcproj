@@ -213,6 +213,21 @@
 				Name="nes"
 				Filter="">
 				<File
+					RelativePath="..\..\source\nes\genie.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\..\source\nes\io.c">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -229,9 +244,33 @@
 				</File>
 				<File
 					RelativePath="..\..\source\nes\memory.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\source\nes\nes.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
 				</File>
 				<Filter
 					Name="cpu"
@@ -1059,6 +1098,27 @@
 				<Filter
 					Name="sound"
 					Filter="">
+					<File
+						RelativePath="..\..\source\mappers\sound\s_DRIP.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_FDS.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_FME7.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_MMC5.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_N106.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_VRC6.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_VRC7.c">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -1127,21 +1187,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\source\misc\emu.c">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/misc/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/misc/"/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\..\source\misc\log.c">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1178,6 +1223,26 @@
 				<File
 					RelativePath="..\..\source\cartdb\cartdb.c">
 				</File>
+			</Filter>
+			<Filter
+				Name="emu"
+				Filter="">
+				<File
+					RelativePath="..\..\source\emu\commands.c">
+				</File>
+				<File
+					RelativePath="..\..\source\emu\emu.c">
+				</File>
+				<Filter
+					Name="commands"
+					Filter="">
+					<File
+						RelativePath="..\..\source\emu\commands\general.c">
+					</File>
+					<File
+						RelativePath="..\..\source\emu\commands\nes.c">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1239,6 +1304,9 @@
 			<Filter
 				Name="nes"
 				Filter="">
+				<File
+					RelativePath="..\..\source\nes\genie.h">
+				</File>
 				<File
 					RelativePath="..\..\source\nes\io.h">
 				</File>
@@ -1418,6 +1486,16 @@
 				Filter="">
 				<File
 					RelativePath="..\..\source\cartdb\cartdb.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="emu"
+				Filter="">
+				<File
+					RelativePath="..\..\source\emu\commands.h">
+				</File>
+				<File
+					RelativePath="..\..\source\emu\emu.h">
 				</File>
 			</Filter>
 		</Filter>

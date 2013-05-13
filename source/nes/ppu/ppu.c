@@ -22,14 +22,8 @@
 #include "nes/memory.h"
 #include "nes/state/state.h"
 
-u8 blankline[256];
-
 int ppu_init()
 {
-	int i;
-
-	for(i=0;i<256;i++)
-		blankline[i] = 0;
 	state_register(B_PPU,ppu_state);
 	return(0);
 }

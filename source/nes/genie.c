@@ -63,15 +63,15 @@ static u8 genie_read_cheat(u32 addr)
 
 	//reading from rom, lets cheat!
 	if(addr >= 0x8000) {
-		if(addr == code[0].addr && ((reg & 2) || ret == code[0].compare)) {
+		if((reg & 0x10) == 0 && addr == code[0].addr && ((reg & 2) == 0 || ret == code[0].compare)) {
 			log_printf("applying code 0, addr = %04X\n",addr);
 			return(code[0].data);
 		}
-		if(addr == code[1].addr && ((reg & 4) || ret == code[1].compare)) {
+		if((reg & 0x20) == 0 && addr == code[1].addr && ((reg & 4) == 0 || ret == code[1].compare)) {
 			log_printf("applying code 1, addr = %04X\n",addr);
 			return(code[1].data);
 		}
-		if(addr == code[2].addr && ((reg & 8) || ret == code[2].compare)) {
+		if((reg & 0x40) == 0 && addr == code[2].addr && ((reg & 8) == 0 || ret == code[2].compare)) {
 			log_printf("applying code 2, addr = %04X\n",addr);
 			return(code[2].data);
 		}
@@ -82,14 +82,13 @@ static u8 genie_read_cheat(u32 addr)
 
 static void genie_write(u32 addr,u8 data)
 {
-	int i;
-
 	if(addr >= 0x8000) {
 		switch(addr) {
 			case 0x8000:
 				if((data & 1) == 0) {
 
-					//unmap 
+					//unmap the write function
+					mem_setwritefunc(8,0);
 
 					//we not using genie anymore
 					reg &= 0x7F;
@@ -105,10 +104,13 @@ static void genie_write(u32 addr,u8 data)
 
 					//reset the mapper
 					nes.mapper->reset(1);
-					return;
 				}
 				else {
-					reg = 0x80 | data;
+					reg = 0x80 | (data & 0x7E);
+					log_printf("genie_write:  reg = $%02X (data = $%02X)\n",reg,data);
+					log_printf("  code 0:  %s, %s\n",(reg & 0x10) ? "disabled" : "enabled",(reg & 2) ? "compare" : "no compare");
+					log_printf("  code 1:  %s, %s\n",(reg & 0x20) ? "disabled" : "enabled",(reg & 4) ? "compare" : "no compare");
+					log_printf("  code 2:  %s, %s\n",(reg & 0x40) ? "disabled" : "enabled",(reg & 8) ? "compare" : "no compare");
 				}
 				break;
 			case 0x8001:	code[0].addr = (code[0].addr & 0x00FF) | (data << 8);		break;
@@ -197,10 +199,14 @@ int genie_load()
 {
 	//if the rom isnt loaded, we need to do that now
 	if(genierom == 0) {
-		state_register(B_GG,genie_state);
+
+		//try to load the genie rom
 		if(genie_loadrom() != 0) {
 			return(1);
 		}
+
+		//register the save state stuff
+		state_register(B_GG,genie_state);
 	}
 
 	//load in the genie mapper
@@ -212,10 +218,12 @@ int genie_load()
 void genie_unload()
 {
 	if(genierom) {
+		state_unregister(B_GG);
 		mem_free(genierom);
 		mem_free(geniecache);
 		genierom = 0;
 		geniecache = 0;
+		log_printf("genie_unload:  unloaded game genie.\n");
 	}
 }
 
@@ -240,6 +248,8 @@ void genie_reset(int hard)
 	//setup genie registers
 	memset(code,0,sizeof(codedata_t) * 3);
 	reg = 0x80;
+
+	log_printf("genie_reset:  ok\n");
 }
 
 void genie_state(int mode,u8 *data)

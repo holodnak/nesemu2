@@ -93,7 +93,6 @@ typedef struct ppu_s {
 
 extern readfunc_t ppu_memread;
 extern writefunc_t ppu_memwrite;
-extern u8 blankline[];
 
 int ppu_init();
 void ppu_kill();

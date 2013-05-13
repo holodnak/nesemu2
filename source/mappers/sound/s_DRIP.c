@@ -137,4 +137,5 @@ int	DRIPsound_SaveLoad(int statetype,int a,unsigned char *d)
 	SAVELOAD_BYTE(mode, offset, data, Chan[1].vol);
 	SAVELOAD_WORD(mode, offset, data, Chan[0].timer);
 	SAVELOAD_WORD(mode, offset, data, Chan[1].timer);*/
+	return(0);
 }

@@ -182,13 +182,14 @@ void nes_reset(int hard)
 	ppu_setreadfunc(0);
 	ppu_setwritefunc(0);
 
-	//load in the game genie if it is enabled
-	if(config_get_int("nes.gamegenie.enabled",0) != 0 && genie_load() == 0) {
-		genie_load();
+	//load in the game genie if it is enabled and we doing hard reset
+	if(config_get_int("nes.gamegenie.enabled",0) != 0) {
+		if(hard)
+			genie_load();
 	}
 	else {
 		//make sure we dont have a game genie block in the state if it is disabled
-		state_unregister(B_GG);
+		genie_unload();
 	}
 
 	//reset the mapper

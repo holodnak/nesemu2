@@ -130,8 +130,5 @@ static INLINE void update_line()
 	if(CONTROL1 & 0x10)
 		drawspriteline();
 #endif
-	if(SCANLINE < 8 || SCANLINE >= 232)
-		video_updateline(SCANLINE,blankline);
-	else
-		video_updateline(SCANLINE,nes.ppu.linebuffer);
+	video_updateline(SCANLINE,nes.ppu.linebuffer);
 }

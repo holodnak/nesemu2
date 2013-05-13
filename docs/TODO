@@ -1,5 +1,5 @@
 nes
- . something is wrong with reset!
+ . fix game genie + save states
 
 cpu
  . add the BRK + NMI bug

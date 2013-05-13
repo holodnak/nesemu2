@@ -43,6 +43,12 @@ SOURCE_SYSTEM_SDL += source/system/common/filters/draw/draw.c source/system/comm
 SOURCE_SYSTEM_SDL += source/system/common/filters/scale2x/scalebit.c source/system/common/filters/scale2x/scale2x.c
 SOURCE_SYSTEM_SDL += source/system/common/filters/scale2x/scale3x.c
 
+# win32 system files
+SOURCE_SYSTEM_WIN32 = source/system/win32/video.c source/system/win32/input.c source/system/win32/sound.c
+SOURCE_SYSTEM_WIN32 += source/system/win32/system.c source/system/win32/main.c source/system/win32/mainwnd.c
+SOURCE_SYSTEM_WIN32 += $(foreach dir,$(PATH_SOURCE)/system/win32/dialogs,$(wildcard $(dir)/*.c))
+SOURCE_SYSTEM_WIN32 += source/system/win32/nesemu2-res.o
+
 # sdl/win32 system files
 SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c source/system/win32/nesemu2-res.o
 
@@ -67,17 +73,25 @@ TRASHDIRS += projects/vc2010/Debug projects/vc2010/Release projects/vc2010/ipch
 
 # system stuff
 ifeq ($(OSTARGET),WIN32)
-	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_WIN32)
+	ifeq ($(USESDL),1)
+		SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_WIN32)
+		LIBS += -lSDL
+	else
+		SOURCES += $(SOURCE_SYSTEM_WIN32)
+		LIBS += -lcomctl32 -lgdi32 -lcomdlg32
+	endif
 	TARGET = $(OUTPUT).exe
 endif
 
 ifeq ($(OSTARGET),LINUX)
 	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_LINUX)
+	LIBS += -lSDL
 	TARGET = $(OUTPUT)
 endif
 
 ifeq ($(OSTARGET),OSX)
 	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_OSX)
+	LIBS += -lSDL
 	TARGET = $(OUTPUT)
 endif
 

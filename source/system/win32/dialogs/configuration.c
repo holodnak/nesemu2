@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 #include <windows.h>
-#include <windows.h>
+#include <prsht.h>
 #include "system/win32/resource.h"
 #include "system/win32/mainwnd.h"
 

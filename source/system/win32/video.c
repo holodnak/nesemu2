@@ -22,7 +22,7 @@
 
 #include <windows.h>
 #include <windowsx.h>
-#include <ddraw.h>
+//#include <ddraw.h>
 #include <stdio.h>
 #include "misc/log.h"
 #include "misc/config.h"

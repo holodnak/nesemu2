@@ -21,4 +21,4 @@ source/system/osx/%.o: source/system/osx/%.m
 
 # output executable
 $(TARGET): $(OBJECTS)
-	$(LD) -o $@ $^ $(LDFLAGS)
+	$(LD) -o $@ $^ $(LDFLAGS) $(LIBS)

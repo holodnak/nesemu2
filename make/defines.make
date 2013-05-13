@@ -4,13 +4,16 @@
 OSTARGET = UNKNOWN
 ifeq ($(OS),Windows_NT)
 	OSTARGET = WIN32
+	USESDL ?= 1
 	DEFINES = -DNO_STDIO_REDIRECT
 else
 	UNAME = $(shell uname -s)
 	ifeq ($(UNAME),Linux)
+		USESDL = 1
 		OSTARGET = LINUX
 	endif
 	ifeq ($(UNAME),Darwin)
+		USESDL = 1
 		OSTARGET = OSX
 	endif
 endif
@@ -48,11 +51,11 @@ CFLAGS_RELEASE = -O3 -funroll-loops -fomit-frame-pointer
 LDFLAGS_RELEASE = -s
 
 # libraries for linking
-LIBS = -lSDL
+LIBS =
 
 # compiler/linker flags
 CFLAGS = $(CFLAGS_$(BUILD)) $(DEFINES) -I$(PATH_SOURCE) -D$(OSTARGET) -D$(BUILD)
-LDFLAGS = $(LDFLAGS_$(BUILD)) $(LIBS)
+LDFLAGS = $(LDFLAGS_$(BUILD))
 
 # resource compiler (win32 only)
 RC = windres

@@ -16,7 +16,7 @@ USE_QUICK_SPRITES ?= 1
 USE_ACCURATE_SPRITE0 ?= 1
 
 # build type
-BUILD ?= DEBUG
+BUILD ?= RELEASE
 
 # os target
 OSTARGET ?= WIN32

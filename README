@@ -1,0 +1,13 @@
+nesemu2 -- cycle accurate nes emulator for win32/linux/osx
+
+targets
+-------
+win32 - nesemu2 requires sdl, nesemu2-win32 doesnt.  see projects directory.
+linux - requires sdl
+osx - requires sdl
+
+building with make
+------------------
+if you plan on building with make, you will need sdl.  there is no gui, but there
+is a 'console' in the style of quake.  nesemu2 will generate a configuration file
+in the current working directory.

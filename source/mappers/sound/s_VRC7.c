@@ -57,7 +57,7 @@
 #include	"s_VRC7.h"
 #include	<stdio.h>
 #include	<stdlib.h>
-//#include	<string.h>
+#include	<string.h>
 #include	<math.h>
 #include	"types.h"
 
@@ -301,11 +301,11 @@ static u16 AR_ADJUST_TABLE[1 << EG_BITS];
 
 /* Definition of envelope mode */
 enum
-{ SETTLE, ATTACK, DECAY, SUSHOLD, SUSTINE, RELEASE, FINISH };
+{ SETTLE, ATTACK, DECAY, SUSHOLD, SUSTINE, ERELEASE, FINISH };
 
 /* Phase incr table for Attack */
 static u32 dphaseARTable[16][16];
-/* Phase incr table for Decay and Release */
+/* Phase incr table for Decay and ERELEASE */
 static u32 dphaseDRTable[16][16];
 
 /* KSL + TL Table */
@@ -547,7 +547,7 @@ makeDphaseARTable (void)
 		}
 }
 
-/* Rate Table for Decay and Release */
+/* Rate Table for Decay and ERELEASE */
 static void
 makeDphaseDRTable (void)
 {
@@ -628,7 +628,7 @@ calc_eg_dphase (OPLL_SLOT * slot)
 	case SUSTINE:
 		return dphaseDRTable[slot->patch.RR][slot->rks];
 
-	case RELEASE:
+	case ERELEASE:
 		if (slot->sustine)
 			return dphaseDRTable[5][slot->rks];
 		else if (slot->patch.EG)
@@ -689,7 +689,7 @@ slotOff (OPLL_SLOT * slot)
 {
 	if (slot->eg_mode == ATTACK)
 		slot->eg_phase = EXPAND_BITS (AR_ADJUST_TABLE[HIGHBITS (slot->eg_phase, EG_DP_BITS - EG_BITS)], EG_BITS, EG_DP_BITS);
-	slot->eg_mode = RELEASE;
+	slot->eg_mode = ERELEASE;
 }
 
 /* Channel key on */
@@ -1031,7 +1031,7 @@ calc_envelope (OPLL_SLOT * slot, s32 lfo)
 		break;
 
 	case SUSTINE:
-	case RELEASE:
+	case ERELEASE:
 		egout = HIGHBITS (slot->eg_phase, EG_DP_BITS - EG_BITS);
 		slot->eg_phase += slot->eg_dphase;
 		if (egout >= (1 << EG_BITS))

@@ -5,7 +5,11 @@ PATH_SOURCE=source
 
 # misc source files
 SOURCE_MISC = source/misc/config.c source/misc/log.c 
-SOURCE_MISC += source/misc/crc32.c source/misc/memutil.c source/misc/emu.c
+SOURCE_MISC += source/misc/crc32.c source/misc/memutil.c
+
+# emu source files
+SOURCE_EMU = source/emu/emu.c source/emu/commands.c 
+SOURCE_EMU += source/emu/commands/general.c source/emu/commands/nes.c
 
 # search mapper directory for source files
 MAPPER_DIRS=$(shell find $(PATH_SOURCE)/mappers -type d)
@@ -15,7 +19,7 @@ SOURCE_MAPPERS=$(foreach dir,$(MAPPER_DIRS),$(wildcard $(dir)/*.c))
 SOURCE_INPUTDEV = $(foreach dir,$(PATH_SOURCE)/inputdev,$(wildcard $(dir)/*.c))
 
 # nes core
-SOURCE_NES = source/nes/memory.c source/nes/nes.c source/nes/io.c
+SOURCE_NES = source/nes/memory.c source/nes/nes.c source/nes/io.c source/nes/genie.c
 SOURCE_NES += source/nes/cart/cart.c source/nes/cart/ines.c source/nes/cart/ines20.c
 SOURCE_NES += source/nes/cart/unif.c source/nes/cart/fds.c
 SOURCE_NES += source/nes/state/state.c source/nes/state/block.c
@@ -49,7 +53,7 @@ SOURCE_SYSTEM_LINUX = source/system/linux/stricmp.c
 SOURCE_SYSTEM_OSX = source/system/osx/SDLmain.o
 
 # build list of source files
-SOURCES = $(SOURCE_MISC) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE)
+SOURCES = $(SOURCE_MISC) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE)
 
 # extra files to remove
 TRASHFILES = nesemu2.log stdout.txt stderr.txt

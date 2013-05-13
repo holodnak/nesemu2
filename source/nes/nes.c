@@ -26,6 +26,7 @@
 #include "nes/nes.h"
 #include "nes/io.h"
 #include "nes/memory.h"
+#include "nes/genie.h"
 #include "nes/state/state.h"
 
 //kludge for sure
@@ -86,6 +87,7 @@ void nes_kill()
 	ppu_kill();
 	apu_kill();
 	cart_unload(nes.cart);
+	genie_unload();
 }
 
 int nes_load_cart(cart_t *c)
@@ -180,8 +182,19 @@ void nes_reset(int hard)
 	ppu_setreadfunc(0);
 	ppu_setwritefunc(0);
 
-	//reset the mapper, cpu, and ppu
+	//load in the game genie if it is enabled
+	if(config_get_int("nes.gamegenie.enabled",0) != 0 && genie_load() == 0) {
+		genie_load();
+	}
+	else {
+		//make sure we dont have a game genie block in the state if it is disabled
+		state_unregister(B_GG);
+	}
+
+	//reset the mapper
 	nes.mapper->reset(hard);
+
+	//reset the cpu, ppu, and apu
 	ppu_reset(hard);
 	cpu_reset(hard);
 	apu_reset(hard);

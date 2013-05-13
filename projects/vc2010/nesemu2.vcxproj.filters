@@ -181,9 +181,6 @@
     <Filter Include="Source Files\mappers\boards\homebrew">
       <UniqueIdentifier>{655aac3a-a9bf-4b1e-8163-4c285b01b477}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\nes\cpu\cart">
-      <UniqueIdentifier>{e6fb2024-8279-4dd4-be7a-b340a3feb6fd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\mappers\boards\sunsoft">
       <UniqueIdentifier>{bec70d57-b76a-4b0d-9bd1-b5f186a30be5}</UniqueIdentifier>
     </Filter>
@@ -216,6 +213,9 @@
     </Filter>
     <Filter Include="Source Files\mappers\sound">
       <UniqueIdentifier>{912bb246-db91-4c7b-a126-7cff92b7dd9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\nes\cart">
+      <UniqueIdentifier>{e6fb2024-8279-4dd4-be7a-b340a3feb6fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -262,13 +262,13 @@
       <Filter>Source Files\nes\ppu</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\cart.c">
-      <Filter>Source Files\nes\cpu\cart</Filter>
+      <Filter>Source Files\nes\cart</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\ines.c">
-      <Filter>Source Files\nes\cpu\cart</Filter>
+      <Filter>Source Files\nes\cart</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\ines20.c">
-      <Filter>Source Files\nes\cpu\cart</Filter>
+      <Filter>Source Files\nes\cart</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\ines.c">
       <Filter>Source Files\mappers</Filter>
@@ -463,7 +463,7 @@
       <Filter>Source Files\system\sdl\console</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\unif.c">
-      <Filter>Source Files\nes\cpu\cart</Filter>
+      <Filter>Source Files\nes\cart</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\chips\mmc5.c">
       <Filter>Source Files\mappers\chips</Filter>
@@ -595,7 +595,7 @@
       <Filter>Source Files\system\sdl\console</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\fds.c">
-      <Filter>Source Files\nes\cpu\cart</Filter>
+      <Filter>Source Files\nes\cart</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-3.c">
       <Filter>Source Files\mappers\boards\sunsoft</Filter>
@@ -741,6 +741,9 @@
     <ClCompile Include="..\..\source\mappers\sound\s_DRIP.c">
       <Filter>Source Files\mappers\sound</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\nes\genie.c">
+      <Filter>Source Files\nes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">
@@ -871,6 +874,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\mappers\chips\namcot-108.h">
       <Filter>Header Files\mappers\chips</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\nes\genie.h">
+      <Filter>Header Files\nes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

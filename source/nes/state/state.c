@@ -74,6 +74,31 @@ void state_register(u32 type,void (*func)(int,u8*))
 	blockinfo[i].func = func;
 }
 
+void state_unregister(u32 type)
+{
+	int i;
+
+	for(i=0;i<16;i++) {
+		if(blockinfo[i].type == type) {
+			blockinfo[i].type = 0;
+			blockinfo[i].func = 0;
+			break;
+		}
+	}
+}
+
+statefunc_t state_getfunc(u32 type)
+{
+	int i;
+
+	for(i=0;i<16;i++) {
+		if(blockinfo[i].type == type) {
+			return(blockinfo[i].func);
+		}
+	}
+	return(0);
+}
+
 int state_load(FILE *fp)
 {
 	stateheader_t header;

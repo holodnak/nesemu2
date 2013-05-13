@@ -152,9 +152,13 @@ typedef struct stateheader_s {
 	u32	crc32;			//crc32 of uncompressed data
 } stateheader_t;
 
+typedef void (*statefunc_t)(int,u8*);
+
 int state_init();
 void state_kill();
-void state_register(u32 type,void (*func)(int,u8*));
+void state_register(u32 type,statefunc_t func);
+void state_unregister(u32 type);
+statefunc_t state_getfunc(u32 type);
 int state_load(FILE *fp);
 int state_save(FILE *fp);
 

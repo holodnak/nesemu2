@@ -22,7 +22,7 @@
 #include "mappers/chips/mmc3.h"
 
 static int type;
-static void (*sync)();
+static void (*sync)() = 0;
 static u8 command;
 static u8 prg[4],chr[8];
 static u8 mirror;

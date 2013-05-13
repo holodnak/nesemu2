@@ -89,7 +89,7 @@
       <ProgramDatabaseFile>$(OutDir)nesemu2.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <Profile>false</Profile>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
@@ -331,6 +331,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\source\nes\genie.c" />
     <ClCompile Include="..\..\source\nes\io.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">$(IntDir)/nes/</ObjectFileName>
@@ -461,6 +462,7 @@
     <ClInclude Include="..\..\source\misc\log.h" />
     <ClInclude Include="..\..\source\misc\memutil.h" />
     <ClInclude Include="..\..\source\nes\apu\apu.h" />
+    <ClInclude Include="..\..\source\nes\genie.h" />
     <ClInclude Include="..\..\source\nes\io.h" />
     <ClInclude Include="..\..\source\nes\ppu\attribcache.h" />
     <ClInclude Include="..\..\source\nes\ppu\tilecache.h" />

@@ -154,6 +154,7 @@
     <ClCompile Include="..\..\source\mappers\boards\waixing\sgz.c" />
     <ClCompile Include="..\..\source\mappers\chips\namcot-108.c" />
     <ClCompile Include="..\..\source\mappers\chips\taito-tc0190fmc.c" />
+    <ClCompile Include="..\..\source\mappers\sound\s_DRIP.c" />
     <ClCompile Include="..\..\source\mappers\sound\s_FDS.c" />
     <ClCompile Include="..\..\source\mappers\sound\s_FME7.c" />
     <ClCompile Include="..\..\source\mappers\sound\s_MMC5.c" />
@@ -170,6 +171,7 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\..\source\nes\genie.c" />
     <ClCompile Include="..\..\source\nes\ppu\step\calc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

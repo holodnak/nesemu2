@@ -690,6 +690,12 @@
     <ClCompile Include="..\..\source\mappers\sound\s_VRC7.c">
       <Filter>Source Files\mappers\sound</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\sound\s_DRIP.c">
+      <Filter>Source Files\mappers\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\genie.c">
+      <Filter>Source Files\nes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

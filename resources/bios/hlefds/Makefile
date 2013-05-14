@@ -14,6 +14,7 @@ $(TARGET): $(OBJECT)
 	$(LD) $(LDFLAGS) $@
 
 all: $(TARGET)
+	cp $(TARGET) ../../../test/
 
 clean:
 	rm -f $(OBJECT) $(TARGET)

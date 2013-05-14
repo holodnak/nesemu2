@@ -48,6 +48,9 @@ mappers
 submappers
  . which needs?
 
+hlefds
+ . code borrowed from disksys.rom (some controller read code) needs to be hle'd
+
 roms
  . need mapper 104 (golden five) roms
  . need mapper 194 (Dai-2-Ji - Super Robot Taisen (As)) roms

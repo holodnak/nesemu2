@@ -25,6 +25,9 @@
 #include "misc/log.h"
 #include "misc/config.h"
 
+//show disassembly as we execute
+//#define SHOW_DISASM
+
 //defines to make easier reading
 #define PC					nes.cpu.pc
 #define A					nes.cpu.a
@@ -145,8 +148,7 @@ void cpu_tick()
 {
 	//acknowledge interrupts
 	PREV_NMISTATE = NMISTATE;
-	if(FLAG_I == 0)
-		PREV_IRQSTATE = IRQSTATE;
+	PREV_IRQSTATE = IRQSTATE;
 
 	//increment cycle counter for every memory access
 	CYCLES++;

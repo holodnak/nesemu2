@@ -60,11 +60,16 @@ set  00      20      40      60      80      a0      c0      e0      mode
 +1f  SLO*    RLA*    SRE*    RRA*    SHA**y) LAX* y) DCP*    ISB*    Absolute,x
 */
 
-//char buf[256];
 static INLINE void cpu_step()
 {
-//	cpu_disassemble(buf,PC);
-//	log_printf("%d\t%04X:  %s\n",(u32)CYCLES,PC,buf);
+#ifdef SHOW_DISASM
+	static char buf[256];
+	cpu_disassemble(buf,PC);
+	log_printf("%7d A:%02X X:%02X Y:%02X SP:%02X [%02X %02X %02X %02X %02X] I:%02X  %04X: %s\n",
+		(u32)CYCLES,A,X,Y,SP,
+		cpu_read((SP|0x100)+1), cpu_read((SP|0x100)+2), cpu_read((SP|0x100)+3), cpu_read((SP|0x100)+4), cpu_read((SP|0x100)+5),
+		PREV_IRQSTATE,PC,buf);
+#endif
 	OPADDR = PC;
 	OPCODE = memread(PC++);
 	switch(nes.cpu.opcode) {
@@ -136,10 +141,7 @@ static INLINE void cpu_step()
 		OP(F0, BEQ,REL) OP(F1, SBC,IYR) OP(F2, UNK,UNK) OP(F3, UNK,UNK) OP(F4, UNK,UNK) OP(F5, SBC,ZPX) OP(F6, INC,ZPX) OP(F7, UNK,UNK)
 		OP(F8, SED,IMP) OP(F9, SBC,AYR) OP(FA, UNK,UNK) OP(FB, UNK,UNK) OP(FC, UNK,UNK) OP(FD, SBC,AXR) OP(FE, INC,ABX) OP(FF, UNK,UNK)
 #endif
-		//should never get here
-		default:
-			log_printf("cpu_execute:  bug:  bad opcode $%02X at $%04X\n",OPCODE,OPADDR);
-			break;
+
 	}
 	if(PREV_NMISTATE) {
 		NMISTATE = 0;

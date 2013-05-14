@@ -35,12 +35,19 @@ static apu_external_t fdssound = {
 static readfunc_t read4;
 static writefunc_t write4;
 static u8 mirror,newdiskside;
-static u8 diskside,diskread,writeskip;
+static u8 diskread,writeskip;
 static u8 diskirq,timerirq;
 static u8 irqenable,ioenable,control,status;
 static u16 irqcounter,irqlatch;
 static int diskaddr;
 static int diskflip;
+static int hlefds;
+static char hleident[6] = "HLEFDS";
+
+//global (for hle fds bios)
+int diskside;
+
+void hlefds_write(u32 addr,u8 data);
 
 static void sync()
 {
@@ -62,6 +69,7 @@ static u8 read(u32 addr)
 		case 0x4030:
 			ret = status;
 			cpu_clear_irq(IRQ_DISK | IRQ_TIMER);
+//			log_printf("fds.c:  irq ack.\n");
 			return(ret);
 
 		//read data register
@@ -190,11 +198,21 @@ static void write(u32 addr,u8 data)
 		//external connector
 		case 0x4026:
 			break;
+
+		//hlefds register
+		case 0x4222:
+			if(hlefds == 0)
+				break;
+			hlefds_write(addr,data);
+			break;
 	}
 }
 
 static void reset(int hard)
 {
+	u8 *bios;
+
+	//setup for fds
 	read4 = mem_getreadfunc(4);
 	write4 = mem_getwritefunc(4);
 	mem_setreadfunc(4,read);
@@ -217,6 +235,18 @@ static void reset(int hard)
 	writeskip = 0;
 	diskflip = 0;
 	apu_setexternal(&fdssound);
+
+	//get pointer to bios rom
+	bios = mem_getreadptr(0xE);
+
+	//see if we have the hlefds bios loaded
+	if(memcmp(bios,hleident,6) == 0) {
+		log_printf("fds.c:  reset:  hlefds bios found, version %d.%d\n",bios[6],bios[7]);
+		hlefds = 1;
+	}
+	else
+		hlefds = 0;
+
 	sync();
 }
 
@@ -224,64 +254,96 @@ static void cpucycle()
 {
 	//debugging the bios calls!
 	static u16 lastopaddr = 0;
-	static struct {u16 addr;char *name;} funcaddrs[] = {
-		{0xe1f8,"LoadFiles"},
-		{0xe237,"AppendFile"},
-		{0xe239,"WriteFile"},
-		{0xe2b7,"CheckFileCount"},
-		{0xe2bb,"AdjustFileCount"},
-		{0xe301,"SetFileCount1"},
-		{0xe305,"SetFileCount"},
-		{0xe32a,"GetDiskInfo"},
-		{0xe149,"Delay132"},
-		{0xe153,"Delayms"},
-		{0xe161,"DisPFObj"},
-		{0xe16b,"EnPFObj"},
-		{0xe170,"DisObj"},
-		{0xe178,"EnObj"},
-		{0xe17e,"DisPF"},
-		{0xe185,"EnPF"},
-		{0xe1b2,"VINTWait"},
-		{0xe7bb,"VRAMStructWrite"},
-		{0xe844,"FetchDirectPtr"},
-		{0xe86a,"WriteVRAMBuffer"},
-		{0xe8b3,"ReadVRAMBuffer"},
-		{0xe8d2,"PrepareVRAMString"},
-		{0xe8e1,"PrepareVRAMStrings"},
-		{0xe94f,"GetVRAMBufferByte"},
-		{0xe97d,"Pixel2NamConv"},
-		{0xe997,"Nam2PixelConv"},
-		{0xe9b1,"Random"},
-		{0xe9c8,"SpriteDMA"},
-		{0xe9d3,"CounterLogic"},
-		{0xe9eb,"ReadPads"},
-		{0xea1a,"ReadDownPads"},
-		{0xea1f,"ReadOrDownPads"},
-		{0xea36,"ReadDownVerifyPads"},
-		{0xea4c,"ReadOrDownVerifyPads"},
-		{0xea68,"ReadDownExpPads"},
-		{0xea84,"VRAMFill"},
-		{0xead2,"MemFill"},
-		{0xeaea,"SetScroll"},
-		{0xeafd,"JumpEngine"},
-		{0xeb13,"ReadKeyboard"},
-		{0xeb66,"LoadTileset"},
+	static struct {int type;u16 addr;char *name;} funcaddrs[] = {
+
+		//vectors
+		{4,0xe18b,"NMI"},
+		{4,0xe1c7,"IRQ"},
+		{4,0xee24,"RESET"},
+
+		//disk
+		{1,0xe1f8,"LoadFiles"},
+		{1,0xe237,"AppendFile"},
+		{1,0xe239,"WriteFile"},
+		{1,0xe2b7,"CheckFileCount"},
+		{1,0xe2bb,"AdjustFileCount"},
+		{1,0xe301,"SetFileCount1"},
+		{1,0xe305,"SetFileCount"},
+		{1,0xe32a,"GetDiskInfo"},
+
+		//util
+		{2,0xe149,"Delay132"},
+		{2,0xe153,"Delayms"},
+		{2,0xe161,"DisPFObj"},
+		{2,0xe16b,"EnPFObj"},
+		{2,0xe170,"DisObj"},
+		{2,0xe178,"EnObj"},
+		{2,0xe17e,"DisPF"},
+		{2,0xe185,"EnPF"},
+		{2,0xe1b2,"VINTWait"},
+		{2,0xe7bb,"VRAMStructWrite"},
+		{2,0xe844,"FetchDirectPtr"},
+		{2,0xe86a,"WriteVRAMBuffer"},
+		{2,0xe8b3,"ReadVRAMBuffer"},
+		{2,0xe8d2,"PrepareVRAMString"},
+		{2,0xe8e1,"PrepareVRAMStrings"},
+		{2,0xe94f,"GetVRAMBufferByte"},
+		{2,0xe97d,"Pixel2NamConv"},
+		{2,0xe997,"Nam2PixelConv"},
+		{2,0xe9b1,"Random"},
+		{2,0xe9c8,"SpriteDMA"},
+		{2,0xe9d3,"CounterLogic"},
+		{2,0xe9eb,"ReadPads"},
+		{2,0xea0d,"ReadOrPads"},
+		{2,0xea1a,"ReadDownPads"},
+		{2,0xea1f,"ReadOrDownPads"},
+		{2,0xea36,"ReadDownVerifyPads"},
+		{6,0xea4c,"ReadOrDownVerifyPads"},
+		{2,0xea68,"ReadDownExpPads"},
+		{2,0xea84,"VRAMFill"},
+		{2,0xead2,"MemFill"},
+		{2,0xeaea,"SetScroll"},
+		{2,0xeafd,"JumpEngine"},
+		{2,0xeb13,"ReadKeyboard"},
+		{2,0xeb66,"LoadTileset"},
 		{0,0}
 	};
-	if(lastopaddr != nes.cpu.opaddr) {
+	if(nes.cpu.opaddr >= 0xE000 && lastopaddr < 0xE000) {
+		int i,found = 0;
+
+		for(i=0;funcaddrs[i].addr;i++) {
+			if(funcaddrs[i].addr == nes.cpu.opaddr) {
+				int t = funcaddrs[i].type;
+				char *types[4] = {"VECTOR","DISK","UTIL","MISC"};
+
+				if(t < 4)
+					log_printf("fds.c:  bios %s:  calling $%04X ('%s')\n",types[t],funcaddrs[i].addr,funcaddrs[i].name);
+				found = 1;
+			}
+		}
+		if(found == 0)
+			log_printf("fds.c:  bios UNK:  calling $%04X\n",nes.cpu.opaddr);
+	}
+	lastopaddr = nes.cpu.opaddr;
+
+/*	if(lastopaddr != nes.cpu.opaddr) {
 		lastopaddr = nes.cpu.opaddr;
 		//in bios?
 		if(lastopaddr >= 0xE000) {
-			int i;
+			int i,found = 1;
 
 			for(i=0;funcaddrs[i].addr;i++) {
-				if(i >= 8) continue;
+//				if(i >= 8) continue;
 				if(funcaddrs[i].addr == lastopaddr) {
 					log_printf("fds.c:  bios %s:  calling $%04X ('%s')\n",(i < 8) ? "DISK" : "UTIL",funcaddrs[i].addr,funcaddrs[i].name);
+					found = 1;
 				}
 			}
+			if(found == 0) {
+				log_printf("fds.c:  bios %s:  calling $%04X (unknown)\n","UNK",lastopaddr);
+			}
 		}
-	}
+	}*/
 ////////////////////////////////////////////////////////////////////
 	if(diskflip) {
 		diskflip--;

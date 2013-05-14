@@ -250,65 +250,71 @@ static void reset(int hard)
 	sync();
 }
 
+#define TAKEOVER(addr,hle) \
+	if(nes.cpu.opaddr == addr) { \
+		nes.cpu.readpages[addr >> 12][addr & 0xFFF] = 0x60; \
+		hlefds_write(0x4222,hle); \
+	}
+
 static void cpucycle()
 {
 	//debugging the bios calls!
 	static u16 lastopaddr = 0;
-	static struct {int type;u16 addr;char *name;} funcaddrs[] = {
+	static struct {int type;u8 hle;u16 addr;char *name;} funcaddrs[] = {
 
 		//vectors
-		{4,0xe18b,"NMI"},
-		{4,0xe1c7,"IRQ"},
-		{4,0xee24,"RESET"},
+		{0,	0x38,		0xe18b,	"NMI"},
+		{0,	0x39,		0xe1c7,	"IRQ"},
+		{0,	0x3A,		0xee24,	"RESET"},
 
 		//disk
-		{1,0xe1f8,"LoadFiles"},
-		{1,0xe237,"AppendFile"},
-		{1,0xe239,"WriteFile"},
-		{1,0xe2b7,"CheckFileCount"},
-		{1,0xe2bb,"AdjustFileCount"},
-		{1,0xe301,"SetFileCount1"},
-		{1,0xe305,"SetFileCount"},
-		{1,0xe32a,"GetDiskInfo"},
+		{1,	0x00,		0xe1f8,	"LoadFiles"},
+		{1,	0xFF,		0xe237,	"AppendFile"},
+		{1,	0xFF,		0xe239,	"WriteFile"},
+		{1,	0xFF,		0xe2b7,	"CheckFileCount"},
+		{1,	0xFF,		0xe2bb,	"AdjustFileCount"},
+		{1,	0xFF,		0xe301,	"SetFileCount1"},
+		{1,	0xFF,		0xe305,	"SetFileCount"},
+		{1,	0xFF,		0xe32a,	"GetDiskInfo"},
 
 		//util
-		{2,0xe149,"Delay132"},
-		{2,0xe153,"Delayms"},
-		{2,0xe161,"DisPFObj"},
-		{2,0xe16b,"EnPFObj"},
-		{2,0xe170,"DisObj"},
-		{2,0xe178,"EnObj"},
-		{2,0xe17e,"DisPF"},
-		{2,0xe185,"EnPF"},
-		{2,0xe1b2,"VINTWait"},
-		{2,0xe7bb,"VRAMStructWrite"},
-		{2,0xe844,"FetchDirectPtr"},
-		{2,0xe86a,"WriteVRAMBuffer"},
-		{2,0xe8b3,"ReadVRAMBuffer"},
-		{2,0xe8d2,"PrepareVRAMString"},
-		{2,0xe8e1,"PrepareVRAMStrings"},
-		{2,0xe94f,"GetVRAMBufferByte"},
-		{2,0xe97d,"Pixel2NamConv"},
-		{2,0xe997,"Nam2PixelConv"},
-		{2,0xe9b1,"Random"},
-		{2,0xe9c8,"SpriteDMA"},
-		{2,0xe9d3,"CounterLogic"},
-		{2,0xe9eb,"ReadPads"},
-		{2,0xea0d,"ReadOrPads"},
-		{2,0xea1a,"ReadDownPads"},
-		{2,0xea1f,"ReadOrDownPads"},
-		{2,0xea36,"ReadDownVerifyPads"},
-		{6,0xea4c,"ReadOrDownVerifyPads"},
-		{2,0xea68,"ReadDownExpPads"},
-		{2,0xea84,"VRAMFill"},
-		{2,0xead2,"MemFill"},
-		{2,0xeaea,"SetScroll"},
-		{2,0xeafd,"JumpEngine"},
-		{2,0xeb13,"ReadKeyboard"},
-		{2,0xeb66,"LoadTileset"},
+		{2,	0xFF,		0xe149,	"Delay132"},
+		{2,	0xFF,		0xe153,	"Delayms"},
+		{2,	0xFF,		0xe161,	"DisPFObj"},
+		{2,	0xFF,		0xe16b,	"EnPFObj"},
+		{2,	0xFF,		0xe170,	"DisObj"},
+		{2,	0xFF,		0xe178,	"EnObj"},
+		{2,	0xFF,		0xe17e,	"DisPF"},
+		{2,	0xFF,		0xe185,	"EnPF"},
+		{2,	0xFF,		0xe1b2,	"VINTWait"},
+		{2,	0xFF,		0xe7bb,	"VRAMStructWrite"},
+		{2,	0xFF,		0xe844,	"FetchDirectPtr"},
+		{2,	0xFF,		0xe86a,	"WriteVRAMBuffer"},
+		{2,	0xFF,		0xe8b3,	"ReadVRAMBuffer"},
+		{2,	0xFF,		0xe8d2,	"PrepareVRAMString"},
+		{2,	0xFF,		0xe8e1,	"PrepareVRAMStrings"},
+		{2,	0xFF,		0xe94f,	"GetVRAMBufferByte"},
+		{2,	0xFF,		0xe97d,	"Pixel2NamConv"},
+		{2,	0xFF,		0xe997,	"Nam2PixelConv"},
+		{2,	0xFF,		0xe9b1,	"Random"},
+		{2,	0xFF,		0xe9c8,	"SpriteDMA"},
+		{2,	0xFF,		0xe9d3,	"CounterLogic"},
+		{2,	0xFF,		0xe9eb,	"ReadPads"},
+		{2,	0xFF,		0xea0d,	"ReadOrPads"},
+		{2,	0xFF,		0xea1a,	"ReadDownPads"},
+		{2,	0xFF,		0xea1f,	"ReadOrDownPads"},
+		{2,	0xFF,		0xea36,	"ReadDownVerifyPads"},
+		{6,	0xFF,		0xea4c,	"ReadOrDownVerifyPads"},
+		{2,	0xFF,		0xea68,	"ReadDownExpPads"},
+		{2,	0xFF,		0xea84,	"VRAMFill"},
+		{2,	0xFF,		0xead2,	"MemFill"},
+		{2,	0xFF,		0xeaea,	"SetScroll"},
+		{2,	0xFF,		0xeafd,	"JumpEngine"},
+		{2,	0xFF,		0xeb13,	"ReadKeyboard"},
+		{2,	0x1C,		0xeb66,	"LoadTileset"},
 		{0,0}
 	};
-	if(nes.cpu.opaddr >= 0xE000 && lastopaddr < 0xE000) {
+	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
 		int i,found = 0;
 
 		for(i=0;funcaddrs[i].addr;i++) {
@@ -321,29 +327,20 @@ static void cpucycle()
 				found = 1;
 			}
 		}
-		if(found == 0)
-			log_printf("fds.c:  bios UNK:  calling $%04X\n",nes.cpu.opaddr);
 	}
+
+//force hle!  takeover!
+	//if the opaddr changes we are reading an opcode
+	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
+		TAKEOVER(0xea84,0x18);		//vramfill
+		TAKEOVER(0xe7bb,0x19);		//vramstructwrite
+//		TAKEOVER(0xeb66,0x1C);		//loadtileset
+		TAKEOVER(0xead2,0x20);		//memfill
+	}
+//end force
+
 	lastopaddr = nes.cpu.opaddr;
 
-/*	if(lastopaddr != nes.cpu.opaddr) {
-		lastopaddr = nes.cpu.opaddr;
-		//in bios?
-		if(lastopaddr >= 0xE000) {
-			int i,found = 1;
-
-			for(i=0;funcaddrs[i].addr;i++) {
-//				if(i >= 8) continue;
-				if(funcaddrs[i].addr == lastopaddr) {
-					log_printf("fds.c:  bios %s:  calling $%04X ('%s')\n",(i < 8) ? "DISK" : "UTIL",funcaddrs[i].addr,funcaddrs[i].name);
-					found = 1;
-				}
-			}
-			if(found == 0) {
-				log_printf("fds.c:  bios %s:  calling $%04X (unknown)\n","UNK",lastopaddr);
-			}
-		}
-	}*/
 ////////////////////////////////////////////////////////////////////
 	if(diskflip) {
 		diskflip--;

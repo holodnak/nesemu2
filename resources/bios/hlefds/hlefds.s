@@ -125,10 +125,42 @@ loadfiles:
 	hlecall	i_loadfiles
 	rts
 
+.ORG $07BB
+vramstructwrite:
+	hlecall	i_vramstructwrite
+	rts
+
+.ORG $09B1
+random:
+	hlecall	i_random
+	rts
+
 .ORG $09C8
 spritedma:
 	hlecall	i_spritedma	
 	rts
+
+.ORG $09D3
+counterlogic:
+;	hlecall	i_counterlogic
+;	rts
+	STX $00
+	DEC $00,X
+	BPL E9DE
+	LDA #$09
+	STA $00,X
+	TYA
+E9DE:
+	TAX
+E9DF:
+	LDA $00,X
+	BEQ E9E5
+	DEC $00,X
+E9E5:
+	DEX
+	CPX $00
+	BNE E9DF
+	RTS
 
 .ORG $09EB
 readpads:
@@ -221,6 +253,11 @@ vramfill:
 .ORG $0AD2
 memfill:
 	hlecall	i_memfill
+	rts
+
+.ORG $0AEA
+setscroll:
+	hlecall	i_setscroll
 	rts
 
 ;;reset vector

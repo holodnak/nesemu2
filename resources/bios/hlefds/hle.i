@@ -15,6 +15,7 @@
 .define i_spritedma			$1A
 .define i_setscroll			$1B
 .define i_loadtileset		$1C
+.define i_inc00bya			$1D
 
 .define i_memfill				$20
 

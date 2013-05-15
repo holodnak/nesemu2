@@ -749,28 +749,10 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\exrom.c">
 						</File>
 						<File
-							RelativePath="..\..\source\mappers\boards\nintendo\fds.c">
-							<FileConfiguration
-								Name="Debug|Win32">
-								<Tool
-									Name="VCCLCompilerTool"
-									ObjectFile="$(IntDir)/mappers/boards/nintendo"/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32">
-								<Tool
-									Name="VCCLCompilerTool"
-									ObjectFile="$(IntDir)/mappers/boards/nintendo"/>
-							</FileConfiguration>
-						</File>
-						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\fxrom.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\gxrom_mxrom.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\nintendo\hlefds.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\hxrom.c">
@@ -1123,6 +1105,55 @@
 						RelativePath="..\..\source\mappers\sound\s_VRC7.c">
 					</File>
 				</Filter>
+				<Filter
+					Name="fds"
+					Filter="">
+					<File
+						RelativePath="..\..\source\mappers\fds\calls.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/mappers/fds/"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/mappers/fds/"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\fds\fds.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/mappers/fds/"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/mappers/fds/"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\fds\hle.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/mappers/fds/"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/mappers/fds/"/>
+						</FileConfiguration>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="palette"
@@ -1436,6 +1467,44 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\taito-tc0190fmc.h">
+					</File>
+				</Filter>
+				<Filter
+					Name="fds"
+					Filter="">
+					<File
+						RelativePath="..\..\source\mappers\fds\calls.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\fds\fds.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\fds\hle.h">
+					</File>
+				</Filter>
+				<Filter
+					Name="sound"
+					Filter="">
+					<File
+						RelativePath="..\..\source\mappers\sound\s_DRIP.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_FDS.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_FME7.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_MMC5.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_N106.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_VRC6.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\sound\s_VRC7.h">
 					</File>
 				</Filter>
 			</Filter>

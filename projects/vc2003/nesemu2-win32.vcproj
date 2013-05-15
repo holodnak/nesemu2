@@ -737,9 +737,6 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\exrom.c">
 						</File>
 						<File
-							RelativePath="..\..\source\mappers\boards\nintendo\fds.c">
-						</File>
-						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\fxrom.c">
 						</File>
 						<File
@@ -1094,6 +1091,19 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\sound\s_VRC7.c">
+					</File>
+				</Filter>
+				<Filter
+					Name="fds"
+					Filter="">
+					<File
+						RelativePath="..\..\source\mappers\fds\calls.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\fds\fds.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\fds\hle.c">
 					</File>
 				</Filter>
 			</Filter>

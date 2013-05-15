@@ -20,6 +20,7 @@
 
 #include "mappers/mapperinc.h"
 #include "mappers/sound/s_FDS.h"
+#include "mappers/fds/hle.h"
 
 #define SHORTIRQ	100
 #define LONGIRQ	150
@@ -41,6 +42,8 @@ static u8 irqenable,ioenable,control,status;
 static u16 irqcounter,irqlatch;
 static int diskaddr;
 static int diskflip;
+
+//hle
 static int hlefds;
 static char hleident[6] = "HLEFDS";
 
@@ -112,6 +115,12 @@ static u8 read(u32 addr)
 		case 0x4033:
 			return(0x80);
 
+		//hlefds register
+		case 0x4222:
+			if(hlefds)
+				return(hlefds_read(addr));
+			break;
+
 	}
 	return((u8)(addr >> 8));
 }
@@ -124,7 +133,6 @@ static void write(u32 addr,u8 data)
 	}
 
 //	log_printf("fds.c:  write:  $%04X = $%02X\n",addr,data);
-
 	switch(addr) {
 
 		//irq latch low
@@ -201,9 +209,8 @@ static void write(u32 addr,u8 data)
 
 		//hlefds register
 		case 0x4222:
-			if(hlefds == 0)
-				break;
-			hlefds_write(addr,data);
+			if(hlefds)
+				hlefds_write(addr,data);
 			break;
 	}
 }
@@ -247,106 +254,24 @@ static void reset(int hard)
 	else
 		hlefds = 0;
 
+	hlefds = 1;
+
 	sync();
 }
 
-#define TAKEOVER(addr,hle) \
-	if(nes.cpu.opaddr == addr) { \
-		nes.cpu.readpages[addr >> 12][addr & 0xFFF] = 0x60; \
-		hlefds_write(0x4222,hle); \
-	}
-
 static void cpucycle()
 {
-	//debugging the bios calls!
-	static u16 lastopaddr = 0;
-	static struct {int type;u8 hle;u16 addr;char *name;} funcaddrs[] = {
+	if(hlefds)
+		hlefds_cpucycle();
 
-		//vectors
-		{0,	0x38,		0xe18b,	"NMI"},
-		{0,	0x39,		0xe1c7,	"IRQ"},
-		{0,	0x3A,		0xee24,	"RESET"},
-
-		//disk
-		{1,	0x00,		0xe1f8,	"LoadFiles"},
-		{1,	0xFF,		0xe237,	"AppendFile"},
-		{1,	0xFF,		0xe239,	"WriteFile"},
-		{1,	0xFF,		0xe2b7,	"CheckFileCount"},
-		{1,	0xFF,		0xe2bb,	"AdjustFileCount"},
-		{1,	0xFF,		0xe301,	"SetFileCount1"},
-		{1,	0xFF,		0xe305,	"SetFileCount"},
-		{1,	0xFF,		0xe32a,	"GetDiskInfo"},
-
-		//util
-		{2,	0xFF,		0xe149,	"Delay132"},
-		{2,	0xFF,		0xe153,	"Delayms"},
-		{2,	0xFF,		0xe161,	"DisPFObj"},
-		{2,	0xFF,		0xe16b,	"EnPFObj"},
-		{2,	0xFF,		0xe170,	"DisObj"},
-		{2,	0xFF,		0xe178,	"EnObj"},
-		{2,	0xFF,		0xe17e,	"DisPF"},
-		{2,	0xFF,		0xe185,	"EnPF"},
-		{2,	0xFF,		0xe1b2,	"VINTWait"},
-		{2,	0xFF,		0xe7bb,	"VRAMStructWrite"},
-		{2,	0xFF,		0xe844,	"FetchDirectPtr"},
-		{2,	0xFF,		0xe86a,	"WriteVRAMBuffer"},
-		{2,	0xFF,		0xe8b3,	"ReadVRAMBuffer"},
-		{2,	0xFF,		0xe8d2,	"PrepareVRAMString"},
-		{2,	0xFF,		0xe8e1,	"PrepareVRAMStrings"},
-		{2,	0xFF,		0xe94f,	"GetVRAMBufferByte"},
-		{2,	0xFF,		0xe97d,	"Pixel2NamConv"},
-		{2,	0xFF,		0xe997,	"Nam2PixelConv"},
-		{2,	0xFF,		0xe9b1,	"Random"},
-		{2,	0xFF,		0xe9c8,	"SpriteDMA"},
-		{2,	0xFF,		0xe9d3,	"CounterLogic"},
-		{2,	0xFF,		0xe9eb,	"ReadPads"},
-		{2,	0xFF,		0xea0d,	"ReadOrPads"},
-		{2,	0xFF,		0xea1a,	"ReadDownPads"},
-		{2,	0xFF,		0xea1f,	"ReadOrDownPads"},
-		{2,	0xFF,		0xea36,	"ReadDownVerifyPads"},
-		{6,	0xFF,		0xea4c,	"ReadOrDownVerifyPads"},
-		{2,	0xFF,		0xea68,	"ReadDownExpPads"},
-		{2,	0xFF,		0xea84,	"VRAMFill"},
-		{2,	0xFF,		0xead2,	"MemFill"},
-		{2,	0xFF,		0xeaea,	"SetScroll"},
-		{2,	0xFF,		0xeafd,	"JumpEngine"},
-		{2,	0xFF,		0xeb13,	"ReadKeyboard"},
-		{2,	0x1C,		0xeb66,	"LoadTileset"},
-		{0,0}
-	};
-	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
-		int i,found = 0;
-
-		for(i=0;funcaddrs[i].addr;i++) {
-			if(funcaddrs[i].addr == nes.cpu.opaddr) {
-				int t = funcaddrs[i].type;
-				char *types[4] = {"VECTOR","DISK","UTIL","MISC"};
-
-				if(t < 4)
-					log_printf("fds.c:  bios %s:  calling $%04X ('%s')\n",types[t],funcaddrs[i].addr,funcaddrs[i].name);
-				found = 1;
-			}
-		}
-	}
-
-//force hle!  takeover!
-	//if the opaddr changes we are reading an opcode
-	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
-		TAKEOVER(0xea84,0x18);		//vramfill
-		TAKEOVER(0xe7bb,0x19);		//vramstructwrite
-//		TAKEOVER(0xeb66,0x1C);		//loadtileset
-		TAKEOVER(0xead2,0x20);		//memfill
-	}
-//end force
-
-	lastopaddr = nes.cpu.opaddr;
-
-////////////////////////////////////////////////////////////////////
+	//for disk flipping
 	if(diskflip) {
 		diskflip--;
 		if(diskflip == 0)
 			diskside = newdiskside;
 	}
+
+	//timer irq
 	if((irqenable & 2) && irqcounter) {
 		irqcounter--;
 		if(irqcounter == 0) {
@@ -361,6 +286,8 @@ static void cpucycle()
 //			log_printf("fds.c:  IRQ!  timer!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
 		}
 	}
+
+	//disk irq
 	if(diskirq) {
 		diskirq--;
 		if(diskirq == 0 && (control & 0x80)) {

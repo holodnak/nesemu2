@@ -100,7 +100,7 @@ int cart_load_fds(cart_t *ret,const char *filename)
 
 	}
 
-	ret->mapperid = B_FDS;//B_HLEFDS
+	ret->mapperid = B_FDS;
 
 	//setup the disk data pointers
 	ret->disk.size = size;

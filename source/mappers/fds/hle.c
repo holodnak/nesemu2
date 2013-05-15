@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <string.h>
+#include "mappers/fds/fds.h"
 #include "nes/nes.h"
 #include "misc/log.h"
 
@@ -60,8 +61,6 @@ typedef struct fds_file_header2_s {
 	u16 srcaddr;
 	u8 srcarea;
 } fds_file_header2_t;
-
-extern int diskside;
 
 //get parameter from the bytes after the jsr
 //n = parameter index (0 is the first, 1 is the second, etc)
@@ -114,6 +113,14 @@ static void loadfiles()
 	u32 addr1,addr2;
 	int pos,i,j,k;
 	u8 fileidlist[0x20];
+
+	//bios needs these flags set
+	nes.cpu.flags.z = 1;
+	nes.cpu.flags.n = 0;
+	nes.cpu.flags.v = 0;
+	nes.cpu.flags.c = 0;
+	nes.cpu.a = 0;
+	nes.cpu.y = 0;
 
 	if(diskside == 0xFF) {
 		log_printf("loadfiles:  aborting, disk not inserted\n");
@@ -372,88 +379,93 @@ static void setscroll()
 	cpu_write(0x2005,cpu_read(0xFD));
 	cpu_write(0x2005,cpu_read(0xFC));
 	cpu_write(0x2000,cpu_read(0xFF));
+	log_printf("setscroll:  done\n");
 }
 
+//todo:  revise this to use $2007
 static void loadtileset()
 {
-	u8 tiles = nes.cpu.x;
-	u8 flags = nes.cpu.a & 0xF;
-	u32 ppuaddr = (nes.cpu.y << 8) | (nes.cpu.a & 0xF0);
-	u32 cpuaddr;
+	int units = nes.cpu.x;
+	u16 ppuaddr = (nes.cpu.y << 8) | (nes.cpu.a & 0xF0);
+	u8 mode = nes.cpu.a;
+	u8 fill;
+	u32 i,addr;
 
-	//get parameter following the calling jsr, it is the address of data
-	cpuaddr = getparam(0);
-
-	//fix the return address
+	addr = getparam(0);
 	fixretaddr(1);
 
-	log_printf("loadtileset:  cpuaddr = $%04X, ppuaddr = $%04X, num tiles = %d, flags = $%X\n",cpuaddr,ppuaddr,tiles,flags);
-
-/*
-	u8 units = nes->cpu.x;
-	u16 ppuaddr = (nes->cpu.y << 8) | (nes->cpu.a & 0xF0);
-	u8 mode = nes->cpu.a;
-	u8 fill;
-
-	u32 i,tmp,tmp1,addr;
-
-	//get data pointer addr
-	tmp = 0x100 + nes->cpu.s;
-	tmp1 = dead6502_read(tmp + 1) << 0;
-	tmp1 |= dead6502_read(tmp + 2) << 8;
-
-	log_message("hle cputoppucpy: tmp1 = $%04X\n",tmp1);
-	//get data addr
-	addr = dead6502_read(tmp1 + 1) << 0;
-	addr |= dead6502_read(tmp1 + 2) << 8;
-
-//	addr --; 
-	//fixup return address
-	tmp1 += 2;
-	dead6502_write(tmp + 1,tmp1 & 0xFF);
-	dead6502_write(tmp + 2,(tmp1 >> 8) & 0xFF);
-	log_message("hle cputoppucpy: cpuaddr = $%04X, units = %d\n",addr,units);
-
-	//read from ppu
-	if(mode & 2) {
-		log_message("hle cputoppucpy: read from ppu not supported\n");
-	}
+	log_printf("loadtileset: ppuaddr = $%04X, cpuaddr = $%04X, units = %d, mode = %d\n",ppuaddr,addr,units,(mode & 0xC) >> 2);
 
 //	if(mode & 0xC)
 //		addr &= ~0xF;
-//
-//	//write to ppu
-//	else {
-{		while(units--) {
-			log_message("hle cputoppucpy: ppu,cpu addr = $%04X,$%04X, mode = %X\n",ppuaddr,addr,mode & 0xC);
+
+	//read from ppu
+	if(mode & 2) {
+		while(units--) {
+//			log_printf("loadtileset: read:  ppu,cpu addr = $%04X,$%04X, mode = %X\n",ppuaddr,addr,mode & 0xC);
 			fill = (mode & 1) ? 0xFF : 0x00;
 			switch(mode & 0xC) {
 				case 0x0:
-					for(i=0;i<16;i++)	ppumem_write(ppuaddr++,dead6502_read(addr++));
+					for(i=0;i<16;i++)	cpu_write(addr++,ppu_memread(ppuaddr++));
 					break;
 				case 0x4:
-					for(i=0;i<8;i++)	ppumem_write(ppuaddr++,dead6502_read(addr++));
-					for(i=0;i<8;i++)	ppumem_write(ppuaddr++,fill);
+					for(i=0;i<8;i++)	cpu_write(addr++,ppu_memread(ppuaddr++));
+					for(i=0;i<8;i++)	ppu_memread(ppuaddr++);
 					break;
 				case 0x8:
-					for(i=0;i<8;i++)	ppumem_write(ppuaddr++,fill);
-					for(i=0;i<8;i++)	ppumem_write(ppuaddr++,dead6502_read(addr++));
+					for(i=0;i<8;i++)	ppu_memread(ppuaddr++);
+					for(i=0;i<8;i++)	cpu_write(addr++,ppu_memread(ppuaddr++));
+					break;
+				case 0xC:
+					log_printf("loadtileset: reading and mode 3 not supported\n");
+					ppuaddr += 8;
+					break;
+			}
+		}
+	}
+
+	//write to ppu
+	else {
+		while(units--) {
+//			log_printf("loadtileset: write:  ppu,cpu addr = $%04X,$%04X, mode = %X\n",ppuaddr,addr,mode & 0xC);
+			fill = (mode & 1) ? 0xFF : 0x00;
+			switch(mode & 0xC) {
+				case 0x0:
+					for(i=0;i<16;i++)	ppu_memwrite(ppuaddr++,cpu_read(addr++));
+					break;
+				case 0x4:
+					for(i=0;i<8;i++)	ppu_memwrite(ppuaddr++,cpu_read(addr++));
+					for(i=0;i<8;i++)	ppu_memwrite(ppuaddr++,fill);
+					break;
+				case 0x8:
+					for(i=0;i<8;i++)	ppu_memwrite(ppuaddr++,fill);
+					for(i=0;i<8;i++)	ppu_memwrite(ppuaddr++,cpu_read(addr++));
 					break;
 				case 0xC:
 					for(i=0;i<8;i++,ppuaddr++) {
-						u8 data = dead6502_read(addr++);
+						u8 data = cpu_read(addr++);
 
-						ppumem_write(ppuaddr,data ^ fill);
-						ppumem_write(ppuaddr+8,data);
+						ppu_memwrite(ppuaddr,data ^ fill);
+						ppu_memwrite(ppuaddr+8,data);
 					}
 					ppuaddr += 8;
 					break;
 			}
 		}
 	}
-*/
+
 }
 
+static void inc00bya()
+{
+	u16 tmp;
+
+	tmp = cpu_read(0) | (cpu_read(1) << 8);
+	tmp += nes.cpu.a;
+	cpu_write(0,(u8)tmp);
+	cpu_write(1,(u8)(tmp >> 8));
+	cpu_write(2,cpu_read(2) - 1);
+}
 
 static void memfill()
 {
@@ -470,7 +482,6 @@ static void memfill()
 		}
 		start += 0x100;
 	}
-	
 }
 
 static void counterlogic()
@@ -480,7 +491,36 @@ static void counterlogic()
 
 static void random()
 {
-	cpu_write(0,(u8)rand());
+	u32 random = rand();
+
+	cpu_write(nes.cpu.x+0,(u8)(random >> 0));
+	cpu_write(nes.cpu.x+1,(u8)(random >> 8));
+}
+
+//doesnt handle stack wrapping
+static void fetchdirectptr()
+{
+	u32 tmp,retaddr;
+
+	//current stack address
+	tmp = 0x100 + nes.cpu.sp + 2;
+
+	//get the return address off the stack
+	retaddr = cpu_read(tmp + 1);
+	retaddr |= cpu_read(tmp + 2) << 8;
+
+	//read input parameter, write to memory
+	cpu_write(0,cpu_read(retaddr + 1));
+	cpu_write(1,cpu_read(retaddr + 2));
+
+	log_printf("direct pointer fetched is $%02X%02X (retaddr = $%04X)\n",cpu_read(1),cpu_read(0),retaddr);
+
+	//offset to new return address
+	retaddr += 2;
+
+	//write new return address to the stack
+	cpu_write(tmp + 1,(u8)retaddr);
+	cpu_write(tmp + 2,(u8)(retaddr >> 8));
 }
 
 static void readpads()
@@ -569,13 +609,52 @@ static void reset()
 
 }
 
+static void enpf()
+{
+	nes.cpu.a = cpu_read(0xFE) | 0x08;
+	cpu_write(0xFE,nes.cpu.a);
+	cpu_write(0x2001,nes.cpu.a);
+}
+
+static void dispf()
+{
+	nes.cpu.a = cpu_read(0xFE) & 0xF7;
+	cpu_write(0xFE,nes.cpu.a);
+	cpu_write(0x2001,nes.cpu.a);
+}
+
+static void enobj()
+{
+	nes.cpu.a = cpu_read(0xFE) | 0x10;
+	cpu_write(0xFE,nes.cpu.a);
+	cpu_write(0x2001,nes.cpu.a);
+}
+
+static void disobj()
+{
+	nes.cpu.a = cpu_read(0xFE) & 0xEF;
+	cpu_write(0xFE,nes.cpu.a);
+	cpu_write(0x2001,nes.cpu.a);
+}
+
+static void enpfobj()
+{
+	enpf();
+	enobj();
+}
+
+static void dispfobj()
+{
+	dispf();
+	disobj();
+}
+
 //insert disk
 static void forceinsert()
 {
 	log_printf("forceinsert:  disk inserted, side = 0\n");
 	diskside = 0;
 }
-
 
 static hle_call_t hle_calls[64] = {
 
@@ -609,38 +688,38 @@ static hle_call_t hle_calls[64] = {
 	readdownexppads,
 	0,
 
-	//$18 - ppu related calls
+	//$18 - ppu memory related calls
 	vramfill,
 	vramstructwrite,
 	spritedma,
 	setscroll,
 	loadtileset,
-	0,
-	0,
-	0,
-
-	//$20 - cpu calls
-	memfill,
-	0,
-	0,
-	0,
-	0,
-	0,
+	inc00bya,
 	0,
 	0,
 
-	//$28 - ???
+	//$20 - ppu related calls
+	enpf,
+	dispf,
+	enobj,
+	disobj,
+	enpfobj,
+	dispfobj,
+	0,
+	0,
+
+	//$28 - utility calls
 	counterlogic,
 	random,
-	0,
+	fetchdirectptr,
 	0,
 	0,
 	0,
 	0,
 	0,
 
-	//$30 - ???
-	0,
+	//$30 - cpu calls
+	memfill,
 	0,
 	0,
 	0,
@@ -662,6 +741,12 @@ static hle_call_t hle_calls[64] = {
 	0,
 };
 
+u8 hlefds_read(u32 addr)
+{
+	log_printf("hlefds_read:  register read!\n");
+	return(0);
+}
+
 void hlefds_write(u32 addr,u8 data)
 {
 	u8 index = data & 0x3F;
@@ -676,4 +761,114 @@ void hlefds_write(u32 addr,u8 data)
 		func();
 	else
 		log_printf("hlefds_write:  hle call $%02X not implemented yet\n",index);
+}
+
+#define TAKEOVER(addr,hle) \
+	if(nes.cpu.opaddr == addr) { \
+		nes.cpu.readpages[addr >> 12][addr & 0xFFF] = 0x60; \
+		hlefds_write(0x4222,hle); \
+	}
+
+void hlefds_cpucycle()
+{
+	//debugging the bios calls!
+	static u16 lastopaddr = 0;
+	static struct {int type;u8 hle;u16 addr;char *name;} funcaddrs[] = {
+
+		//vectors
+		{0,	0x38,		0xe18b,	"NMI"},
+		{0,	0x39,		0xe1c7,	"IRQ"},
+		{0,	0x3A,		0xee24,	"RESET"},
+
+		//disk
+		{1,	0x00,		0xe1f8,	"LoadFiles"},
+		{1,	0xFF,		0xe237,	"AppendFile"},
+		{1,	0xFF,		0xe239,	"WriteFile"},
+		{1,	0xFF,		0xe2b7,	"CheckFileCount"},
+		{1,	0xFF,		0xe2bb,	"AdjustFileCount"},
+		{1,	0xFF,		0xe301,	"SetFileCount1"},
+		{1,	0xFF,		0xe305,	"SetFileCount"},
+		{1,	0xFF,		0xe32a,	"GetDiskInfo"},
+
+		//util
+		{2,	0xFF,		0xe149,	"Delay132"},
+		{2,	0xFF,		0xe153,	"Delayms"},
+		{2,	0xFF,		0xe161,	"DisPFObj"},
+		{2,	0xFF,		0xe16b,	"EnPFObj"},
+		{2,	0xFF,		0xe170,	"DisObj"},
+		{2,	0xFF,		0xe178,	"EnObj"},
+		{2,	0xFF,		0xe17e,	"DisPF"},
+		{2,	0xFF,		0xe185,	"EnPF"},
+		{2,	0xFF,		0xe1b2,	"VINTWait"},
+		{2,	0xFF,		0xe7bb,	"VRAMStructWrite"},
+		{2,	0xFF,		0xe844,	"FetchDirectPtr"},
+		{2,	0xFF,		0xe86a,	"WriteVRAMBuffer"},
+		{2,	0xFF,		0xe8b3,	"ReadVRAMBuffer"},
+		{2,	0xFF,		0xe8d2,	"PrepareVRAMString"},
+		{2,	0xFF,		0xe8e1,	"PrepareVRAMStrings"},
+		{2,	0xFF,		0xe94f,	"GetVRAMBufferByte"},
+		{2,	0xFF,		0xe97d,	"Pixel2NamConv"},
+		{2,	0xFF,		0xe997,	"Nam2PixelConv"},
+		{2,	0xFF,		0xe9b1,	"Random"},
+		{2,	0xFF,		0xe9c8,	"SpriteDMA"},
+		{2,	0xFF,		0xe9d3,	"CounterLogic"},
+		{2,	0xFF,		0xe9eb,	"ReadPads"},
+		{2,	0xFF,		0xea0d,	"ReadOrPads"},
+		{2,	0xFF,		0xea1a,	"ReadDownPads"},
+		{2,	0xFF,		0xea1f,	"ReadOrDownPads"},
+		{2,	0xFF,		0xea36,	"ReadDownVerifyPads"},
+		{6,	0xFF,		0xea4c,	"ReadOrDownVerifyPads"},
+		{2,	0xFF,		0xea68,	"ReadDownExpPads"},
+		{2,	0xFF,		0xea84,	"VRAMFill"},
+		{2,	0x30,		0xead2,	"MemFill"},
+		{2,	0xFF,		0xeaea,	"SetScroll"},
+		{2,	0xFF,		0xeafd,	"JumpEngine"},
+		{2,	0xFF,		0xeb13,	"ReadKeyboard"},
+		{2,	0x1C,		0xebaf,	"LoadTileset"},
+		{2,	0xFF,		0xeb66,	"Inc00by8"},
+		{2,	0x1D,		0xeb68,	"Inc00byA"},
+		{-1,	0xFF,		0x0000,	0},
+	};
+	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
+		int i,found = 0;
+
+		for(i=0;funcaddrs[i].type >= 0;i++) {
+			if(funcaddrs[i].addr == nes.cpu.opaddr) {
+				int t = funcaddrs[i].type;
+				char *types[4] = {"VECTOR","DISK","UTIL","MISC"};
+
+				if(t < 4)
+					log_printf("fds.c:  bios %s:  calling $%04X ('%s')\n",types[t],funcaddrs[i].addr,funcaddrs[i].name);
+				found = 1;
+			}
+		}
+	}
+
+//force hle!  takeover!
+	//if the opaddr changes we are reading an opcode
+	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
+		TAKEOVER(0xe1f8,0x00);		//loadfiles
+		TAKEOVER(0xea84,0x18);		//vramfill
+		TAKEOVER(0xe7bb,0x19);		//vramstructwrite
+
+//bug somewhere in sprite dma code
+//		TAKEOVER(0xe9c8,0x1A);		//spritedma
+		TAKEOVER(0xeaea,0x1B);		//setscroll
+		TAKEOVER(0xebaf,0x1C);		//loadtileset
+		TAKEOVER(0xeb66,0x1C);		//inc00by8
+		TAKEOVER(0xeb68,0x1D);		//inc00byA
+		TAKEOVER(0xead2,0x30);		//memfill
+		TAKEOVER(0xe9b1,0x29);		//random
+		TAKEOVER(0xe844,0x2A);		//fetchdirectptr		 
+
+		TAKEOVER(0xe185,0x20);		//enpf
+		TAKEOVER(0xe17e,0x21);		//dispf
+		TAKEOVER(0xe178,0x22);		//enobj
+		TAKEOVER(0xe170,0x23);		//disobj
+		TAKEOVER(0xe16b,0x24);		//enpfobj
+		TAKEOVER(0xe161,0x25);		//dispfobj
+	}
+//end force
+
+	lastopaddr = nes.cpu.opaddr;
 }

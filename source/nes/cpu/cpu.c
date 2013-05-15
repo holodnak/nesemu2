@@ -149,6 +149,8 @@ void cpu_tick()
 	//acknowledge interrupts
 	PREV_NMISTATE = NMISTATE;
 	PREV_IRQSTATE = IRQSTATE;
+	if(FLAG_I)
+		PREV_IRQSTATE = 0;
 
 	//increment cycle counter for every memory access
 	CYCLES++;

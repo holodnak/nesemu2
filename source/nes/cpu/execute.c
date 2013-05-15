@@ -62,16 +62,19 @@ set  00      20      40      60      80      a0      c0      e0      mode
 
 static INLINE void cpu_step()
 {
-#ifdef SHOW_DISASM
-	static char buf[256];
-	cpu_disassemble(buf,PC);
-	log_printf("%7d A:%02X X:%02X Y:%02X SP:%02X [%02X %02X %02X %02X %02X] I:%02X  %04X: %s\n",
-		(u32)CYCLES,A,X,Y,SP,
-		cpu_read((SP|0x100)+1), cpu_read((SP|0x100)+2), cpu_read((SP|0x100)+3), cpu_read((SP|0x100)+4), cpu_read((SP|0x100)+5),
-		PREV_IRQSTATE,PC,buf);
-#endif
 	OPADDR = PC;
-	OPCODE = memread(PC++);
+	OPCODE = memread(PC);
+#ifdef SHOW_DISASM
+	{
+		static char buf[256];
+		cpu_disassemble(buf,PC);
+		log_printf("%7d A:%02X X:%02X Y:%02X SP:%02X [%02X %02X %02X %02X %02X] I:%02X  %04X: %s\n",
+			(u32)CYCLES,A,X,Y,SP,
+			cpu_read((SP|0x100)+1), cpu_read((SP|0x100)+2), cpu_read((SP|0x100)+3), cpu_read((SP|0x100)+4), cpu_read((SP|0x100)+5),
+			PREV_IRQSTATE,PC,buf);
+	}
+#endif
+	PC++;
 	switch(nes.cpu.opcode) {
 
 #ifdef CPU_UNDOC

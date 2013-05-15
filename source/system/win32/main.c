@@ -106,6 +106,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 	video_setpalette(pal);
 
+	log_printf("trying lpcmdline as filename (%s)...\n",lpCmdLine);
+	if(nes_load(lpCmdLine) == 0) {
+		nes_reset(1);
+		running = 1;
+	}
+
 	log_printf("starting main loop...\n");
 	ret = mainloop();
 

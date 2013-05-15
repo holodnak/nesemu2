@@ -109,17 +109,6 @@ disk_irq:
 	pla
 	rti
 
-
-;+----------+
-;|Load Files|
-;+----------+
-;Entry point:	$E1F8
-;RETaddr:	pointer to DiskID
-;RETaddr+2:	pointer to LoadList
-;A on return:	error code
-;Y on return:	count of files actually found
-;Description:	Loads files specified by DiskID into memory from disk. Load 
-;addresses are decided by the file's header.
 .ORG $01F8
 loadfiles:
 	hlecall	i_loadfiles
@@ -260,6 +249,17 @@ setscroll:
 	hlecall	i_setscroll
 	rts
 
+.ORG $0B66
+inc00by8:
+	lda	#8
+inc00bya:
+	hlecall	i_inc00bya
+	rts
+
+.ORG $0BAF
+	hlecall	i_loadtileset
+	rts
+
 ;;reset vector
 .ORG $0E24
 reset:
@@ -341,7 +341,6 @@ reset:
 	lda	#0
 	jsr	loadfiles
 	.dw	$FF00,$FF00
-
 
 	;enable interrupts
 	cli

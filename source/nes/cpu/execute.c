@@ -150,7 +150,7 @@ static INLINE void cpu_step()
 		NMISTATE = 0;
 		execute_nmi();
 	}
-	else if(PREV_IRQSTATE && (FLAG_I == 0)) {
+	else if(PREV_IRQSTATE) {
 		execute_irq();
 	}
 }

@@ -40,9 +40,6 @@ typedef struct cpu_s {
 	u8		nmistate,prev_nmistate;
 	u8		irqstate,prev_irqstate;
 
-	//are we going to do irq
-	u8		irqtaken;
-
 	//effective/temporary address
 	u16	effaddr;
 	u16	tmpaddr;

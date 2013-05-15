@@ -72,7 +72,7 @@ static u8 read(u32 addr)
 		case 0x4030:
 			ret = status;
 			cpu_clear_irq(IRQ_DISK | IRQ_TIMER);
-//			log_printf("fds.c:  irq ack.\n");
+			log_printf("fds.c:  irq ack. (%02X - %02X)\n",nes.cpu.prev_irqstate,nes.cpu.irqstate);
 			return(ret);
 
 		//read data register
@@ -137,18 +137,21 @@ static void write(u32 addr,u8 data)
 
 		//irq latch low
 		case 0x4020:
+	log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
 			cpu_clear_irq(IRQ_TIMER);
 			irqlatch = (irqlatch & 0xFF00) | data;
 			break;
 
 		//irq latch high
 		case 0x4021:
+	log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
 			cpu_clear_irq(IRQ_TIMER);
 			irqlatch = (irqlatch & 0x00FF) | (data << 8);
 			break;
 
 		//irq enable
 		case 0x4022:
+	log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
 			cpu_clear_irq(IRQ_TIMER);
 			irqenable = data;
 			irqcounter = irqlatch;
@@ -283,7 +286,7 @@ static void cpucycle()
 				irqlatch = 0;
 			}
 			cpu_set_irq(IRQ_TIMER);
-//			log_printf("fds.c:  IRQ!  timer!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
+			log_printf("fds.c:  IRQ!  timer!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
 		}
 	}
 

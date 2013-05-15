@@ -44,7 +44,8 @@ __inline void checkmessages()
 	MSG msg;
 
 	while(PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
-		if(IsDialogMessage(hConsole,&msg) == FALSE) {
+		if(IsDialogMessage(hConsole,&msg) == FALSE &&
+			IsDialogMessage(hDebugger,&msg) == FALSE) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}

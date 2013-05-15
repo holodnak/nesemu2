@@ -19,6 +19,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				InlineFunctionExpansion="2"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\..\source"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;QUICK_SPRITES"
 				MinimalRebuild="TRUE"
@@ -27,7 +29,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool

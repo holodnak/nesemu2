@@ -23,13 +23,15 @@
 #include "misc/log.h"
 #include "misc/config.h"
 #include "nes/nes.h"
+#include "nes/state/state.h"
 #include "system/win32/dialogs.h"
 
 #define MAX_LOADSTRING 100
 
 HINSTANCE hInst;									//current instance
 HWND hWnd;											//main window
-HWND hConsole;										//console/debug message window
+HWND hConsole = 0;								//console/debug message window
+HWND hDebugger = 0;								//debugger window
 CHAR szTitle[MAX_LOADSTRING];					//title bar text
 CHAR szWindowClass[MAX_LOADSTRING];			//the main window class name
 
@@ -149,8 +151,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 //			if(nes.cart)
 //				nes_savestate();
 			break;
+		case ID_FDS_FLIPDISK:
+			if(nes.cart) {
+				u8 data[4] = {0,0,0,0};
+
+				nes.mapper->state(CFG_SAVE,data);
+				if(data[0] == 0xFF)
+					data[0] = 0;
+				else
+					data[0] ^= 1;
+				nes.mapper->state(CFG_LOAD,data);
+				log_printf("disk inserted!  side = %d\n",data[0]);
+			}
+			break;
 		case ID_CONFIGURATION_GENERAL:
 			ConfigurationPropertySheet(hWnd);
+			break;
+		case ID_VIEW_DEBUGGER:
+			DialogBox(hInst,(LPCTSTR)IDD_DEBUGGER,hWnd,(DLGPROC)DebuggerDlg);
 			break;
 		case ID_VIEW_CONSOLE:
 			if(consoleshowing == 0) {

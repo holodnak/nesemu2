@@ -24,6 +24,7 @@
 extern HINSTANCE hInst;
 extern HWND hWnd;
 extern HWND hConsole;
+extern HWND hDebugger;
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow);

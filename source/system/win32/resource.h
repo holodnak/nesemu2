@@ -25,15 +25,19 @@
 #define IDC_XEDIT                       1001
 #define IDC_YEDIT                       1002
 #define IDC_DISASM                      1003
+#define IDC_DISASMLIST                  1003
 #define IDC_DISASM_SCROLL               1004
+#define IDC_DISASMSCROLL                1004
 #define IDC_INES20LIST                  1005
 #define IDC_SPEDIT                      1005
 #define IDC_UNIFLIST                    1006
+#define IDC_PCEDIT                      1006
 #define IDC_INESLIST                    1007
 #define IDC_INESSTATIC                  1008
 #define IDC_INES20STATIC                1009
 #define IDC_UNIFSTATIC                  1010
 #define IDC_STEPCYCLEBUTTON             1012
+#define IDC_STEPBUTTON                  1012
 #define IDC_STEPLINEBUTTON              1013
 #define IDC_STEPFRAMEBUTTON             1014
 #define IDC_RUNBUTTON                   1015
@@ -51,6 +55,15 @@
 #define IDC_UNIFCHECK                   1022
 #define IDC_FDSCHECK                    1023
 #define IDC_CHECK1                      1025
+#define IDC_BREAKPOINTLIST              1026
+#define IDC_CHECK2                      1027
+#define IDC_CHECK3                      1028
+#define IDC_CHECK4                      1029
+#define IDC_CHECK5                      1030
+#define IDC_CHECK6                      1031
+#define IDC_BUTTON1                     1032
+#define IDC_BUTTON2                     1033
+#define IDC_BUTTON3                     1034
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -73,6 +86,8 @@
 #define ID_CONFIGURATION_MAPPER         32790
 #define ID_HELP_SUPPORTEDMAPPERS        32791
 #define ID_VIEW_CONSOLE                 32792
+#define ID_NES_FDS                      32793
+#define ID_FDS_FLIPDISK                 32794
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -81,8 +96,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        136
-#define _APS_NEXT_COMMAND_VALUE         32793
-#define _APS_NEXT_CONTROL_VALUE         1026
+#define _APS_NEXT_COMMAND_VALUE         32795
+#define _APS_NEXT_CONTROL_VALUE         1035
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

@@ -23,42 +23,6 @@
 		AM_##a();			\
 		OP_##o();			\
 		break;
-/*
-off- ++++++++++ Positive ++++++++++  ---------- Negative ----------
-set  00      20      40      60      80      a0      c0      e0      mode
-+00  BRK     JSR     RTI     RTS     NOP*    LDY     CPY     CPX     Impl/immed
-+01  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     (indir,x)
-+02   t       t       t       t      NOP*t   LDX     NOP*t   NOP*t     ? /immed
-+03  SLO*    RLA*    SRE*    RRA*    SAX*    LAX*    DCP*    ISB*    (indir,x)
-+04  NOP*    BIT     NOP*    NOP*    STY     LDY     CPY     CPX     Zeropage
-+05  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     Zeropage
-+06  ASL     ROL     LSR     ROR     STX     LDX     DEC     INC     Zeropage
-+07  SLO*    RLA*    SRE*    RRA*    SAX*    LAX*    DCP*    ISB*    Zeropage
-+08  PHP     PLP     PHA     PLA     DEY     TAY     INY     INX     Implied
-+09  ORA     AND     EOR     ADC     NOP*    LDA     CMP     SBC     Immediate
-+0a  ASL     ROL     LSR     ROR     TXA     TAX     DEX     NOP     Accu/impl
-+0b  ANC**   ANC**   ASR**   ARR**   ANE**   LXA**   SBX**   SBC*    Immediate
-+0c  NOP*    BIT     JMP     JMP ()  STY     LDY     CPY     CPX     Absolute
-+0d  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     Absolute
-+0e  ASL     ROL     LSR     ROR     STX     LDX     DEC     INC     Absolute
-+0f  SLO*    RLA*    SRE*    RRA*    SAX*    LAX*    DCP*    ISB*    Absolute
-+10  BPL     BMI     BVC     BVS     BCC     BCS     BNE     BEQ     Relative
-+11  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     (indir),y
-+12   t       t       t       t       t       t       t       t         ?
-+13  SLO*    RLA*    SRE*    RRA*    SHA**   LAX*    DCP*    ISB*    (indir),y
-+14  NOP*    NOP*    NOP*    NOP*    STY     LDY     NOP*    NOP*    Zeropage,x
-+15  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     Zeropage,x
-+16  ASL     ROL     LSR     ROR     STX  y) LDX  y) DEC     INC     Zeropage,x
-+17  SLO*    RLA*    SRE*    RRA*    SAX* y) LAX* y) DCP*    ISB*    Zeropage,x
-+18  CLC     SEC     CLI     SEI     TYA     CLV     CLD     SED     Implied
-+19  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     Absolute,y
-+1a  NOP*    NOP*    NOP*    NOP*    TXS     TSX     NOP*    NOP*    Implied
-+1b  SLO*    RLA*    SRE*    RRA*    SHS**   LAS**   DCP*    ISB*    Absolute,y
-+1c  NOP*    NOP*    NOP*    NOP*    SHY**   LDY     NOP*    NOP*    Absolute,x
-+1d  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     Absolute,x
-+1e  ASL     ROL     LSR     ROR     SHX**y) LDX  y) DEC     INC     Absolute,x
-+1f  SLO*    RLA*    SRE*    RRA*    SHA**y) LAX* y) DCP*    ISB*    Absolute,x
-*/
 
 static INLINE void cpu_step()
 {
@@ -68,8 +32,9 @@ static INLINE void cpu_step()
 	{
 		static char buf[256];
 		cpu_disassemble(buf,PC);
-		log_printf("%7d A:%02X X:%02X Y:%02X SP:%02X [%02X %02X %02X %02X %02X] I:%02X  %04X: %s\n",
-			(u32)CYCLES,A,X,Y,SP,
+		compact_flags();
+		log_printf("%7d A:%02X X:%02X Y:%02X P:%02X SP:%02X [%02X %02X %02X %02X %02X] I:%02X  %04X: %s\n",
+			(u32)CYCLES,A,X,Y,P,SP,
 			cpu_read((SP|0x100)+1), cpu_read((SP|0x100)+2), cpu_read((SP|0x100)+3), cpu_read((SP|0x100)+4), cpu_read((SP|0x100)+5),
 			PREV_IRQSTATE,PC,buf);
 	}

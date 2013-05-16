@@ -18,6 +18,7 @@
 #define IDD_CONFIG_GENERAL2             134
 #define IDD_CONSOLE                     135
 #define IDD_CONFIG_GENERAL3             136
+#define IDD_BREAKPOINT                  137
 #define IDC_EDIT1                       1000
 #define IDC_AEDIT                       1000
 #define IDC_DATAPATHEDIT                1000
@@ -64,6 +65,17 @@
 #define IDC_BUTTON1                     1032
 #define IDC_BUTTON2                     1033
 #define IDC_BUTTON3                     1034
+#define IDC_PIXELSTATIC                 1035
+#define IDC_LINESTATIC                  1036
+#define IDC_FRAMESTATIC                 1037
+#define IDC_RESETRADIO                  1038
+#define IDC_NMIRADIO                    1039
+#define IDC_IRQRADIO                    1040
+#define IDC_WRITERADIO                  1042
+#define IDC_WRITECHECK                  1043
+#define IDC_READCHECK                   1044
+#define IDC_EDIT2                       1045
+#define IDC_EDIT3                       1046
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -95,9 +107,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        136
+#define _APS_NEXT_RESOURCE_VALUE        138
 #define _APS_NEXT_COMMAND_VALUE         32795
-#define _APS_NEXT_CONTROL_VALUE         1035
+#define _APS_NEXT_CONTROL_VALUE         1047
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

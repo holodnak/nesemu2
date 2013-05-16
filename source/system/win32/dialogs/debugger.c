@@ -72,10 +72,20 @@ static void update_registers(HWND hwnd)
 	sprintf(str,"%02X",nes.cpu.sp);	SetWindowText(GetDlgItem(hwnd,IDC_SPEDIT),str);
 }
 
+static void update_timing(HWND hwnd)
+{
+	char str[32];
+
+	sprintf(str,"%d",nes.ppu.linecycles);	SetWindowText(GetDlgItem(hwnd,IDC_PIXELSTATIC),str);
+	sprintf(str,"%d",nes.ppu.scanline);		SetWindowText(GetDlgItem(hwnd,IDC_LINESTATIC),str);
+	sprintf(str,"%d",nes.ppu.frames);		SetWindowText(GetDlgItem(hwnd,IDC_FRAMESTATIC),str);
+}
+
 static void update(HWND hwnd)
 {
 	update_disasm(hwnd);
 	update_registers(hwnd);
+	update_timing(hwnd);
 }
 
 

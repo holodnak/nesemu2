@@ -162,6 +162,7 @@ void ppu_write(u32 addr,u8 data)
 				cpu_clear_nmi();
 			CONTROL0 = data;
 			TMPSCROLL = (TMPSCROLL & 0x73FF) | ((data & 3) << 10);
+//			log_printf("control0:  $%02X (nmi %s) (pixel %d, line %d, frame %d)\n",CONTROL0,(CONTROL0&0x80)?"on":"off",LINECYCLES,SCANLINE,FRAMES);
 			return;
 		case 1:
 			CONTROL1 = data;

@@ -50,6 +50,7 @@ static INLINE void clear_nmi_flag()
 static INLINE void clear_nmi_line()
 {
 	cpu_clear_nmi();
+//	log_printf("clear_nmi_line:  nmi %s (pixel %d, line %d, frame %d)\n",(CONTROL0&0x80)?"on":"off",LINECYCLES,SCANLINE,FRAMES);
 }
 
 static INLINE void set_nmi()
@@ -57,4 +58,5 @@ static INLINE void set_nmi()
 	STATUS |= 0x80;
 	if(CONTROL0 & 0x80)
 		cpu_set_nmi();
+//	log_printf("set_nmi:  nmi %s (pixel %d, line %d, frame %d)\n",(CONTROL0&0x80)?"on":"off",LINECYCLES,SCANLINE,FRAMES);
 }

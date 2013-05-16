@@ -44,7 +44,7 @@ static int diskaddr;
 static int diskflip;
 
 //hle
-static int hlefds;
+static int hlefds = 0;
 static char hleident[6] = "HLEFDS";
 
 //global (for hle fds bios)
@@ -125,6 +125,8 @@ static u8 read(u32 addr)
 	return((u8)(addr >> 8));
 }
 
+static int irqhax = 0;
+
 static void write(u32 addr,u8 data)
 {
 	if(addr < 0x4020) {
@@ -137,21 +139,22 @@ static void write(u32 addr,u8 data)
 
 		//irq latch low
 		case 0x4020:
-	log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
+			log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
+			irqhax = 1;
 			cpu_clear_irq(IRQ_TIMER);
 			irqlatch = (irqlatch & 0xFF00) | data;
 			break;
 
 		//irq latch high
 		case 0x4021:
-	log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
+			log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
 			cpu_clear_irq(IRQ_TIMER);
 			irqlatch = (irqlatch & 0x00FF) | (data << 8);
 			break;
 
 		//irq enable
 		case 0x4022:
-	log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
+			log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
 			cpu_clear_irq(IRQ_TIMER);
 			irqenable = data;
 			irqcounter = irqlatch;
@@ -267,6 +270,14 @@ static void cpucycle()
 	if(hlefds)
 		hlefds_cpucycle();
 
+/*	if(irqhax) {
+		if(SCANLINE == 240 && LINECYCLES < 4) {
+//			cpu_set_irq(IRQ_TIMER);
+			cpu_set_nmi();
+			log_printf("fds.c:  IRQ hax!  timer!  line = %d, cycle = %d, frame %d (sp = %02X)\n",SCANLINE,LINECYCLES,FRAMES,nes.cpu.sp);
+		}
+	}*/
+
 	//for disk flipping
 	if(diskflip) {
 		diskflip--;
@@ -281,12 +292,10 @@ static void cpucycle()
 			if(irqenable & 1)
 				irqcounter = irqlatch;
 			else {
-				irqenable &= ~2;
-				irqcounter = 0;
-				irqlatch = 0;
+				irqenable &= 1;
 			}
 			cpu_set_irq(IRQ_TIMER);
-			log_printf("fds.c:  IRQ!  timer!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
+			log_printf("fds.c:  IRQ!  timer!  line = %d, cycle = %d, frame %d\n",SCANLINE,LINECYCLES,FRAMES);
 		}
 	}
 
@@ -295,7 +304,7 @@ static void cpucycle()
 		diskirq--;
 		if(diskirq == 0 && (control & 0x80)) {
 			cpu_set_irq(IRQ_DISK);
-//			log_printf("fds.c:  IRQ!  disk!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
+			log_printf("fds.c:  IRQ!  disk!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
 		}
 	}
 }

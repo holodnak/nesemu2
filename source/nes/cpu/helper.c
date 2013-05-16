@@ -63,7 +63,6 @@ static INLINE void expand_flags()
 	FLAG_Z = (P & 0x02) >> 1;
 	FLAG_I = (P & 0x04) >> 2;
 	FLAG_D = (P & 0x08) >> 3;
-//	FLAG_B = (P & 0x10) >> 4;
 	FLAG_V = (P & 0x40) >> 6;
 	FLAG_N = (P & 0x80) >> 7;
 }
@@ -75,7 +74,6 @@ static INLINE void compact_flags()
 		FLAG_Z & 0xFE ||
 		FLAG_I & 0xFE ||
 		FLAG_D & 0xFE ||
-		FLAG_B & 0xFE ||
 		FLAG_V & 0xFE ||
 		FLAG_N & 0xFE) {
 		log_printf("compact_flags:  one or more flags is dirty!\n");
@@ -86,7 +84,6 @@ static INLINE void compact_flags()
 	P |= (FLAG_Z) << 1;
 	P |= (FLAG_I) << 2;
 	P |= (FLAG_D) << 3;
-//	P |= (FLAG_B) << 4;
 	P |= (FLAG_V) << 6;
 	P |= (FLAG_N) << 7;
 }

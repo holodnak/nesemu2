@@ -41,7 +41,6 @@
 #define FLAG_Z				nes.cpu.flags.z
 #define FLAG_I				nes.cpu.flags.i
 #define FLAG_D				nes.cpu.flags.d
-#define FLAG_B				nes.cpu.flags.b
 #define FLAG_V				nes.cpu.flags.v
 #define FLAG_N				nes.cpu.flags.n
 #define OPCODE				nes.cpu.opcode
@@ -109,6 +108,7 @@ void cpu_reset(int hard)
 	}
 	else {
 		FLAG_I = 1;
+		compact_flags();
 		SP -= 3;
 	}
 	PC = memread(0xFFFC);
@@ -148,9 +148,7 @@ void cpu_tick()
 {
 	//acknowledge interrupts
 	PREV_NMISTATE = NMISTATE;
-	PREV_IRQSTATE = IRQSTATE;
-	if(FLAG_I)
-		PREV_IRQSTATE = 0;
+	PREV_IRQSTATE = (FLAG_I == 0) ? IRQSTATE : 0;
 
 	//increment cycle counter for every memory access
 	CYCLES++;

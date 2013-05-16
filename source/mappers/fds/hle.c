@@ -867,6 +867,7 @@ void hlefds_cpucycle()
 		TAKEOVER(0xe170,0x23);		//disobj
 		TAKEOVER(0xe16b,0x24);		//enpfobj
 		TAKEOVER(0xe161,0x25);		//dispfobj
+
 	}
 //end force
 

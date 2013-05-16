@@ -1109,21 +1109,6 @@
 					Name="fds"
 					Filter="">
 					<File
-						RelativePath="..\..\source\mappers\fds\calls.c">
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/mappers/fds/"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/mappers/fds/"/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath="..\..\source\mappers\fds\fds.c">
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -1472,9 +1457,6 @@
 				<Filter
 					Name="fds"
 					Filter="">
-					<File
-						RelativePath="..\..\source\mappers\fds\calls.h">
-					</File>
 					<File
 						RelativePath="..\..\source\mappers\fds\fds.h">
 					</File>

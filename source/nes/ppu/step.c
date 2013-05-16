@@ -29,7 +29,7 @@ typedef struct {
 	u8 flags;				//flags
 	u8 tile;					//sprite tile index
 	u8 sprline;				//line of sprite bitmap to draw
-	} sprtemp_t;			//sprite temp entry
+} sprtemp_t;				//sprite temp entry
 
 static sprtemp_t sprtemp[8];
 

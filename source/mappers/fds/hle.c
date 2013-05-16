@@ -467,6 +467,12 @@ static void inc00bya()
 	cpu_write(2,cpu_read(2) - 1);
 }
 
+static void inc00by8()
+{
+	nes.cpu.a = 8;
+	inc00bya();
+}
+
 static void memfill()
 {
 	int i;
@@ -486,7 +492,36 @@ static void memfill()
 
 static void counterlogic()
 {
-	log_printf("counterlogic:  not implemented\n");
+	u8 tmp;
+	int i;
+
+//	log_printf("counterlogic:  a,x,y = $%02X, $%02X, $%02X\n",nes.cpu.a,nes.cpu.x,nes.cpu.y);
+
+	//first counter is decimal counter (9 down to 0, repeat)
+	tmp = cpu_read(nes.cpu.x);
+
+	//when this one transitions, decrement counters in upper region
+	if(tmp == 0) {
+
+		//reset counter to 9
+		cpu_write(nes.cpu.x,9);
+
+		//these stay at 0
+		for(i=nes.cpu.a+1;i<=nes.cpu.y;i++) {
+			tmp = cpu_read(i);
+			if(tmp > 0)
+				cpu_write(i,tmp - 1);
+		}
+	}
+	else
+		cpu_write(nes.cpu.x,tmp - 1);
+
+	//the rest stay at 0
+	for(i=nes.cpu.x+1;i<=nes.cpu.a;i++) {
+		tmp = cpu_read(i);
+		if(tmp > 0)
+			cpu_write(i,tmp - 1);
+	}
 }
 
 static void random()
@@ -694,8 +729,8 @@ static hle_call_t hle_calls[64] = {
 	spritedma,
 	setscroll,
 	loadtileset,
+	inc00by8,
 	inc00bya,
-	0,
 	0,
 
 	//$20 - ppu related calls
@@ -825,8 +860,8 @@ void hlefds_cpucycle()
 		{2,	0xFF,		0xeafd,	"JumpEngine"},
 		{2,	0xFF,		0xeb13,	"ReadKeyboard"},
 		{2,	0x1C,		0xebaf,	"LoadTileset"},
-		{2,	0xFF,		0xeb66,	"Inc00by8"},
-		{2,	0x1D,		0xeb68,	"Inc00byA"},
+		{2,	0x1D,		0xeb66,	"Inc00by8"},
+		{2,	0x1E,		0xeb68,	"Inc00byA"},
 		{-1,	0xFF,		0x0000,	0},
 	};
 	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
@@ -847,17 +882,19 @@ void hlefds_cpucycle()
 //force hle!  takeover!
 	//if the opaddr changes we are reading an opcode
 	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
+		lastopaddr = nes.cpu.opaddr;
+
 		TAKEOVER(0xe1f8,0x00);		//loadfiles
 		TAKEOVER(0xea84,0x18);		//vramfill
 		TAKEOVER(0xe7bb,0x19);		//vramstructwrite
 
-//bug somewhere in sprite dma code
-//		TAKEOVER(0xe9c8,0x1A);		//spritedma
+		TAKEOVER(0xe9c8,0x1A);		//spritedma
 		TAKEOVER(0xeaea,0x1B);		//setscroll
 		TAKEOVER(0xebaf,0x1C);		//loadtileset
-		TAKEOVER(0xeb66,0x1C);		//inc00by8
-		TAKEOVER(0xeb68,0x1D);		//inc00byA
+		TAKEOVER(0xeb66,0x1D);		//inc00by8
+		TAKEOVER(0xeb68,0x1E);		//inc00byA
 		TAKEOVER(0xead2,0x30);		//memfill
+		TAKEOVER(0xe9d3,0x28);		//counterlogic
 		TAKEOVER(0xe9b1,0x29);		//random
 		TAKEOVER(0xe844,0x2A);		//fetchdirectptr		 
 
@@ -867,9 +904,6 @@ void hlefds_cpucycle()
 		TAKEOVER(0xe170,0x23);		//disobj
 		TAKEOVER(0xe16b,0x24);		//enpfobj
 		TAKEOVER(0xe161,0x25);		//dispfobj
-
 	}
 //end force
-
-	lastopaddr = nes.cpu.opaddr;
 }

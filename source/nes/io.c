@@ -77,7 +77,7 @@ void nes_write_4000(u32 addr,u8 data)
 		case 0x4014:
 			temp2 = data << 8;
 			for(temp=0;temp<256;temp++,temp2++)
-				nes.ppu.oam[temp] = cpu_read(temp2);
+				cpu_write(0x2004,cpu_read(temp2));
 			temp2 = 513 + ((u32)nes.cpu.cycles & 1);
 			for(temp=0;temp<temp2;temp++)
 				cpu_tick();

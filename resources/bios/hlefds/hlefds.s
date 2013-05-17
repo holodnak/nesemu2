@@ -33,36 +33,46 @@ BANKS 1
 
 .ORG $018B
 nmi:
-	bit $0100
-	bpl game_nmi1
-	bvc game_nmi2
-	jmp ($DFFA);	11xxxxxx
-game_nmi2:
-	jmp ($DFF8);	10xxxxxx
-game_nmi1:
-	bvc no_game_nmi
-	jmp ($DFF6);	01xxxxxx
+	hlecall	i_nmi
+	rts
 
-no_game_nmi:
+;;unreachable
+;	bit $0100
+;	bpl game_nmi1
+;	bvc game_nmi2
+;	jmp ($DFFA);	11xxxxxx
+;game_nmi2:
+;	jmp ($DFF8);	10xxxxxx
+;game_nmi1:
+;	bvc no_game_nmi
+;	jmp ($DFF6);	01xxxxxx
+
+;no_game_nmi:
 ;disable further VINTs	00xxxxxx
-	lda $FF
-	and #$7f
-	sta $FF
-	sta PPUCONTROL		;	[NES] PPU setup	#1
-	lda PPUSTATUS		;	[NES] PPU status
+;	lda $FF
+;	and #$7f
+;	sta $FF
+;	sta PPUCONTROL		;	[NES] PPU setup	#1
+;	lda PPUSTATUS		;	[NES] PPU status
 
 ;discard interrupted return address (should be $E1C5)
-	pla
-	pla
-	pla
+;	pla
+;	pla
+;	pla
 
 ;restore byte at [$0100]
-	pla
-	sta $0100
+;	pla
+;	sta $0100
 
 ;restore A
-	pla
-	rts
+;	pla
+;	rts
+
+.ORG $01B2
+vintwait:
+	hlecall	i_vintwait
+forever:
+	bne	forever
 
 ;($DFFE): disk game IRQ vector    (if [$0101] = 11xxxxxxB)
 .ORG $01C7
@@ -164,7 +174,7 @@ orpads:
 .ORG $0A1A
 readdownpads:
 	jsr		readpads
-	beq		downpads
+	beq		downpads		;always branches
 
 .ORG $0A1F
 readordownpads:

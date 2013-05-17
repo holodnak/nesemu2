@@ -108,7 +108,6 @@ void cpu_reset(int hard)
 	}
 	else {
 		FLAG_I = 1;
-		compact_flags();
 		SP -= 3;
 	}
 	PC = memread(0xFFFC);

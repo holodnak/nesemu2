@@ -123,8 +123,10 @@ static void loadfiles()
 	nes.cpu.y = 0;
 
 	if(diskside == 0xFF) {
-		log_printf("loadfiles:  aborting, disk not inserted\n");
-		return;
+		log_printf("loadfiles:  hax:  disk not inserted, setting to 0\n");
+		diskside = 0;
+//		log_printf("loadfiles:  aborting, disk not inserted\n");
+//		return;
 	}
 
 	addr1 = getparam(0);
@@ -153,6 +155,9 @@ static void loadfiles()
 
 	//$FF indicates to load system boot files
 	if(fileidlist[0] == 0xFF) {
+
+		//change reset action
+		cpu_write(0x103,0x53);
 
 		//leet hax
 		log_printf("loadfiles: hack!  fileidlist[0]==$FF!  resetting disknum to 0!!!@!@@121112\n");
@@ -224,6 +229,106 @@ static void loadfiles()
 
 	//put error code in accumulator
 	nes.cpu.a = 0;
+}
+
+static void writefile()
+{
+	int i;
+	char fn[9] = "        \0";
+	u32 addr1,addr2;
+	u32 pos;
+	fds_file_header_t file_header;
+	fds_file_header2_t file_header2;
+	fds_disk_header_t disk_header;
+
+	if(diskside > 3) {
+		log_printf("writefile: diskside > 3, correcting with mask of $%X\n",3);
+		diskside &= 3;
+	}
+
+	addr1 = getparam(0);
+	addr2 = getparam(1);
+	fixretaddr(2);
+
+	log_printf("hle writefile: addr1 = %04X, addr2 = %04X\n",addr1,addr2);
+
+	pos = diskside * 65500;
+
+	memcpy(&disk_header,nes.cart->disk.data + pos,sizeof(fds_disk_header_t));
+
+	pos += 57;
+
+	if(nes.cpu.y != 0xFF)
+		disk_header.numfiles = nes.cpu.y;
+
+	cpu_write(6,disk_header.numfiles);
+
+	//skip thru files to find the position to write the file
+	for(i=0;i<disk_header.numfiles;i++) {
+		memcpy(&file_header,nes.cart->disk.data + pos,sizeof(fds_file_header_t));
+		pos += 17 + file_header.filesize;
+	}
+
+	log_printf("hle writefile: disk data pos = %d\n",pos);
+
+	//write the file
+	//get the file write info
+	pos += 3;
+
+	for(i=0;i<17;i++)
+		((u8*)&file_header2)[i] = cpu_read(addr2 + i);
+
+	memcpy(fn,&file_header2.name,8);
+	log_printf("writing file, header:\n");
+	log_printf("  fileid: %02X\n",file_header2.fileid);
+	log_printf("  name:   %8s\n",fn);
+	log_printf("  loadaddr: %04X\n",file_header2.loadaddr);
+	log_printf("  filesize: %04X\n",file_header2.filesize);
+	log_printf("  loadarea: %02X\n",file_header2.loadarea);
+	log_printf("  srcaddr: %04X\n",file_header2.srcaddr);
+	log_printf("  srcarea: %02X\n",file_header2.srcarea);
+
+	//write header
+	memcpy(nes.cart->disk.data + pos,&file_header2,sizeof(fds_file_header2_t));
+	pos += 17;
+
+	//write data
+	for(i=0;i<file_header2.filesize;i++) {
+		if(file_header2.srcarea == 0)
+			nes.cart->disk.data[pos++ - 2] = cpu_read(file_header2.srcaddr+i);
+		else
+			nes.cart->disk.data[pos++ - 2] = ppu_memread(file_header2.srcaddr+i);
+	}
+	disk_header.numfiles++;
+
+	//write new disk header
+	pos = diskside * 65500;
+	memcpy(nes.cart->disk.data + pos,&disk_header,57);
+
+	cpu_write(0x6,disk_header.numfiles);
+
+	pos += 57;
+	for(i=0;i<disk_header.numfiles;i++) {
+		char fn[9] = "        \0";
+
+		memcpy(&file_header,nes.cart->disk.data + pos,sizeof(fds_file_header_t));
+		pos += 17;                 
+		memcpy(fn,file_header.name,8);
+		log_printf("writefile: checking file '%s', id $%X, size $%X, load addr $%04X\n",fn,file_header.fileid,file_header.filesize,file_header.loadaddr);
+		pos += file_header.filesize;
+	}
+
+	cpu_write(0x05,0xFF);
+	nes.cpu.a = 0;
+	nes.cpu.x = 0;
+	nes.cpu.flags.n = 0;
+	nes.cpu.flags.z = 1;
+}
+
+static void appendfile()
+{
+	nes.cpu.a = 0xFF;
+	writefile();
 }
 
 /*
@@ -322,18 +427,18 @@ static void vramstructwrite()
 
 		//ternimate!
 		if(data >= 0x80) {
-			log_printf("vramstructwrite: end opcode @ $%04X = $%02X\n",srcaddr-1,data);		
+			log_printf("vramstructwrite: end opcode @ $%04X = $%02X\n",srcaddr-1,data);
 			break;
 		}
 
 		//jsr!
 		else if(data == 0x4C) {
-			log_printf("vramstructwrite: jsr @ $%04X\n",srcaddr-1);		
+			log_printf("vramstructwrite: jsr @ $%04X\n",srcaddr-1);
 		}
 
 		//rts!
 		else if(data == 0x60) {
-			log_printf("vramstructwrite: rts @ $%04X\n",srcaddr-1);		
+			log_printf("vramstructwrite: rts @ $%04X\n",srcaddr-1);
 		}
 
 		//data!
@@ -373,6 +478,99 @@ static void vramstructwrite()
 	}
 }
 
+static void writevrambuffer()
+{
+	u32 srcaddr;
+	u8 data,i;
+
+	//increment vram address by 1
+	data = cpu_read(0xFF);
+	data &= ~4;
+	cpu_write(0xFF,data);
+	cpu_write(0x2000,data);
+
+	//reset ppu toggle
+	cpu_read(0x2002);
+
+	//setup source data address
+	srcaddr = 0x302;
+
+	log_printf("writevrambuffer:  len = %d\n",cpu_read(0x301));
+
+	//process!
+	for(;;) {
+
+		data = cpu_read(srcaddr++);
+
+		if(data >= 0x80) {
+			break;
+		}
+
+		//write dest address
+		cpu_write(0x2006,data);
+		cpu_write(0x2006,cpu_read(srcaddr++));
+
+		//get length
+		data = cpu_read(srcaddr++);
+
+		//write data
+		for(i=0;i<data;i++) {
+			cpu_write(0x2007,cpu_read(srcaddr++));
+		}
+
+	}
+
+	//set buffer to unused for next time
+	cpu_write(0x302,data);
+	cpu_write(0x301,0);
+}
+
+static void readvrambuffer()
+{
+
+}
+
+//appends data to end of the buffer
+static void preparevramstring()
+{
+	u8 i,len = nes.cpu.y;
+	u32 srcaddr;
+
+	srcaddr = getparam(0);
+	fixretaddr(1);
+
+	log_printf("preparevramstring:  destaddr = $%04X, srcaddr = $%04X, len = %d\n",nes.cpu.x | (nes.cpu.a << 8),srcaddr,len);
+
+	//see if data is too big
+	if(len > 64) {
+		nes.cpu.a = 1;
+		return;
+	}
+
+	//bios doesnt modify this byte?
+//	cpu_write(0x300,len);
+	cpu_write(0x301,len + 3);
+	cpu_write(0x302,nes.cpu.a);
+	cpu_write(0x303,nes.cpu.x);
+	cpu_write(0x304,(nes.cpu.y == 64) ? 0 : nes.cpu.y);
+	for(i=0;i<len;i++) {
+		cpu_write(0x305 + i,cpu_read(srcaddr++));
+	}
+	cpu_write(0x305 + i,0xFF);
+
+	nes.cpu.a = 0xFF;
+}
+
+static void preparevramstrings()
+{
+
+}
+
+static void getvrambufferbyte()
+{
+
+}
+
 static void setscroll()
 {
 	cpu_read(0x2002);
@@ -382,7 +580,18 @@ static void setscroll()
 	log_printf("setscroll:  done\n");
 }
 
-//todo:  revise this to use $2007
+static void vintwait()
+{
+	//save a
+	cpu_write(nes.cpu.sp-- | 0x100,nes.cpu.a);
+
+	//save old $100
+	cpu_write(nes.cpu.sp-- | 0x100,cpu_read(0x100));
+
+	nes.cpu.flags.z = 0;
+}
+
+//todo:  revise this to use $2007 and its internal functions
 static void loadtileset()
 {
 	int units = nes.cpu.x;
@@ -532,7 +741,7 @@ static void random()
 	cpu_write(nes.cpu.x+1,(u8)(random >> 8));
 }
 
-//doesnt handle stack wrapping
+//doesnt handle stack wrapping (easy fix!  wtf!)
 static void fetchdirectptr()
 {
 	u32 tmp,retaddr;
@@ -556,6 +765,11 @@ static void fetchdirectptr()
 	//write new return address to the stack
 	cpu_write(tmp + 1,(u8)retaddr);
 	cpu_write(tmp + 2,(u8)(retaddr >> 8));
+}
+
+static void jumpengine()
+{
+
 }
 
 static void readpads()
@@ -608,7 +822,9 @@ static void downpads()
 
 static void readordownpads()
 {
-
+	readpads();
+	orpads();
+	downpads();
 }
 
 static void readdownverifypads()
@@ -629,7 +845,40 @@ static void readdownexppads()
 //nmi vector
 static void nmi()
 {
+	u8 tmp,action = cpu_read(0x100) >> 6;
 
+	switch(action) {
+
+		//returning from vintwait, return to address that called vintwait
+		case 0:
+
+			//disable nmi
+			tmp = cpu_read(0xFF) & 0x7F;
+			cpu_write(0xFF,tmp);
+			cpu_write(0x2000,tmp);
+			cpu_read(0x2002);
+
+			//eat nmi return address
+			nes.cpu.sp += 3;
+
+			//restore old nmi action
+			cpu_write(0x100,cpu_read(++nes.cpu.sp | 0x100));
+
+			//restore a
+			nes.cpu.a = cpu_read(++nes.cpu.sp | 0x100);
+			break;
+
+		//game vectors
+		case 1:
+			nes.cpu.pc = cpu_read(0xDFF6) | (cpu_read(0xDFF7) << 8);
+			break;
+		case 2:
+			nes.cpu.pc = cpu_read(0xDFF8) | (cpu_read(0xDFF9) << 8);
+			break;
+		case 3:
+			nes.cpu.pc = cpu_read(0xDFFA) | (cpu_read(0xDFFB) << 8);
+			break;
+	}
 }
 
 //irq vector
@@ -638,10 +887,99 @@ static void irq()
 
 }
 
+/*
+($0102):	PC action on reset
+[$0101]:	PC action on IRQ. set to $80 on reset
+[$0100]:	PC action on NMI. set to $C0 on reset
+($DFFE):	disk game IRQ vector    (if [$0101] = 11xxxxxxB)
+($DFFC):	disk game reset vector  (if ($0102) = $5335, or $AC35)
+($DFFA):	disk game NMI vector #3 (if [$0100] = 11xxxxxxB)
+($DFF8):	disk game NMI vector #2 (if [$0100] = 10xxxxxxB)
+($DFF6):	disk game NMI vector #1 (if [$0100] = 01xxxxxxB)
+
+[$FF]:  value last written to $2000   $80 on reset.
+[$FE]:  value last written to $2001   $06 on reset
+[$FD]:  value last written to $2005#1 0'd on reset.
+[$FC]:  value last written to $2005#2 0'd on reset.
+[$FB]:  value last written to $4016   0'd on reset.
+[$FA]:  value last written to $4025   $2E on reset.
+[$F9]:  value last written to $4026   $FF on reset.
+$F5..$F8 : Used by controller read routines
+$00..$0F is used as temporary memory for the BIOS. The main program can use it as temporary memory too.
+*/
 //reset vector
 static void reset()
 {
+	u8 m102,m103;
 
+	//flag setup
+	nes.cpu.flags.i = 1;
+	nes.cpu.flags.d = 0;
+
+	cpu_write(0x101,0x80);		//action on irq
+	cpu_write(0x100,0xC0);		//action on nmi
+
+	//$2000
+	cpu_write(0xFF,0x10);
+	cpu_write(0x2000,0x10);
+
+	//$2001
+	cpu_write(0xFE,0x06);
+	cpu_write(0x2001,0x06);
+
+	cpu_write(0x4022,0x00);		//disable timer irq
+	cpu_write(0x4023,0x00);		//disable sound & disk I/O
+	cpu_write(0x4023,0x83);		//enable sound & disk I/O
+
+	cpu_write(0xFD,0x00);
+	cpu_write(0xFC,0x00);
+	cpu_write(0xFB,0x00);
+	cpu_write(0x4016,0x00);
+
+	cpu_write(0xFA,0x2E);
+	cpu_write(0x4025,0x2E);
+
+	cpu_write(0xF9,0xFF);
+	cpu_write(0x4026,0xFF);
+
+	cpu_write(0x4010,0x00);
+	cpu_write(0x4015,0x0F);
+	cpu_write(0x4080,0x80);
+	cpu_write(0x408A,0xE8);
+	cpu_write(0x4017,0xC0);
+
+	nes.cpu.sp = 0xFF;
+	m102 = cpu_read(0x102);
+	m103 = cpu_read(0x103);
+
+/*;if ([$102]=$35)and(([$103]=$53)or([$103]=$AC)) then
+;  [$103]:=$53
+;  CALL RstPPU05
+;  CLI
+;  JMP [$DFFC]
+$EE84 LDA $0102
+$EE87 CMP #$35
+$EE89 BNE $EEA2
+$EE8B LDA $0103
+$EE8E CMP #$53
+$EE90 BEQ $EE9B
+$EE92 CMP #$ac
+$EE94 BNE $EEA2
+$EE96 LDA #$53
+$EE98 STA $0103
+$EE9B JSR RstPPU05
+$EE9E CLI; enable interrupts
+$EE9F JMP ($DFFC)*/
+
+	if(m102 == 0x35 && (m103 == 0x53 || m103 == 0xAC)) {
+		cpu_write(0x103,0x53);
+		setscroll();
+		//setup pointers
+		loadfiles();
+		nes.cpu.pc = cpu_read(0xDFFC) | (cpu_read(0xDFFD) << 8);
+	}
+	cpu_write(0x102,0xAC);		//action on reset
+	nes.cpu.flags.i = 0;
 }
 
 static void enpf()
@@ -688,22 +1026,21 @@ static void dispfobj()
 static void forceinsert()
 {
 	log_printf("forceinsert:  disk inserted, side = 0\n");
-	diskside = 0;
 }
 
 static hle_call_t hle_calls[64] = {
 
-	//$0 - disk related calls
+	//$00 - disk related calls
 	loadfiles,
-	0,
-	0,
+	appendfile,
+	writefile,
 	0,
 	0,
 	0,
 	0,
 	0,
 
-	//$8 - ???
+	//$08 - disk helper calls
 	0,
 	0,
 	0,
@@ -717,48 +1054,48 @@ static hle_call_t hle_calls[64] = {
 	readpads,
 	orpads,
 	downpads,
-	0,
+	readordownpads,
 	readdownverifypads,
 	readordownverifypads,
 	readdownexppads,
 	0,
 
-	//$18 - ppu memory related calls
+	//$18 - ppu vram related calls
 	vramfill,
 	vramstructwrite,
+	writevrambuffer,
+	readvrambuffer,
+	preparevramstring,
+	preparevramstrings,
+	getvrambufferbyte,
 	spritedma,
-	setscroll,
+
+	//$20 - loadtileset and its internally used functions
 	loadtileset,
 	inc00by8,
 	inc00bya,
 	0,
+	0,
+	0,
+	0,
+	0,
 
-	//$20 - ppu related calls
+	//$28 - ppu related calls
 	enpf,
 	dispf,
 	enobj,
 	disobj,
 	enpfobj,
 	dispfobj,
-	0,
-	0,
+	setscroll,
+	vintwait,
 
-	//$28 - utility calls
+	//$30 - utility calls
 	counterlogic,
 	random,
 	fetchdirectptr,
-	0,
-	0,
-	0,
-	0,
-	0,
-
-	//$30 - cpu calls
+	jumpengine,
 	memfill,
-	0,
-	0,
-	0,
-	0,
 	0,
 	0,
 	0,
@@ -797,12 +1134,6 @@ void hlefds_write(u32 addr,u8 data)
 	else
 		log_printf("hlefds_write:  hle call $%02X not implemented yet\n",index);
 }
-
-#define TAKEOVER(addr,hle) \
-	if(nes.cpu.opaddr == addr) { \
-		nes.cpu.readpages[addr >> 12][addr & 0xFFF] = 0x60; \
-		hlefds_write(0x4222,hle); \
-	}
 
 void hlefds_cpucycle()
 {
@@ -848,8 +1179,8 @@ void hlefds_cpucycle()
 		{2,	0xFF,		0xe9c8,	"SpriteDMA"},
 		{2,	0xFF,		0xe9d3,	"CounterLogic"},
 		{2,	0xFF,		0xe9eb,	"ReadPads"},
-		{2,	0xFF,		0xea0d,	"ReadOrPads"},
-		{2,	0xFF,		0xea1a,	"ReadDownPads"},
+		{2,	0xFF,		0xea0d,	"OrPads"},
+		{2,	0xFF,		0xea1a,	"DownPads"},
 		{2,	0xFF,		0xea1f,	"ReadOrDownPads"},
 		{2,	0xFF,		0xea36,	"ReadDownVerifyPads"},
 		{6,	0xFF,		0xea4c,	"ReadOrDownVerifyPads"},
@@ -864,46 +1195,92 @@ void hlefds_cpucycle()
 		{2,	0x1E,		0xeb68,	"Inc00byA"},
 		{-1,	0xFF,		0x0000,	0},
 	};
-	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
-		int i,found = 0;
 
-		for(i=0;funcaddrs[i].type >= 0;i++) {
-			if(funcaddrs[i].addr == nes.cpu.opaddr) {
-				int t = funcaddrs[i].type;
-				char *types[4] = {"VECTOR","DISK","UTIL","MISC"};
+#define TAKEOVER(addr,hle) \
+	if(nes.cpu.opaddr == addr) { \
+		nes.cpu.readpages[addr >> 12][addr & 0xFFF] = 0x60; \
+		hlefds_write(0x4222,hle); \
+		handled = 1; \
+	}
 
-				if(t < 4)
-					log_printf("fds.c:  bios %s:  calling $%04X ('%s')\n",types[t],funcaddrs[i].addr,funcaddrs[i].name);
-				found = 1;
-			}
-		}
+#define RAPE_RESET(addr,hle) \
+	if(nes.cpu.opaddr == addr) { \
+		hlefds_write(0x4222,hle); \
+		handled = 1; \
+	}
+
+#define RAPE_IRQ(addr,hle) \
+	if(nes.cpu.opaddr == addr) { \
+		nes.cpu.readpages[addr >> 12][addr & 0xFFF] = 0x40; \
+		hlefds_write(0x4222,hle); \
+		handled = 1; \
+	}
+
+#define RAPE_NMI(addr,hle) \
+	if(nes.cpu.opaddr == addr) { \
+		nes.cpu.readpages[addr >> 12][addr & 0xFFF] = 0x60; \
+		hlefds_write(0x4222,hle); \
+		handled = 1; \
 	}
 
 //force hle!  takeover!
 	//if the opaddr changes we are reading an opcode
 	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
+		int i;
+		int handled = 0;
+
 		lastopaddr = nes.cpu.opaddr;
 
+//		RAPE_RESET(0xee24,0x3A);	//reset
+//		RAPE_NMI(0xe18b,0x38);		//nmi
+//		RAPE_IRQ(0xe1c7,0x39);		//irq
+
 		TAKEOVER(0xe1f8,0x00);		//loadfiles
+//		TAKEOVER(0xe237,0x01);		//appendfile
+//		TAKEOVER(0xe239,0x02);		//writefile
+
+		TAKEOVER(0xe9eb,0x10);		//readpads
+		TAKEOVER(0xea0d,0x11);		//orpads
+		TAKEOVER(0xea1a,0x12);		//downpads
+		TAKEOVER(0xea1f,0x13);		//readordownpads
+
 		TAKEOVER(0xea84,0x18);		//vramfill
-		TAKEOVER(0xe7bb,0x19);		//vramstructwrite
+//		TAKEOVER(0xe7bb,0x19);		//vramstructwrite
+//		TAKEOVER(0xe86a,0x1A);		//writevrambuffer
+// readvrambuffer
+//		TAKEOVER(0xe8d2,0x1C);		//preparevramstring
+// preparevramstrings
+// getvrambufferbyte
+		TAKEOVER(0xe9c8,0x1F);		//spritedma
 
-		TAKEOVER(0xe9c8,0x1A);		//spritedma
-		TAKEOVER(0xeaea,0x1B);		//setscroll
-		TAKEOVER(0xebaf,0x1C);		//loadtileset
-		TAKEOVER(0xeb66,0x1D);		//inc00by8
-		TAKEOVER(0xeb68,0x1E);		//inc00byA
-		TAKEOVER(0xead2,0x30);		//memfill
-		TAKEOVER(0xe9d3,0x28);		//counterlogic
-		TAKEOVER(0xe9b1,0x29);		//random
-		TAKEOVER(0xe844,0x2A);		//fetchdirectptr		 
+		TAKEOVER(0xebaf,0x20);		//loadtileset
+		TAKEOVER(0xeb66,0x21);		//inc00by8
+		TAKEOVER(0xeb68,0x22);		//inc00byA
 
-		TAKEOVER(0xe185,0x20);		//enpf
-		TAKEOVER(0xe17e,0x21);		//dispf
-		TAKEOVER(0xe178,0x22);		//enobj
-		TAKEOVER(0xe170,0x23);		//disobj
-		TAKEOVER(0xe16b,0x24);		//enpfobj
-		TAKEOVER(0xe161,0x25);		//dispfobj
+		TAKEOVER(0xe185,0x28);		//enpf
+		TAKEOVER(0xe17e,0x29);		//dispf
+		TAKEOVER(0xe178,0x2A);		//enobj
+		TAKEOVER(0xe170,0x2B);		//disobj
+		TAKEOVER(0xe16b,0x2C);		//enpfobj
+		TAKEOVER(0xe161,0x2D);		//dispfobj
+		TAKEOVER(0xeaea,0x2E);		//setscroll
+//		TAKEOVER(0xe1b2,0x2F);		//vintwait
+
+		TAKEOVER(0xe9d3,0x30);		//counterlogic
+		TAKEOVER(0xe9b1,0x31);		//random
+		TAKEOVER(0xe844,0x32);		//fetchdirectptr
+// jumpengine
+		TAKEOVER(0xead2,0x34);		//memfill
+
+		for(i=0;funcaddrs[i].type >= 0 && handled == 0;i++) {
+			if(funcaddrs[i].addr == nes.cpu.opaddr) {
+				int t = funcaddrs[i].type;
+				char *types[4] = {"VECTOR","DISK","UTIL","MISC"};
+
+				if(t < 4)
+					log_printf("fds.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",types[t],funcaddrs[i].addr,funcaddrs[i].name,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
+			}
+		}
 	}
 //end force
 }

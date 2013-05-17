@@ -1125,18 +1125,6 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\fds\hle.c">
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/mappers/fds/"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/mappers/fds/"/>
-						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>

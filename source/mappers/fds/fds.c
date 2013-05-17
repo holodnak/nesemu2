@@ -52,6 +52,18 @@ int diskside;
 
 void hlefds_write(u32 addr,u8 data);
 
+static void setirq(u8 mask)
+{
+	status |= mask;
+	cpu_set_irq(mask);
+}
+
+static void clearirq(u8 mask)
+{
+	status &= ~mask;
+	cpu_clear_irq(mask);
+}
+
 static void sync()
 {
 	mem_setmirroring(mirror);
@@ -71,8 +83,8 @@ static u8 read(u32 addr)
 		//status register
 		case 0x4030:
 			ret = status;
-			cpu_clear_irq(IRQ_DISK | IRQ_TIMER);
-			log_printf("fds.c:  irq ack. (%02X - %02X)\n",nes.cpu.prev_irqstate,nes.cpu.irqstate);
+//			log_printf("fds.c:  irq ack. (%02X - %02X)\n",nes.cpu.prev_irqstate,nes.cpu.irqstate);
+			clearirq(IRQ_DISK | IRQ_TIMER);
 			return(ret);
 
 		//read data register
@@ -94,7 +106,7 @@ static u8 read(u32 addr)
 			diskirq = SHORTIRQ;
 
 			//clear irq status
-			cpu_clear_irq(IRQ_DISK);
+			clearirq(IRQ_DISK);
 
 			return(diskread);
 
@@ -105,7 +117,7 @@ static u8 read(u32 addr)
 				ret |= 5;
 			}
 			if((diskside == 0xFF) || ((control & 1) == 0) || (control & 2)) {
-				log_printf("fds_read:  disk not inserted.  (diskside = $%02X, control = $%02X)\n",diskside,control);
+//				log_printf("fds_read:  disk not inserted.  (diskside = $%02X, control = $%02X)\n",diskside,control);
 				ret |= 2;
 			}
 //			log_printf("fds.c:  read:  status = $%02X\n",ret);
@@ -125,8 +137,6 @@ static u8 read(u32 addr)
 	return((u8)(addr >> 8));
 }
 
-static int irqhax = 0;
-
 static void write(u32 addr,u8 data)
 {
 	if(addr < 0x4020) {
@@ -139,23 +149,22 @@ static void write(u32 addr,u8 data)
 
 		//irq latch low
 		case 0x4020:
-			log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
-			irqhax = 1;
-			cpu_clear_irq(IRQ_TIMER);
+//			log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
+			clearirq(IRQ_TIMER);
 			irqlatch = (irqlatch & 0xFF00) | data;
 			break;
 
 		//irq latch high
 		case 0x4021:
-			log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
-			cpu_clear_irq(IRQ_TIMER);
+//			log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
+			clearirq(IRQ_TIMER);
 			irqlatch = (irqlatch & 0x00FF) | (data << 8);
 			break;
 
 		//irq enable
 		case 0x4022:
-			log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
-			cpu_clear_irq(IRQ_TIMER);
+//			log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
+			clearirq(IRQ_TIMER);
 			irqenable = data;
 			irqcounter = irqlatch;
 			break;
@@ -181,7 +190,7 @@ static void write(u32 addr,u8 data)
 
 		//fds control
 		case 0x4025:
-			cpu_clear_irq(IRQ_DISK);
+			clearirq(IRQ_DISK);
 			mem_setmirroring(((data & 8) >> 3) ^ 1);
 			if(diskside == 0xFF)
 				break;
@@ -270,14 +279,6 @@ static void cpucycle()
 	if(hlefds)
 		hlefds_cpucycle();
 
-/*	if(irqhax) {
-		if(SCANLINE == 240 && LINECYCLES < 4) {
-//			cpu_set_irq(IRQ_TIMER);
-			cpu_set_nmi();
-			log_printf("fds.c:  IRQ hax!  timer!  line = %d, cycle = %d, frame %d (sp = %02X)\n",SCANLINE,LINECYCLES,FRAMES,nes.cpu.sp);
-		}
-	}*/
-
 	//for disk flipping
 	if(diskflip) {
 		diskflip--;
@@ -294,8 +295,8 @@ static void cpucycle()
 			else {
 				irqenable &= 1;
 			}
-			cpu_set_irq(IRQ_TIMER);
-			log_printf("fds.c:  IRQ!  timer!  line = %d, cycle = %d, frame %d\n",SCANLINE,LINECYCLES,FRAMES);
+			setirq(IRQ_TIMER);
+//			log_printf("fds.c:  IRQ!  timer!  cycle = %d, line = %d, frame %d\n",LINECYCLES,SCANLINE,FRAMES);
 		}
 	}
 
@@ -303,8 +304,8 @@ static void cpucycle()
 	if(diskirq) {
 		diskirq--;
 		if(diskirq == 0 && (control & 0x80)) {
-			cpu_set_irq(IRQ_DISK);
-			log_printf("fds.c:  IRQ!  disk!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
+			setirq(IRQ_DISK);
+//			log_printf("fds.c:  IRQ!  disk!  line = %d, cycle = %d\n",SCANLINE,LINECYCLES);
 		}
 	}
 }
@@ -315,12 +316,13 @@ static void state(int mode,u8 *data)
 
 	CFG_U8(diskside);
 	if(diskside != olddiskside) {
-		diskflip = (341 * 262 / 3) * 15;		//15 frames
+		diskflip = (341 * 262 / 3) * 60;		//60 frames
 		newdiskside = diskside;
 		diskside = 0xFF;
 	}
 	STATE_U16(irqcounter);
 	STATE_U8(irqenable);
+	STATE_U8(diskside);
 	sync();
 }
 

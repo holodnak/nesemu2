@@ -50,6 +50,7 @@ submappers
 
 hlefds
  . code borrowed from disksys.rom (some controller read code) needs to be hle'd
+ . vramstructwrite problems.  (zelda2 life/magic bars)
 
 roms
  . need mapper 104 (golden five) roms

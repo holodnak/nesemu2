@@ -884,6 +884,7 @@ static void readdownexppads()
 //nmi vector
 static void nmi()
 {
+	u32 newpc;
 	u8 tmp,action = cpu_read(0x100);
 
 	log_printf("nmi!  action = $%02X (%d)\n",action,action >> 6);
@@ -906,9 +907,10 @@ static void nmi()
 
 			//restore a
 			nes.cpu.a = cpu_read(++nes.cpu.sp | 0x100);
-			break;
+			return;
 
 		//game vectors
+		/* cannot change the pc because we inserted an rts here, we need to push the new address on the stack??? */
 		case 1:
 			nes.cpu.pc = cpu_read(0xDFF6) | (cpu_read(0xDFF7) << 8);
 			break;
@@ -917,7 +919,6 @@ static void nmi()
 			break;
 		case 3:
 			nes.cpu.pc = cpu_read(0xDFFA) | (cpu_read(0xDFFB) << 8);
-			log_printf("nmi:  new pc = $%04X\n",nes.cpu.pc);
 			break;
 	}
 }
@@ -1224,7 +1225,7 @@ void hlefds_cpucycle()
 		{2,	0xFF,		0xea1a,	"DownPads"},
 		{2,	0xFF,		0xea1f,	"ReadOrDownPads"},
 		{2,	0xFF,		0xea36,	"ReadDownVerifyPads"},
-		{6,	0xFF,		0xea4c,	"ReadOrDownVerifyPads"},
+		{2,	0xFF,		0xea4c,	"ReadOrDownVerifyPads"},
 		{2,	0xFF,		0xea68,	"ReadDownExpPads"},
 		{2,	0xFF,		0xea84,	"VRAMFill"},
 		{2,	0x30,		0xead2,	"MemFill"},
@@ -1273,7 +1274,7 @@ void hlefds_cpucycle()
 		lastopaddr = nes.cpu.opaddr;
 
 //		RAPE_RESET(0xee24,0x3A);	//reset
-//		RAPE_NMI(0xe18b,0x38);		//nmi
+		RAPE_NMI(0xe18b,0x38);		//nmi
 //		RAPE_IRQ(0xe1c7,0x39);		//irq
 
 		TAKEOVER(0xe1f8,0x00);		//loadfiles
@@ -1324,8 +1325,7 @@ void hlefds_cpucycle()
 				int t = funcaddrs[i].type;
 				char *types[4] = {"VECTOR","DISK","UTIL","MISC"};
 
-//				if(t < 4)
-				if(t > 0)
+				if(t < 4)
 					log_printf("fds.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",types[t],funcaddrs[i].addr,funcaddrs[i].name,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
 			}
 		}

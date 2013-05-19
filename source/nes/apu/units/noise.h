@@ -36,10 +36,4 @@ typedef struct noise_s {
 	race_t race;
 } noise_t;
 
-void apu_noise_reset(int hard);
-void apu_noise_write(u32 addr,u8 data);
-void apu_noise_step();
-void apu_noise_quarter();
-void apu_noise_half();
-
 #endif

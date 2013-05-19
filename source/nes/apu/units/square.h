@@ -36,12 +36,6 @@ typedef struct square_s {
 	race_t race;
 } square_t;
 
-void apu_square_reset(square_t *sq,int hard);
-void apu_square_write(square_t *sq,u32 addr,u8 data);
-void apu_square_step(square_t *sq);
-void apu_square_quarter(square_t *sq);
-void apu_square_half(square_t *sq);
-
 #define apu_square0_reset(hard)			apu_square_reset(&nes.apu.square[0],hard)
 #define apu_square0_write(addr,data)	apu_square_write(&nes.apu.square[0],addr,data)
 #define apu_square0_step()					apu_square_step(&nes.apu.square[0])

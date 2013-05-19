@@ -18,16 +18,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "nes/nes.h"
-
 #define noi nes.apu.noise
 
-static u32 FreqTable[16] = {
+static u32 NoiseFreqTable[16] = {
 	0x004,0x008,0x010,0x020,0x040,0x060,0x080,0x0A0,
 	0x0CA,0x0FE,0x17C,0x1FC,0x2FA,0x3F8,0x7F2,0xFE4,
 };
 
-void apu_noise_reset(int hard)
+static INLINE void apu_noise_reset(int hard)
 {
 	noi.volume = noi.envelope = noi.wavehold = noi.datatype = 0;
 	noi.freq = 0;
@@ -42,7 +40,7 @@ void apu_noise_reset(int hard)
 	noi.EnvCtr = 1;
 }
 
-void apu_noise_write(u32 addr,u8 data)
+static INLINE void apu_noise_write(u32 addr,u8 data)
 {
 	switch (addr)
 	{
@@ -70,12 +68,12 @@ void apu_noise_write(u32 addr,u8 data)
 	}
 }
 
-void apu_noise_step()
+static INLINE void apu_noise_step()
 {
 	// this uses pre-decrement due to the lookup table
 	if (!--noi.Cycles)
 	{
-		noi.Cycles = FreqTable[noi.freq];
+		noi.Cycles = NoiseFreqTable[noi.freq];
 		if (noi.datatype)
 			noi.CurD = (noi.CurD << 1) | (((noi.CurD >> 14) ^ (noi.CurD >> 8)) & 0x1);
 		else	noi.CurD = (noi.CurD << 1) | (((noi.CurD >> 14) ^ (noi.CurD >> 13)) & 0x1);
@@ -84,7 +82,7 @@ void apu_noise_step()
 	}
 }
 
-void apu_noise_quarter()
+static INLINE void apu_noise_quarter()
 {
 	if (noi.EnvClk)
 	{
@@ -104,7 +102,7 @@ void apu_noise_quarter()
 		noi.Pos = ((noi.CurD & 0x4000) ? -2 : 2) * noi.Vol;
 }
 
-void apu_noise_half()
+static INLINE void apu_noise_half()
 {
 	if (noi.LengthCtr && !noi.wavehold)
 		noi.LengthCtr--;

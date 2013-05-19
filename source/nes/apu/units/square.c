@@ -18,8 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "nes/nes.h"
-
 static const s8 SquareDuty[4][8] = {
 	{-4,-4,-4,-4,-4,-4,-4,+4},
 	{-4,-4,-4,-4,-4,-4,+4,+4},
@@ -27,14 +25,14 @@ static const s8 SquareDuty[4][8] = {
 	{+4,+4,+4,+4,+4,+4,-4,-4},
 };
 
-static INLINE void checkactive(square_t *sq)
+static INLINE void squarecheckactive(square_t *sq)
 {
 	sq->ValidFreq = (sq->freq >= 0x8) && ((sq->swpdir) || !((sq->freq + (sq->freq >> sq->swpstep)) & 0x800));
 	sq->Active = sq->LengthCtr && sq->ValidFreq;
 	sq->Pos = sq->Active ? (SquareDuty[sq->duty][sq->CurD] * sq->Vol) : 0;
 }
 
-void apu_square_reset(square_t *sq,int hard)
+static INLINE void apu_square_reset(square_t *sq,int hard)
 {
 	sq->volume = sq->envelope = sq->wavehold = sq->duty = 0;
 	sq->swpspeed = sq->swpdir = sq->swpstep = sq->swpenab = 0;
@@ -51,7 +49,7 @@ void apu_square_reset(square_t *sq,int hard)
 	sq->BendCtr = 1;
 }
 
-void apu_square_write(square_t *sq,u32 addr,u8 data)
+static INLINE void apu_square_write(square_t *sq,u32 addr,u8 data)
 {
 	switch (addr)
 	{
@@ -85,10 +83,10 @@ void apu_square_write(square_t *sq,u32 addr,u8 data)
 			sq->LengthCtr = 0;
 		break;
 	}
-	checkactive(sq);
+	squarecheckactive(sq);
 }
 
-void apu_square_step(square_t *sq)
+static INLINE void apu_square_step(square_t *sq)
 {
 	if (!sq->Cycles--)
 	{
@@ -99,7 +97,7 @@ void apu_square_step(square_t *sq)
 	}
 }
 
-void apu_square_quarter(square_t *sq)
+static INLINE void apu_square_quarter(square_t *sq)
 {
 	if (sq->EnvClk)
 	{
@@ -115,10 +113,10 @@ void apu_square_quarter(square_t *sq)
 		else	sq->Envelope = sq->wavehold ? 0xF : 0x0;
 	}
 	sq->Vol = sq->envelope ? sq->volume : sq->Envelope;
-	checkactive(sq);
+	squarecheckactive(sq);
 }
 
-void apu_square_half(square_t *sq)
+static INLINE void apu_square_half(square_t *sq)
 {
 	if (!sq->BendCtr--)
 	{
@@ -136,5 +134,5 @@ void apu_square_half(square_t *sq)
 	}
 	if (sq->LengthCtr && !sq->wavehold)
 		sq->LengthCtr--;
-	checkactive(sq);
+	squarecheckactive(sq);
 }

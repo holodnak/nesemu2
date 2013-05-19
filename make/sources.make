@@ -26,10 +26,7 @@ SOURCE_NES += source/nes/state/state.c source/nes/state/block.c
 SOURCE_NES += source/nes/cpu/cpu.c source/nes/cpu/disassemble.c
 SOURCE_NES += source/nes/ppu/io.c source/nes/ppu/ppu.c source/nes/ppu/step.c
 SOURCE_NES += source/nes/ppu/tilecache.c
-SOURCE_NES += source/nes/apu/apu.c source/nes/apu/race.c
-SOURCE_NES += source/nes/apu/units/square.c source/nes/apu/units/triangle.c
-SOURCE_NES += source/nes/apu/units/noise.c source/nes/apu/units/dpcm.c
-SOURCE_NES += source/nes/apu/units/frame.c
+SOURCE_NES += source/nes/apu/apu.c
 
 # palette
 SOURCE_PALETTE = source/palette/generator.c source/palette/palette.c
@@ -64,12 +61,13 @@ SOURCES = $(SOURCE_MISC) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SO
 # extra files to remove
 TRASHFILES = nesemu2.log stdout.txt stderr.txt
 TRASHFILES += projects/codeblocks/nesemu2.depend projects/codeblocks/nesemu2.layout
-TRASHFILES += projects/vc2003/nesemu2.ncb projects/vc2010/nesemu2.sdf
+TRASHFILES += projects/vc2003/nesemu2.ncb projects/vc2010/nesemu2.sdf projects/vc2012/nesemu2.sdf
 
 # extra directories to remove
 TRASHDIRS = projects/codeblocks/bin projects/codeblocks/obj
 TRASHDIRS += projects/vc2003/Debug projects/vc2003/Release
 TRASHDIRS += projects/vc2010/Debug projects/vc2010/Release projects/vc2010/ipch
+TRASHDIRS += projects/vc2012/Debug projects/vc2012/Release projects/vc2012/Profile projects/vc2012/ipch
 
 # system stuff
 ifeq ($(OSTARGET),WIN32)

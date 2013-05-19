@@ -29,8 +29,4 @@ typedef struct frame_s {
 	u8		irq,zero;
 } frame_t;
 
-void apu_frame_reset(int hard);
-void apu_frame_write(u32 addr,u8 data);
-void apu_frame_step();
-
 #endif

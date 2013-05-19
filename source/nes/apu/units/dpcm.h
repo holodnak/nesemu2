@@ -32,9 +32,4 @@ typedef struct dpcm_s {
 	s32 Pos;
 } dpcm_t;
 
-void apu_dpcm_reset(int hard);
-void apu_dpcm_write(u32 addr,u8 data);
-void apu_dpcm_step();
-void apu_dpcm_fetch();
-
 #endif

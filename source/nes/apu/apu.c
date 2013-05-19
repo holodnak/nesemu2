@@ -49,6 +49,13 @@ u8 LengthCounts[32] = {
 	0x20,0x1E
 };
 
+#include "nes/apu/race.c"
+#include "nes/apu/units/square.c"
+#include "nes/apu/units/triangle.c"
+#include "nes/apu/units/noise.c"
+#include "nes/apu/units/dpcm.c"
+#include "nes/apu/units/frame.c"
+
 static u8 regs[0x20];
 static int cycles = 0;
 static const int soundbufsize = 1024 * 3;
@@ -186,11 +193,32 @@ void apu_write(u32 addr,u8 data)
 	}
 }
 
+static int oldpos = -1;
+
+static INLINE void updatebuffer()
+{
+	int sample,n;
+
+	if(soundbuflen >= soundbufsize) {
+//			log_printf("soundbuffer overflow!  %d! (cycles = %d)\n",soundbuflen,cycles);
+		return;
+	}
+	sample = nes.apu.square[0].Pos + nes.apu.square[1].Pos + nes.apu.triangle.Pos + nes.apu.noise.Pos + nes.apu.dpcm.Pos;
+	sample *= 64;
+	if(nes.apu.external)
+		sample += nes.apu.external->process(40);
+	if(sample < -0x8000)
+		sample = -0x8000;
+	if(sample > 0x7FFF)
+		sample = 0x7FFF;
+	n = (soundbuflen++ + soundbufpos) % soundbufsize;
+	soundbuf[n] = (s16)sample;
+}
+
 //this is called every cycle
 void apu_step()
 {
-	static int oldpos = -1;
-	int pos,sample,n;
+	int pos;
 
 	apu_frame_step();
 	apu_race_step();
@@ -201,21 +229,8 @@ void apu_step()
 	apu_dpcm_step();
 	pos = SOUND_HZ * cycles++ / NES_HZ;
 	if(pos != oldpos) {
-		if(soundbuflen >= soundbufsize) {
-//			log_printf("soundbuffer overflow!  %d! (cycles = %d)\n",soundbuflen,cycles);
-			return;
-		}
 		oldpos = pos;
-		sample = nes.apu.square[0].Pos + nes.apu.square[1].Pos + nes.apu.triangle.Pos + nes.apu.noise.Pos + nes.apu.dpcm.Pos;
-		sample *= 64;
-		if(nes.apu.external)
-			sample += nes.apu.external->process(40);
-		if(sample < -0x8000)
-			sample = -0x8000;
-		if(sample > 0x7FFF)
-			sample = 0x7FFF;
-		n = (soundbuflen++ + soundbufpos) % soundbufsize;
-		soundbuf[n] = (s16)sample;
+		updatebuffer();
 	}
 }
 

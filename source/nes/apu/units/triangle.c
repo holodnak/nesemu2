@@ -18,8 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "nes/nes.h"
-
 #define tri	nes.apu.triangle
 
 static s8 TriangleDuty[32] = {
@@ -29,7 +27,7 @@ static s8 TriangleDuty[32] = {
 	+0,+1,+2,+3,+4,+5,+6,+7,
 };
 
-static INLINE void checkactive()
+static INLINE void trianglecheckactive()
 {
 	tri.Active = tri.LengthCtr && tri.LinCtr;
 	if (tri.freq < 4)
@@ -37,7 +35,7 @@ static INLINE void checkactive()
 	else	tri.Pos = TriangleDuty[tri.CurD] * 8;
 }
 
-void apu_triangle_reset(int hard)
+static INLINE void apu_triangle_reset(int hard)
 {
 	tri.linear = tri.wavehold = 0;
 	tri.freq = 0;
@@ -49,7 +47,7 @@ void apu_triangle_reset(int hard)
 	tri.Cycles = 1;
 }
 
-void apu_triangle_write(u32 addr,u8 data)
+static INLINE void apu_triangle_write(u32 addr,u8 data)
 {
 	switch (addr)
 	{
@@ -73,10 +71,10 @@ void apu_triangle_write(u32 addr,u8 data)
 			tri.LengthCtr = 0;
 		break;
 	}
-	checkactive();
+	trianglecheckactive();
 }
 
-void apu_triangle_step()
+static INLINE void apu_triangle_step()
 {
 	if (!tri.Cycles--)
 	{
@@ -92,7 +90,7 @@ void apu_triangle_step()
 	}
 }
 
-void apu_triangle_quarter()
+static INLINE void apu_triangle_quarter()
 {
 	if (tri.LinClk)
 		tri.LinCtr = tri.linear;
@@ -100,12 +98,12 @@ void apu_triangle_quarter()
 		tri.LinCtr--;
 	if (!tri.wavehold)
 		tri.LinClk = 0;
-	checkactive();
+	trianglecheckactive();
 }
 
-void apu_triangle_half()
+static INLINE void apu_triangle_half()
 {
 	if (tri.LengthCtr && !tri.wavehold)
 		tri.LengthCtr--;
-	checkactive();
+	trianglecheckactive();
 }

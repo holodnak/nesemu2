@@ -18,16 +18,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "nes/nes.h"
-
 #define dpcm nes.apu.dpcm
 
-static u32 FreqTable[16] = {
+static u32 DpcmFreqTable[16] = {
 	0x1AC,0x17C,0x154,0x140,0x11E,0x0FE,0x0E2,0x0D6,
 	0x0BE,0x0A0,0x08E,0x080,0x06A,0x054,0x048,0x036,
 };
 
-void apu_dpcm_reset(int hard)
+static INLINE void apu_dpcm_reset(int hard)
 {
 	dpcm.freq = dpcm.wavehold = dpcm.doirq = dpcm.pcmdata = dpcm.addr = dpcm.len = 0;
 	dpcm.CurAddr = dpcm.SampleLen = 0;
@@ -42,7 +40,7 @@ void apu_dpcm_reset(int hard)
 	dpcm.outbits = 8;
 }
 
-void apu_dpcm_write(u32 addr,u8 data)
+static INLINE void apu_dpcm_write(u32 addr,u8 data)
 {
 	switch (addr)
 	{
@@ -73,12 +71,12 @@ void apu_dpcm_write(u32 addr,u8 data)
 	}
 }
 
-void apu_dpcm_step()
+static INLINE void apu_dpcm_step()
 {
 	// this uses pre-decrement due to the lookup table
 	if (!--dpcm.Cycles)
 	{
-		dpcm.Cycles = FreqTable[dpcm.freq];
+		dpcm.Cycles = DpcmFreqTable[dpcm.freq];
 		if (!dpcm.silenced)
 		{
 			if (dpcm.shiftreg & 1)
@@ -115,7 +113,7 @@ void apu_dpcm_step()
 	}
 }
 
-void apu_dpcm_fetch()
+static INLINE void apu_dpcm_fetch()
 {
 	dpcm.buffer = cpu_read(dpcm.CurAddr);
 	cpu_tick();
@@ -134,3 +132,5 @@ void apu_dpcm_fetch()
 			cpu_set_irq(IRQ_DPCM);
 	}
 }
+
+#undef dpcm

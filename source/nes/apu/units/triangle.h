@@ -34,10 +34,4 @@ typedef struct triangle_s {
 	race_t race;
 } triangle_t;
 
-void apu_triangle_reset(int hard);
-void apu_triangle_write(u32 addr,u8 data);
-void apu_triangle_step();
-void apu_triangle_quarter();
-void apu_triangle_half();
-
 #endif

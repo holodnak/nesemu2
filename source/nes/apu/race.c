@@ -18,15 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "nes/nes.h"
-
 static void race_reset(race_t *r)
 {
 	r->wavehold = 0;
 	r->LengthCtr1 = r->LengthCtr2 = 0;
 }
 
-void apu_race_reset(int hard)
+static INLINE void apu_race_reset(int hard)
 {
 	race_reset(&nes.apu.square[0].race);
 	race_reset(&nes.apu.square[1].race);
@@ -34,7 +32,7 @@ void apu_race_reset(int hard)
 //	race_reset(&nes.apu.noise.race);
 }
 
-void apu_race_step()
+static INLINE void apu_race_step()
 {
 	nes.apu.square[0].wavehold = nes.apu.square[0].race.wavehold;
 	if (nes.apu.square[0].race.LengthCtr1)

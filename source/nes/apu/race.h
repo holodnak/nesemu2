@@ -25,7 +25,4 @@ typedef struct race_s {
 	u8 wavehold, LengthCtr1, LengthCtr2;
 } race_t;
 
-void apu_race_reset(int hard);
-void apu_race_step();
-
 #endif

@@ -18,8 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "nes/nes.h"
-
 #define FRAME_REG			nes.apu.frame.reg
 #define FRAME_CYCLES		nes.apu.frame.cycles
 #define FRAME_QUARTER	nes.apu.frame.quarter
@@ -29,7 +27,7 @@
 
 static s32 cycletable[5] = {7456,14912,22370,29828,37280};
 
-void apu_frame_reset(int hard)
+static INLINE void apu_frame_reset(int hard)
 {
 	if(hard) {
 		FRAME_REG = 0;
@@ -41,7 +39,7 @@ void apu_frame_reset(int hard)
 	FRAME_ZERO = 0;
 }
 
-void apu_frame_write(u32 addr,u8 data)
+static INLINE void apu_frame_write(u32 addr,u8 data)
 {
 	FRAME_REG = data & 0xC0;
 	if(nes.cpu.cycles & 1)
@@ -54,7 +52,7 @@ void apu_frame_write(u32 addr,u8 data)
 //	log_printf("apu_frame_write:  lengthcounter = %02X (cycle %d, line %d, frame %d)\n",data,LINECYCLES,SCANLINE,FRAMES);
 }
 
-void apu_frame_step()
+static INLINE void apu_frame_step()
 {
 	if(FRAME_CYCLES == cycletable[0]) {
 		FRAME_QUARTER = 2;

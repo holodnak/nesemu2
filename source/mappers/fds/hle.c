@@ -1331,6 +1331,8 @@ void hlefds_cpucycle()
 // jumpengine
 		TAKEOVER(0xead2,0x34);		//memfill
 
+		handled = 0;
+
 		for(i=0;funcaddrs[i].type >= 0 && handled == 0;i++) {
 			if(funcaddrs[i].addr == nes.cpu.opaddr) {
 				int t = funcaddrs[i].type;

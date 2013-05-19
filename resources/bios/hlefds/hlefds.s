@@ -24,49 +24,10 @@ BANKS 1
 	;ident string is 6 bytes, followed by the version (high, low)
 	.db	"HLEFDS",0,1
 
-;[$0100]	program control	on NMI
-;-------	----------------------
-;00xxxxxx:	VINTwait was called; return PC to address that called VINTwait
-;01xxxxxx:	use [$DFF6] vector
-;10xxxxxx:	use [$DFF8] vector
-;11xxxxxx:	use [$DFFA] vector
-
 .ORG $018B
 nmi:
 	hlecall	i_nmi
 	rts
-
-;;unreachable
-;	bit $0100
-;	bpl game_nmi1
-;	bvc game_nmi2
-;	jmp ($DFFA);	11xxxxxx
-;game_nmi2:
-;	jmp ($DFF8);	10xxxxxx
-;game_nmi1:
-;	bvc no_game_nmi
-;	jmp ($DFF6);	01xxxxxx
-
-;no_game_nmi:
-;disable further VINTs	00xxxxxx
-;	lda $FF
-;	and #$7f
-;	sta $FF
-;	sta PPUCONTROL		;	[NES] PPU setup	#1
-;	lda PPUSTATUS		;	[NES] PPU status
-
-;discard interrupted return address (should be $E1C5)
-;	pla
-;	pla
-;	pla
-
-;restore byte at [$0100]
-;	pla
-;	sta $0100
-
-;restore A
-;	pla
-;	rts
 
 .ORG $01B2
 vintwait:
@@ -141,25 +102,8 @@ spritedma:
 
 .ORG $09D3
 counterlogic:
-;	hlecall	i_counterlogic
-;	rts
-	STX $00
-	DEC $00,X
-	BPL E9DE
-	LDA #$09
-	STA $00,X
-	TYA
-E9DE:
-	TAX
-E9DF:
-	LDA $00,X
-	BEQ E9E5
-	DEC $00,X
-E9E5:
-	DEX
-	CPX $00
-	BNE E9DF
-	RTS
+	hlecall	i_counterlogic
+	rts
 
 .ORG $09EB
 readpads:

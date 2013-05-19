@@ -129,6 +129,7 @@ static u8 read(u32 addr)
 
 		//hlefds register
 		case 0x4222:
+		case 0x4223:
 			if(hlefds)
 				return(hlefds_read(addr));
 			break;
@@ -267,16 +268,15 @@ static void reset(int hard)
 		hlefds = 1;
 	}
 	else
-		hlefds = 0;
-
-	hlefds = 1;
+//		hlefds = 0;
+		hlefds = 2;
 
 	sync();
 }
 
 static void cpucycle()
 {
-	if(hlefds)
+	if(hlefds == 2)
 		hlefds_cpucycle();
 
 	//for disk flipping

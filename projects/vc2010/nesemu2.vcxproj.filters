@@ -217,6 +217,9 @@
     <Filter Include="Source Files\nes\cart">
       <UniqueIdentifier>{e6fb2024-8279-4dd4-be7a-b340a3feb6fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\mappers\fds">
+      <UniqueIdentifier>{5912ce02-fde6-4c6c-a8d4-bfa9802295d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -570,9 +573,6 @@
     <ClCompile Include="..\..\source\mappers\boards\cne\shlz.c">
       <Filter>Source Files\mappers\boards\cne</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\nintendo\fds.c">
-      <Filter>Source Files\mappers\boards\nintendo</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\nintendo\qj.c">
       <Filter>Source Files\mappers\boards\nintendo</Filter>
     </ClCompile>
@@ -743,6 +743,12 @@
     </ClCompile>
     <ClCompile Include="..\..\source\nes\genie.c">
       <Filter>Source Files\nes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\fds.c">
+      <Filter>Source Files\mappers\fds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\hle.c">
+      <Filter>Source Files\mappers\fds</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

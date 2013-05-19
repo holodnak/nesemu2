@@ -62,6 +62,8 @@ typedef struct fds_file_header2_s {
 	u8 srcarea;
 } fds_file_header2_t;
 
+static u32 hlereg;
+
 //get parameter from the bytes after the jsr
 //n = parameter index (0 is the first, 1 is the second, etc)
 static u32 getparam(int n)
@@ -881,13 +883,13 @@ static void readdownexppads()
 
 }
 
+extern int showdisasm;
+
 //nmi vector
 static void nmi()
 {
-	u32 newpc;
 	u8 tmp,action = cpu_read(0x100);
 
-	log_printf("nmi!  action = $%02X (%d)\n",action,action >> 6);
 	switch(action >> 6) {
 
 		//returning from vintwait, return to address that called vintwait
@@ -910,7 +912,6 @@ static void nmi()
 			return;
 
 		//game vectors
-		/* cannot change the pc because we inserted an rts here, we need to push the new address on the stack??? */
 		case 1:
 			nes.cpu.pc = cpu_read(0xDFF6) | (cpu_read(0xDFF7) << 8);
 			break;
@@ -1158,6 +1159,12 @@ static hle_call_t hle_calls[64] = {
 u8 hlefds_read(u32 addr)
 {
 	log_printf("hlefds_read:  register read!\n");
+	switch(addr) {
+		case 0x4222:
+			return((u8)hlereg);
+		case 0x4223:
+			return((u8)hlereg);
+	}
 	return(0);
 }
 
@@ -1260,8 +1267,12 @@ void hlefds_cpucycle()
 
 #define RAPE_NMI(addr,hle) \
 	if(nes.cpu.opaddr == addr) { \
-		nes.cpu.readpages[addr >> 12][addr & 0xFFF] = 0x60; \
-		hlefds_write(0x4222,hle); \
+		nes.cpu.readpages[(addr + 0) >> 12][(addr + 0) & 0xFFF] = 0xA9; /* lda $38 */ \
+		nes.cpu.readpages[(addr + 1) >> 12][(addr + 1) & 0xFFF] = 0x38; \
+		nes.cpu.readpages[(addr + 2) >> 12][(addr + 2) & 0xFFF] = 0x8D; /* sta $4222 */ \
+		nes.cpu.readpages[(addr + 3) >> 12][(addr + 3) & 0xFFF] = 0x22; \
+		nes.cpu.readpages[(addr + 4) >> 12][(addr + 4) & 0xFFF] = 0x42; \
+		nes.cpu.readpages[(addr + 5) >> 12][(addr + 5) & 0xFFF] = 0x60; /* rts */ \
 		handled = 1; \
 	}
 

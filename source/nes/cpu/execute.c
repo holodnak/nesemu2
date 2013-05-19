@@ -24,12 +24,16 @@
 		OP_##o();			\
 		break;
 
+#ifdef SHOW_DISASM
+int showdisasm = 0;
+#endif
+
 static INLINE void cpu_step()
 {
 	OPADDR = PC;
 	OPCODE = memread(PC);
 #ifdef SHOW_DISASM
-	{
+	if(showdisasm) {
 		static char buf[256];
 		cpu_disassemble(buf,PC);
 		compact_flags();

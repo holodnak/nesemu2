@@ -99,6 +99,9 @@ void cpu_kill()
 
 void cpu_reset(int hard)
 {
+	nes.cpu.readpages[0] = nes.cpu.writepages[0] = (u8*)nes.cpu.ram;
+	nes.cpu.readpages[1] = nes.cpu.writepages[1] = (u8*)nes.cpu.ram + 0x400;
+
 	if(hard) {
 		A = X = Y = 0;
 		SP = 0xFD;
@@ -166,16 +169,11 @@ void cpu_tick()
 
 static u8 read_cpu_memory(u32 addr)
 {
-	u32 page = addr >> 12;
-
-	//check for ram read
-	if(addr < 0x2000) {
-		return(nes.cpu.ram[addr & 0x7FF]);
-	}
+	u32 page = addr >> 10;
 
 	//see if this page is handled by a memory pointer
 	if(nes.cpu.readpages[page] != 0) {
-		return(nes.cpu.readpages[page][addr & 0xFFF]);
+		return(nes.cpu.readpages[page][addr & 0x3FF]);
 	}
 
 	//see if this page is handled by a read function
@@ -185,23 +183,17 @@ static u8 read_cpu_memory(u32 addr)
 
 	//not handled
 	if(log_unhandled_io)
-		log_printf("cpu_read:  unhandled read at $%04X\n",addr);
+		log_printf("cpu_read:  unhandled read at $%04X (page %d)\n",addr,page);
 	return(0);
 }
 
 static void write_cpu_memory(u32 addr,u8 data)
 {
-	u32 page = addr >> 12;
-
-	//ram write
-	if(addr < 0x2000) {
-		nes.cpu.ram[addr & 0x7FF] = data;
-		return;
-	}
+	u32 page = addr >> 10;
 
 	//see if this page is handled by a memory pointer
 	if(nes.cpu.writepages[page] != 0) {
-		nes.cpu.writepages[page][addr & 0xFFF] = data;
+		nes.cpu.writepages[page][addr & 0x3FF] = data;
 		return;
 	}
 

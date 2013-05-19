@@ -154,15 +154,15 @@ void nes_reset(int hard)
 	int i;
 
 	//zero out all read/write pages/functions
-	for(i=0;i<16;i++) {
+	for(i=0;i<64;i++) {
 		nes.cpu.readfuncs[i] = 0;
 		nes.cpu.readpages[i] = 0;
 		nes.cpu.writefuncs[i] = 0;
 		nes.cpu.writepages[i] = 0;
-		nes.ppu.readfuncs[i] = 0;
-		nes.ppu.readpages[i] = 0;
-		nes.ppu.writefuncs[i] = 0;
-		nes.ppu.writepages[i] = 0;
+		nes.ppu.readfuncs[i / 4] = 0;
+		nes.ppu.readpages[i / 4] = 0;
+		nes.ppu.writefuncs[i / 4] = 0;
+		nes.ppu.writepages[i / 4] = 0;
 	}
 
 	//setup read/write funcs

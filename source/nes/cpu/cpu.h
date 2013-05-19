@@ -58,12 +58,12 @@ typedef struct cpu_s {
 	u8		ram[0x800];
 
 	//memory access pointers
-	u8		*readpages[16];
-	u8		*writepages[16];
+	u8		*readpages[64];
+	u8		*writepages[64];
 
 	//memory access functions
-	readfunc_t	readfuncs[16];
-	writefunc_t	writefuncs[16];
+	readfunc_t	readfuncs[64];
+	writefunc_t	writefuncs[64];
 
 } cpu_t;
 

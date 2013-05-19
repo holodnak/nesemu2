@@ -105,19 +105,19 @@ void nes_write_4000(u32 addr,u8 data)
 
 u8 nes_read_mem(u32 addr)
 {
-	if(nes.cpu.readpages[addr >> 12])
-		return(nes.cpu.readpages[addr >> 12][addr & 0xFFF]);
+	if(nes.cpu.readpages[addr >> 10])
+		return(nes.cpu.readpages[addr >> 10][addr & 0x3FF]);
 	return(0);
 }
 
 void nes_write_mem(u32 addr,u8 data)
 {
-	if(nes.cpu.writepages[addr >> 12])
-		nes.cpu.writepages[addr >> 12][addr & 0xFFF] = data;
+	if(nes.cpu.writepages[addr >> 10])
+		nes.cpu.writepages[addr >> 10][addr & 0x3FF] = data;
 }
 
 //read nes rom memory area ($8000-FFFF)
 u8 nes_read_rom(u32 addr)
 {
-	return(nes.cpu.readpages[addr >> 12][addr & 0xFFF]);
+	return(nes.cpu.readpages[addr >> 10][addr & 0x3FF]);
 }

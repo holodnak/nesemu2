@@ -22,14 +22,65 @@
 #include "nes/nes.h"
 #include "misc/log.h"
 
-void mem_setreadfunc(int page,readfunc_t func)		{	nes.cpu.readfuncs[page] = func;		}
-void mem_setwritefunc(int page,writefunc_t func)	{	nes.cpu.writefuncs[page] = func;		}
-void mem_setreadptr(int page,u8 *ptr)					{	nes.cpu.readpages[page] = ptr;		}
-void mem_setwriteptr(int page,u8 *ptr)					{	nes.cpu.writepages[page] = ptr;		}
-readfunc_t mem_getreadfunc(int page)					{	return(nes.cpu.readfuncs[page]);		}
-writefunc_t mem_getwritefunc(int page)					{	return(nes.cpu.writefuncs[page]);	}
-u8 *mem_getreadptr(int page)								{	return(nes.cpu.readpages[page]);		}
-u8 *mem_getwriteptr(int page)								{	return(nes.cpu.writepages[page]);	}
+void mem_setreadfunc(int page,readfunc_t func)
+{
+	page <<= 2;
+	nes.cpu.readfuncs[page+0] = func;
+	nes.cpu.readfuncs[page+1] = func;
+	nes.cpu.readfuncs[page+2] = func;
+	nes.cpu.readfuncs[page+3] = func;
+}
+
+void mem_setwritefunc(int page,writefunc_t func)
+{
+	page <<= 2;
+	nes.cpu.writefuncs[page+0] = func;
+	nes.cpu.writefuncs[page+1] = func;
+	nes.cpu.writefuncs[page+2] = func;
+	nes.cpu.writefuncs[page+3] = func;
+}
+
+void mem_setreadptr(int page,u8 *ptr)
+{
+	page <<= 2;
+	nes.cpu.readpages[page+0] = ptr;
+	nes.cpu.readpages[page+1] = ptr + 0x400;
+	nes.cpu.readpages[page+2] = ptr + 0x800;
+	nes.cpu.readpages[page+3] = ptr + 0xC00;
+}
+
+void mem_setwriteptr(int page,u8 *ptr)
+{
+	page <<= 2;
+	nes.cpu.writepages[page+0] = ptr;
+	nes.cpu.writepages[page+1] = ptr + 0x400;
+	nes.cpu.writepages[page+2] = ptr + 0x800;
+	nes.cpu.writepages[page+3] = ptr + 0xC00;
+}
+
+readfunc_t mem_getreadfunc(int page)			
+{	
+	page <<= 2;
+	return(nes.cpu.readfuncs[page]);
+}
+
+writefunc_t mem_getwritefunc(int page)			
+{
+	page <<= 2;
+	return(nes.cpu.writefuncs[page]);
+}
+
+u8 *mem_getreadptr(int page)					
+{
+	page <<= 2;
+	return(nes.cpu.readpages[page]);	
+}
+
+u8 *mem_getwriteptr(int page)			
+{
+	page <<= 2;
+	return(nes.cpu.writepages[page]);
+}
 
 void mem_setppureadfunc(int page,readfunc_t func)		{	nes.ppu.readfuncs[page] = func;		}
 void mem_setppuwritefunc(int page,writefunc_t func)	{	nes.ppu.writefuncs[page] = func;		}
@@ -44,7 +95,8 @@ void mem_unsetcpu(int banksize,int page)
 {
 	int i;
 
-	for(i=0;i<(banksize/4);i++) {
+	page <<= 2;
+	for(i=0;i<(banksize);i++) {
 		nes.cpu.readpages[page + i] = 
 		nes.cpu.writepages[page + i] = 0;
 	}
@@ -67,8 +119,9 @@ void mem_setprg(int banksize,int page,int bank)
 	int i;
 	u8 *ptr = nes.cart->prg.data + ((bank * banksize * 1024) & nes.cart->prg.mask);
 
-	for(i=0;i<(banksize/4);i++) {
-		nes.cpu.readpages[page + i] = ptr + i * 0x1000;
+	page <<= 2;
+	for(i=0;i<(banksize);i++) {
+		nes.cpu.readpages[page + i] = ptr + i * 0x400;
 		nes.cpu.writepages[page + i] = 0;
 	}
 }
@@ -78,9 +131,10 @@ void mem_setsram(int banksize,int page,int bank)
 	int i;
 	u8 *ptr = nes.cart->sram.data + ((bank * banksize * 1024) & nes.cart->sram.mask);
 
-	for(i=0;i<(banksize/4);i++) {
+	page <<= 2;
+	for(i=0;i<(banksize);i++) {
 		nes.cpu.readpages[page + i] = 
-		nes.cpu.writepages[page + i] = ptr + i * 0x1000;
+		nes.cpu.writepages[page + i] = ptr + i * 0x400;
 	}
 }
 
@@ -89,9 +143,10 @@ void mem_setwram(int banksize,int page,int bank)
 	int i;
 	u8 *ptr = nes.cart->wram.data + ((bank * banksize * 1024) & nes.cart->wram.mask);
 
-	for(i=0;i<(banksize/4);i++) {
+	page <<= 2;
+	for(i=0;i<(banksize);i++) {
 		nes.cpu.readpages[page + i] = 
-		nes.cpu.writepages[page + i] = ptr + i * 0x1000;
+		nes.cpu.writepages[page + i] = ptr + i * 0x400;
 	}
 }
 

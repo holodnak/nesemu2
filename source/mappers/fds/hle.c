@@ -1247,7 +1247,7 @@ void hlefds_cpucycle()
 
 #define TAKEOVER(addr,hle) \
 	if(nes.cpu.opaddr == addr) { \
-		nes.cpu.readpages[addr >> 12][addr & 0xFFF] = 0x60; \
+		nes.cpu.readpages[addr >> 10][addr & 0x3FF] = 0x60; \
 		hlefds_write(0x4222,hle); \
 		handled = 1; \
 	}
@@ -1260,19 +1260,19 @@ void hlefds_cpucycle()
 
 #define RAPE_IRQ(addr,hle) \
 	if(nes.cpu.opaddr == addr) { \
-		nes.cpu.readpages[addr >> 12][addr & 0xFFF] = 0x40; \
+		nes.cpu.readpages[addr >> 10][addr & 0x3FF] = 0x40; \
 		hlefds_write(0x4222,hle); \
 		handled = 1; \
 	}
 
 #define RAPE_NMI(addr,hle) \
 	if(nes.cpu.opaddr == addr) { \
-		nes.cpu.readpages[(addr + 0) >> 12][(addr + 0) & 0xFFF] = 0xA9; /* lda $38 */ \
-		nes.cpu.readpages[(addr + 1) >> 12][(addr + 1) & 0xFFF] = 0x38; \
-		nes.cpu.readpages[(addr + 2) >> 12][(addr + 2) & 0xFFF] = 0x8D; /* sta $4222 */ \
-		nes.cpu.readpages[(addr + 3) >> 12][(addr + 3) & 0xFFF] = 0x22; \
-		nes.cpu.readpages[(addr + 4) >> 12][(addr + 4) & 0xFFF] = 0x42; \
-		nes.cpu.readpages[(addr + 5) >> 12][(addr + 5) & 0xFFF] = 0x60; /* rts */ \
+		nes.cpu.readpages[(addr + 0) >> 10][(addr + 0) & 0x3FF] = 0xA9; /* lda $38 */ \
+		nes.cpu.readpages[(addr + 1) >> 10][(addr + 1) & 0x3FF] = 0x38; \
+		nes.cpu.readpages[(addr + 2) >> 10][(addr + 2) & 0x3FF] = 0x8D; /* sta $4222 */ \
+		nes.cpu.readpages[(addr + 3) >> 10][(addr + 3) & 0x3FF] = 0x22; \
+		nes.cpu.readpages[(addr + 4) >> 10][(addr + 4) & 0x3FF] = 0x42; \
+		nes.cpu.readpages[(addr + 5) >> 10][(addr + 5) & 0x3FF] = 0x60; /* rts */ \
 		handled = 1; \
 	}
 
@@ -1319,8 +1319,8 @@ void hlefds_cpucycle()
 		TAKEOVER(0xeaea,0x2E);		//setscroll
 //		TAKEOVER(0xe1b2,0x2F);		//vintwait
 		if(nes.cpu.opaddr == 0xe1b2) {
-			nes.cpu.readpages[0xe1b2 >> 12][0xe1b2 & 0xFFF] = 0xD0;
-			nes.cpu.readpages[0xe1b3 >> 12][0xe1b3 & 0xFFF] = 0xFE;
+			nes.cpu.readpages[0xe1b2 >> 10][0xe1b2 & 0x3FF] = 0xD0;
+			nes.cpu.readpages[0xe1b3 >> 10][0xe1b3 & 0x3FF] = 0xFE;
 			hlefds_write(0x4222,0x2F);
 			handled = 1;
 		}

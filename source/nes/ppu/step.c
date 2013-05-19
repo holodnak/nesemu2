@@ -440,7 +440,18 @@ void ppu_step()
 		case 210:	case 211:	case 212:	case 213:	case 214:	case 215:	case 216:	case 217:	case 218:	case 219:
 		case 220:	case 221:	case 222:	case 223:	case 224:	case 225:	case 226:	case 227:	case 228:	case 229:
 		case 230:	case 231:	case 232:	case 233:	case 234:	case 235:	case 236:	case 237:	case 238:	case 239:
-			scanline_visible();
+//			scanline_visible();
+			if(CONTROL1 & 0x18)
+				scanline_visible();
+			else {
+				nes.ppu.busaddr = SCROLL; //hack
+				if(LINECYCLES < 256)
+					nes.ppu.linebuffer[LINECYCLES] = 0;
+				else if(LINECYCLES == 256) {
+				//	blankline();
+					video_updateline(SCANLINE,nes.ppu.linebuffer);
+				}
+			}
 			break;
 		case 240:
 			break;

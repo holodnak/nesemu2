@@ -104,6 +104,21 @@ int mainloop()
 			keydown &= ~0x80;
 		}
 
+		if(joykeys[SDLK_F11] && (keydown & 0x8000) == 0) {
+			FILE *fp;
+
+			keydown |= 0x8000;
+			log_printf("dumping disk as dump.fds\n");
+			if((fp = fopen("dump.fds","wb")) != 0) {
+				fwrite(nes.cart->disk.data,1,nes.cart->disk.size,fp);
+				fclose(fp);
+			}
+
+		}
+		else if(joykeys[SDLK_F11] == 0) {
+			keydown &= ~0x8000;
+		}
+
 		if(nes.cart && (nes.cart->mapperid & B_TYPEMASK) == B_FDS) {
 			if(joykeys[SDLK_F9] && (keydown & 0x10) == 0) {
 				u8 data[4] = {0,0,0,0};

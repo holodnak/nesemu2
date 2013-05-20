@@ -97,6 +97,7 @@ int cart_load_fds(cart_t *ret,const char *filename)
 
 		//set number of disk sides
 //		ret->disksides = header[4];
+		size -= 16;
 
 	}
 
@@ -114,6 +115,6 @@ int cart_load_fds(cart_t *ret,const char *filename)
 	//copy to original disk data pointer
 	memcpy(ret->diskoriginal.data,ret->disk.data,size);
 
-	log_printf("cart_load_fds:  loaded disk, %d sides\n",ret->disk.size / 65500);
+	log_printf("cart_load_fds:  loaded disk, %d sides (%d bytes)\n",ret->disk.size / 65500,size);
 	return(0);
 }

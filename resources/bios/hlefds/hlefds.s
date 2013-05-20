@@ -96,64 +96,19 @@ downpads:
 	rts
 
 .ORG $0A36
-	JSR readpads
-EA39:
-	LDY $F5
-	LDA $F6
-	PHA
-	JSR readpads
-	PLA
-	CMP $F6
-	BNE EA39
-	CPY $F5
-	BNE EA39
-	BEQ downpads
+readdownverifypads:
+	hlecall	$14
+	rts
 
-	JSR readpads
-	JSR orpads
-EA52:
-	LDY $F5
-	LDA $F6
-	PHA
-	JSR readpads
-	JSR orpads
-	PLA
-	CMP $F6
-	BNE EA52
-	CPY $F5
-	BNE EA52
-	BEQ downpads
-	JSR readpads
-	LDA $00
-	STA $F7
-	LDA $01
-	STA $F8
-	LDX #$03
-EA75:
-	LDA $F5,X
-	TAY
-	EOR $F1,X
-	AND $F5,X
-	STA $F5,X
-	STY $F1,X
-	DEX
-	BPL EA75
-	RTS
+.ORG $0A4C
+readordownverifypads:
+	hlecall	$15
+	rts
 
-;.ORG $0A36
-;readdownverifypads:
-;	hlecall	$14
-;	rts
-
-;.ORG $0A4C
-;readordownverifypads:
-;	hlecall	$15
-;	rts
-
-;.ORG $0A68
-;readdownexppads:
-;	hlecall	$16
-;	rts
+.ORG $0A68
+readdownexppads:
+	hlecall	$16
+	rts
 
 .ORG $0A84
 vramfill:
@@ -185,97 +140,6 @@ inc00bya:
 .ORG $0E24
 reset:
 	hlecall	i_reset
-	jmp	($DFFC)
-
-	;;disable irq and clear decimal mode bit
-	sei
-	cld
-
-	;;ppu reg init
-	lda	#$10
-	sta	PPUCONTROL
-	sta	$FF
-
-	lda	#$06
-	sta	PPUMASK
-	sta	$FE
-
-	;;wait two frames
-;	ldx	#2
-;vblankwait:
-;	lda	PPUSTATUS
-;	bpl	vblankwait
-;	dex
-;	bne	vblankwait
-	ldx	#0
-	
-	;;setup fds bios register/fds registers
-	stx	$4022.w
-	stx	$4023.w
-	stx	$FD
-	stx	$FC
-	stx	$FB
-	stx	$4016.w
-
-	lda	#$83
-	sta	$4023
-
-	lda	#$2E
-	sta	$4025
-	sta	$FA
-
-	lda	$FF
-	sta	$4026.w
-	sta	$F9
-
-	stx	$4010.w
-	
-	lda	#$C0
-	sta	$4017
-
-	lda	#$0F
-	sta	$4015
-
-	;init stack
-	ldx	#$FF
-	txs
-
-	;initialize bios vars
-	lda	#$35
-	sta	$103
-
-	lda	#$AC
-	sta	$102
-
-	lda	#$80
-	sta	$101
-
-	lda	#$C0
-	sta	$100
-
-	lda	#$80
-	sta	$FF
-
-	lda	#$06
-	sta	$FE
-	
-	;init the vram buffer
-	lda #$7D
-	sta $300
-	
-	lda #0
-	sta $301
-
-	lda #$FF
-	sta $302
-
-	;load the boot files
-	hlecall	i_loadbootfiles
-
-	;enable interrupts
-	cli
-
-	;transfer control to the disk program
 	jmp	($DFFC)
 
 .ORG $1F00

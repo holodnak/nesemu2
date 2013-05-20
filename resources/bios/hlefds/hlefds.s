@@ -24,12 +24,16 @@ BANKS 1
 	;ident string is 6 bytes, followed by the version (high, low)
 	.db	"HLEFDS",0,1
 
-;;delay132
-.ORG $0149
+.ORG $0100
+delay132:
+	hlecall i_delay132
 	rts
 
-;;delayms
+.ORG $0149
+	jmp	delay132
+
 .ORG $0153
+	hlecall i_delayms
 	rts
 
 .ORG $0161
@@ -195,6 +199,10 @@ inc00bya:
 
 .ORG $0BAF
 	hlecall	i_loadtileset
+	rts
+
+.ORG $0C22
+	hlecall	i_unk_ec22
 	rts
 
 ;;reset vector

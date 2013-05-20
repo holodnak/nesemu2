@@ -51,6 +51,8 @@ submappers
 
 hlefds
  . code borrowed from disksys.rom (some controller read code) needs to be hle'd
+ . functions used by games:
+    jumpengine - kaettekita mario bros
 
 roms
  . need mapper 104 (golden five) roms

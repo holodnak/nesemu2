@@ -359,6 +359,31 @@ static void appendfile()
 	writefile();
 }
 
+static void getdiskinfo()
+{
+	log_printf("getdiskinfo not implemented\n");
+}
+
+static void checkfilecount()
+{
+	log_printf("checkfilecount not implemented\n");
+}
+
+static void adjustfilecount()
+{
+	log_printf("adjustfilecount not implemented\n");
+}
+
+static void setfilecount1()
+{
+	log_printf("setfilecount1 not implemented\n");
+}
+
+static void setfilecount()
+{
+	log_printf("setfilecount not implemented\n");
+}
+
 /*
 vram fill
 ---------
@@ -569,7 +594,7 @@ static void writevrambuffer()
 
 static void readvrambuffer()
 {
-
+	log_printf("readvrambuffer not implemented\n");
 }
 
 //appends data to end of the buffer
@@ -620,12 +645,12 @@ static void preparevramstring()
 
 static void preparevramstrings()
 {
-
+	log_printf("preparevramstrings not implemented\n");
 }
 
 static void getvrambufferbyte()
 {
-
+	log_printf("preparevramstrings not implemented\n");
 }
 
 static void setscroll()
@@ -733,7 +758,7 @@ static void loadtileset()
 	}
 
 }
-
+/*
 static void inc00bya()
 {
 	u16 tmp;
@@ -750,7 +775,7 @@ static void inc00by8()
 	nes.cpu.a = 8;
 	inc00bya();
 }
-
+*/
 static void memfill()
 {
 	int i;
@@ -760,7 +785,7 @@ static void memfill()
 	start = nes.cpu.x << 8;
 	stop = nes.cpu.y << 8;
 	while(start <= stop) {
-		log_hle("memfill:  filling 256 bytes at $%04X with $%02X\n",nes.cpu.x << 8,nes.cpu.a);
+		log_hle("memfill:  filling 256 bytes at $%04X with $%02X\n",start,nes.cpu.a);
 		for(i=0;i<256;i++) {
 			cpu_write(start + i,nes.cpu.a);
 		}
@@ -840,7 +865,18 @@ static void fetchdirectptr()
 
 static void jumpengine()
 {
+	u32 addr;
 
+//	addr = getparam(0);
+//	fixretaddr(1);
+	addr = cpu_read(++nes.cpu.sp | 0x100);
+	addr |= cpu_read(++nes.cpu.sp | 0x100) << 8;
+	addr++;
+	addr += nes.cpu.a * 2;
+	nes.cpu.pc = cpu_read(addr) | (cpu_read(addr + 1) << 8);
+	log_hle("jumpengine:  entry = %d, address of table = $%04X, newpc = $%04X\n",nes.cpu.a,addr - nes.cpu.a * 2,nes.cpu.pc);
+	addr -= nes.cpu.a * 2;
+	log_hle("data:  %02X %02X %02X %02X %02X %02X %02X %02X\n",cpu_read(addr + 0),cpu_read(addr + 1),cpu_read(addr + 2),cpu_read(addr + 3),cpu_read(addr + 4),cpu_read(addr + 5),cpu_read(addr + 6),cpu_read(addr + 7));
 }
 
 static void readpads()
@@ -994,12 +1030,12 @@ static void readordownverifypads()
 
 static void readdownexppads()
 {
-	log_printf("readdownexppads\n");
+	log_printf("readdownexppads not implemented\n");
 }
 
 static void readkeyboard()
 {
-
+	log_printf("readkeyboard not implemented\n");
 }
 
 static void pixel2nam()
@@ -1067,6 +1103,24 @@ static void nmi()
 	}
 }
 
+static void irqdisktransfer()
+{
+	//eat the irq return address and pushed flags
+	nes.cpu.sp += 3;
+
+	//read data from disk into the a register
+	nes.cpu.x = cpu_read(0x4031);
+
+	//write data in a reg to disk
+	cpu_write(0x4024,nes.cpu.a);
+
+	//txa
+	nes.cpu.a = nes.cpu.x;
+
+	//set hle register to rts opcode
+	hleregs[0] = 0x60;		//rts
+}
+
 //irq vector
 static void irq()
 {
@@ -1090,29 +1144,10 @@ static void irq()
 
 			//set hle register to rti opcode
 			hleregs[0] = 0x40;		//rti
-			nes.cpu.flags.z = 1;
-			nes.cpu.flags.n = 0;
-			nes.cpu.flags.v = 0;
 			break;
 
 		case 1:
-			//eat the irq return address and pushed flags
-			nes.cpu.sp += 3;
-
-			//read data from disk into the a register
-			nes.cpu.x = cpu_read(0x4031);
-
-			//write data in a reg to disk
-			cpu_write(0x4024,nes.cpu.a);
-
-			//txa
-			nes.cpu.a = nes.cpu.x;
-
-			//set hle register to rts opcode
-			hleregs[0] = 0x60;		//rts
-			nes.cpu.flags.z = 0;
-			nes.cpu.flags.n = 0;
-			nes.cpu.flags.v = 1;
+			irqdisktransfer();
 			break;
 
 		//disk IRQ acknowledge routine ([$0101] = 10xxxxxx).
@@ -1123,17 +1158,11 @@ static void irq()
 
 			//set hle register to rti opcode
 			hleregs[0] = 0x40;		//rti
-			nes.cpu.flags.z = 0;
-			nes.cpu.flags.n = 1;
-			nes.cpu.flags.v = 0;
 			break;
 
 		//game irq
 		case 3:
 			nes.cpu.pc = cpu_read(0xDFFE) | (cpu_read(0xDFFF) << 8);
-			nes.cpu.flags.z = 0;
-			nes.cpu.flags.n = 1;
-			nes.cpu.flags.v = 1;
 			break;
 	}
 }
@@ -1158,6 +1187,9 @@ static void irq()
 $F5..$F8 : Used by controller read routines
 $00..$0F is used as temporary memory for the BIOS. The main program can use it as temporary memory too.
 */
+
+extern int showdisasm;
+
 //reset vector
 static void reset()
 {
@@ -1225,6 +1257,7 @@ $EE9B JSR RstPPU05
 $EE9E CLI; enable interrupts
 $EE9F JMP ($DFFC)*/
 
+	memset(nes.ppu.nametables,0,0x1000);
 	{//if(m102 == 0x35 && (m103 == 0x53 || m103 == 0xAC)) {
 		cpu_write(0x103,0x53);
 		setscroll();
@@ -1274,17 +1307,41 @@ static void dispfobj()
 	disobj();
 }
 
+static void delay132()
+{
+	int i;
+
+	log_printf("delay132\n");
+	for(i=0;i<132;i++)
+		cpu_tick();
+}
+
+static void delayms()
+{
+	int delay = 1790 * nes.cpu.y + 5;
+	int i;
+
+	log_printf("delayms:  delaying %d cycles\n",delay);
+	for(i=0;i<delay;i++)
+		cpu_tick();
+}
+
+static void unk_EC22()
+{
+	log_printf("unk_EC22\n");
+}
+
 static hle_call_t hle_calls[64] = {
 
 	//$00 - disk related calls
 	loadfiles,
 	writefile,
 	appendfile,
-	0,
-	0,
-	0,
-	0,
-	0,
+	getdiskinfo,
+	checkfilecount,
+	adjustfilecount,
+	setfilecount1,
+	setfilecount,
 
 	//$08 - disk helper calls
 	0,
@@ -1318,8 +1375,8 @@ static hle_call_t hle_calls[64] = {
 
 	//$20 - loadtileset and its internally used functions
 	loadtileset,
-	inc00by8,
-	inc00bya,
+	0,
+	0,
 	0,
 	0,
 	0,
@@ -1344,18 +1401,18 @@ static hle_call_t hle_calls[64] = {
 	memfill,
 	pixel2nam,
 	nam2pixel,
+	unk_EC22,
+
+	//$38 - misc calls
+	delay132,
+	delayms,
+	0,
 	0,
 
-	//$38 - vectors
+	//$3C - vectors
 	nmi,
 	irq,
 	reset,
-	0,
-
-	//$3C - special calls for hle bios use only
-	loadbootfiles,
-	0,
-	0,
 	0,
 };
 
@@ -1450,8 +1507,7 @@ static struct {int type;u8 hle;u16 addr;char *name;} funcaddrs[] = {
 	{2,	0xFF,		0xeafd,	"JumpEngine"},
 	{2,	0xFF,		0xeb13,	"ReadKeyboard"},
 	{2,	0x1C,		0xebaf,	"LoadTileset"},
-	{2,	0x1D,		0xeb66,	"Inc00by8"},
-	{2,	0x1E,		0xeb68,	"Inc00byA"},
+	{2,	0x3F,		0xec22,	"unk_EC22"},
 	{-1,	0xFF,		0x0000,	0},
 };
 
@@ -1459,11 +1515,29 @@ void hlefds_cpucycle()
 {
 	//debugging the bios calls!
 	static u16 lastopaddr = 0;
+	static int in_EC22 = 0;
+	static u8 oldram[0x100];
 
 #define TAKEOVER(addr,hle) \
 	if(nes.cpu.opaddr == addr) { \
 		nes.cpu.readpages[addr >> 10][addr & 0x3FF] = 0x60; \
 		hlefds_write(0x4221,hle); \
+		handled = 1; \
+	}
+
+#define TAKEOVER2(addr,hle) \
+	if(nes.cpu.opaddr == addr) { \
+		nes.cpu.readpages[(addr +  0) >> 10][(addr +  0) & 0x3FF] = 0x48; /* pha */ \
+		nes.cpu.readpages[(addr +  1) >> 10][(addr +  1) & 0x3FF] = 0xA9; /* lda 'hle' */ \
+		nes.cpu.readpages[(addr +  2) >> 10][(addr +  2) & 0x3FF] = hle;  \
+		nes.cpu.readpages[(addr +  3) >> 10][(addr +  3) & 0x3FF] = 0x8D; /* sta $4222 */ \
+		nes.cpu.readpages[(addr +  4) >> 10][(addr +  4) & 0x3FF] = 0x22; \
+		nes.cpu.readpages[(addr +  5) >> 10][(addr +  5) & 0x3FF] = 0x42; \
+		nes.cpu.readpages[(addr +  6) >> 10][(addr +  6) & 0x3FF] = 0x68; /* pla */ \
+		nes.cpu.readpages[(addr +  7) >> 10][(addr +  7) & 0x3FF] = 0x8D; /* sta $4220 */ \
+		nes.cpu.readpages[(addr +  8) >> 10][(addr +  8) & 0x3FF] = 0x20; \
+		nes.cpu.readpages[(addr +  9) >> 10][(addr +  9) & 0x3FF] = 0x42; \
+		nes.cpu.readpages[(addr + 10) >> 10][(addr + 10) & 0x3FF] = 0x60; /* rts */ \
 		handled = 1; \
 	}
 
@@ -1521,11 +1595,31 @@ void hlefds_cpucycle()
 		int i;
 		int handled = 0;
 
+/*		if(in_EC22) {
+			if(cpu_read(nes.cpu.opaddr) == 0x60) {
+				log_printf("RTS from EC22 ($%04X)\n",nes.cpu.opaddr);
+				in_EC22 = 0;
+				log_printf("diff (ram $00 - $FF):\n");
+				log_printf("      old -- new\n");
+				for(i=2;i<0x100;i++) {
+					if(i <= 0xC || oldram[i] != nes.cpu.ram[i]) {
+						log_printf("$%02X:  $%02X -- $%02X%s\n",i,oldram[i],nes.cpu.ram[i],(oldram[i] != nes.cpu.ram[i]) ? " *":"");
+					}
+				}
+			}
+		}
+
+		if(nes.cpu.opaddr == 0xEC22) {
+			log_printf("unk_EC22:  entered.\n");
+			memcpy(oldram,nes.cpu.ram,0x100);
+			in_EC22 = 1;
+		}*/
+
 		lastopaddr = nes.cpu.opaddr;
 
-		RAPE_RESET(0xee24,0x3A);	//reset
-		RAPE_NMI(0xe18b,0x38);		//nmi
-		RAPE_IRQ(0xe1c7,0x39);		//irq
+		RAPE_RESET(0xee24,0x3E);	//reset
+		RAPE_NMI(0xe18b,0x3C);		//nmi
+		RAPE_IRQ(0xe1c7,0x3D);		//irq
 
 		TAKEOVER(0xe1f8,0x00);		//loadfiles
 		TAKEOVER(0xe239,0x01);		//writefile
@@ -1542,34 +1636,57 @@ void hlefds_cpucycle()
 		TAKEOVER(0xea84,0x18);		//vramfill
 		TAKEOVER(0xe7bb,0x19);		//vramstructwrite
 		TAKEOVER(0xe86a,0x1A);		//writevrambuffer
-//		TAKEOVER(0xe8b3,0x1B);		//readvrambuffer
+		TAKEOVER(0xe8b3,0x1B);		//readvrambuffer
 		TAKEOVER(0xe8d2,0x1C);		//preparevramstring
 // preparevramstrings
 // getvrambufferbyte
 		TAKEOVER(0xe9c8,0x1F);		//spritedma
 
 		TAKEOVER(0xebaf,0x20);		//loadtileset
-		TAKEOVER(0xeb66,0x21);		//inc00by8
-		TAKEOVER(0xeb68,0x22);		//inc00byA
+
+		TAKEOVER(0xec22,0x37);		//unk_EC22
 
 		TAKEOVER(0xe185,0x28);		//enpf
 		TAKEOVER(0xe17e,0x29);		//dispf
 		TAKEOVER(0xe178,0x2A);		//enobj
-		TAKEOVER(0xe170,0x2B);		//disobj
+		TAKEOVER(0xe171,0x2B);		//disobj
 		TAKEOVER(0xe16b,0x2C);		//enpfobj
 		TAKEOVER(0xe161,0x2D);		//dispfobj
 		TAKEOVER(0xeaea,0x2E);		//setscroll
 		if(nes.cpu.opaddr == 0xe1b2) {	//vintwait
-			nes.cpu.readpages[0xe1b2 >> 10][0xe1b2 & 0x3FF] = 0xD0;  //BNE forever!
-			nes.cpu.readpages[0xe1b3 >> 10][0xe1b3 & 0x3FF] = 0xFE;
-			hlefds_write(0x4221,0x2F);
+			u32 addr = 0xe1b2;
+			nes.cpu.readpages[(addr + 0) >> 10][(addr + 0) & 0x3FF] = 0x48; // pha
+			nes.cpu.readpages[(addr + 1) >> 10][(addr + 1) & 0x3FF] = 0xA9; // lda $2F
+			nes.cpu.readpages[(addr + 2) >> 10][(addr + 2) & 0x3FF] = 0x2F;
+			nes.cpu.readpages[(addr + 3) >> 10][(addr + 3) & 0x3FF] = 0x8D; // sta $4222
+			nes.cpu.readpages[(addr + 4) >> 10][(addr + 4) & 0x3FF] = 0x22;
+			nes.cpu.readpages[(addr + 5) >> 10][(addr + 5) & 0x3FF] = 0x42;
+			nes.cpu.readpages[(addr + 6) >> 10][(addr + 6) & 0x3FF] = 0x68; // pla
+			nes.cpu.readpages[(addr + 7) >> 10][(addr + 7) & 0x3FF] = 0x8D; // sta $4220
+			nes.cpu.readpages[(addr + 8) >> 10][(addr + 8) & 0x3FF] = 0x20;
+			nes.cpu.readpages[(addr + 9) >> 10][(addr + 9) & 0x3FF] = 0x42;
+			nes.cpu.readpages[(addr + 10) >> 10][(addr + 10) & 0x3FF] = 0xD0; //bne forever!
+			nes.cpu.readpages[(addr + 11) >> 10][(addr + 11) & 0x3FF] = 0xFE;
 			handled = 1;
 		}
 
 		TAKEOVER(0xe9d3,0x30);		//counterlogic
 		TAKEOVER(0xe9b1,0x31);		//random
 		TAKEOVER(0xe844,0x32);		//fetchdirectptr
-// jumpengine
+		if(nes.cpu.opaddr == 0xeafd) {	//jumpengine
+			u32 addr = 0xeafd;
+			nes.cpu.readpages[(addr + 0) >> 10][(addr + 0) & 0x3FF] = 0x48; // pha
+			nes.cpu.readpages[(addr + 1) >> 10][(addr + 1) & 0x3FF] = 0xA9; // lda $33
+			nes.cpu.readpages[(addr + 2) >> 10][(addr + 2) & 0x3FF] = 0x33;
+			nes.cpu.readpages[(addr + 3) >> 10][(addr + 3) & 0x3FF] = 0x8D; // sta $4222
+			nes.cpu.readpages[(addr + 4) >> 10][(addr + 4) & 0x3FF] = 0x22;
+			nes.cpu.readpages[(addr + 5) >> 10][(addr + 5) & 0x3FF] = 0x42;
+			nes.cpu.readpages[(addr + 6) >> 10][(addr + 6) & 0x3FF] = 0x68; // pla
+			nes.cpu.readpages[(addr + 7) >> 10][(addr + 7) & 0x3FF] = 0x8D; // sta $4220
+			nes.cpu.readpages[(addr + 8) >> 10][(addr + 8) & 0x3FF] = 0x20;
+			nes.cpu.readpages[(addr + 9) >> 10][(addr + 9) & 0x3FF] = 0x42;
+			handled = 1;
+		}
 		TAKEOVER(0xead2,0x34);		//memfill
 
 		handled = 0;
@@ -1580,7 +1697,7 @@ void hlefds_cpucycle()
 				char *types[4] = {"VECTOR","DISK","UTIL","MISC"};
 
 				if(t > 0) //(t < 4)
-					log_hle("fds.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",types[t],funcaddrs[i].addr,funcaddrs[i].name,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
+					log_printf("fds.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",types[t],funcaddrs[i].addr,funcaddrs[i].name,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
 			}
 		}
 	}
@@ -1603,8 +1720,12 @@ void hlefds_cpucycle2()
 					log_hle("hle.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",types[t],funcaddrs[i].addr,funcaddrs[i].name,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
 			}
 		}
-		if(found == 0)
-			log_hle("hle.c:  bios:  calling $%04X (unknown) from $%04X (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",nes.cpu.opaddr,lastopaddr,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
+		if(found == 0) {
+			extern int running;
+
+			log_printf("hle.c:  bios:  calling $%04X (unknown) from $%04X (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",nes.cpu.opaddr,lastopaddr,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
+			running = 0;
+		}
 	}
 	lastopaddr = nes.cpu.opaddr;
 

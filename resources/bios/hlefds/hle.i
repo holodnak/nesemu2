@@ -48,12 +48,14 @@
 .define i_memfill						$34
 .define i_pixel2nam					$35
 .define i_nam2pixel					$36
+.define i_unk_ec22					$37
 
-.define i_nmi							$38
-.define i_irq							$39
-.define i_reset						$3A
+.define i_delay132					$38
+.define i_delayms						$39
 
-.define i_loadbootfiles				$3C
+.define i_nmi							$3C
+.define i_irq							$3D
+.define i_reset						$3E
 
 ;;macro for calling hle function
 .macro hlecall

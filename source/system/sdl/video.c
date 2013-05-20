@@ -42,7 +42,7 @@ static SDL_Surface *surface = 0;
 static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;// | SDL_NOFRAME;
 static int screenw,screenh,screenbpp;
 static int screenscale;
-static u32 palette32[256];
+static u32 palette32[8][256];
 static u32 palettecache[256];
 static double interval = 0;
 static u64 lasttime = 0;
@@ -228,18 +228,27 @@ void video_updateline(int line,u8 *s)
 //this handles palette changes from the nes engine
 void video_updatepalette(u8 addr,u8 data)
 {
-	palettecache[addr] = palette32[data & 0x3F];
+	palettecache[addr+0x00] = palette32[0][data];
+	palettecache[addr+0x20] = palette32[1][data];
+	palettecache[addr+0x40] = palette32[2][data];
+	palettecache[addr+0x60] = palette32[3][data];
+	palettecache[addr+0x80] = palette32[4][data];
+	palettecache[addr+0xA0] = palette32[5][data];
+	palettecache[addr+0xC0] = palette32[6][data];
+	palettecache[addr+0xE0] = palette32[7][data];
 }
 
 void video_setpalette(palette_t *p)
 {
-	int i;
+	int i,j;
 	palentry_t *e;
 
 	palette = p;
-	for(i=0;i<256;i++) {
-		e = &p->pal[0][i & 0x3F];
-		palette32[i] = (e->r << 16) | (e->g << 8) | (e->b << 0);
+	for(j=0;j<8;j++) {
+		for(i=0;i<256;i++) {
+			e = &p->pal[j][i & 0x3F];
+			palette32[j][i] = (e->r << 16) | (e->g << 8) | (e->b << 0);
+		}
 	}
 }
 

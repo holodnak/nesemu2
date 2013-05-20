@@ -62,7 +62,8 @@ typedef struct fds_file_header2_s {
 	u8 srcarea;
 } fds_file_header2_t;
 
-static u32 hlereg;
+static u8 hleregs[4];
+static u8 hlelog = 1;
 
 //get parameter from the bytes after the jsr
 //n = parameter index (0 is the first, 1 is the second, etc)
@@ -105,6 +106,59 @@ static void fixretaddr(int n)
 	//write new return address to the stack
 	cpu_write(tmp + 1,(u8)retaddr);
 	cpu_write(tmp + 2,(u8)(retaddr >> 8));
+}
+
+static void loadbootfiles()
+{
+	fds_disk_header_t disk_header;
+	fds_file_header_t file_header;
+	int i,j,pos;
+	u8 loadedfiles = 0;
+
+	//change reset action
+	cpu_write(0x103,0x53);
+
+	//leet hax
+	log_printf("loadbootfiles:  setting diskside to 0\n");
+	diskside = 0;
+	pos = 0;
+
+	//load disk header
+	pos = diskside * 65500;
+	memcpy(&disk_header,nes.cart->disk.data + pos,sizeof(fds_disk_header_t));
+	pos += 57;
+
+	//load boot files
+	for(i=0;i<disk_header.numfiles;i++) {
+		char fn[10] = "        \0";
+
+		memcpy(&file_header,nes.cart->disk.data + pos,sizeof(fds_file_header_t));
+		pos += 17;
+		if(file_header.fileid <= disk_header.bootid) {
+			memcpy(fn,file_header.name,8);
+			log_printf("loadfiles: loading boot file '%s', id %d, size $%X, load addr $%04X\n",fn,file_header.fileid,file_header.filesize,file_header.loadaddr);
+			loadedfiles++;
+
+			//load into cpu
+			if(file_header.loadarea == 0) {
+				for(j=0;j<file_header.filesize;j++)
+					cpu_write(j + file_header.loadaddr,nes.cart->disk.data[pos + j + 1]);
+			}
+
+			//load into ppu
+			else {
+				for(j=0;j<file_header.filesize;j++)
+					ppu_memwrite(j + file_header.loadaddr,nes.cart->disk.data[pos + j + 1]);
+			}
+		}
+		pos += file_header.filesize;
+	}
+
+	//put loaded files into y register
+	nes.cpu.y = loadedfiles;
+
+	//put error code in accumulator
+	nes.cpu.a = 0;
 }
 
 static void loadfiles()
@@ -158,24 +212,22 @@ static void loadfiles()
 
 	//$FF indicates to load system boot files
 	if(fileidlist[0] == 0xFF) {
+		loadbootfiles();
+		return;
+	}
 
-		//change reset action
-		cpu_write(0x103,0x53);
+	//load files
+	for(i=0;i<disk_header.numfiles;i++) {
+		char fn[10] = "        \0";
 
-		//leet hax
-		log_printf("loadfiles: hack!  fileidlist[0]==$FF!  resetting disknum to 0!!!@!@@121112\n");
-		diskside = 0;
-
-		//load boot files
-		for(i=0;i<disk_header.numfiles;i++) {
-			char fn[9] = "        \0";
-
-			memcpy(&file_header,nes.cart->disk.data + pos,sizeof(fds_file_header_t));
-			pos += 17;
-			if(file_header.fileid <= disk_header.bootid) {
-				memcpy(fn,file_header.name,8);
-				log_printf("loadfiles: loading boot file '%s', id %d, size $%X, load addr $%04X\n",fn,file_header.fileid,file_header.filesize,file_header.loadaddr);
-				loadedfiles++;
+		memcpy(&file_header,nes.cart->disk.data + pos,sizeof(fds_file_header_t));
+		pos += 17;                 
+		memcpy(fn,file_header.name,8);
+		log_printf("loadfiles: checking file '%s', id $%X, size $%X, load addr $%04X\n",fn,file_header.fileid,file_header.filesize,file_header.loadaddr);
+		for(k=0;fileidlist[k] != 0xFF && k < 20;k++) {
+			if(file_header.fileid == fileidlist[k]) {
+				log_printf("loadfiles: loading file '%s', id $%X, size $%X, load addr $%04X\n",fn,file_header.fileid,file_header.filesize,file_header.loadaddr);
+				loadedfiles++;       
 
 				//load into cpu
 				if(file_header.loadarea == 0) {
@@ -189,38 +241,8 @@ static void loadfiles()
 						ppu_memwrite(j + file_header.loadaddr,nes.cart->disk.data[pos + j + 1]);
 				}
 			}
-			pos += file_header.filesize;
 		}
-	}
-	else {
-		//load files
-		for(i=0;i<disk_header.numfiles;i++) {
-			char fn[9] = "        \0";
-
-			memcpy(&file_header,nes.cart->disk.data + pos,sizeof(fds_file_header_t));
-			pos += 17;                 
-			memcpy(fn,file_header.name,8);
-			log_printf("loadfiles: checking file '%s', id $%X, size $%X, load addr $%04X\n",fn,file_header.fileid,file_header.filesize,file_header.loadaddr);
-			for(k=0;fileidlist[k] != 0xFF && k < 20;k++) {
-				if(file_header.fileid == fileidlist[k]) {
-					log_printf("loadfiles: loading file '%s', id $%X, size $%X, load addr $%04X\n",fn,file_header.fileid,file_header.filesize,file_header.loadaddr);
-					loadedfiles++;       
-
-					//load into cpu
-					if(file_header.loadarea == 0) {
-						for(j=0;j<file_header.filesize;j++)
-							cpu_write(j + file_header.loadaddr,nes.cart->disk.data[pos + j + 1]);
-					}
-
-					//load into ppu
-					else {
-						for(j=0;j<file_header.filesize;j++)
-							ppu_memwrite(j + file_header.loadaddr,nes.cart->disk.data[pos + j + 1]);
-					}
-				}
-			}
-			pos += file_header.filesize;
-		}
+		pos += file_header.filesize;
 	}
 
 	log_printf("loadfiles: loaded %d files\n",loadedfiles);
@@ -234,8 +256,59 @@ static void loadfiles()
 
 static void writefile()
 {
+	fds_disk_header_t *disk_header;
+	fds_file_header_t *file_header;
+	fds_file_header2_t file_header2;
+	u32 addr1,addr2,pos;
+	char fn[10] = "        \0";
 	int i;
-	char fn[9] = "        \0";
+
+	addr1 = getparam(0);
+	addr2 = getparam(1);
+	fixretaddr(2);
+
+	log_printf("hle writefile: addr1 = %04X, addr2 = %04X\n",addr1,addr2);
+
+	//position of disk data start
+	pos = diskside * 65500;
+
+	//pointer to disk header
+	disk_header = (fds_disk_header_t*)(nes.cart->disk.data + pos);
+
+	log_printf("hle writefile: %d files on disk (A = %d)\n",disk_header->numfiles,nes.cpu.a);
+
+	//seek past the header
+	pos += 57;
+
+	//loop thru all the files
+	for(i=0;i<disk_header->numfiles;i++) {
+		file_header = (fds_file_header_t*)(nes.cart->disk.data + pos);
+		pos += 17 + file_header->filesize;
+		memcpy(fn,file_header->name,8);
+		log_printf("hle writefile: seeking over '%s', id $%X, size $%X, load addr $%04X\n",fn,file_header->fileid,file_header->filesize,file_header->loadaddr);
+	}
+
+	for(i=0;i<17;i++)
+		((u8*)&file_header2)[i] = cpu_read(addr2 + i);
+
+	memcpy(fn,&file_header2.name,8);
+	log_printf("writing file, header:\n");
+	log_printf("  fileid: %02X\n",file_header2.fileid);
+	log_printf("  name:   %8s\n",fn);
+	log_printf("  loadaddr: %04X\n",file_header2.loadaddr);
+	log_printf("  filesize: %04X\n",file_header2.filesize);
+	log_printf("  loadarea: %02X\n",file_header2.loadarea);
+	log_printf("  srcaddr: %04X\n",file_header2.srcaddr);
+	log_printf("  srcarea: %02X\n",file_header2.srcarea);
+
+	if(nes.cpu.a != 0xFF)
+		disk_header->numfiles = nes.cpu.a;
+
+	cpu_write(6,disk_header->numfiles);
+
+
+/*	int i;
+	char fn[10] = "        \0";
 	u32 addr1,addr2;
 	u32 pos;
 	fds_file_header_t file_header;
@@ -270,7 +343,7 @@ static void writefile()
 		pos += 17 + file_header.filesize;
 	}
 
-	log_printf("hle writefile: disk data pos = %d\n",pos);
+	log_printf("hle writefile: disk data pos = %d (%d)\n",pos,pos % 65500);
 
 	//write the file
 	//get the file write info
@@ -310,7 +383,7 @@ static void writefile()
 
 	pos += 57;
 	for(i=0;i<disk_header.numfiles;i++) {
-		char fn[9] = "        \0";
+		char fn[10] = "        \0";
 
 		memcpy(&file_header,nes.cart->disk.data + pos,sizeof(fds_file_header_t));
 		pos += 17;                 
@@ -319,7 +392,7 @@ static void writefile()
 		pos += file_header.filesize;
 	}
 
-	cpu_write(0x05,0xFF);
+	cpu_write(0x05,0xFF);*/
 	nes.cpu.a = 0;
 	nes.cpu.x = 0;
 	nes.cpu.flags.n = 0;
@@ -774,9 +847,10 @@ static void counterlogic()
 	}
 }
 
+//not correctly implemented
 static void random()
 {
-	u32 random = rand();
+	u32 random = nes.ppu.linecycles * nes.ppu.frames * nes.ppu.scanline;
 
 	cpu_write(nes.cpu.x+0,(u8)(random >> 0));
 	cpu_write(nes.cpu.x+1,(u8)(random >> 8));
@@ -798,7 +872,7 @@ static void fetchdirectptr()
 	cpu_write(0,cpu_read(retaddr + 1));
 	cpu_write(1,cpu_read(retaddr + 2));
 
-	log_printf("direct pointer fetched is $%02X%02X (retaddr = $%04X)\n",cpu_read(1),cpu_read(0),retaddr);
+//	log_printf("direct pointer fetched is $%02X%02X (retaddr = $%04X)\n",cpu_read(1),cpu_read(0),retaddr);
 
 	//offset to new return address
 	retaddr += 2;
@@ -883,8 +957,6 @@ static void readdownexppads()
 
 }
 
-extern int showdisasm;
-
 //nmi vector
 static void nmi()
 {
@@ -924,10 +996,108 @@ static void nmi()
 	}
 }
 
+static void irqdisktransfer()
+{
+	//eat the irq return address and pushed flags
+	nes.cpu.sp += 3;
+
+	//read data from disk into the a register
+	nes.cpu.x = cpu_read(0x4031);
+
+	//write data in a reg to disk
+	cpu_write(0x4024,nes.cpu.a);
+
+	//txa
+	nes.cpu.a = nes.cpu.x;
+}
+
+static void irqdiskbyteskip()
+{
+	u8 tmp = cpu_read(0x101) & 0x3F;
+
+	tmp--;
+	if(tmp != 0xFF) {
+		cpu_write(0x101,tmp);
+		cpu_read(0x4031);
+	}
+}
+
+static void irqdiskack()
+{
+	cpu_read(0x4030);
+}
+
+extern int showdisasm;
+
 //irq vector
 static void irq()
 {
+	u8 action = cpu_read(0x101);
+	u8 tmp = action & 0x3F;
 
+	switch(action >> 6) {
+		//disk byte skip routine ([$0101] = 00nnnnnn; n is # of bytes to skip)
+		//this is mainly used when the CPU has to do some calculations while bytes
+		//read off the disk need to be discarded.
+		case 0:
+
+			//decrement the number of bytes to skip
+			tmp = (action & 0x3F) - 1;
+
+			//if it hasnt expired, throw data away and store new value
+			if(tmp != 0xFF) {
+				cpu_write(0x101,tmp);
+				cpu_read(0x4031);
+			}
+
+			//set hle register to rti opcode
+			hleregs[0] = 0x40;		//rti
+			nes.cpu.flags.z = 1;
+			nes.cpu.flags.n = 0;
+			nes.cpu.flags.v = 0;
+			break;
+
+		case 1:
+			//eat the irq return address and pushed flags
+			nes.cpu.sp += 3;
+
+			//read data from disk into the a register
+			nes.cpu.x = cpu_read(0x4031);
+
+			//write data in a reg to disk
+			cpu_write(0x4024,nes.cpu.a);
+
+			//txa
+			nes.cpu.a = nes.cpu.x;
+
+			//set hle register to rts opcode
+			hleregs[0] = 0x60;		//rts
+			nes.cpu.flags.z = 0;
+			nes.cpu.flags.n = 0;
+			nes.cpu.flags.v = 1;
+			break;
+
+		//disk IRQ acknowledge routine ([$0101] = 10xxxxxx).
+		//don't know what this is used for, or why a delay is put here.
+		case 2:
+			//ack the interrupt
+			cpu_read(0x4030);
+
+			//set hle register to rti opcode
+			hleregs[0] = 0x40;		//rti
+			nes.cpu.flags.z = 0;
+			nes.cpu.flags.n = 1;
+			nes.cpu.flags.v = 0;
+			break;
+
+		//game irq
+		case 3:
+			nes.cpu.pc = cpu_read(0xDFFE) | (cpu_read(0xDFFF) << 8);
+			nes.cpu.flags.z = 0;
+			nes.cpu.flags.n = 1;
+			nes.cpu.flags.v = 1;
+			break;
+	}
 }
 
 /*
@@ -955,11 +1125,13 @@ static void reset()
 {
 	u8 m102,m103;
 
+//	showdisasm = 1;
+
 	//flag setup
 	nes.cpu.flags.i = 1;
 	nes.cpu.flags.d = 0;
 
-	cpu_write(0x101,0x80);		//action on irq
+	cpu_write(0x101,0xC0);		//action on irq
 	cpu_write(0x100,0xC0);		//action on nmi
 
 	//$2000
@@ -1014,12 +1186,10 @@ $EE9B JSR RstPPU05
 $EE9E CLI; enable interrupts
 $EE9F JMP ($DFFC)*/
 
-	if(m102 == 0x35 && (m103 == 0x53 || m103 == 0xAC)) {
+	{//if(m102 == 0x35 && (m103 == 0x53 || m103 == 0xAC)) {
 		cpu_write(0x103,0x53);
 		setscroll();
-		//setup pointers
-		loadfiles();
-		nes.cpu.pc = cpu_read(0xDFFC) | (cpu_read(0xDFFD) << 8);
+		loadbootfiles();
 	}
 	cpu_write(0x102,0xAC);		//action on reset
 	nes.cpu.flags.i = 0;
@@ -1065,18 +1235,12 @@ static void dispfobj()
 	disobj();
 }
 
-//insert disk
-static void forceinsert()
-{
-	log_printf("forceinsert:  disk inserted, side = 0\n");
-}
-
 static hle_call_t hle_calls[64] = {
 
 	//$00 - disk related calls
 	loadfiles,
-	appendfile,
 	writefile,
+	appendfile,
 	0,
 	0,
 	0,
@@ -1150,7 +1314,7 @@ static hle_call_t hle_calls[64] = {
 	0,
 
 	//$3C - special calls for hle bios use only
-	forceinsert,
+	loadbootfiles,
 	0,
 	0,
 	0,
@@ -1158,30 +1322,41 @@ static hle_call_t hle_calls[64] = {
 
 u8 hlefds_read(u32 addr)
 {
-	log_printf("hlefds_read:  register read!\n");
+//	log_printf("hlefds_read:  register read!  $%04X\n",addr);
 	switch(addr) {
 		case 0x4222:
-			return((u8)hlereg);
 		case 0x4223:
-			return((u8)hlereg);
+		case 0x4224:
+		case 0x4225:
+			return(hleregs[addr - 0x4222]);
 	}
 	return(0);
 }
 
 void hlefds_write(u32 addr,u8 data)
 {
-	u8 index = data & 0x3F;
-	hle_call_t func = hle_calls[index];
+	hle_call_t func = 0;
+	int index = -1;
 
-	if(addr != 0x4222) {
-		return;
+//	log_printf("hlefds_write:  register write!  $%04X = $%02X ($%02X $%02X $%02X $%02X)\n",addr,data,hleregs[0],hleregs[1],hleregs[2],hleregs[3]);
+	switch(addr) {
+		case 0x4220:
+			data = hleregs[0];
+		case 0x4221:
+			data &= 0x3F;
+			if((func = hle_calls[data]) == 0) {
+				log_printf("hlefds_write:  hle call $%02X not implemented yet\n",data);
+				return;
+			}
+			func();
+			break;
+		case 0x4222:
+		case 0x4223:
+		case 0x4224:
+		case 0x4225:
+			hleregs[addr - 0x4222] = data;
+			return;
 	}
-
-//	log_printf("hlefds_write:  register write!  $%02X (function = $%02X)\n",data,index);
-	if(func)
-		func();
-	else
-		log_printf("hlefds_write:  hle call $%02X not implemented yet\n",index);
 }
 
 void hlefds_cpucycle()
@@ -1254,29 +1429,45 @@ void hlefds_cpucycle()
 
 #define RAPE_RESET(addr,hle) \
 	if(nes.cpu.opaddr == addr) { \
-		hlefds_write(0x4222,hle); \
+		nes.cpu.readpages[(addr + 0) >> 10][(addr + 0) & 0x3FF] = 0xA9; /* lda 'hle' */ \
+		nes.cpu.readpages[(addr + 1) >> 10][(addr + 1) & 0x3FF] = hle; \
+		nes.cpu.readpages[(addr + 2) >> 10][(addr + 2) & 0x3FF] = 0x8D; /* sta $4221 */ \
+		nes.cpu.readpages[(addr + 3) >> 10][(addr + 3) & 0x3FF] = 0x21; \
+		nes.cpu.readpages[(addr + 4) >> 10][(addr + 4) & 0x3FF] = 0x42; \
+		nes.cpu.readpages[(addr + 5) >> 10][(addr + 5) & 0x3FF] = 0x6C; /* jmp ($DFFC) */ \
+		nes.cpu.readpages[(addr + 6) >> 10][(addr + 6) & 0x3FF] = 0xFC; \
+		nes.cpu.readpages[(addr + 7) >> 10][(addr + 7) & 0x3FF] = 0xDF; \
 		handled = 1; \
 	}
 
+//pha/pla to work correctly
 #define RAPE_IRQ(addr,hle) \
 	if(nes.cpu.opaddr == addr) { \
-		nes.cpu.readpages[addr >> 10][addr & 0x3FF] = 0x40; \
-		hlefds_write(0x4222,hle); \
+		nes.cpu.readpages[(addr + 0) >> 10][(addr + 0) & 0x3FF] = 0xEA; \
+		nes.cpu.readpages[(addr + 1) >> 10][(addr + 1) & 0x3FF] = 0xA9; /* lda 'hle' */ \
+		nes.cpu.readpages[(addr + 2) >> 10][(addr + 2) & 0x3FF] = hle; \
+		nes.cpu.readpages[(addr + 3) >> 10][(addr + 3) & 0x3FF] = 0x8D; /* sta $4221 */ \
+		nes.cpu.readpages[(addr + 4) >> 10][(addr + 4) & 0x3FF] = 0x21; \
+		nes.cpu.readpages[(addr + 5) >> 10][(addr + 5) & 0x3FF] = 0x42; \
+		nes.cpu.readpages[(addr + 6) >> 10][(addr + 6) & 0x3FF] = 0x4C; /* jmp $4222 */ \
+		nes.cpu.readpages[(addr + 7) >> 10][(addr + 7) & 0x3FF] = 0x22; \
+		nes.cpu.readpages[(addr + 8) >> 10][(addr + 8) & 0x3FF] = 0x42; \
 		handled = 1; \
 	}
 
 #define RAPE_NMI(addr,hle) \
 	if(nes.cpu.opaddr == addr) { \
-		nes.cpu.readpages[(addr + 0) >> 10][(addr + 0) & 0x3FF] = 0xA9; /* lda $38 */ \
-		nes.cpu.readpages[(addr + 1) >> 10][(addr + 1) & 0x3FF] = 0x38; \
-		nes.cpu.readpages[(addr + 2) >> 10][(addr + 2) & 0x3FF] = 0x8D; /* sta $4222 */ \
-		nes.cpu.readpages[(addr + 3) >> 10][(addr + 3) & 0x3FF] = 0x22; \
-		nes.cpu.readpages[(addr + 4) >> 10][(addr + 4) & 0x3FF] = 0x42; \
-		nes.cpu.readpages[(addr + 5) >> 10][(addr + 5) & 0x3FF] = 0x60; /* rts */ \
+		nes.cpu.readpages[(addr + 0) >> 10][(addr + 0) & 0x3FF] = 0xEA; \
+		nes.cpu.readpages[(addr + 1) >> 10][(addr + 1) & 0x3FF] = 0xA9; /* lda 'hle' */ \
+		nes.cpu.readpages[(addr + 2) >> 10][(addr + 2) & 0x3FF] = hle; \
+		nes.cpu.readpages[(addr + 3) >> 10][(addr + 3) & 0x3FF] = 0x8D; /* sta $4221 */ \
+		nes.cpu.readpages[(addr + 4) >> 10][(addr + 4) & 0x3FF] = 0x21; \
+		nes.cpu.readpages[(addr + 5) >> 10][(addr + 5) & 0x3FF] = 0x42; \
+		nes.cpu.readpages[(addr + 6) >> 10][(addr + 6) & 0x3FF] = 0x60; /* rts */ \
 		handled = 1; \
 	}
 
-//force hle!  takeover!
+	//force hle!  takeover!
 	//if the opaddr changes we are reading an opcode
 	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
 		int i;
@@ -1284,13 +1475,13 @@ void hlefds_cpucycle()
 
 		lastopaddr = nes.cpu.opaddr;
 
-//		RAPE_RESET(0xee24,0x3A);	//reset
-		RAPE_NMI(0xe18b,0x38);		//nmi
+		RAPE_RESET(0xee24,0x3A);	//reset
+//		RAPE_NMI(0xe18b,0x38);		//nmi
 //		RAPE_IRQ(0xe1c7,0x39);		//irq
 
 		TAKEOVER(0xe1f8,0x00);		//loadfiles
-//		TAKEOVER(0xe237,0x01);		//appendfile
-//		TAKEOVER(0xe239,0x02);		//writefile
+		TAKEOVER(0xe239,0x01);		//writefile
+		TAKEOVER(0xe237,0x02);		//appendfile
 
 		TAKEOVER(0xe9eb,0x10);		//readpads
 		TAKEOVER(0xea0d,0x11);		//orpads
@@ -1319,7 +1510,7 @@ void hlefds_cpucycle()
 		TAKEOVER(0xeaea,0x2E);		//setscroll
 //		TAKEOVER(0xe1b2,0x2F);		//vintwait
 		if(nes.cpu.opaddr == 0xe1b2) {
-			nes.cpu.readpages[0xe1b2 >> 10][0xe1b2 & 0x3FF] = 0xD0;
+			nes.cpu.readpages[0xe1b2 >> 10][0xe1b2 & 0x3FF] = 0xD0;  //BNE forever!
 			nes.cpu.readpages[0xe1b3 >> 10][0xe1b3 & 0x3FF] = 0xFE;
 			hlefds_write(0x4222,0x2F);
 			handled = 1;
@@ -1331,14 +1522,14 @@ void hlefds_cpucycle()
 // jumpengine
 		TAKEOVER(0xead2,0x34);		//memfill
 
-		handled = 0;
+//		handled = 0;
 
 		for(i=0;funcaddrs[i].type >= 0 && handled == 0;i++) {
 			if(funcaddrs[i].addr == nes.cpu.opaddr) {
 				int t = funcaddrs[i].type;
 				char *types[4] = {"VECTOR","DISK","UTIL","MISC"};
 
-				if(t < 4)
+				if(t > 0) //(t < 4)
 					log_printf("fds.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",types[t],funcaddrs[i].addr,funcaddrs[i].name,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
 			}
 		}

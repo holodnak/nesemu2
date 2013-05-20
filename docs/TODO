@@ -13,6 +13,7 @@ ppu
  . make the other two nametables for four screen handled by cart, not ppu
  ! we are allowing writes to chr-rom because of cache system
  . instead of using the 'fetchpos' variable, calculate where tile data goes
+ . add mid-scanline palette changes
 
 mappers
  ! better method of changing mapper dips

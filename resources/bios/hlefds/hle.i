@@ -1,12 +1,13 @@
 ;;hle fds defines
 
 ;;the hlefds register
-.define FDSHLE							$4222
+.define FDSHLECALL					$4220
+.define FDSHLEREG						$4222
 
 ;;hle call indices
 .define i_loadfiles					$00
-.define i_appendfiles				$01
-.define i_writefiles					$02
+.define i_writefile					$01
+.define i_appendfile					$02
 
 .define i_readpads					$10
 .define i_orpads						$11
@@ -49,10 +50,13 @@
 .define i_irq							$39
 .define i_reset						$3A
 
-.define i_forceinsert				$3C
+.define i_loadbootfiles				$3C
 
 ;;macro for calling hle function
 .macro hlecall
+	pha
 	lda	#\1
-	sta	FDSHLE
+	sta	FDSHLEREG
+	pla
+	sta	FDSHLECALL
 .endm

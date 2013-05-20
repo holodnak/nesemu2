@@ -35,54 +35,21 @@ vintwait:
 forever:
 	bne	forever
 
-;($DFFE): disk game IRQ vector    (if [$0101] = 11xxxxxxB)
 .ORG $01C7
 irq:
-	bit $0101
-	bmi game_irq
-	bvc disk_byte_skip
-
-;disk transfer routine ([$0101]	= 01xxxxxx)
-	ldx $4031
-	sta $4024
-	pla
-	pla
-	pla
-	txa
-	rts
-
-disk_byte_skip:
-;disk byte skip	routine ([$0101] = 00nnnnnn; n is # of bytes to	skip)
-;this is mainly	used when the CPU has to do some calculations while bytes
-;read off the disk need to be discarded.
-	pha
-	lda $0101
-	sec
-	sbc #$01
-	bcc end_irq
-	sta $0101
-	lda $4031
-	pla
-end_irq:
-	rti
-
-game_irq:
-;[$0101] = 1Xxxxxxx
-	bvc disk_irq
-	jmp ($DFFE);	11xxxxxx
-
-disk_irq:
-;disk IRQ acknowledge routine ([$0101] = 10xxxxxx).
-;don't know what this is used for, or why a delay is put here.
-	pha
-	lda $4030
-;	jsr Delay131
-	pla
-	rti
+	hlecall	i_irq
+	jmp $4222
 
 .ORG $01F8
 loadfiles:
 	hlecall	i_loadfiles
+	rts
+
+.ORG $0237
+appendfile:
+	lda	#$FF
+writefile:
+	hlecall	i_writefile
 	rts
 
 .ORG $07BB
@@ -217,6 +184,9 @@ inc00bya:
 ;;reset vector
 .ORG $0E24
 reset:
+	hlecall	i_reset
+	jmp	($DFFC)
+
 	;;disable irq and clear decimal mode bit
 	sei
 	cld
@@ -231,12 +201,13 @@ reset:
 	sta	$FE
 
 	;;wait two frames
-	ldx	#2
+;	ldx	#2
 ;vblankwait:
 ;	lda	PPUSTATUS
 ;	bpl	vblankwait
 ;	dex
 ;	bne	vblankwait
+	ldx	#0
 	
 	;;setup fds bios register/fds registers
 	stx	$4022.w
@@ -287,25 +258,25 @@ reset:
 
 	lda	#$06
 	sta	$FE
+	
+	;init the vram buffer
+	lda #$7D
+	sta $300
+	
+	lda #0
+	sta $301
 
-	;force insert the disk
-	hlecall	i_forceinsert
+	lda #$FF
+	sta $302
 
-	;do boot (load boot files)
-	lda	#0
-	jsr	loadfiles
-	.dw	$FF00,$FF00
+	;load the boot files
+	hlecall	i_loadbootfiles
 
 	;enable interrupts
 	cli
 
 	;transfer control to the disk program
 	jmp	($DFFC)
-
-	;loop forever
-loop:
-	jmp	loop
-
 
 .ORG $1F00
 	.dw $FFFF

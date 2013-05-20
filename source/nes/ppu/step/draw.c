@@ -25,10 +25,9 @@ static INLINE void drawpixel()
 	int pos = LINECYCLES - 1;
 
 	if(pos >= 8 || (nes.ppu.control1 & 2))
-		dest[pos] = src[pos + nes.ppu.scrollx];
+		dest[pos] = src[pos + nes.ppu.scrollx] | (nes.ppu.control1 & 0xE0);
 	else
 		dest[pos] = 0;
-	//color emphasis
 #ifdef ACCURATE_SPRITE0
 	sprite0_hit_check();
 #endif

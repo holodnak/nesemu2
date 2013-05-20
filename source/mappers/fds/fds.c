@@ -130,6 +130,8 @@ static u8 read(u32 addr)
 		//hlefds register
 		case 0x4222:
 		case 0x4223:
+		case 0x4224:
+		case 0x4225:
 			if(hlefds)
 				return(hlefds_read(addr));
 			break;
@@ -223,8 +225,13 @@ static void write(u32 addr,u8 data)
 		case 0x4026:
 			break;
 
-		//hlefds register
+		//hlefds registers
+		case 0x4220:
+		case 0x4221:
 		case 0x4222:
+		case 0x4223:
+		case 0x4224:
+		case 0x4225:
 			if(hlefds)
 				hlefds_write(addr,data);
 			break;

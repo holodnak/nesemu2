@@ -96,6 +96,13 @@ int mainloop()
 			nes_loadstate(statefilename);
 			keydown &= ~8;
 		}
+		if(joykeys[SDLK_F4] && (keydown & 0x80) == 0) {
+			keydown |= 0x80;
+			running ^= 1;
+		}
+		else if(joykeys[SDLK_F4] == 0) {
+			keydown &= ~0x80;
+		}
 
 		if(nes.cart && (nes.cart->mapperid & B_TYPEMASK) == B_FDS) {
 			if(joykeys[SDLK_F9] && (keydown & 0x10) == 0) {

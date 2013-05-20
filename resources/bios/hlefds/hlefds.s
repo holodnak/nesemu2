@@ -24,13 +24,44 @@ BANKS 1
 	;ident string is 6 bytes, followed by the version (high, low)
 	.db	"HLEFDS",0,1
 
+;;delay132
+.ORG $0149
+	rts
+
+;;delayms
+.ORG $0153
+	rts
+
+.ORG $0161
+	hlecall2	i_dispfobj
+	rts
+
+.ORG $016B
+	hlecall2	i_enpfobj
+	rts
+
+.ORG $0171
+	hlecall2	i_disobj
+	rts
+
+.ORG $0178
+	hlecall2	i_enobj
+	rts
+
+.ORG $017E
+	hlecall2	i_dispf
+	rts
+
+.ORG $0185
+	hlecall2	i_enpf
+	rts
+
 .ORG $018B
 nmi:
 	hlecall	i_nmi
 	rts
 
 .ORG $01B2
-vintwait:
 	hlecall	i_vintwait
 forever:
 	bne	forever
@@ -41,34 +72,59 @@ irq:
 	jmp $4222
 
 .ORG $01F8
-loadfiles:
 	hlecall	i_loadfiles
 	rts
 
 .ORG $0237
-appendfile:
 	lda	#$FF
-writefile:
 	hlecall	i_writefile
 	rts
 
 .ORG $07BB
-vramstructwrite:
 	hlecall	i_vramstructwrite
 	rts
 
+.ORG $0844
+	hlecall	i_fetchdirectptr
+	rts
+
+.ORG $086A
+	hlecall	i_writevrambuffer
+	rts
+
+.ORG $08B3
+	hlecall	i_readvrambuffer
+	rts
+
+.ORG $08D2
+	hlecall	i_preparevramstring
+	rts
+
+.ORG $08E1
+	hlecall	i_preparevramstrings
+	rts
+
+.ORG $094F
+	hlecall	i_getvrambufferbyte
+	rts
+
+.ORG $097D
+	hlecall	i_pixel2nam
+	rts
+
+.ORG $0997
+	hlecall	i_nam2pixel
+	rts
+
 .ORG $09B1
-random:
 	hlecall	i_random
 	rts
 
 .ORG $09C8
-spritedma:
 	hlecall	i_spritedma	
 	rts
 
 .ORG $09D3
-counterlogic:
 	hlecall	i_counterlogic
 	rts
 
@@ -111,18 +167,23 @@ readdownexppads:
 	rts
 
 .ORG $0A84
-vramfill:
 	hlecall	i_vramfill
 	rts
 
 .ORG $0AD2
-memfill:
 	hlecall	i_memfill
 	rts
 
 .ORG $0AEA
-setscroll:
 	hlecall	i_setscroll
+	rts
+
+.ORG $0AFD
+	hlecall	i_jumpengine
+	rts
+
+.ORG $0B13
+	hlecall	i_readkeyboard
 	rts
 
 .ORG $0B66

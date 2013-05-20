@@ -195,6 +195,13 @@ int main(int argc,char *argv[])
 	//begin the main loop
 	ret = mainloop();
 
+	//check if a cart was loaded
+	if(nes.cart) {
+		//save sram
+		//save disk
+		nes_unload();
+	}
+
 	//destroy emulator
 	emu_kill();
 

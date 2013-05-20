@@ -281,10 +281,14 @@ static void reset(int hard)
 	sync();
 }
 
+void hlefds_cpucycle2();
+
 static void cpucycle()
 {
 	if(hlefds == 2)
 		hlefds_cpucycle();
+	else if(hlefds == 1)
+		hlefds_cpucycle2();
 
 	//for disk flipping
 	if(diskflip) {

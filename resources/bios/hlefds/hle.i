@@ -2,6 +2,7 @@
 
 ;;the hlefds register
 .define FDSHLECALL					$4220
+.define FDSHLECALL2					$4221
 .define FDSHLEREG						$4222
 
 ;;hle call indices
@@ -16,6 +17,7 @@
 .define i_readdownverifypads		$14
 .define i_readordownverifypads	$15
 .define i_readdownexppads			$16
+.define i_readkeyboard				$17
 
 .define i_vramfill					$18
 .define i_vramstructwrite			$19
@@ -25,7 +27,6 @@
 .define i_preparevramstrings		$1D
 .define i_getvrambufferbyte		$1E
 .define i_spritedma					$1F
-
 
 .define i_loadtileset				$20
 .define i_inc00by8					$21
@@ -45,6 +46,8 @@
 .define i_fetchdirectptr			$32
 .define i_jumpengine					$33
 .define i_memfill						$34
+.define i_pixel2nam					$35
+.define i_nam2pixel					$36
 
 .define i_nmi							$38
 .define i_irq							$39
@@ -59,4 +62,9 @@
 	sta	FDSHLEREG
 	pla
 	sta	FDSHLECALL
+.endm
+
+.macro hlecall2
+	lda	#\1
+	sta	FDSHLECALL2
 .endm

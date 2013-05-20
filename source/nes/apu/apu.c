@@ -86,7 +86,7 @@ int apu_init()
 
 	state_register(B_APU,apu_state);
 	sound_setcallback(apu_callback);
-	soundbuf = (s16*)mem_alloc(sizeof(s16) * soundbufsize);
+	soundbuf = (s16*)mem_alloc(sizeof(s16) * soundbufsize * 4);
 	for(i=0;i<soundbufsize;i++)
 		soundbuf[i] = 0;
 	return(0);

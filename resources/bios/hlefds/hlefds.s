@@ -26,14 +26,14 @@ BANKS 1
 
 .ORG $0100
 delay132:
-	hlecall i_delay132
+;	hlecall i_delay132
 	rts
 
 .ORG $0149
 	jmp	delay132
 
 .ORG $0153
-	hlecall i_delayms
+;	hlecall i_delayms
 	rts
 
 .ORG $0161

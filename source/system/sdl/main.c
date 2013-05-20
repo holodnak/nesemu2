@@ -170,8 +170,13 @@ int main(int argc,char *argv[])
 			return(0);
 		}
 
+//		else if(strcmp("--showdisasm",argv[1]) == 0) {
+//			showdisasm = 1;
+//		}
+
 		//set rom filename
-		strncpy(romfilename,argv[1],1024);
+//		else
+			strncpy(romfilename,argv[1],1024);
 	}
 
 	//initialize the emulator

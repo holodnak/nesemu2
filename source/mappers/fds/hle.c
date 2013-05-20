@@ -67,7 +67,7 @@ typedef struct fds_file_header2_s {
 } fds_file_header2_t;
 
 static u8 hleregs[4];
-static int hlelog = 1;
+static int hlelog = 0;
 
 //get parameter from the bytes after the jsr
 //n = parameter index (0 is the first, 1 is the second, etc)
@@ -1311,7 +1311,7 @@ static void delay132()
 {
 	int i;
 
-	log_printf("delay132\n");
+	log_hle("delay132\n");
 	for(i=0;i<132;i++)
 		cpu_tick();
 }
@@ -1321,7 +1321,7 @@ static void delayms()
 	int delay = 1790 * nes.cpu.y + 5;
 	int i;
 
-	log_printf("delayms:  delaying %d cycles\n",delay);
+	log_hle("delayms:  delaying %d cycles\n",delay);
 	for(i=0;i<delay;i++)
 		cpu_tick();
 }
@@ -1496,7 +1496,7 @@ static struct {int type;u8 hle;u16 addr;char *name;} funcaddrs[] = {
 	{2,	0xFF,		0xe9d3,	"CounterLogic"},
 	{2,	0xFF,		0xe9eb,	"ReadPads"},
 	{2,	0xFF,		0xea0d,	"OrPads"},
-	{2,	0xFF,		0xea1a,	"DownPads"},
+	{2,	0xFF,		0xea1a,	"ReadDownPads"},
 	{2,	0xFF,		0xea1f,	"ReadOrDownPads"},
 	{2,	0xFF,		0xea36,	"ReadDownVerifyPads"},
 	{2,	0xFF,		0xea4c,	"ReadOrDownVerifyPads"},
@@ -1716,15 +1716,15 @@ void hlefds_cpucycle2()
 				char *types[4] = {"VECTOR","DISK","UTIL","MISC"};
 
 				found = 1;
-				if(t > 0) //(t < 4)
-					log_hle("hle.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",types[t],funcaddrs[i].addr,funcaddrs[i].name,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
+				if(t < 4)
+					log_printf("hle.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",types[t],funcaddrs[i].addr,funcaddrs[i].name,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
 			}
 		}
 		if(found == 0) {
-			extern int running;
+//			extern int running;
 
 			log_printf("hle.c:  bios:  calling $%04X (unknown) from $%04X (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",nes.cpu.opaddr,lastopaddr,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
-			running = 0;
+//			running = 0;
 		}
 	}
 	lastopaddr = nes.cpu.opaddr;

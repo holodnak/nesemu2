@@ -25,7 +25,6 @@ HLECALL(delay132)
 {
 	int i;
 
-	log_hle("delay132\n");
 	for(i=0;i<132;i++)
 		cpu_tick();
 }
@@ -35,7 +34,6 @@ HLECALL(delayms)
 	int delay = 1790 * nes.cpu.y + 5;
 	int i;
 
-	log_hle("delayms:  delaying %d cycles\n",delay);
 	for(i=0;i<delay;i++)
 		cpu_tick();
 }

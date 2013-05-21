@@ -22,5 +22,7 @@
 #define __main_h__
 
 extern int quit;
+extern int running;
+extern char configfilename[];
 
 #endif

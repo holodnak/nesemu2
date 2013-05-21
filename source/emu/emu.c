@@ -43,9 +43,9 @@ typedef struct subsystem_s {
 } subsystem_t;
 
 SUBSYSTEM_START
-	SUBSYSTEM(log)
 	SUBSYSTEM(memutil)
 	SUBSYSTEM(config)
+	SUBSYSTEM(log)
 	SUBSYSTEM(system)
 	SUBSYSTEM(video)
 	SUBSYSTEM(input)

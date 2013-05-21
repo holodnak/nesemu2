@@ -21,14 +21,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "system/main.h"
 #include "misc/memutil.h"
 #include "misc/config.h"
 #include "misc/log.h"
 
-#define FILE_CONFIG	"nesemu2.cfg"
-
 static configvar_t *config = 0;
 
+//check if a char is whitespace
 static int iswhitespace(char ch)
 {
 	if(ch == ' ' || ch == '\t' || ch == '\n')
@@ -36,6 +36,7 @@ static int iswhitespace(char ch)
 	return(0);
 }
 
+//eat whitespace from beginning and end of the string
 static char *eatwhitespace(char *str)
 {
 	char *p,*ret = str;
@@ -50,7 +51,7 @@ static char *eatwhitespace(char *str)
 
 int config_init()
 {
-	config_load(FILE_CONFIG);
+	config_load(configfilename);
 	return(0);
 }
 
@@ -58,7 +59,7 @@ void config_kill()
 {
 	configvar_t *v,*v2;
 
-	config_save(FILE_CONFIG);
+	config_save(configfilename);
 	v = config;
 	while(v) {
 		v2 = v;
@@ -164,6 +165,7 @@ void config_delete_var(char *name)
 			mem_free(v->name);
 			mem_free(v->data);
 			mem_free(v);
+			return;
 		}
 		prev = v;
 		v = v->next;
@@ -182,8 +184,6 @@ char *config_get_string(char *name,char *def)
 		}
 		v = v->next;
 	}
-	if(def != 0)
-		config_add_var(name,def);
 	return(def);
 }
 
@@ -207,9 +207,12 @@ void config_set_string(char *name,char *data)
 		if(strcmp(name,v->name) == 0) {
 			mem_free(v->data);
 			v->data = mem_strdup(data);
+			return;
 		}
 		v = v->next;
 	}
+	if(v == 0)
+		config_add_var(name,data);
 }
 
 void config_set_int(char *name,int data)

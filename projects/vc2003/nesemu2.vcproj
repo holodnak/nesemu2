@@ -1407,6 +1407,9 @@
 							ObjectFile="$(IntDir)/misc/"/>
 					</FileConfiguration>
 				</File>
+				<File
+					RelativePath="..\..\source\misc\paths.c">
+				</File>
 			</Filter>
 			<Filter
 				Name="cartdb"

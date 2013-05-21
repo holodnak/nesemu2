@@ -22,7 +22,7 @@ BANKS 1
 
 .ORG $0000
 	;ident string is 6 bytes, followed by the version (high, low)
-	.db	"HLEFDS",0,1
+	.db	"HLEFDS",0,7
 
 .ORG $0100
 delay132:
@@ -147,7 +147,6 @@ orpads:
 	rts
 
 .ORG $0A1A
-readdownpads:
 	jsr		readpads
 	beq		downpads		;always branches
 
@@ -160,18 +159,21 @@ downpads:
 	rts
 
 .ORG $0A36
-readdownverifypads:
-	hlecall	$14
+	hlecall	i_readdownverifypads
 	rts
 
 .ORG $0A4C
-readordownverifypads:
-	hlecall	$15
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	hlecall	i_readordownverifypads
 	rts
 
 .ORG $0A68
-readdownexppads:
-	hlecall	$16
+	hlecall	i_readdownexppads
 	rts
 
 .ORG $0A84
@@ -193,13 +195,6 @@ readdownexppads:
 .ORG $0B13
 	hlecall	i_readkeyboard
 	rts
-
-;.ORG $0B66
-;inc00by8:
-;	lda	#8
-;inc00bya:
-;	hlecall	i_inc00bya
-;	rts
 
 .ORG $0BAF
 	hlecall	i_loadtileset

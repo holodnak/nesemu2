@@ -28,7 +28,7 @@ HLECALL(nmi)
 {
 	u8 tmp,action = cpu_read(0x100) >> 6;
 
-	log_hle("nmi:  action = $%02X\n",action);
+//	log_hle("nmi:  action = $%02X\n",action);
 	switch(action) {
 
 		//returning from vintwait, return to address that called vintwait
@@ -89,7 +89,7 @@ HLECALL(irq)
 	u8 action = cpu_read(0x101);
 	u8 tmp = action & 0x3F;
 
-	log_hle("irq:  action = $%02X\n",action);
+//	log_hle("irq:  action = $%02X\n",action);
 	switch(action >> 6) {
 		//disk byte skip routine ([$0101] = 00nnnnnn; n is # of bytes to skip)
 		//this is mainly used when the CPU has to do some calculations while bytes

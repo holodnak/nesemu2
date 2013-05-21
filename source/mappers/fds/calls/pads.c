@@ -127,7 +127,10 @@ HLECALL(readordownverifypads)
 
 HLECALL(readdownexppads)
 {
-	log_printf("readdownexppads not implemented\n");
+	hle_readpads();
+	//now read expansion port!
+	hle_downpads();
+//log_printf("readdownexppads not implemented\n");
 }
 
 HLECALL(readkeyboard)

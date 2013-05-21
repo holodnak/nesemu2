@@ -119,7 +119,7 @@ u8 hleregs[4];
 u8 hlemem[128];
 
 //log hle calls
-int hlelog = 0;
+int hlelog = 1;
 
 //get parameter from the bytes after the jsr
 //n = parameter index (0 is the first, 1 is the second, etc)
@@ -393,14 +393,11 @@ void hlefds_cpucycle()
 				t = abs(t);
 				t = (t > 8) ? 0 : t;
 				found = 1;
-				log_printf("hle.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",types[t],hle_call_table[i].addr,hle_call_table[i].name,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
+				log_printf("hle.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X SP:%02X)\n",types[t],hle_call_table[i].addr,hle_call_table[i].name,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y,nes.cpu.sp);
 			}
 		}
 		if(found == 0) {
-			extern int running;
-
-			log_printf("hle.c:  bios:  calling $%04X (unknown) from $%04X (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X)\n",nes.cpu.opaddr,lastopaddr,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y);
-			running = 0;
+			log_printf("hle.c:  bios:  calling $%04X (unknown) from $%04X (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X SP:%02X)\n",nes.cpu.opaddr,lastopaddr,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y,nes.cpu.sp);
 		}
 	}
 	lastopaddr = nes.cpu.opaddr;

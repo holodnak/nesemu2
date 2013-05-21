@@ -24,6 +24,7 @@
 #include "emu/commands.h"
 #include "misc/log.h"
 #include "misc/config.h"
+#include "misc/paths.h"
 #include "nes/nes.h"
 #include "nes/state/state.h"
 #include "system/system.h"
@@ -34,8 +35,15 @@
 #include "mappers/mapperid.h"
 #include "system/sdl/console/console.h"
 
+//default filename for configuration
+#define CONFIG_FILENAME		"nesemu2.cfg"
+
+//required
 int quit = 0;
 int running = 0;
+char configfilename[1024] = CONFIG_FILENAME;
+
+char datapath[1024];
 char romfilename[1024];
 char statefilename[1024];
 static palette_t *pal = 0;
@@ -156,34 +164,42 @@ int mainloop()
 
 int main(int argc,char *argv[])
 {
-	int ret;
+	int i,ret;
+	char *p,tmp[1024];
 
-//	if(argc < 2) {
-//		log_printf("usage:  %s file.rom\n",argv[0]);
-//		return(1);
-//	}
+	//set default configuration filename
+	strcpy(configfilename,CONFIG_FILENAME);
 
-	//crappily process command line arguments
-	if(argc > 1) {
-		if(strcmp("--mappers",argv[1]) == 0) {
+	//process the command line
+	for(i=1;i<argc;i++) {
+		if(strcmp("--mappers",argv[i]) == 0) {
 			command_execute("mappers");
 			return(0);
 		}
-
-//		else if(strcmp("--showdisasm",argv[1]) == 0) {
-//			showdisasm = 1;
-//		}
-
-		//set rom filename
-//		else
-			strncpy(romfilename,argv[1],1024);
+		else if(strcmp("--config",argv[i]) == 0) {
+			strcpy(configfilename,argv[++i]);
+		}
+		else
+			strcpy(romfilename,argv[i]);
 	}
+
+	printf("configfilename = '%s'\n",configfilename);
 
 	//initialize the emulator
 	if(emu_init() != 0) {
         log_printf("main:  emu_init() failed\n");
         return(2);
 	}
+
+	//make the exe path variable
+	strcpy(tmp,argv[0]);
+	if((p = strrchr(tmp,PATH_SEPERATOR)) != 0) {
+		*p = 0;
+		config_set_string("path.exe",tmp);
+	}
+
+	printf("path.data (unparsed) = '%s'\n",config_get_string("path.data","%exepath%/data"));
+	printf("path.data (parsed)   = '%s'\n",paths_parse(config_get_string("path.data","%exepath%/data"),tmp,1024));
 
 	if(strcmp(romfilename,"") != 0) {
 		//load file into the nes
@@ -206,6 +222,9 @@ int main(int argc,char *argv[])
 		//save disk
 		nes_unload();
 	}
+	
+	//kludge...need seperate variable/config system
+	config_delete_var("path.exe");
 
 	//destroy emulator
 	emu_kill();

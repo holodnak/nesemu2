@@ -50,11 +50,15 @@ submappers
  . which needs?
 
 hlefds
- . code borrowed from disksys.rom (some controller read code) needs to be hle'd
+ . broken games:
+    falsion - loadfiles?  doesnt work with it.
+
  . functions used by games:
-    jumpengine - kaettekita mario bros
-    readordownverifypads - electrician
-    xferdone - Aki to Tsukasa no Fushigi no Kabe
+    jumpengine					- kaettekita mario bros
+    readordownverifypads	- electrician
+    xferdone					- Aki to Tsukasa no Fushigi no Kabe
+    readdownexppads			- Bakutoushi Patton-Kun
+
 roms
  . need mapper 104 (golden five) roms
  . need mapper 194 (Dai-2-Ji - Super Robot Taisen (As)) roms
@@ -74,3 +78,5 @@ broken games
 
 info
  . reflect world (fds) uses undocument opcode $89 (maybe more?)
+ . $EA52:  some game jumps into the middle!
+ . $EC22:  ??? (some kind of logic)

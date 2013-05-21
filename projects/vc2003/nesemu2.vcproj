@@ -79,7 +79,7 @@
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CPU_UNDOC;QUICK_SPRITES"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;QUICK_SPRITES;CPU_UNDOC"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -1198,6 +1198,118 @@
 					<File
 						RelativePath="..\..\source\mappers\fds\hle.c">
 					</File>
+					<Filter
+						Name="calls"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\disk.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\diskutil.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\misc.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\pads.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\ppu.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\util.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\vector.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\vram.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
@@ -1517,6 +1629,9 @@
 				<Filter
 					Name="fds"
 					Filter="">
+					<File
+						RelativePath="..\..\source\mappers\fds\calls.h">
+					</File>
 					<File
 						RelativePath="..\..\source\mappers\fds\fds.h">
 					</File>

@@ -4,11 +4,15 @@
 .define FDSHLECALL					$4220
 .define FDSHLECALL2					$4221
 .define FDSHLEREG						$4222
+.define FDSHLEREG2					$4223
+.define FDSHLEREG3					$4224
+.define FDSHLEREG4					$4225
 
 ;;hle call indices
 .define i_loadfiles					$00
 .define i_writefile					$01
-.define i_appendfile					$02
+
+.define i_xferdone					$08
 
 .define i_readpads					$10
 .define i_orpads						$11
@@ -26,11 +30,10 @@
 .define i_preparevramstring		$1C
 .define i_preparevramstrings		$1D
 .define i_getvrambufferbyte		$1E
-.define i_spritedma					$1F
+.define i_loadtileset				$1F
 
-.define i_loadtileset				$20
-.define i_inc00by8					$21
-.define i_inc00bya					$22
+;;.define i_inc00by8					$21
+;;.define i_inc00bya					$22
 
 .define i_enpf							$28
 .define i_dispf						$29
@@ -39,7 +42,7 @@
 .define i_enpfobj						$2C
 .define i_dispfobj					$2D
 .define i_setscroll					$2E
-.define i_vintwait					$2F
+.define i_spritedma					$2F
 
 .define i_counterlogic				$30
 .define i_random						$31
@@ -52,6 +55,7 @@
 
 .define i_delay132					$38
 .define i_delayms						$39
+.define i_vintwait					$3A
 
 .define i_nmi							$3C
 .define i_irq							$3D

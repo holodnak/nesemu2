@@ -59,9 +59,9 @@ u8 LengthCounts[32] = {
 static u8 regs[0x20];
 static int cycles = 0;
 static const int soundbufsize = 1024 * 3;
-static s16 *soundbuf = 0;
 static u16 soundbuflen = 0;
 static u16 soundbufpos = 0;
+static s16 *soundbuf = 0;
 
 static void apu_callback(void *data,int length)
 {

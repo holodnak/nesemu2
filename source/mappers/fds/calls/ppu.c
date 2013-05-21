@@ -18,25 +18,59 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __fds__hle_h__
-#define __fds__hle_h__
+#include "mappers/fds/calls.h"
+#include "mappers/fds/hle.h"
 
-#define log_hle if(hlelog) log_printf
+HLECALL(enpf)
+{
+	nes.cpu.a = cpu_read(0xFE) | 0x08;
+	cpu_write(0xFE,nes.cpu.a);
+	cpu_write(0x2001,nes.cpu.a);
+}
 
-extern u8 hleregs[];
-extern u8 hlemem[];
-extern int hlelog;
+HLECALL(dispf)
+{
+	nes.cpu.a = cpu_read(0xFE) & 0xF7;
+	cpu_write(0xFE,nes.cpu.a);
+	cpu_write(0x2001,nes.cpu.a);
+}
 
-//helper functions
-u32 hle_getparam(int n);
-void hle_fixretaddr(int n);
+HLECALL(enobj)
+{
+	nes.cpu.a = cpu_read(0xFE) | 0x10;
+	cpu_write(0xFE,nes.cpu.a);
+	cpu_write(0x2001,nes.cpu.a);
+}
 
-//nes mapper functions
-u8 hlefds_read(u32 addr);
-void hlefds_write(u32 addr,u8 data);
-void hlefds_cpucycle();
+HLECALL(disobj)
+{
+	nes.cpu.a = cpu_read(0xFE) & 0xEF;
+	cpu_write(0xFE,nes.cpu.a);
+	cpu_write(0x2001,nes.cpu.a);
+}
 
-//for replacing real bios calls with the hle calls
-void hlefds_intercept();
+HLECALL(enpfobj)
+{
+	hle_enpf();
+	hle_enobj();
+}
 
-#endif
+HLECALL(dispfobj)
+{
+	hle_dispf();
+	hle_disobj();
+}
+
+HLECALL(setscroll)
+{
+	cpu_read(0x2002);
+	cpu_write(0x2005,cpu_read(0xFD));
+	cpu_write(0x2005,cpu_read(0xFC));
+	cpu_write(0x2000,cpu_read(0xFF));
+}
+
+HLECALL(spritedma)
+{
+	cpu_write(0x2003,0);		//sprite address
+	cpu_write(0x4014,2);		//sprite dma
+}

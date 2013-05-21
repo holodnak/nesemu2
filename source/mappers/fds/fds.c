@@ -18,9 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <string.h>
 #include "mappers/mapperinc.h"
 #include "mappers/sound/s_FDS.h"
 #include "mappers/fds/hle.h"
+#include "misc/log.h"
+#include "misc/config.h"
 
 #define SHORTIRQ	100
 #define LONGIRQ	150
@@ -127,16 +130,14 @@ static u8 read(u32 addr)
 		case 0x4033:
 			return(0x80);
 
-		//hlefds register
-		case 0x4222:
-		case 0x4223:
-		case 0x4224:
-		case 0x4225:
-			if(hlefds)
-				return(hlefds_read(addr));
-			break;
-
 	}
+
+	//hlefds registers/memory
+	if(addr >= 0x4222 && addr < 0x4300) {
+		if(hlefds)
+			return(hlefds_read(addr));
+	}
+
 	return((u8)(addr >> 8));
 }
 
@@ -269,14 +270,18 @@ static void reset(int hard)
 	//get pointer to bios rom
 	bios = mem_getreadptr(0xE);
 
+	//turn off
+	hlefds = 0;
+
 	//see if we have the hlefds bios loaded
 	if(memcmp(bios,hleident,6) == 0) {
 		log_printf("fds.c:  reset:  hlefds bios found, version %d.%d\n",bios[6],bios[7]);
 		hlefds = 1;
 	}
-	else
-//		hlefds = 0;
+	else if(config_get_int("fds.hle.enabled",0)) {
+		log_printf("fds.c:  reset:  hle supplementing original bios\n");
 		hlefds = 2;
+	}
 
 	sync();
 }
@@ -286,9 +291,9 @@ void hlefds_cpucycle2();
 static void cpucycle()
 {
 	if(hlefds == 2)
-		hlefds_cpucycle();
+		hlefds_intercept();
 	else if(hlefds == 1)
-		hlefds_cpucycle2();
+		hlefds_cpucycle();
 
 	//for disk flipping
 	if(diskflip) {

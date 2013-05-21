@@ -53,7 +53,8 @@ hlefds
  . code borrowed from disksys.rom (some controller read code) needs to be hle'd
  . functions used by games:
     jumpengine - kaettekita mario bros
-
+    readordownverifypads - electrician
+    xferdone - Aki to Tsukasa no Fushigi no Kabe
 roms
  . need mapper 104 (golden five) roms
  . need mapper 194 (Dai-2-Ji - Super Robot Taisen (As)) roms
@@ -70,3 +71,6 @@ broken games
  . guardian legend status bar...still broken
  . famicom wars intro/title screen is broken
  . ms. pac-man (tengen)
+
+info
+ . reflect world (fds) uses undocument opcode $89 (maybe more?)

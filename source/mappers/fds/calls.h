@@ -18,25 +18,76 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __fds__hle_h__
-#define __fds__hle_h__
+#ifndef __fds__calls_h__
+#define __fds__calls_h__
 
-#define log_hle if(hlelog) log_printf
+#include "nes/nes.h"
+#include "misc/log.h"
 
-extern u8 hleregs[];
-extern u8 hlemem[];
-extern int hlelog;
+#define HLECALL(name) void hle_ ## name ()
 
-//helper functions
-u32 hle_getparam(int n);
-void hle_fixretaddr(int n);
+//disk.c
+HLECALL(loadbootfiles);
+HLECALL(loadfiles);
+HLECALL(writefile);
+HLECALL(getdiskinfo);
+HLECALL(checkfilecount);
+HLECALL(adjustfilecount);
+HLECALL(setfilecount1);
+HLECALL(setfilecount);
 
-//nes mapper functions
-u8 hlefds_read(u32 addr);
-void hlefds_write(u32 addr,u8 data);
-void hlefds_cpucycle();
+//diskutil.c
+HLECALL(xferdone);
 
-//for replacing real bios calls with the hle calls
-void hlefds_intercept();
+//ppu.c
+HLECALL(enpf);
+HLECALL(dispf);
+HLECALL(enobj);
+HLECALL(disobj);
+HLECALL(enpfobj);
+HLECALL(dispfobj);
+HLECALL(setscroll);
+HLECALL(spritedma);
+
+//vram.c
+HLECALL(vramfill);
+HLECALL(vramstructwrite);
+HLECALL(writevrambuffer);
+HLECALL(readvrambuffer);
+HLECALL(preparevramstring);
+HLECALL(preparevramstrings);
+HLECALL(getvrambufferbyte);
+HLECALL(loadtileset);
+
+//pads.c
+HLECALL(readpads);
+HLECALL(readverifypads);
+HLECALL(orpads);
+HLECALL(downpads);
+HLECALL(readordownpads);
+HLECALL(readdownverifypads);
+HLECALL(readordownverifypads);
+HLECALL(readdownexppads);
+HLECALL(readkeyboard);
+
+//util.c
+HLECALL(counterlogic);
+HLECALL(random);
+HLECALL(fetchdirectptr);
+HLECALL(jumpengine);
+HLECALL(memfill);
+HLECALL(pixel2nam);
+HLECALL(nam2pixel);
+HLECALL(unk_EC22);
+
+//misc.c
+HLECALL(delay132);
+HLECALL(delayms);
+HLECALL(vintwait);
+
+//vector.c
+HLECALL(nmi);
+HLECALL(irq);
+HLECALL(reset);
 
 #endif

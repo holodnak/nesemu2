@@ -29,6 +29,6 @@ static INLINE void OP_NOPR()
 
 static INLINE void OP_UNK()
 {
-	log_printf("OP_UNK:  $%04X = $%02X\n",OPADDR,OPCODE);
+	log_printf("OP_UNK:  $%04X = $%02X (cpu cycle %d)\n",OPADDR,OPCODE,CYCLES);
 	running = 0;
 }

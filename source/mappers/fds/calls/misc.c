@@ -18,25 +18,49 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __fds__hle_h__
-#define __fds__hle_h__
+#include "mappers/fds/calls.h"
+#include "mappers/fds/hle.h"
 
-#define log_hle if(hlelog) log_printf
+HLECALL(delay132)
+{
+	int i;
 
-extern u8 hleregs[];
-extern u8 hlemem[];
-extern int hlelog;
+	log_hle("delay132\n");
+	for(i=0;i<132;i++)
+		cpu_tick();
+}
 
-//helper functions
-u32 hle_getparam(int n);
-void hle_fixretaddr(int n);
+HLECALL(delayms)
+{
+	int delay = 1790 * nes.cpu.y + 5;
+	int i;
 
-//nes mapper functions
-u8 hlefds_read(u32 addr);
-void hlefds_write(u32 addr,u8 data);
-void hlefds_cpucycle();
+	log_hle("delayms:  delaying %d cycles\n",delay);
+	for(i=0;i<delay;i++)
+		cpu_tick();
+}
 
-//for replacing real bios calls with the hle calls
-void hlefds_intercept();
+HLECALL(vintwait)
+{
+	u8 tmp;
 
-#endif
+	//save a
+	cpu_write(nes.cpu.sp-- | 0x100,nes.cpu.a);
+
+	//save old nmi action
+	cpu_write(nes.cpu.sp-- | 0x100,cpu_read(0x100));
+
+	//write new nmi action
+	cpu_write(0x100,0);
+
+	//enable nmi
+	tmp = cpu_read(0xFF) | 0x80;
+	cpu_write(0xFF,tmp);
+	cpu_write(0x2000,tmp);
+
+	//clear zero flag, set negative flag
+	nes.cpu.flags.z = 0;
+	nes.cpu.flags.n = 1;
+
+	log_hle("vintwait!\n");
+}

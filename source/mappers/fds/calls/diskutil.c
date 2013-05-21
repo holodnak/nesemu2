@@ -18,25 +18,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __fds__hle_h__
-#define __fds__hle_h__
+#include "mappers/fds/calls.h"
+#include "mappers/fds/hle.h"
 
-#define log_hle if(hlelog) log_printf
+HLECALL(xferdone)
+{
+	log_printf("xferdone:  not implemented\n");
+	//no error
+	if(nes.cpu.flags.z == 0) {
+		nes.cpu.a = (cpu_read(0xFA) & 9) | 0x26;
+		cpu_write(0xFA,nes.cpu.a);
+		cpu_write(0x4025,nes.cpu.a);
+		nes.cpu.a = nes.cpu.x = 0;
+		nes.cpu.flags.i = 0;
+		return;
+	}
+	else {
 
-extern u8 hleregs[];
-extern u8 hlemem[];
-extern int hlelog;
-
-//helper functions
-u32 hle_getparam(int n);
-void hle_fixretaddr(int n);
-
-//nes mapper functions
-u8 hlefds_read(u32 addr);
-void hlefds_write(u32 addr,u8 data);
-void hlefds_cpucycle();
-
-//for replacing real bios calls with the hle calls
-void hlefds_intercept();
-
-#endif
+	}
+}

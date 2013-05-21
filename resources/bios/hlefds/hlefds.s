@@ -26,14 +26,14 @@ BANKS 1
 
 .ORG $0100
 delay132:
-;	hlecall i_delay132
+	hlecall i_delay132
 	rts
 
 .ORG $0149
 	jmp	delay132
 
 .ORG $0153
-;	hlecall i_delayms
+	hlecall i_delayms
 	rts
 
 .ORG $0161
@@ -63,7 +63,7 @@ delay132:
 .ORG $018B
 nmi:
 	hlecall	i_nmi
-	rts
+	jmp $4280
 
 .ORG $01B2
 	hlecall	i_vintwait
@@ -73,7 +73,7 @@ forever:
 .ORG $01C7
 irq:
 	hlecall	i_irq
-	jmp $4222
+	jmp $4288
 
 .ORG $01F8
 	hlecall	i_loadfiles
@@ -82,6 +82,10 @@ irq:
 .ORG $0237
 	lda	#$FF
 	hlecall	i_writefile
+	rts
+
+.ORG $0778
+	hlecall	i_xferdone
 	rts
 
 .ORG $07BB
@@ -184,18 +188,18 @@ readdownexppads:
 
 .ORG $0AFD
 	hlecall	i_jumpengine
-	rts
+	jmp	$4290
 
 .ORG $0B13
 	hlecall	i_readkeyboard
 	rts
 
-.ORG $0B66
-inc00by8:
-	lda	#8
-inc00bya:
-	hlecall	i_inc00bya
-	rts
+;.ORG $0B66
+;inc00by8:
+;	lda	#8
+;inc00bya:
+;	hlecall	i_inc00bya
+;	rts
 
 .ORG $0BAF
 	hlecall	i_loadtileset

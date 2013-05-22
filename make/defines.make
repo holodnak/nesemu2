@@ -1,20 +1,23 @@
 # defines for nesemu2
 
 # detect os
-OSTARGET = UNKNOWN
-ifeq ($(OS),Windows_NT)
-	OSTARGET = WIN32
-	USESDL ?= 1
-	DEFINES = -DNO_STDIO_REDIRECT
-else
-	UNAME = $(shell uname -s)
-	ifeq ($(UNAME),Linux)
-		USESDL = 1
-		OSTARGET = LINUX
-	endif
-	ifeq ($(UNAME),Darwin)
-		USESDL = 1
-		OSTARGET = OSX
+ifeq ($(OSTARGET),UNKNOWN)
+	ifeq ($(OS),Windows_NT)
+		OSTARGET = WIN32
+		USESDL ?= 1
+		ifeq ($(USESDL),1)
+			DEFINES = -DNO_STDIO_REDIRECT
+		endif
+	else
+		UNAME = $(shell uname -s)
+		ifeq ($(UNAME),Linux)
+			USESDL = 1
+			OSTARGET = LINUX
+		endif
+		ifeq ($(UNAME),Darwin)
+			USESDL = 1
+			OSTARGET = OSX
+		endif
 	endif
 endif
 ifeq ($(OSTARGET),UNKNOWN)
@@ -25,17 +28,11 @@ endif
 ifeq ($(USE_CPU_UNDOC),1)
 	DEFINES += -DCPU_UNDOC
 endif
-ifeq ($(USE_ASM_RENDER),1)
-	DEFINES += -DASM_RENDER
-endif
-ifeq ($(USE_CACHE_ATTRIB),1)
-	DEFINES += -DCACHE_ATTRIB
-endif
 ifeq ($(USE_QUICK_SPRITES),1)
+	ifeq ($(USE_ACCURATE_SPRITE0),1)
+		DEFINES += -DACCURATE_SPRITE0
+	endif
 	DEFINES += -DQUICK_SPRITES
-endif
-ifeq ($(USE_ACCURATE_SPRITE0),1)
-	DEFINES += -DACCURATE_SPRITE0
 endif
 
 # compiler/linker programs

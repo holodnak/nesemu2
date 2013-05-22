@@ -66,6 +66,7 @@ roms
 
 input
  . input device code is crap
+ . need lookup table to standardize the buttons used in the config file
 
 misc
  . implement reading of the xml rom databases

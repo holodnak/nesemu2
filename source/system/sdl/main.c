@@ -165,6 +165,7 @@ int main(int argc,char *argv[])
 {
 	int i,ret;
 	char *p;
+	char tmp[1024];
 
 	//set default configuration filename
 	strcpy(configfilename,CONFIG_FILENAME);
@@ -187,8 +188,6 @@ int main(int argc,char *argv[])
 		else
 			strcpy(romfilename,argv[i]);
 	}
-
-	printf("configfilename = '%s'\n",configfilename);
 
 	//initialize the emulator
 	if(emu_init() != 0) {

@@ -80,5 +80,7 @@ extern vars_t *vars;
 
 int config_init();
 void config_kill();
+void config_update();
+char *config_get_string(char *name,char *def);
 
 #endif

@@ -76,7 +76,7 @@ int config_init()
 
 #ifdef WIN32
 	GET_VAR_STR(path.data,					"%exepath%/data");
-	GET_VAR_STR(path.roms,					"%exepath%/roms");
+	GET_VAR_STR(path.roms,					"%config.path.data%/roms");
 #else
 	GET_VAR_STR(path.data,					"%home%/nesemu2/data");
 	GET_VAR_STR(path.roms,					"%home%/nesemu2/roms");
@@ -149,4 +149,59 @@ void config_kill()
 	vars_save(v,configfilename);
 	vars_destroy(v);
 	mem_free(config);
+}
+
+//update the internal config var list with data from the config struct
+//todo: this should only update the var list if the variable changed
+void config_update()
+{
+	vars_t *v = configvars;
+
+	if(v == 0) {
+		log_printf("config_update:  internal error!  configvars = 0.\n");
+		return;
+	}
+
+	SET_VAR_INT(video.framelimit);
+	SET_VAR_INT(video.fullscreen);
+	SET_VAR_INT(video.scale);
+	SET_VAR_STR(video.filter);
+
+	SET_VAR_STR(input.port0);
+	SET_VAR_STR(input.port1);
+	SET_VAR_STR(input.expansion);
+
+	SET_VAR_INT(input.joypad0.a);
+	SET_VAR_INT(input.joypad0.b);
+	SET_VAR_INT(input.joypad0.select);
+	SET_VAR_INT(input.joypad0.start);
+	SET_VAR_INT(input.joypad0.up);
+	SET_VAR_INT(input.joypad0.down);
+	SET_VAR_INT(input.joypad0.left);
+	SET_VAR_INT(input.joypad0.right);
+
+	SET_VAR_INT(sound.enabled);
+
+	SET_VAR_STR(path.data);
+	SET_VAR_STR(path.roms);
+
+	SET_VAR_STR(palette.source);
+	SET_VAR_INT(palette.hue);
+	SET_VAR_INT(palette.saturation);
+	SET_VAR_STR(palette.filename);
+
+	SET_VAR_STR(nes.gamegenie.bios);
+	SET_VAR_INT(nes.gamegenie.enabled);
+
+	SET_VAR_STR(nes.fds.bios);
+	SET_VAR_INT(nes.fds.hle);
+
+	SET_VAR_INT(nes.log_unhandled_io);
+	SET_VAR_INT(nes.pause_on_load);
+}
+
+//kludge for the path parser
+char *config_get_string(char *name,char *def)
+{
+	return(vars_get_string(configvars,name,def));
 }

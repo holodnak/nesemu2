@@ -6,6 +6,7 @@ PATH_SOURCE=source
 # misc source files
 SOURCE_MISC = source/misc/config.c source/misc/log.c 
 SOURCE_MISC += source/misc/crc32.c source/misc/memutil.c
+SOURCE_MISC += source/misc/vars.c source/misc/paths.c
 
 # emu source files
 SOURCE_EMU = source/emu/emu.c source/emu/commands.c 
@@ -49,11 +50,11 @@ SOURCE_SYSTEM_WIN32 += source/system/win32/nesemu2-res.o
 # sdl/win32 system files
 SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c source/system/win32/nesemu2-res.o
 
-# linux system files
-SOURCE_SYSTEM_LINUX = source/system/linux/stricmp.c
+# sdl/linux system files
+SOURCE_SYSTEM_SDL_LINUX = source/system/linux/stricmp.c
 
-# osx system files
-SOURCE_SYSTEM_OSX = source/system/osx/SDLmain.o
+# sdl/osx system files
+SOURCE_SYSTEM_SDL_OSX = source/system/osx/SDLmain.o
 
 # build list of source files
 SOURCES = $(SOURCE_MISC) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE)
@@ -74,21 +75,22 @@ ifeq ($(OSTARGET),WIN32)
 	ifeq ($(USESDL),1)
 		SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_WIN32)
 		LIBS += -lSDL
+		TARGET = $(OUTPUT)-sdl.exe
 	else
 		SOURCES += $(SOURCE_SYSTEM_WIN32)
 		LIBS += -lcomctl32 -lgdi32 -lcomdlg32
+		TARGET = $(OUTPUT)-win32.exe
 	endif
-	TARGET = $(OUTPUT).exe
 endif
 
 ifeq ($(OSTARGET),LINUX)
-	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_LINUX)
+	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_LINUX)
 	LIBS += -lSDL
 	TARGET = $(OUTPUT)
 endif
 
 ifeq ($(OSTARGET),OSX)
-	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_OSX)
+	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_OSX)
 	LIBS += -lSDL
 	TARGET = $(OUTPUT)
 endif

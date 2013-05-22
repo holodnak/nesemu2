@@ -24,6 +24,7 @@
 #include "emu/emu.h"
 #include "misc/log.h"
 #include "misc/config.h"
+#include "misc/paths.h"
 #include "palette/palette.h"
 #include "palette/generator.h"
 #include "system/main.h"
@@ -84,6 +85,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      int       nCmdShow)
 {
 	int ret;
+	char *p;
 
 	MyRegisterClass(hInstance);
 
@@ -94,6 +96,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 
 	log_sethook(console_loghook);
+
+	//make the exe path variable
+	GetModuleFileName(hInstance,exepath,1024);
+	if((p = strrchr(exepath,PATH_SEPERATOR)) != 0) {
+		*p = 0;
+	}
 
 	if(emu_init() != 0)
 		return(FALSE);

@@ -79,7 +79,7 @@
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="&quot;D:\Development\zlib-1.2.7&quot;;&quot;D:\Development\SDL-1.2.15\include&quot;;&quot;C:\DELL\drivers\R8088\zlib-1.2.7&quot;;&quot;C:\DELL\drivers\R8088\SDL-1.2.15\include&quot;;..\..\source"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;QUICK_SPRITES;CPU_UNDOC"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;QUICK_SPRITES;CPU_UNDOC;ACCURATE_SPRITE0"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -494,16 +494,6 @@
 					</File>
 					<File
 						RelativePath="..\..\source\nes\ppu\step.c">
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\source\nes\ppu\tilecache.c">
@@ -608,16 +598,6 @@
 					Filter="">
 					<File
 						RelativePath="..\..\source\nes\apu\apu.c">
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\source\nes\apu\race.c">

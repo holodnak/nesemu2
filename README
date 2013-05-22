@@ -1,13 +1,50 @@
-nesemu2 -- cycle accurate nes emulator for win32/linux/osx
+nesemu2 -- Cycle accurate nes emulator for Win32/Linux/OSX
+        -- Copyright 2013 James Holodnak
 
-targets
--------
-win32 - nesemu2 requires sdl, nesemu2-win32 doesnt.  see projects directory.
-linux - requires sdl
-osx - requires sdl
-
-building with make
+Building with make
 ------------------
-if you plan on building with make, you will need sdl.  there is no gui, but there
-is a 'console' in the style of quake.  nesemu2 will generate a configuration file
-in the current working directory.
+There are many build options available.  You can build for Win32, Linux and OSX.
+Some options are:
+
+   CPU_UNDOC        - Enable the undocumented opcodes.
+   QUICK_SPRITES    - Use the fast sprite code.
+   ACCURATE_SPRITE0 - Enable perfect sprite0 emulation, use with QUICK_SPRITES
+
+      * All of these are currently enabled by default.
+
+The build target is automatically determined by the makefile.  Linux/OSX must use
+the SDL library.  For Win32 just specify USESDL=0 on the command line to build the
+Win32 API version.  Here are some example command lines for building:
+
+   To build using the default options and autodetect your OS.
+      $ make
+      
+   For building the Win32 API version.
+      $ make USESDL=0
+
+   Enabling the undocumented opcodes.
+      $ make CPU_UNDOC=1
+
+   Forcing to build on a specific OS.
+      $ make OSTARGET=OSX
+
+   Building on forced Win32, undocument opcodes and fast sprites enabled.
+      $ make OSTARGET=WIN32 CPU_UNDOC=1 QUICK_SPRITES=1
+
+Basic Usage
+-----------
+Just run it like this:
+
+   $ ./nesemu2 <ines/ines 2.0/unif/fds file>
+   
+The Win32 API target operates like a standard Win32 program.  Use File -> Open.
+
+Configuration Files
+-------------------
+Be careful with the variables in the configuration files.  Do not have a variable
+reference itself, for example:
+
+   path.roms = %path.roms%/new
+  
+The program will die.  There is no need to reference itself anyway.
+

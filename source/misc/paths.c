@@ -24,10 +24,10 @@
 #include "misc/memutil.h"
 #include "misc/config.h"
 #include "emu/emu.h"
+#include "system/main.h"
 
 char *paths_parse(char *src,char *dest,int len)
 {
-	int error = 0;
 	char *tmp,*p,*p2;
 	char varname[64],varname2[70];
 	int pos;
@@ -43,49 +43,60 @@ char *paths_parse(char *src,char *dest,int len)
 		//see if we find a '%'
 		if(*p == '%') {
 
-			//skip over the '%'
-			p++;
-
 			//clear area to hold var name
 			memset(varname,0,64);
 
 			//see if it is missing the '%'
-			if((p2 = strchr(p,'%')) == 0) {
-				printf("missing ending '%'\n");
-				error = 1;
-				break;
+			if((p2 = strchr(p + 1,'%')) == 0) {
+				printf("missing ending '%', just copying\n");
 			}
 
-			//terminate the substring
-			*p2 = 0;
+			//not missing, replace with variable data
+			else {
+				//skip over the '%'
+				p++;
 
-			//copy substring to varname array
-			strcpy(varname,p);
+				//terminate the substring
+				*p2 = 0;
 
-			//set new position in the string we parsing
-			p = p2 + 1;
+				//copy substring to varname array
+				strcpy(varname,p);
 
-			//see if we need the exe path (special case)
-			if(strcmp("exepath",varname) == 0) {
-				strcpy(varname,"exe");
-			}
+				//set new position in the string we parsing
+				p = p2 + 1;
 
-			strcpy(varname2,"path.");
-			strcat(varname2,varname);
+				//see if we need the exe path (special case)
+				if(strcmp("exepath",varname) == 0) {
+					p2 = exepath;
+				}
 
-			//check if these are in configuration (instead of variables)
-			if(strcmp("path.data",varname2) == 0)
-				p2 = config->path.data;
-			else if(strcmp("path.roms",varname2) == 0)
-				p2 = config->path.roms;
+				//see if it comes from the configuration
+				else if(strncmp("config.",varname,7) == 0) {
+					p2 = config_get_string((char*)varname + 7,"");
+				}
 
-			//get the var data from vars
-			else
-				p2 = vars_get_string(vars,varname2,"");
+				//else we are using a variable from our var list
+				else {
+					p2 = vars_get_string(vars,varname2,"");
+				}
 
-			//copy variable data to the dest string
-			while(*p2) {
-				dest[pos++] = *p2++;
+				//see if it has a % in it
+				if(strrchr(p2,'%') != 0) {
+					char *tmp2 = (char*)mem_alloc(1024);
+
+					p2 = paths_parse(p2,tmp2,1024);
+					while(p2 && *p2) {
+						dest[pos++] = *p2++;
+					}
+					mem_free(tmp2);
+				}
+
+				else {
+					//copy variable data to the dest string
+					while(p2 && *p2) {
+						dest[pos++] = *p2++;
+					}
+				}
 			}
 		}
 
@@ -93,11 +104,11 @@ char *paths_parse(char *src,char *dest,int len)
 		dest[pos++] = *p;
 	}
 
-	printf("dest = '%s'\n",dest);
 	for(p=dest;*p;p++) {
 		if(*p == '/' || *p == '\\')
 			*p = PATH_SEPERATOR;
 	}
 	mem_free(tmp);
-	return(error ? 0 : dest);
+	printf("dest = '%s'\n",dest);
+	return(dest);
 }

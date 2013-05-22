@@ -29,9 +29,6 @@
 #include "nes/genie.h"
 #include "nes/state/state.h"
 
-//kludge for sure
-int log_unhandled_io;
-
 nes_t nes;
 
 //kludge (or possibly not)
@@ -62,7 +59,6 @@ int nes_init()
 {
 	int ret = 0;
 	
-	log_unhandled_io = config_get_int("log.unhandled_io",1);
 	memset(&nes,0,sizeof(nes_t));
 	nes_set_inputdev(0,I_NULL);
 	nes_set_inputdev(1,I_NULL);
@@ -183,7 +179,7 @@ void nes_reset(int hard)
 	ppu_setwritefunc(0);
 
 	//load in the game genie if it is enabled and we doing hard reset
-	if(config_get_int("nes.gamegenie.enabled",0) != 0) {
+	if(config->nes.gamegenie.enabled != 0) {
 		if(hard)
 			genie_load();
 	}

@@ -38,7 +38,7 @@ int cart_load_fds(cart_t *ret,const char *filename)
 	char *biosfile;
 
 	//get bios filename
-	biosfile = config_get_string("fds.bios","disksys.rom");
+	biosfile = config->nes.fds.bios;
 
 	//open bios file
 	if((fp = fopen(biosfile,"rb")) == 0) {

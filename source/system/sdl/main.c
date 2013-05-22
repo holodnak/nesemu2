@@ -57,11 +57,11 @@ int mainloop()
 	console_init();
 
 //this palette crap could be made common to all system targets...palette_init() maybe?
-	if(strcmp(config_get_string("palette.source","generator"),"file") == 0) {
-		pal = palette_load(config_get_string("palette.filename","roni.pal"));
+	if(strcmp(config->palette.source,"file") == 0) {
+		pal = palette_load(config->palette.filename);
 	}
 	if(pal == 0) {
-		pal = palette_generate(config_get_int("palette.generator.hue",-15),config_get_int("palette.generator.saturation",45));
+		pal = palette_generate(config->palette.hue,config->palette.saturation);
 	}
 	video_setpalette(pal);
 
@@ -195,11 +195,8 @@ int main(int argc,char *argv[])
 	strcpy(tmp,argv[0]);
 	if((p = strrchr(tmp,PATH_SEPERATOR)) != 0) {
 		*p = 0;
-		config_set_string("path.exe",tmp);
+		vars_set_string(vars,"path.exe",tmp);
 	}
-
-	printf("path.data (unparsed) = '%s'\n",config_get_string("path.data","%exepath%/data"));
-	printf("path.data (parsed)   = '%s'\n",paths_parse(config_get_string("path.data","%exepath%/data"),tmp,1024));
 
 	if(strcmp(romfilename,"") != 0) {
 		//load file into the nes
@@ -223,9 +220,6 @@ int main(int argc,char *argv[])
 		nes_unload();
 	}
 	
-	//kludge...need seperate variable/config system
-	config_delete_var("path.exe");
-
 	//destroy emulator
 	emu_kill();
 

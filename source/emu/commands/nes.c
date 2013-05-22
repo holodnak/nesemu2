@@ -66,7 +66,7 @@ COMMAND_FUNC(load)
 {
 	if(nes_load(argv[1]) == 0) {
 		nes_reset(1);
-		running = config_get_int("nes.pause_on_load",0) ? 0 : 1;
+		running = config->nes.pause_on_load;
 	}
 	return(0);
 }

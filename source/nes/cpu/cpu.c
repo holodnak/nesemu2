@@ -182,7 +182,7 @@ static u8 read_cpu_memory(u32 addr)
 	}
 
 	//not handled
-	if(log_unhandled_io)
+	if(config->nes.log_unhandled_io)
 		log_printf("cpu_read:  unhandled read at $%04X (page %d)\n",addr,page);
 	return(0);
 }
@@ -204,7 +204,7 @@ static void write_cpu_memory(u32 addr,u8 data)
 	}
 
 	//not handled
-	if(log_unhandled_io)
+	if(config->nes.log_unhandled_io)
 		log_printf("cpu_write:  unhandled write at $%04X = $%02X\n",addr,data);
 }
 

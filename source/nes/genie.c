@@ -138,7 +138,7 @@ int genie_loadrom()
 	u8 buf[16];
 
 	//get the filename from the configuration
-	str = config_get_string("nes.gamegenie.rom","genie.rom");
+	str = config->nes.gamegenie.bios;
 
 	//try to open the file
 	if((fp = fopen(str,"rb")) == 0) {

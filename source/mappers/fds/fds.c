@@ -278,7 +278,7 @@ static void reset(int hard)
 		log_printf("fds.c:  reset:  hlefds bios found, version %d.%d\n",bios[6],bios[7]);
 		hlefds = 1;
 	}
-	else if(config_get_int("fds.hle.enabled",0)) {
+	else if(config->nes.fds.hle) {
 		log_printf("fds.c:  reset:  hle supplementing original bios\n");
 		hlefds = 2;
 	}

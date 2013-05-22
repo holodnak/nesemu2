@@ -18,211 +18,135 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include "system/main.h"
-#include "misc/memutil.h"
 #include "misc/config.h"
+#include "misc/vars.h"
+#include "misc/memutil.h"
 #include "misc/log.h"
+#include "system/main.h"
 
-static configvar_t *config = 0;
+static vars_t *configvars = 0;
 
-//check if a char is whitespace
-static int iswhitespace(char ch)
-{
-	if(ch == ' ' || ch == '\t' || ch == '\n')
-		return(1);
-	return(0);
-}
+config_t *config = 0;
 
-//eat whitespace from beginning and end of the string
-static char *eatwhitespace(char *str)
-{
-	char *p,*ret = str;
+#define GET_VAR_INT(name,def) \
+	config-> name = vars_get_int(v,#name,def);
 
-	while(iswhitespace(*ret))
-		ret++;
-	p = ret + strlen(ret) - 1;
-	while(iswhitespace(*p))
-		*p-- = 0;
-	return(ret);
-}
+#define GET_VAR_STR(name,def) \
+	p = vars_get_string(v,#name,def); \
+	strcpy(config-> name,p);
+
+#define SET_VAR_INT(name) \
+	vars_set_int(v,#name,config-> name);
+
+#define SET_VAR_STR(name) \
+	vars_set_string(v,#name,config-> name);
 
 int config_init()
 {
-	config_load(configfilename);
+	char *p;
+	vars_t *v;
+
+	config = (config_t*)mem_alloc(sizeof(config_t));
+	memset(config,0,sizeof(config_t));
+	if((v = vars_load(configfilename)) == 0) {
+		log_printf("config_init:  unable to load file, using defaults\n");
+		v = vars_create();
+	}
+
+	GET_VAR_INT(video.framelimit,			1);
+	GET_VAR_INT(video.fullscreen,			0);
+	GET_VAR_INT(video.scale,				1);
+	GET_VAR_STR(video.filter,				"none");
+
+	GET_VAR_STR(input.port0,				"joypad0");
+	GET_VAR_STR(input.port1,				"joypad1");
+	GET_VAR_STR(input.expansion,			"none");
+
+	GET_VAR_INT(input.joypad0.a,			'x');
+	GET_VAR_INT(input.joypad0.b,			'z');
+	GET_VAR_INT(input.joypad0.select,	'a');
+	GET_VAR_INT(input.joypad0.start,		's');
+	GET_VAR_INT(input.joypad0.up,			273);
+	GET_VAR_INT(input.joypad0.down,		274);
+	GET_VAR_INT(input.joypad0.left,		276);
+	GET_VAR_INT(input.joypad0.right,		275);
+
+	GET_VAR_INT(sound.enabled,				1);
+
+#ifdef WIN32
+	GET_VAR_STR(path.data,					"%exepath%/data");
+	GET_VAR_STR(path.roms,					"%exepath%/roms");
+#else
+	GET_VAR_STR(path.data,					"%home%/nesemu2/data");
+	GET_VAR_STR(path.roms,					"%home%/nesemu2/roms");
+#endif
+
+	GET_VAR_STR(palette.source,			"generator");
+	GET_VAR_INT(palette.hue,				-15);
+	GET_VAR_INT(palette.saturation,		45);
+	GET_VAR_STR(palette.filename,			"roni.pal");
+
+	GET_VAR_STR(nes.gamegenie.bios,		"genie.rom");
+	GET_VAR_INT(nes.gamegenie.enabled,	0);
+
+	GET_VAR_STR(nes.fds.bios,				"disksys.rom");
+	GET_VAR_INT(nes.fds.hle,				1);
+
+	GET_VAR_INT(nes.log_unhandled_io,	0);
+	GET_VAR_INT(nes.pause_on_load,		0);
+
+	configvars = v;
 	return(0);
 }
 
 void config_kill()
 {
-	configvar_t *v,*v2;
+	vars_t *v = configvars;
 
-	config_save(configfilename);
-	v = config;
-	while(v) {
-		v2 = v;
-		v = v->next;
-		mem_free(v2->name);
-		mem_free(v2->data);
-		mem_free(v2);
-	}
-	config = 0;
-}
-
-int config_load(char *filename)
-{
-	FILE *fp;
-	char line[1024],*p,*oldp;
-
-	if((fp = fopen(filename,"rt")) == 0) {
-		log_printf("config_load:  error opening configuration file '%s'\n",filename);
-		return(1);
+	if(v == 0) {
+		log_printf("config_kill:  internal error!  configvars = 0.\n");
+		return;
 	}
 
-	while(feof(fp) == 0) {
+	SET_VAR_INT(video.framelimit);
+	SET_VAR_INT(video.fullscreen);
+	SET_VAR_INT(video.scale);
+	SET_VAR_STR(video.filter);
 
-		//read line from file
-		if(fgets(line,1024,fp) == NULL)
-			break;
+	SET_VAR_STR(input.port0);
+	SET_VAR_STR(input.port1);
+	SET_VAR_STR(input.expansion);
 
-		//skip past any whitespace
-		p = eatwhitespace(line);
+	SET_VAR_INT(input.joypad0.a);
+	SET_VAR_INT(input.joypad0.b);
+	SET_VAR_INT(input.joypad0.select);
+	SET_VAR_INT(input.joypad0.start);
+	SET_VAR_INT(input.joypad0.up);
+	SET_VAR_INT(input.joypad0.down);
+	SET_VAR_INT(input.joypad0.left);
+	SET_VAR_INT(input.joypad0.right);
 
-		//comment or empty string, do nothing
-		if(*p == '#' || *p == 0)
-			continue;
+	SET_VAR_INT(sound.enabled);
 
-		//find where to split the string
-		if((oldp = strchr(p,'=')) == 0) {
-			log_printf("config_load:  malformed configuration line ('%s')\n",p);
-			continue;
-		}
+	SET_VAR_STR(path.data);
+	SET_VAR_STR(path.roms);
 
-		//parse out the name/data pair
-		*oldp++ = 0;
-		p = eatwhitespace(p);
-		oldp = eatwhitespace(oldp);
-		config_add_var(p,oldp);
-	}
+	SET_VAR_STR(palette.source);
+	SET_VAR_INT(palette.hue);
+	SET_VAR_INT(palette.saturation);
+	SET_VAR_STR(palette.filename);
 
-	log_printf("config_load:  loaded configuration file '%s'\n",filename);
-	fclose(fp);
-	return(0);
-}
+	SET_VAR_STR(nes.gamegenie.bios);
+	SET_VAR_INT(nes.gamegenie.enabled);
 
-int config_save(char *filename)
-{
-	FILE *fp;
-	configvar_t *v = config;
+	SET_VAR_STR(nes.fds.bios);
+	SET_VAR_INT(nes.fds.hle);
 
-	if((fp = fopen(filename,"wt")) == 0) {
-		log_printf("config_save:  error opening '%s'\n",filename);
-		return(1);
-	}
-	fprintf(fp,"# nesemu2 configuration\n\n");
-	while(v) {
-		fprintf(fp,"%s = %s\n",v->name,v->data);
-		v = v->next;
-	}
-	fclose(fp);
-	return(0);
-}
+	SET_VAR_INT(nes.log_unhandled_io);
+	SET_VAR_INT(nes.pause_on_load);
 
-void config_add_var(char *name,char *data)
-{
-	configvar_t *v,*var;
-
-	var = (configvar_t*)mem_alloc(sizeof(configvar_t));
-	memset(var,0,sizeof(configvar_t));
-	var->name = mem_strdup(name);
-	var->data = mem_strdup(data);
-	if(config == 0)
-		config = var;
-	else {
-		v = config;
-		while(v->next)
-			v = v->next;
-		v->next = var;
-	}
-}
-
-void config_delete_var(char *name)
-{
-	configvar_t *v,*prev;
-
-	prev = 0;
-	v = config;
-	while(v) {
-		if(strcmp(name,v->name) == 0) {
-			if(prev == 0) {
-				config = v->next;
-			}
-			else {
-				prev->next = v->next;
-			}
-			mem_free(v->name);
-			mem_free(v->data);
-			mem_free(v);
-			return;
-		}
-		prev = v;
-		v = v->next;
-	}
-}
-
-static char tmpstr[64];
-
-char *config_get_string(char *name,char *def)
-{
-	configvar_t *v = config;
-
-	while(v) {
-		if(strcmp(name,v->name) == 0) {
-			return(v->data);
-		}
-		v = v->next;
-	}
-	return(def);
-}
-
-int config_get_int(char *name,int def)
-{
-	sprintf(tmpstr,"%d",def);
-	return(atoi(config_get_string(name,tmpstr)));
-}
-
-double config_get_double(char *name,double def)
-{
-	sprintf(tmpstr,"%f",def);
-	return(atof(config_get_string(name,tmpstr)));
-}
-
-void config_set_string(char *name,char *data)
-{
-	configvar_t *v = config;
-
-	while(v) {
-		if(strcmp(name,v->name) == 0) {
-			mem_free(v->data);
-			v->data = mem_strdup(data);
-			return;
-		}
-		v = v->next;
-	}
-	if(v == 0)
-		config_add_var(name,data);
-}
-
-void config_set_int(char *name,int data)
-{
-	sprintf(tmpstr,"%d",data);
-	config_set_string(name,tmpstr);
-}
-
-void config_set_double(char *name,double data)
-{
-	sprintf(tmpstr,"%f",data);
-	config_set_string(name,tmpstr);
+	vars_save(v,configfilename);
+	vars_destroy(v);
+	mem_free(config);
 }

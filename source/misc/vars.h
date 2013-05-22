@@ -18,69 +18,57 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "emu/emu.h"
-#include "misc/log.h"
-#include "misc/memutil.h"
-#include "misc/config.h"
-#include "misc/crc32.h"
-#include "system/system.h"
-#include "system/video.h"
-#include "system/input.h"
-#include "system/sound.h"
-#include "nes/nes.h"
+#ifndef __vars_h__
+#define __vars_h__
 
-#define SUBSYSTEM_START	static subsystem_t subsystems[] = {
-#define SUBSYSTEM(n)		{"" #n "", n ## _init, n ## _kill},
-#define SUBSYSTEM_END	{0,0}};
+typedef struct var_s {
+	struct var_s *next;
+	char *name;
+	char *data;
+} var_t;
 
-typedef int (*initfunc_t)();
-typedef void (*killfunc_t)();
+typedef struct vars_s {
+	var_t *vars;
+	int changed;
+} vars_t;
 
-typedef struct subsystem_s {
-	char			*name;
-	initfunc_t	init;
-	killfunc_t	kill;
-} subsystem_t;
+extern vars_t *vars;
 
-SUBSYSTEM_START
-	SUBSYSTEM(memutil)
-	SUBSYSTEM(config)
-	SUBSYSTEM(log)
-	SUBSYSTEM(vars)
-	SUBSYSTEM(system)
-	SUBSYSTEM(video)
-	SUBSYSTEM(input)
-	SUBSYSTEM(sound)
-	SUBSYSTEM(nes)
-SUBSYSTEM_END
+//init vars
+int vars_init();
 
-int emu_init()
-{
-	int i;
+//kill vars
+void vars_kill();
 
-	//generate crc32 table
-	crc32_gentab();
+//create empty var list
+vars_t *vars_create();
 
-	//loop thru the subsystem function pointers and init
-	for(i=0;subsystems[i].init;i++) {
-		if(subsystems[i].init() != 0) {
-			emu_kill();
-			return(1);
-		}
-	}
-	return(0);
-}
+//destroy var list
+void vars_destroy(vars_t *vs);
 
-void emu_kill()
-{
-	int i;
+//load vars from file
+vars_t *vars_load(char *filename);
 
-	//find the end of the pointer list ('i' will equal last one + 1)
-	for(i=0;subsystems[i].kill;i++);
+//save vars to a file
+int vars_save(vars_t *vars,char *filename);
 
-	//loop thru the subsystem function pointers backwards and kill
-	for(i--;i>=0;i--) {
-//		log_printf("killing '%s'\n",subsystems[i].name);
-		subsystems[i].kill();
-	}
-}
+//delete all vars
+void vars_clear(vars_t *vars);
+
+//add var
+void vars_add_var(vars_t *vars,char *name,char *data);
+
+//delete var
+void vars_delete_var(vars_t *vars,char *name);
+
+//get var
+char *vars_get_string(vars_t *vars,char *name,char *def);
+int vars_get_int(vars_t *vars,char *name,int def);
+double vars_get_double(vars_t *vars,char *name,double def);
+
+//set var
+void vars_set_string(vars_t *vars,char *name,char *data);
+void vars_set_int(vars_t *vars,char *name,int data);
+void vars_set_double(vars_t *vars,char *name,double data);
+
+#endif

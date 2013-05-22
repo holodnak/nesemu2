@@ -21,6 +21,7 @@
 #include "misc/log.h"
 #include "nes/nes.h"
 #include "system/video.h"
+#include "misc/config.h"
 
 readfunc_t ppu_memread;
 writefunc_t ppu_memwrite;
@@ -31,7 +32,7 @@ static u8 read_ppu_memory(u32 addr)
 		return(nes.ppu.readpages[addr >> 10][addr & 0x3FF]);
 	else if(nes.ppu.readfuncs[addr >> 10])
 		return(nes.ppu.readfuncs[addr >> 10](addr));
-	else if(log_unhandled_io)
+	else if(config->nes.log_unhandled_io)
 		log_printf("ppu_memread: read from unmapped memory at $%04X\n",addr);
 	return(0);
 }
@@ -63,7 +64,7 @@ static void write_ppu_memory(u32 addr,u8 data)
 		nes.ppu.writefuncs[page](addr,data);
 
 	//not mapped, report error
-	else if(log_unhandled_io)
+	else if(config->nes.log_unhandled_io)
 		log_printf("ppu_memwrite: write to unmapped memory at $%04X = $%02X\n",addr,data);
 }
 

@@ -77,7 +77,6 @@ typedef struct nes_s {
 	u8				frame_irq;
 } nes_t;
 
-extern int log_unhandled_io;
 extern nes_t nes;
 
 int nes_init();

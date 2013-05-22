@@ -98,14 +98,14 @@ static int timer_init()
 #endif
 int video_reinit()
 {
-	int filter = get_filter_int(config_get_string("video.filter","none"));
+	int filter = get_filter_int(config->video.filter);
 
 	//setup timer to limit frames
 	if(timer_init() != 0) {
 		log_printf("video_reinit:  timer_init() failed!\n");
 		return(1);
 	}
-	framelimit = config_get_int("video.framelimit",1);
+	framelimit = config->video.framelimit;
 
 	//clear palette cache
 	memset(palettecache,0,256*sizeof(u32));
@@ -118,8 +118,8 @@ int video_reinit()
 
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
-	flags |= config_get_int("video.fullscreen",0) ? SDL_FULLSCREEN : 0;
-	screenscale = config_get_int("video.scale",1);
+	flags |= config->video.fullscreen ? SDL_FULLSCREEN : 0;
+	screenscale = config->video.scale;
 	screenw = 256 * screenscale;
 	screenh = 240 * screenscale;
 	screenbpp = 32;

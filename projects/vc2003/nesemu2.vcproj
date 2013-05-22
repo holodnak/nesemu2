@@ -494,6 +494,16 @@
 					</File>
 					<File
 						RelativePath="..\..\source\nes\ppu\step.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\source\nes\ppu\tilecache.c">
@@ -598,6 +608,16 @@
 					Filter="">
 					<File
 						RelativePath="..\..\source\nes\apu\apu.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\source\nes\apu\race.c">
@@ -1410,6 +1430,9 @@
 				<File
 					RelativePath="..\..\source\misc\paths.c">
 				</File>
+				<File
+					RelativePath="..\..\source\misc\vars.c">
+				</File>
 			</Filter>
 			<Filter
 				Name="cartdb"
@@ -1678,13 +1701,16 @@
 					RelativePath="..\..\source\misc\crc32.h">
 				</File>
 				<File
-					RelativePath="..\..\source\misc\emu.h">
-				</File>
-				<File
 					RelativePath="..\..\source\misc\log.h">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\memutil.h">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\paths.h">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\vars.h">
 				</File>
 			</Filter>
 			<Filter

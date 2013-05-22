@@ -30,9 +30,6 @@
 
 int memutil_init();
 void memutil_kill();
-//void *mem_alloc(size_t size);
-//void *mem_realloc(void *ptr,size_t size);
-//void mem_free(void *ptr);
 char *memutil_strdup(char *str,char *file,int line);
 void *memutil_alloc(size_t size,char *file,int line);
 void *memutil_realloc(void *ptr,size_t size,char *file,int line);

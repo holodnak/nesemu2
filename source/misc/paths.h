@@ -18,69 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "emu/emu.h"
-#include "misc/log.h"
-#include "misc/memutil.h"
-#include "misc/config.h"
-#include "misc/crc32.h"
-#include "system/system.h"
-#include "system/video.h"
-#include "system/input.h"
-#include "system/sound.h"
-#include "nes/nes.h"
+#ifndef __paths_h__
+#define __paths_h__
 
-#define SUBSYSTEM_START	static subsystem_t subsystems[] = {
-#define SUBSYSTEM(n)		{"" #n "", n ## _init, n ## _kill},
-#define SUBSYSTEM_END	{0,0}};
+#ifdef WIN32
+	#define PATH_SEPERATOR	'\\'
+#else
+	#define PATH_SEPERATOR	'/'
+#endif
 
-typedef int (*initfunc_t)();
-typedef void (*killfunc_t)();
+char *paths_parse(char *src,char *dest,int len);
 
-typedef struct subsystem_s {
-	char			*name;
-	initfunc_t	init;
-	killfunc_t	kill;
-} subsystem_t;
-
-SUBSYSTEM_START
-	SUBSYSTEM(memutil)
-	SUBSYSTEM(config)
-	SUBSYSTEM(log)
-	SUBSYSTEM(vars)
-	SUBSYSTEM(system)
-	SUBSYSTEM(video)
-	SUBSYSTEM(input)
-	SUBSYSTEM(sound)
-	SUBSYSTEM(nes)
-SUBSYSTEM_END
-
-int emu_init()
-{
-	int i;
-
-	//generate crc32 table
-	crc32_gentab();
-
-	//loop thru the subsystem function pointers and init
-	for(i=0;subsystems[i].init;i++) {
-		if(subsystems[i].init() != 0) {
-			emu_kill();
-			return(1);
-		}
-	}
-	return(0);
-}
-
-void emu_kill()
-{
-	int i;
-
-	//find the end of the pointer list ('i' will equal last one + 1)
-	for(i=0;subsystems[i].kill;i++);
-
-	//loop thru the subsystem function pointers backwards and kill
-	for(i--;i>=0;i--) {
-//		log_printf("killing '%s'\n",subsystems[i].name);
-		subsystems[i].kill();
-	}
-}
+#endif

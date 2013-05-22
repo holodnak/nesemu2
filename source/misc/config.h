@@ -49,6 +49,10 @@ typedef struct config_s {
 	struct {
 		char data[1024];
 		char roms[1024];
+		char bios[1024];
+		char save[1024];
+		char state[1024];
+		char palette[1024];
 	} path;
 
 	struct {

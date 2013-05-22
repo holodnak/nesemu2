@@ -48,7 +48,7 @@ char *paths_parse(char *src,char *dest,int len)
 
 			//see if it is missing the '%'
 			if((p2 = strchr(p + 1,'%')) == 0) {
-				printf("missing ending '%', just copying\n");
+				log_printf("paths_parse:  missing ending '%', just copying\n");
 			}
 
 			//not missing, replace with variable data
@@ -109,6 +109,5 @@ char *paths_parse(char *src,char *dest,int len)
 			*p = PATH_SEPERATOR;
 	}
 	mem_free(tmp);
-	printf("dest = '%s'\n",dest);
 	return(dest);
 }

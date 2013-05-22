@@ -76,11 +76,15 @@ int config_init()
 
 #ifdef WIN32
 	GET_VAR_STR(path.data,					"%exepath%/data");
-	GET_VAR_STR(path.roms,					"%config.path.data%/roms");
 #else
-	GET_VAR_STR(path.data,					"%home%/nesemu2/data");
-	GET_VAR_STR(path.roms,					"%home%/nesemu2/roms");
+	GET_VAR_STR(path.data,					"%home%/.nesemu2/data");
 #endif
+
+	GET_VAR_STR(path.roms,					"%config.path.data%/roms");
+	GET_VAR_STR(path.bios,					"%config.path.data%/bios");
+	GET_VAR_STR(path.save,					"%config.path.data%/save");
+	GET_VAR_STR(path.state,					"%config.path.data%/state");
+	GET_VAR_STR(path.palette,				"%config.path.data%/palette");
 
 	GET_VAR_STR(palette.source,			"generator");
 	GET_VAR_INT(palette.hue,				-15);
@@ -131,6 +135,10 @@ void config_kill()
 
 	SET_VAR_STR(path.data);
 	SET_VAR_STR(path.roms);
+	SET_VAR_STR(path.bios);
+	SET_VAR_STR(path.save);
+	SET_VAR_STR(path.state);
+	SET_VAR_STR(path.palette);
 
 	SET_VAR_STR(palette.source);
 	SET_VAR_INT(palette.hue);

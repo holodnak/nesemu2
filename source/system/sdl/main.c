@@ -25,6 +25,7 @@
 #include "misc/log.h"
 #include "misc/config.h"
 #include "misc/paths.h"
+#include "misc/memutil.h"
 #include "nes/nes.h"
 #include "nes/state/state.h"
 #include "system/main.h"
@@ -161,6 +162,30 @@ int mainloop()
 	return(0);
 }
 
+static void mkdirr(char *path)
+{
+	char *tmp = mem_strdup(path);
+	char *p = tmp;
+	int num = 0;
+
+	for(p=tmp;*p;p++) {
+		if(*p == '/' || *p == '\\')
+			*p = PATH_SEPERATOR;
+	}
+	log_printf("mkdirr:  creating directory '%s'\n",path);
+	for(num=0,p=tmp;(p = strchr(p,PATH_SEPERATOR));num++) {
+		if(num == 0) {
+			p++;
+			continue;
+		}
+		*p = 0;
+		mkdir(path);
+		*p = PATH_SEPERATOR;
+		p++;
+	}
+	mem_free(tmp);
+}
+
 int main(int argc,char *argv[])
 {
 	int i,ret;
@@ -194,6 +219,12 @@ int main(int argc,char *argv[])
         log_printf("main:  emu_init() failed\n");
         return(2);
 	}
+
+	//make the directories
+	paths_parse(config->path.save,tmp,1024);
+	mkdirr(tmp);
+	paths_parse(config->path.state,tmp,1024);
+	mkdirr(tmp);
 
 	if(strcmp(romfilename,"") != 0) {
 		//load file into the nes

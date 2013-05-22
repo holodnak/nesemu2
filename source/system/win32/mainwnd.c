@@ -103,7 +103,7 @@ static void file_open(HWND hWnd)
 	if(nes_load(buffer) == 0) {
 		log_printf("WndProc:  resetting nes...\n");
 		nes_reset(1);
-		running = config_get_int("nes.pause_on_load",0) ? 0 : 1;
+		running = config->nes.pause_on_load;
 	}
 }
 

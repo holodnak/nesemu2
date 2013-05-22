@@ -537,24 +537,96 @@
 					</File>
 					<File
 						RelativePath="..\..\source\nes\apu\race.c">
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="TRUE">
+							<Tool
+								Name="VCCLCompilerTool"/>
+						</FileConfiguration>
 					</File>
 					<Filter
 						Name="units"
 						Filter="">
 						<File
 							RelativePath="..\..\source\nes\apu\units\dpcm.c">
+							<FileConfiguration
+								Name="Debug|Win32"
+								ExcludedFromBuild="TRUE">
+								<Tool
+									Name="VCCLCompilerTool"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32"
+								ExcludedFromBuild="TRUE">
+								<Tool
+									Name="VCCLCompilerTool"/>
+							</FileConfiguration>
 						</File>
 						<File
 							RelativePath="..\..\source\nes\apu\units\frame.c">
+							<FileConfiguration
+								Name="Debug|Win32"
+								ExcludedFromBuild="TRUE">
+								<Tool
+									Name="VCCLCompilerTool"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32"
+								ExcludedFromBuild="TRUE">
+								<Tool
+									Name="VCCLCompilerTool"/>
+							</FileConfiguration>
 						</File>
 						<File
 							RelativePath="..\..\source\nes\apu\units\noise.c">
+							<FileConfiguration
+								Name="Debug|Win32"
+								ExcludedFromBuild="TRUE">
+								<Tool
+									Name="VCCLCompilerTool"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32"
+								ExcludedFromBuild="TRUE">
+								<Tool
+									Name="VCCLCompilerTool"/>
+							</FileConfiguration>
 						</File>
 						<File
 							RelativePath="..\..\source\nes\apu\units\square.c">
+							<FileConfiguration
+								Name="Debug|Win32"
+								ExcludedFromBuild="TRUE">
+								<Tool
+									Name="VCCLCompilerTool"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32"
+								ExcludedFromBuild="TRUE">
+								<Tool
+									Name="VCCLCompilerTool"/>
+							</FileConfiguration>
 						</File>
 						<File
 							RelativePath="..\..\source\nes\apu\units\triangle.c">
+							<FileConfiguration
+								Name="Debug|Win32"
+								ExcludedFromBuild="TRUE">
+								<Tool
+									Name="VCCLCompilerTool"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32"
+								ExcludedFromBuild="TRUE">
+								<Tool
+									Name="VCCLCompilerTool"/>
+							</FileConfiguration>
 						</File>
 					</Filter>
 				</Filter>
@@ -1099,14 +1171,135 @@
 					Name="fds"
 					Filter="">
 					<File
-						RelativePath="..\..\source\mappers\fds\calls.c">
-					</File>
-					<File
 						RelativePath="..\..\source\mappers\fds\fds.c">
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\fds\hle.c">
 					</File>
+					<Filter
+						Name="calls"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\disk.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\diskutil.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\misc.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\pads.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\ppu.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\util.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\vector.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\fds\calls\vram.c">
+							<FileConfiguration
+								Name="Debug|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32">
+								<Tool
+									Name="VCCLCompilerTool"
+									ObjectFile="$(IntDir)/mappers/fds/calls/"/>
+							</FileConfiguration>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
@@ -1123,6 +1316,12 @@
 				</File>
 				<File
 					RelativePath="..\..\source\misc\memutil.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\paths.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\vars.c">
 				</File>
 			</Filter>
 			<Filter

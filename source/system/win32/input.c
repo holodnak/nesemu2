@@ -78,20 +78,20 @@ void input_poll()
 
 void input_update_config()
 {
-	joyconfig[0][0] = config_get_int("input.win32.joypad0.a",		'X');
-	joyconfig[0][1] = config_get_int("input.win32.joypad0.b",		'Z');
-	joyconfig[0][2] = config_get_int("input.win32.joypad0.select",	'A');
-	joyconfig[0][3] = config_get_int("input.win32.joypad0.start",	'S');
-	joyconfig[0][4] = config_get_int("input.win32.joypad0.up",		VK_UP);
-	joyconfig[0][5] = config_get_int("input.win32.joypad0.down",	VK_DOWN);
-	joyconfig[0][6] = config_get_int("input.win32.joypad0.left",	VK_LEFT);
-	joyconfig[0][7] = config_get_int("input.win32.joypad0.right",	VK_RIGHT);
-	joyconfig[1][0] = config_get_int("input.win32.joypad1.a",		'H');
-	joyconfig[1][1] = config_get_int("input.win32.joypad1.b",		'G');
-	joyconfig[1][2] = config_get_int("input.win32.joypad1.select",	'T');
-	joyconfig[1][3] = config_get_int("input.win32.joypad1.start",	'Y');
-	joyconfig[1][4] = config_get_int("input.win32.joypad1.up",		'I');
-	joyconfig[1][5] = config_get_int("input.win32.joypad1.down",	'K');
-	joyconfig[1][6] = config_get_int("input.win32.joypad1.left",	'J');
-	joyconfig[1][7] = config_get_int("input.win32.joypad1.right",	'L');
+	joyconfig[0][0] = config->input.joypad0.a;
+	joyconfig[0][1] = config->input.joypad0.b;
+	joyconfig[0][2] = config->input.joypad0.select;
+	joyconfig[0][3] = config->input.joypad0.start;
+	joyconfig[0][4] = config->input.joypad0.up;
+	joyconfig[0][5] = config->input.joypad0.down;
+	joyconfig[0][6] = config->input.joypad0.left;
+	joyconfig[0][7] = config->input.joypad0.right;
+	joyconfig[1][0] = config->input.joypad1.a;
+	joyconfig[1][1] = config->input.joypad1.b;
+	joyconfig[1][2] = config->input.joypad1.select;
+	joyconfig[1][3] = config->input.joypad1.start;
+	joyconfig[1][4] = config->input.joypad1.up;
+	joyconfig[1][5] = config->input.joypad1.down;
+	joyconfig[1][6] = config->input.joypad1.left;
+	joyconfig[1][7] = config->input.joypad1.right;
 }

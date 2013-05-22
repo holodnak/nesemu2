@@ -21,8 +21,12 @@
 #ifndef __main_h__
 #define __main_h__
 
+//default filename for configuration
+#define CONFIG_FILENAME		"nesemu2.cfg"
+
 extern int quit;
 extern int running;
 extern char configfilename[];
+extern char exepath[];
 
 #endif

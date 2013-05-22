@@ -53,7 +53,7 @@ int video_reinit()
 	HDC hdesktopdc = GetDC(hdesktopwnd);
 	int bpp;
 
-	screenscale = config_get_int("video.scale",1);
+	screenscale = config->video.scale;
 	screenw = 256 * screenscale;
 	screenh = 240 * screenscale;
 	screenbpp = 32;

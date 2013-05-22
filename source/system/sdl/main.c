@@ -27,6 +27,7 @@
 #include "misc/paths.h"
 #include "nes/nes.h"
 #include "nes/state/state.h"
+#include "system/main.h"
 #include "system/system.h"
 #include "system/video.h"
 #include "system/input.h"
@@ -35,13 +36,11 @@
 #include "mappers/mapperid.h"
 #include "system/sdl/console/console.h"
 
-//default filename for configuration
-#define CONFIG_FILENAME		"nesemu2.cfg"
-
 //required
 int quit = 0;
 int running = 0;
 char configfilename[1024] = CONFIG_FILENAME;
+char exepath[1024] = "";
 
 char datapath[1024];
 char romfilename[1024];
@@ -165,10 +164,16 @@ int mainloop()
 int main(int argc,char *argv[])
 {
 	int i,ret;
-	char *p,tmp[1024];
+	char *p;
 
 	//set default configuration filename
 	strcpy(configfilename,CONFIG_FILENAME);
+
+	//make the exe path variable
+	strcpy(exepath,argv[0]);
+	if((p = strrchr(exepath,PATH_SEPERATOR)) != 0) {
+		*p = 0;
+	}
 
 	//process the command line
 	for(i=1;i<argc;i++) {
@@ -189,13 +194,6 @@ int main(int argc,char *argv[])
 	if(emu_init() != 0) {
         log_printf("main:  emu_init() failed\n");
         return(2);
-	}
-
-	//make the exe path variable
-	strcpy(tmp,argv[0]);
-	if((p = strrchr(tmp,PATH_SEPERATOR)) != 0) {
-		*p = 0;
-		vars_set_string(vars,"path.exe",tmp);
 	}
 
 	if(strcmp(romfilename,"") != 0) {

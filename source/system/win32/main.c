@@ -26,6 +26,7 @@
 #include "misc/config.h"
 #include "palette/palette.h"
 #include "palette/generator.h"
+#include "system/main.h"
 #include "system/video.h"
 #include "system/input.h"
 #include "system/win32/mainwnd.h"
@@ -36,6 +37,8 @@ static palette_t *pal = 0;
 // Global Variables:
 int quit = 0;
 int running = 0;
+char configfilename[1024] = CONFIG_FILENAME;
+char exepath[1024] = "";
 
 void video_resize();
 
@@ -99,11 +102,11 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	nes_set_inputdev(0,I_JOYPAD0);
 
 //this palette crap could be made common to all system targets...palette_init() maybe?
-	if(strcmp(config_get_string("palette.source","generator"),"file") == 0) {
-		pal = palette_load(config_get_string("palette.filename","roni.pal"));
+	if(strcmp(config->palette.source,"file") == 0) {
+		pal = palette_load(config->palette.filename);
 	}
 	if(pal == 0) {
-		pal = palette_generate(config_get_int("palette.generator.hue",-15),config_get_int("palette.generator.saturation",45));
+		pal = palette_generate(config->palette.hue,config->palette.saturation);
 	}
 	video_setpalette(pal);
 

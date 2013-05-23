@@ -19,40 +19,14 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
+#include "mappers/chips/sachen-8259.h"
 
-static u8 prg;
+static void reset_8259a(int hard)	{	sachen8259_reset(B_SACHEN_8259A,hard);	}
+static void reset_8259b(int hard)	{	sachen8259_reset(B_SACHEN_8259B,hard);	}
+static void reset_8259c(int hard)	{	sachen8259_reset(B_SACHEN_8259C,hard);	}
+static void reset_8259d(int hard)	{	sachen8259_reset(B_SACHEN_8259D,hard);	}
 
-static void sync()
-{
-	mem_setsram8(6,0);
-	mem_setprg32(8,prg);
-	mem_setvram8(0,0);
-}
-
-static void write(u32 addr,u8 data)
-{
-	switch(addr & 0x7300) {
-		case 0x5000:
-			prg = data;
-			break;
-	}
-	sync();
-}
-
-static void reset(int hard)
-{
-	mem_setsramsize(2);
-	mem_setvramsize(8);
-	mem_setwritefunc(0x5,write);
-	mem_setwritefunc(0xD,write);
-	prg = 0xFF;
-	sync();
-}
-
-static void state(int mode,u8 *data)
-{
-	STATE_U8(prg);
-	sync();
-}
-
-MAPPER(B_UNION_BOND_FFV,reset,0,0,state);
+MAPPER(B_SACHEN_8259A,reset_8259a,0,0,sachen8259_state);
+MAPPER(B_SACHEN_8259B,reset_8259b,0,0,sachen8259_state);
+MAPPER(B_SACHEN_8259C,reset_8259c,0,0,sachen8259_state);
+MAPPER(B_SACHEN_8259D,reset_8259d,0,0,sachen8259_state);

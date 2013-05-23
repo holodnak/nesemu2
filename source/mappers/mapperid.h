@@ -66,6 +66,7 @@ enum boardid_e {
 
 	//jaleco
 	B_JALECO_SS88006,
+	B_JALECO_JF11,
 
 	//namcot
 	B_NAMCOT_163,
@@ -118,9 +119,6 @@ enum boardid_e {
 	B_MAGICSERIES,
 	B_COLORDREAMS,
 	B_RUMBLESTATION,
-
-	//union bond ffv
-	B_UNION_BOND_FFV,
 
 	//c&e
 	B_CNE_FSB,
@@ -176,6 +174,7 @@ enum boardid_e {
 
 	//waixing
 	B_WAIXING_SGZ,
+	B_WAIXING_FFV,
 
 	//ntdec
 	B_NTDEC_TC112,

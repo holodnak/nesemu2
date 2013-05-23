@@ -82,6 +82,7 @@ static mapper_t *get_mapper(int mapperid)
 
 	//jaleco
 	MAPPER(B_JALECO_SS88006);
+	MAPPER(B_JALECO_JF11);
 
 	//namcot
 	MAPPER(B_NAMCOT_34x3);
@@ -115,6 +116,10 @@ static mapper_t *get_mapper(int mapperid)
 	//sachen
 	MAPPER(B_SACHEN_74LS374N);
 //	MAPPER(B_SACHEN_74LS374NA);
+	MAPPER(B_SACHEN_8259A);
+	MAPPER(B_SACHEN_8259B);
+	MAPPER(B_SACHEN_8259C);
+	MAPPER(B_SACHEN_8259D);
 	MAPPER(B_SA_72007);
 	MAPPER(B_SA_72008);
 	MAPPER(B_SA_0036);
@@ -133,6 +138,7 @@ static mapper_t *get_mapper(int mapperid)
 
 	//waixing
 	MAPPER(B_WAIXING_SGZ);
+	MAPPER(B_WAIXING_FFV);
 
 	//ntdec
 	MAPPER(B_NTDEC_TC112);
@@ -156,7 +162,6 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_BTL_MARIO1_MALEE2);
 	MAPPER(B_BTL_BIOMIRACLEA);
 	MAPPER(B_BTL_SMB2B);
-	MAPPER(B_UNION_BOND_FFV);
 	MAPPER(B_UNL_RACERMATE);
 	MAPPER(B_MAGICSERIES);
 	MAPPER(B_COLORDREAMS);

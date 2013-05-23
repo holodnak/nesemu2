@@ -918,6 +918,9 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\sachen\sachen-74ls374n.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sachen\sachen-8259x.c">
+						</File>
 					</Filter>
 					<Filter
 						Name="konami"
@@ -955,9 +958,6 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\rumblestation.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\union-bond-ffv.c">
 						</File>
 						<Filter
 							Name="bmc"
@@ -1047,6 +1047,9 @@
 						Name="jaleco"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\jaleco\jf11.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\jaleco\ss88006.c">
 						</File>
 					</Filter>
@@ -1113,6 +1116,9 @@
 						Name="waixing"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\waixing\ffv.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\waixing\sgz.c">
 						</File>
 					</Filter>
@@ -1147,6 +1153,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\namcot-108.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\sachen-8259.c">
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\taito-tc0190fmc.c">
@@ -1627,6 +1636,12 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\mmc5.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\namcot-108.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\sachen-8259.h">
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\taito-tc0190fmc.h">

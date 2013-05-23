@@ -123,7 +123,9 @@ int nes_load(char *filename)
 	else
 		log_printf("nes_load:  loaded file '%s'\n",filename);
 
-	//see if the nes accepts it
+	//check cartdb here
+
+	//see if the nes accepts it (mapper is supported)
 	if((ret = nes_load_cart(c)) != 0)
 		cart_unload(c);
 	return(ret);

@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "misc/log.h"
+#include "misc/config.h"
+#include "misc/paths.h"
 #include "system/system.h"
 #include "version.h"
 
@@ -42,12 +44,30 @@ int log_init()
 		printf("log_init:  already initialized\n");
 		return(0);
 	}
-	sprintf(logfilename,"%s/%s",system_getcwd(),LOGFILENAME);
+
+	//clear the string
+	memset(logfilename,0,MAX_PATH);
+
+	//parse the bios path
+	paths_parse(config->path.data,logfilename,1024);
+
+	//append the path seperator
+	logfilename[strlen(logfilename)] = PATH_SEPERATOR;
+
+	//append the bios filename
+	strcat(logfilename,LOGFILENAME);
+
+	//try to open
 	if((logfd = fopen(logfilename,"wt")) == 0) {
-		printf("log_init:  error opening log file '%s'\n",logfilename);
-		return(1);
+		strcpy(logfilename,LOGFILENAME);
+		if((logfd = fopen(logfilename,"wt")) == 0) {
+			printf("log_init:  error opening log file '%s'\n",logfilename);
+			return(1);
+		}
 	}
+
 	log_printf("log_init:  log initialized.  nesemu2 v"VERSION"\n");
+	log_printf("log_init:  log filename is '%s'.\n",logfilename);
 	return(0);
 }
 

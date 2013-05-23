@@ -72,6 +72,15 @@ int config_init()
 	GET_VAR_INT(input.joypad0.left,		276);
 	GET_VAR_INT(input.joypad0.right,		275);
 
+	GET_VAR_INT(input.joypad1.a,			'h');
+	GET_VAR_INT(input.joypad1.b,			'g');
+	GET_VAR_INT(input.joypad1.select,	't');
+	GET_VAR_INT(input.joypad1.start,		'y');
+	GET_VAR_INT(input.joypad1.up,			'i');
+	GET_VAR_INT(input.joypad1.down,		'k');
+	GET_VAR_INT(input.joypad1.left,		'j');
+	GET_VAR_INT(input.joypad1.right,		'l');
+
 	GET_VAR_INT(sound.enabled,				1);
 
 #ifdef WIN32
@@ -130,6 +139,15 @@ void config_kill()
 	SET_VAR_INT(input.joypad0.down);
 	SET_VAR_INT(input.joypad0.left);
 	SET_VAR_INT(input.joypad0.right);
+
+	SET_VAR_INT(input.joypad1.a);
+	SET_VAR_INT(input.joypad1.b);
+	SET_VAR_INT(input.joypad1.select);
+	SET_VAR_INT(input.joypad1.start);
+	SET_VAR_INT(input.joypad1.up);
+	SET_VAR_INT(input.joypad1.down);
+	SET_VAR_INT(input.joypad1.left);
+	SET_VAR_INT(input.joypad1.right);
 
 	SET_VAR_INT(sound.enabled);
 

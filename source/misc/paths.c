@@ -23,6 +23,7 @@
 #include "misc/paths.h"
 #include "misc/memutil.h"
 #include "misc/config.h"
+#include "misc/log.h"
 #include "emu/emu.h"
 #include "system/main.h"
 
@@ -104,10 +105,13 @@ char *paths_parse(char *src,char *dest,int len)
 		dest[pos++] = *p;
 	}
 
+	//normalize the path
 	for(p=dest;*p;p++) {
 		if(*p == '/' || *p == '\\')
 			*p = PATH_SEPERATOR;
 	}
+
+	//free tmp string and return
 	mem_free(tmp);
 	return(dest);
 }

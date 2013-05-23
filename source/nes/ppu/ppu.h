@@ -57,8 +57,8 @@ typedef struct ppu_s {
 	//rendering data, current address the ppu is accessing
 	u32	busaddr;
 
-	//nametable byte and position we are fetching tile data to
-	u8		ntbyte,fetchpos;
+	//current nametable byte
+	u8		ntbyte;
 
 	//current sprite we are fetching tile data for
 	u8		cursprite;
@@ -68,9 +68,6 @@ typedef struct ppu_s {
 
 	//tile buffer (34 tiles)
 	u8		tilebuffer[256 + 16];
-
-	//fetchpos gets out of hand and begins to corrupt memory!  fix it quick!
-	u8		kludge[1024];
 
 	//read/write pointers
 	u8		*readpages[16];

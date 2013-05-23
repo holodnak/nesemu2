@@ -30,7 +30,6 @@ static INLINE void inc_hscroll()
 		else
 			SCROLL++;							//no, increment address
 	}
-	nes.ppu.fetchpos++;
 }
 
 static INLINE void inc_vscroll()
@@ -62,7 +61,6 @@ static INLINE void update_hscroll()
 		SCROLL &= ~0x041F;
 		SCROLL |= TMPSCROLL & 0x041F;
 	}
-	nes.ppu.fetchpos = 0;
 	nes.ppu.cursprite = 0;
 }
 

@@ -71,7 +71,7 @@ static INLINE void scanline_prerender()
 			fetch_ntbyte();
 			break;
 
-		//attribute table byte read
+		//attribute table byte calc
 		case 3:
 			clear_nmi_line();
 		case 11:		case 19:		case 27:		case 35:		case 43:		case 51:		case 59:
@@ -80,26 +80,82 @@ static INLINE void scanline_prerender()
 		case 195:	case 203:	case 211:	case 219:	case 227:	case 235:	case 243:	case 251:
 			calc_ataddr();
 			break;
-		case 4:		case 12:		case 20:		case 28:		case 36:		case 44:		case 52:		case 60:
-		case 68:		case 76:		case 84:		case 92:		case 100:	case 108:	case 116:	case 124:
-		case 132:	case 140:	case 148:	case 156:	case 164:	case 172:	case 180:	case 188:
-		case 196:	case 204:	case 212:	case 220:	case 228:	case 236:	case 244:	case 252:
-			fetch_atbyte();
-			break;
 
-		//pattern table byte 0 read
+		//attribute table byte fetch
+		case 4:		fetch_atbyte(2);		break;
+		case 12:		fetch_atbyte(3);		break;
+		case 20:		fetch_atbyte(4);		break;
+		case 28:		fetch_atbyte(5);		break;
+		case 36:		fetch_atbyte(6);		break;
+		case 44:		fetch_atbyte(7);		break;
+		case 52:		fetch_atbyte(8);		break;
+		case 60:		fetch_atbyte(9);		break;
+		case 68:		fetch_atbyte(10);		break;
+		case 76:		fetch_atbyte(11);		break;
+		case 84:		fetch_atbyte(12);		break;
+		case 92:		fetch_atbyte(13);		break;
+		case 100:	fetch_atbyte(14);		break;
+		case 108:	fetch_atbyte(15);		break;
+		case 116:	fetch_atbyte(16);		break;
+		case 124:	fetch_atbyte(17);		break;
+		case 132:	fetch_atbyte(18);		break;
+		case 140:	fetch_atbyte(19);		break;
+		case 148:	fetch_atbyte(20);		break;
+		case 156:	fetch_atbyte(21);		break;
+		case 164:	fetch_atbyte(22);		break;
+		case 172:	fetch_atbyte(23);		break;
+		case 180:	fetch_atbyte(24);		break;
+		case 188:	fetch_atbyte(25);		break;
+		case 196:	fetch_atbyte(26);		break;
+		case 204:	fetch_atbyte(27);		break;
+		case 212:	fetch_atbyte(28);		break;
+		case 220:	fetch_atbyte(29);		break;
+		case 228:	fetch_atbyte(30);		break;
+		case 236:	fetch_atbyte(31);		break;
+		case 244:	fetch_atbyte(32);		break;
+		case 252:	fetch_atbyte(33);		break;
+
+		//pattern table byte 0 calc
 		case 5:		case 13:		case 21:		case 29:		case 37:		case 45:		case 53:		case 61:
 		case 69:		case 77:		case 85:		case 93:		case 101:	case 109:	case 117:	case 125:
 		case 133:	case 141:	case 149:	case 157:	case 165:	case 173:	case 181:	case 189:
 		case 197:	case 205:	case 213:	case 221:	case 229:	case 237:	case 245:	case 253:
 			calc_pt0addr();
 			break;
-		case 6:		case 14:		case 22:		case 30:		case 38:		case 46:		case 54:		case 62:
-		case 70:		case 78:		case 86:		case 94:		case 102:	case 110:	case 118:	case 126:
-		case 134:	case 142:	case 150:	case 158:	case 166:	case 174:	case 182:	case 190:
-		case 198:	case 206:	case 214:	case 222:	case 230:	case 238:	case 246:	case 254:
-			fetch_pt0byte();
-			break;
+
+		//pattern table byte 0 fetch
+		case 6:		fetch_pt0byte(2);		break;
+		case 14:		fetch_pt0byte(3);		break;
+		case 22:		fetch_pt0byte(4);		break;
+		case 30:		fetch_pt0byte(5);		break;
+		case 38:		fetch_pt0byte(6);		break;
+		case 46:		fetch_pt0byte(7);		break;
+		case 54:		fetch_pt0byte(8);		break;
+		case 62:		fetch_pt0byte(9);		break;
+		case 70:		fetch_pt0byte(10);	break;
+		case 78:		fetch_pt0byte(11);	break;
+		case 86:		fetch_pt0byte(12);	break;
+		case 94:		fetch_pt0byte(13);	break;
+		case 102:	fetch_pt0byte(14);	break;
+		case 110:	fetch_pt0byte(15);	break;
+		case 118:	fetch_pt0byte(16);	break;
+		case 126:	fetch_pt0byte(17);	break;
+		case 134:	fetch_pt0byte(18);	break;
+		case 142:	fetch_pt0byte(19);	break;
+		case 150:	fetch_pt0byte(20);	break;
+		case 158:	fetch_pt0byte(21);	break;
+		case 166:	fetch_pt0byte(22);	break;
+		case 174:	fetch_pt0byte(23);	break;
+		case 182:	fetch_pt0byte(24);	break;
+		case 190:	fetch_pt0byte(25);	break;
+		case 198:	fetch_pt0byte(26);	break;
+		case 206:	fetch_pt0byte(27);	break;
+		case 214:	fetch_pt0byte(28);	break;
+		case 222:	fetch_pt0byte(29);	break;
+		case 230:	fetch_pt0byte(30);	break;
+		case 238:	fetch_pt0byte(31);	break;
+		case 246:	fetch_pt0byte(32);	break;
+		case 254:	fetch_pt0byte(33);	break;
 
 		//pattern table byte 1 read
 		case 7:		case 15:		case 23:		case 31:		case 39:		case 47:		case 55:		case 63:
@@ -178,16 +234,23 @@ static INLINE void scanline_prerender()
 		case 323:	case 331:
 			calc_ataddr();
 			break;
-		case 324:	case 332:
-			fetch_atbyte();
+		case 324:
+			fetch_atbyte(0);
+			break;
+		case 332:
+			fetch_atbyte(1);
 			break;
 
 		//pattern low byte tile
-		case 325:	case 333:
+		case 325:
+		case 333:
 			calc_pt0addr();
 			break;
-		case 326:	case 334:
-			fetch_pt0byte();
+		case 326:
+			fetch_pt0byte(0);
+			break;
+		case 334:
+			fetch_pt0byte(1);
 			break;
 
 		//pattern high byte tile
@@ -252,15 +315,42 @@ static INLINE void scanline_visible()
 			calc_ataddr();
 			drawpixel();
 			break;
-		case 4:		case 12:		case 20:		case 28:		case 36:		case 44:		case 52:		case 60:
-		case 68:		case 76:		case 84:		case 92:		case 100:	case 108:	case 116:	case 124:
-		case 132:	case 140:	case 148:	case 156:	case 164:	case 172:	case 180:	case 188:
-		case 196:	case 204:	case 212:	case 220:	case 228:	case 236:	case 244:	case 252:
-			fetch_atbyte();
-			drawpixel();
-			break;
 
-		//pattern table byte 0 read
+		//attribute table byte fetch
+		case 4:		fetch_atbyte(2);		drawpixel();	break;
+		case 12:		fetch_atbyte(3);		drawpixel();	break;
+		case 20:		fetch_atbyte(4);		drawpixel();	break;
+		case 28:		fetch_atbyte(5);		drawpixel();	break;
+		case 36:		fetch_atbyte(6);		drawpixel();	break;
+		case 44:		fetch_atbyte(7);		drawpixel();	break;
+		case 52:		fetch_atbyte(8);		drawpixel();	break;
+		case 60:		fetch_atbyte(9);		drawpixel();	break;
+		case 68:		fetch_atbyte(10);		drawpixel();	break;
+		case 76:		fetch_atbyte(11);		drawpixel();	break;
+		case 84:		fetch_atbyte(12);		drawpixel();	break;
+		case 92:		fetch_atbyte(13);		drawpixel();	break;
+		case 100:	fetch_atbyte(14);		drawpixel();	break;
+		case 108:	fetch_atbyte(15);		drawpixel();	break;
+		case 116:	fetch_atbyte(16);		drawpixel();	break;
+		case 124:	fetch_atbyte(17);		drawpixel();	break;
+		case 132:	fetch_atbyte(18);		drawpixel();	break;
+		case 140:	fetch_atbyte(19);		drawpixel();	break;
+		case 148:	fetch_atbyte(20);		drawpixel();	break;
+		case 156:	fetch_atbyte(21);		drawpixel();	break;
+		case 164:	fetch_atbyte(22);		drawpixel();	break;
+		case 172:	fetch_atbyte(23);		drawpixel();	break;
+		case 180:	fetch_atbyte(24);		drawpixel();	break;
+		case 188:	fetch_atbyte(25);		drawpixel();	break;
+		case 196:	fetch_atbyte(26);		drawpixel();	break;
+		case 204:	fetch_atbyte(27);		drawpixel();	break;
+		case 212:	fetch_atbyte(28);		drawpixel();	break;
+		case 220:	fetch_atbyte(29);		drawpixel();	break;
+		case 228:	fetch_atbyte(30);		drawpixel();	break;
+		case 236:	fetch_atbyte(31);		drawpixel();	break;
+		case 244:	fetch_atbyte(32);		drawpixel();	break;
+		case 252:	fetch_atbyte(33);		drawpixel();	break;
+
+		//pattern table byte 0 calc
 		case 5:		case 13:		case 21:		case 29:		case 37:		case 45:		case 53:		case 61:
 		case 69:		case 77:		case 85:		case 93:		case 101:	case 109:	case 117:	case 125:
 		case 133:	case 141:	case 149:	case 157:	case 165:	case 173:	case 181:	case 189:
@@ -268,13 +358,40 @@ static INLINE void scanline_visible()
 			calc_pt0addr();
 			drawpixel();
 			break;
-		case 6:		case 14:		case 22:		case 30:		case 38:		case 46:		case 54:		case 62:
-		case 70:		case 78:		case 86:		case 94:		case 102:	case 110:	case 118:	case 126:
-		case 134:	case 142:	case 150:	case 158:	case 166:	case 174:	case 182:	case 190:
-		case 198:	case 206:	case 214:	case 222:	case 230:	case 238:	case 246:	case 254:
-			fetch_pt0byte();
-			drawpixel();
-			break;
+
+		//pattern table byte 0 fetch
+		case 6:		fetch_pt0byte(2);		drawpixel();	break;
+		case 14:		fetch_pt0byte(3);		drawpixel();	break;
+		case 22:		fetch_pt0byte(4);		drawpixel();	break;
+		case 30:		fetch_pt0byte(5);		drawpixel();	break;
+		case 38:		fetch_pt0byte(6);		drawpixel();	break;
+		case 46:		fetch_pt0byte(7);		drawpixel();	break;
+		case 54:		fetch_pt0byte(8);		drawpixel();	break;
+		case 62:		fetch_pt0byte(9);		drawpixel();	break;
+		case 70:		fetch_pt0byte(10);	drawpixel();	break;
+		case 78:		fetch_pt0byte(11);	drawpixel();	break;
+		case 86:		fetch_pt0byte(12);	drawpixel();	break;
+		case 94:		fetch_pt0byte(13);	drawpixel();	break;
+		case 102:	fetch_pt0byte(14);	drawpixel();	break;
+		case 110:	fetch_pt0byte(15);	drawpixel();	break;
+		case 118:	fetch_pt0byte(16);	drawpixel();	break;
+		case 126:	fetch_pt0byte(17);	drawpixel();	break;
+		case 134:	fetch_pt0byte(18);	drawpixel();	break;
+		case 142:	fetch_pt0byte(19);	drawpixel();	break;
+		case 150:	fetch_pt0byte(20);	drawpixel();	break;
+		case 158:	fetch_pt0byte(21);	drawpixel();	break;
+		case 166:	fetch_pt0byte(22);	drawpixel();	break;
+		case 174:	fetch_pt0byte(23);	drawpixel();	break;
+		case 182:	fetch_pt0byte(24);	drawpixel();	break;
+		case 190:	fetch_pt0byte(25);	drawpixel();	break;
+		case 198:	fetch_pt0byte(26);	drawpixel();	break;
+		case 206:	fetch_pt0byte(27);	drawpixel();	break;
+		case 214:	fetch_pt0byte(28);	drawpixel();	break;
+		case 222:	fetch_pt0byte(29);	drawpixel();	break;
+		case 230:	fetch_pt0byte(30);	drawpixel();	break;
+		case 238:	fetch_pt0byte(31);	drawpixel();	break;
+		case 246:	fetch_pt0byte(32);	drawpixel();	break;
+		case 254:	fetch_pt0byte(33);	drawpixel();	break;
 
 		//pattern table byte 1 read
 		case 7:		case 15:		case 23:		case 31:		case 39:		case 47:		case 55:		case 63:
@@ -355,16 +472,22 @@ static INLINE void scanline_visible()
 		case 323:	case 331:
 			calc_ataddr();
 			break;
-		case 324:	case 332:
-			fetch_atbyte();
+		case 324:
+			fetch_atbyte(0);
+			break;
+		case 332:
+			fetch_atbyte(1);
 			break;
 
 		//pattern low byte tile
 		case 325:	case 333:
 			calc_pt0addr();
 			break;
-		case 326:	case 334:
-			fetch_pt0byte();
+		case 326:
+			fetch_pt0byte(0);
+			break;
+		case 334:
+			fetch_pt0byte(1);
 			break;
 
 		//pattern high byte tile

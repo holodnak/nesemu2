@@ -26,140 +26,168 @@ BANKS 1
 
 .ORG $0100
 delay132:
-	hlecall i_delay132
+	hle	i_delay132
 	rts
 
 .ORG $0149
 	jmp	delay132
 
 .ORG $0153
-	hlecall i_delayms
+	hle	i_delayms
 	rts
 
 .ORG $0161
-	hlecall2	i_dispfobj
+	hle2	i_dispfobj
 	rts
 
 .ORG $016B
-	hlecall2	i_enpfobj
+	hle2	i_enpfobj
 	rts
 
 .ORG $0171
-	hlecall2	i_disobj
+	hle2	i_disobj
 	rts
 
 .ORG $0178
-	hlecall2	i_enobj
+	hle2	i_enobj
 	rts
 
 .ORG $017E
-	hlecall2	i_dispf
+	hle2	i_dispf
 	rts
 
 .ORG $0185
-	hlecall2	i_enpf
+	hle2	i_enpf
 	rts
 
 .ORG $018B
 nmi:
-	hlecall	i_nmi
+	hle	i_nmi
 	jmp $4280
 
 .ORG $01B2
-	hlecall	i_vintwait
+	hle	i_vintwait
 forever:
 	bne	forever
 
 .ORG $01C7
 irq:
-	hlecall	i_irq
+	hle	i_irq
 	jmp $4288
 
 .ORG $01F8
-	hlecall	i_loadfiles
+	hle	i_loadfiles
 	rts
 
 .ORG $0237
 	lda	#$FF
-	hlecall	i_writefile
+	hle	i_writefile
+	rts
+
+.ORG $03E7
+	sec					;;no write protect check
+	bcs	gethcparam	;;always branch
+	clc					;;write protection check
+gethcparam:
+	hle	i_gethcparam
+	rts
+
+.ORG $0445
+	hle	i_checkdiskheader
+	rts
+
+.ORG $0484
+	hle	i_getnumfiles
+	rts
+
+.ORG $04A0
+	hle	i_filematchtest
+	rts
+
+.ORG $04F9
+	hle	i_loaddata
+	rts
+
+.ORG $068F
+	hle	i_checkblocktype
 	rts
 
 .ORG $0778
-	hlecall	i_xferdone
+	hle	i_xferdone
 	rts
 
 .ORG $07BB
-	hlecall	i_vramstructwrite
+	hle	i_vramstructwrite
 	rts
 
 .ORG $0844
-	hlecall	i_fetchdirectptr
+	hle	i_fetchdirectptr
 	rts
 
 .ORG $086A
-	hlecall	i_writevrambuffer
+	hle	i_writevrambuffer
 	rts
 
 .ORG $08B3
-	hlecall	i_readvrambuffer
+	hle	i_readvrambuffer
 	rts
 
 .ORG $08D2
-	hlecall	i_preparevramstring
+	hle	i_preparevramstring
 	rts
 
 .ORG $08E1
-	hlecall	i_preparevramstrings
+	hle	i_preparevramstrings
 	rts
 
 .ORG $094F
-	hlecall	i_getvrambufferbyte
+	hle	i_getvrambufferbyte
 	rts
 
 .ORG $097D
-	hlecall	i_pixel2nam
+	hle	i_pixel2nam
 	rts
 
 .ORG $0997
-	hlecall	i_nam2pixel
+	hle	i_nam2pixel
 	rts
 
 .ORG $09B1
-	hlecall	i_random
+	hle	i_random
 	rts
 
 .ORG $09C8
-	hlecall	i_spritedma	
+	hle	i_spritedma	
 	rts
 
 .ORG $09D3
-	hlecall	i_counterlogic
+	hle	i_counterlogic
 	rts
 
 .ORG $09EB
 readpads:
-	hlecall	i_readpads
+	hle	i_readpads
 	rts
 
 .ORG $0A0D
 orpads:
-	hlecall	i_orpads
+	hle	i_orpads
 	rts
 
 .ORG $0A1A
-	jsr		readpads
-	beq		downpads		;always branches
+	jsr	readpads
+	beq	downpads		;always branches
 
 .ORG $0A1F
 readordownpads:
-	jsr		readpads
-	jsr		orpads
+	jsr	readpads
+	jsr	orpads
 downpads:
-	hlecall	i_downpads
+	hle	i_downpads
 	rts
 
 .ORG $0A36
-	hlecall	i_readdownverifypads
+	hle	i_readdownverifypads
 	rts
 
 .ORG $0A4C
@@ -169,45 +197,45 @@ downpads:
 	nop
 	nop
 	nop
-	hlecall	i_readordownverifypads
+	hle	i_readordownverifypads
 	rts
 
 .ORG $0A68
-	hlecall	i_readdownexppads
+	hle	i_readdownexppads
 	rts
 
 .ORG $0A84
-	hlecall	i_vramfill
+	hle	i_vramfill
 	rts
 
 .ORG $0AD2
-	hlecall	i_memfill
+	hle	i_memfill
 	rts
 
 .ORG $0AEA
-	hlecall	i_setscroll
+	hle	i_setscroll
 	rts
 
 .ORG $0AFD
-	hlecall	i_jumpengine
+	hle	i_jumpengine
 	jmp	$4290
 
 .ORG $0B13
-	hlecall	i_readkeyboard
+	hle	i_readkeyboard
 	rts
 
 .ORG $0BAF
-	hlecall	i_loadtileset
+	hle	i_loadtileset
 	rts
 
 .ORG $0C22
-	hlecall	i_unk_ec22
+	hle	i_unk_ec22
 	rts
 
 ;;reset vector
 .ORG $0E24
 reset:
-	hlecall	i_reset
+	hle	i_reset
 	jmp	($DFFC)
 
 .ORG $1F00

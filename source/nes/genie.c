@@ -27,6 +27,7 @@
 #include "misc/memutil.h"
 #include "misc/config.h"
 #include "misc/log.h"
+#include "misc/paths.h"
 
 //holds code information
 typedef struct codedata_s {
@@ -130,19 +131,15 @@ static void genie_write(u32 addr,u8 data)
 	}
 }
 
-int genie_loadrom()
+int genie_loadrom(char *filename)
 {
 	FILE *fp;
-	char *str;
 	size_t len;
 	u8 buf[16];
 
-	//get the filename from the configuration
-	str = config->nes.gamegenie.bios;
-
 	//try to open the file
-	if((fp = fopen(str,"rb")) == 0) {
-		log_printf("genie_load:  error opening game genie rom '%s'\n",str);
+	if((fp = fopen(filename,"rb")) == 0) {
+		log_printf("genie_load:  error opening game genie rom '%s'\n",filename);
 		return(1);
 	}
 
@@ -182,7 +179,7 @@ int genie_loadrom()
 	else {
 		fclose(fp);
 		genie_unload();
-		log_printf("genie_load:  unable to load genie rom '%s'\n",str);
+		log_printf("genie_load:  unable to load genie rom '%s'\n",filename);
 		return(1);
 	}
 
@@ -191,18 +188,36 @@ int genie_loadrom()
 
 	//close the file, output message, return
 	fclose(fp);
-	log_printf("genie_load:  loaded game genie rom '%s' (%d bytes)\n",str,len);
+	log_printf("genie_load:  loaded game genie rom '%s' (%d bytes)\n",filename,len);
 	return(0);
 }
 
 int genie_load()
 {
+	char biosfile[1024];
+
 	//if the rom isnt loaded, we need to do that now
 	if(genierom == 0) {
 
-		//try to load the genie rom
-		if(genie_loadrom() != 0) {
-			return(1);
+		//clear the string
+		memset(biosfile,0,1024);
+
+		//parse the bios path
+		paths_parse(config->path.bios,biosfile,1024);
+
+		//append the path seperator
+		biosfile[strlen(biosfile)] = PATH_SEPERATOR;
+
+		//append the bios filename
+		strcat(biosfile,config->nes.gamegenie.bios);
+
+		//try to load bios from the bios directory
+		if(genie_loadrom(biosfile) != 0) {
+
+			//see if bios is in the current directory
+			if(genie_loadrom(config->nes.gamegenie.bios) != 0) {
+				return(1);
+			}
 		}
 
 		//register the save state stuff

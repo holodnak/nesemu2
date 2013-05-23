@@ -14,7 +14,7 @@ $(TARGET): $(OBJECT)
 	$(LD) $(LDFLAGS) $@
 
 all: $(TARGET)
-	cp $(TARGET) ../../../test/
+	cp $(TARGET) ../../../test/data/bios/
 
 clean:
 	rm -f $(OBJECT) $(TARGET)

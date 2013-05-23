@@ -62,3 +62,8 @@ HLECALL(vintwait)
 
 	log_hle("vintwait!\n");
 }
+
+HLECALL(unk_EC22)
+{
+	log_printf("unk_EC22 not implemented\n");
+}

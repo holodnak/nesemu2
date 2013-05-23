@@ -22,43 +22,6 @@
 #include "mappers/fds/fds.h"
 #include "mappers/fds/hle.h"
 
-typedef struct fds_disk_header_s {
-	u8 blockid;
-	u8 ident[14];
-	u8 manufacturer_code;
-	u8 name[4];
-	u8 version;
-	u8 diskside;
-	u8 disknum;
-	u8 extra[2];
-	u8 bootid;
-	u8 data[31];
-	u8 numfiles;
-} fds_disk_header_t;
-
-typedef struct fds_file_header_s {
-	u8 unk;
-	u8 blockid;
-	u8 index;
-//start of file header on disk
-	u8 fileid;
-	u8 name[8];
-	u16 loadaddr;
-	u16 filesize;
-	u8 loadarea;
-//end of file header on disk
-} fds_file_header_t;
-
-typedef struct fds_file_header2_s {
-	u8 fileid;
-	u8 name[8];
-	u16 loadaddr;
-	u16 filesize;
-	u8 loadarea;
-	u16 srcaddr;
-	u8 srcarea;
-} fds_file_header2_t;
-
 HLECALL(loadbootfiles)
 {
 	fds_disk_header_t disk_header;
@@ -87,7 +50,7 @@ HLECALL(loadbootfiles)
 		pos += 17;
 		if(file_header.fileid <= disk_header.bootid) {
 			memcpy(fn,file_header.name,8);
-			log_hle("loadfiles: loading boot file '%s', id %d, size $%X, load addr $%04X\n",fn,file_header.fileid,file_header.filesize,file_header.loadaddr);
+			log_hle("loadbootfiles: loading file '%s', id %d, size $%X, load addr $%04X\n",fn,file_header.fileid,file_header.filesize,file_header.loadaddr);
 			loadedfiles++;
 
 			//load into cpu

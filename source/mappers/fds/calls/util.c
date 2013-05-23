@@ -159,7 +159,32 @@ HLECALL(nam2pixel)
 	log_hle("nam2pixel:  address = $%04X  x,y = %d,%d\n",(cpu_read(0) << 8) | cpu_read(1),x,y);
 }
 
-HLECALL(unk_EC22)
+HLECALL(gethcparam)
 {
-	log_printf("unk_EC22 not implemented\n");
+	u8 writeprotectcheck = nes.cpu.flags.c ^ 1;
+	u32 addr1,addr2,tmp;
+
+	log_hle("gethcparam:  writeprotectcheck = %d, a = $%02X\n",writeprotectcheck,nes.cpu.a);
+	log_hle("stack:  %02X %02X %02X %02X %02X %02X\n",cpu_read((nes.cpu.sp + 1) | 0x100),cpu_read((nes.cpu.sp + 2) | 0x100),cpu_read((nes.cpu.sp + 3) | 0x100),cpu_read((nes.cpu.sp + 4) | 0x100),cpu_read((nes.cpu.sp + 5) | 0x100),cpu_read((nes.cpu.sp + 6) | 0x100));
+
+	tmp = cpu_read((nes.cpu.sp + 3) | 0x100);
+	tmp |= cpu_read((nes.cpu.sp + 4) | 0x100) << 8;
+
+	log_hle("tmp = $%04X\n",tmp);
+
+	addr1 = cpu_read(tmp + 0) << 8;
+	addr1 |= cpu_read(tmp + 1);
+
+	addr2 = cpu_read(tmp + 2) << 8;
+	addr2 |= cpu_read(tmp + 3);
+
+	log_hle("addr1 = $%04X\n",addr1);
+	log_hle("addr2 = $%04X\n",addr2);
+
+	cpu_write(0,cpu_read(tmp + 0));
+	cpu_write(1,cpu_read(tmp + 1));
+	if(nes.cpu.a == 0xFF) {
+		cpu_write(2,cpu_read(tmp + 2));
+		cpu_write(3,cpu_read(tmp + 3));
+	}
 }

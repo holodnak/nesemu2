@@ -26,10 +26,48 @@
 
 #define HLECALL(name) void hle_ ## name ()
 
+typedef struct fds_disk_header_s {
+	u8 blockid;
+	u8 ident[14];
+	u8 manufacturer_code;
+	u8 name[4];
+	u8 version;
+	u8 diskside;
+	u8 disknum;
+	u8 extra[2];
+	u8 bootid;
+	u8 data[31];
+	u8 numfiles;
+} fds_disk_header_t;
+
+typedef struct fds_file_header_s {
+	u8 unk;
+	u8 blockid;
+	u8 index;
+//start of file header on disk
+	u8 fileid;
+	u8 name[8];
+	u16 loadaddr;
+	u16 filesize;
+	u8 loadarea;
+//end of file header on disk
+} fds_file_header_t;
+
+typedef struct fds_file_header2_s {
+	u8 fileid;
+	u8 name[8];
+	u16 loadaddr;
+	u16 filesize;
+	u8 loadarea;
+	u16 srcaddr;
+	u8 srcarea;
+} fds_file_header2_t;
+
 //disk.c
 HLECALL(loadbootfiles);
 HLECALL(loadfiles);
 HLECALL(writefile);
+HLECALL(appendfile);
 HLECALL(getdiskinfo);
 HLECALL(checkfilecount);
 HLECALL(adjustfilecount);
@@ -38,6 +76,11 @@ HLECALL(setfilecount);
 
 //diskutil.c
 HLECALL(xferdone);
+HLECALL(checkdiskheader);
+HLECALL(getnumfiles);
+HLECALL(checkblocktype);
+HLECALL(filematchtest);
+HLECALL(loaddata);
 
 //ppu.c
 HLECALL(enpf);
@@ -78,12 +121,13 @@ HLECALL(jumpengine);
 HLECALL(memfill);
 HLECALL(pixel2nam);
 HLECALL(nam2pixel);
-HLECALL(unk_EC22);
+HLECALL(gethcparam);
 
 //misc.c
 HLECALL(delay132);
 HLECALL(delayms);
 HLECALL(vintwait);
+HLECALL(unk_EC22);
 
 //vector.c
 HLECALL(nmi);

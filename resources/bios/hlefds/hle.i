@@ -7,12 +7,19 @@
 .define FDSHLEREG2					$4223
 .define FDSHLEREG3					$4224
 .define FDSHLEREG4					$4225
+.define FDSHLEMEM						$4280
 
 ;;hle call indices
 .define i_loadfiles					$00
 .define i_writefile					$01
+.define i_appendfile					$02
 
 .define i_xferdone					$08
+.define i_checkdiskheader			$09
+.define i_getnumfiles				$0A
+.define i_checkblocktype			$0B
+.define i_filematchtest				$0C
+.define i_loaddata					$0D
 
 .define i_readpads					$10
 .define i_orpads						$11
@@ -32,9 +39,6 @@
 .define i_getvrambufferbyte		$1E
 .define i_loadtileset				$1F
 
-;;.define i_inc00by8					$21
-;;.define i_inc00bya					$22
-
 .define i_enpf							$28
 .define i_dispf						$29
 .define i_enobj						$2A
@@ -51,18 +55,19 @@
 .define i_memfill						$34
 .define i_pixel2nam					$35
 .define i_nam2pixel					$36
-.define i_unk_ec22					$37
+.define i_gethcparam					$37
 
 .define i_delay132					$38
 .define i_delayms						$39
 .define i_vintwait					$3A
+.define i_unk_ec22					$3B
 
 .define i_nmi							$3C
 .define i_irq							$3D
 .define i_reset						$3E
 
 ;;macro for calling hle function
-.macro hlecall
+.macro hle
 	pha
 	lda	#\1
 	sta	FDSHLEREG
@@ -70,7 +75,8 @@
 	sta	FDSHLECALL
 .endm
 
-.macro hlecall2
+;;same thing but trashes the accumulator
+.macro hle2
 	lda	#\1
 	sta	FDSHLECALL2
 .endm

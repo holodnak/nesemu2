@@ -20,6 +20,7 @@
 
 #include "mappers/fds/calls.h"
 #include "mappers/fds/hle.h"
+#include "mappers/fds/fds.h"
 
 HLECALL(xferdone)
 {
@@ -36,4 +37,40 @@ HLECALL(xferdone)
 	else {
 
 	}
+}
+
+HLECALL(checkdiskheader)
+{
+	log_printf("checkdiskheader:  not implemented\n");
+}
+
+HLECALL(getnumfiles)
+{
+	fds_disk_header_t *disk_header;
+	int pos;
+
+	//position of disk data start
+	pos = diskside * 65500;
+
+	//pointer to disk header
+	disk_header = (fds_disk_header_t*)(nes.cart->disk.data + pos);
+
+	cpu_write(6,disk_header->numfiles);
+
+	log_printf("getnumfiles:  %d files on disk %d side %d\n",disk_header->numfiles,diskside >> 1,diskside & 1);
+}
+
+HLECALL(checkblocktype)
+{
+	log_printf("checkblocktype:  not implemented\n");
+}
+
+HLECALL(filematchtest)
+{
+	log_printf("filematchtest:  not implemented\n");
+}
+
+HLECALL(loaddata)
+{
+	log_printf("loaddata:  not implemented\n");
 }

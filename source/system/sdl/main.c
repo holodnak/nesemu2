@@ -20,6 +20,7 @@
 
 #include <SDL/SDL.h>
 #include <stdio.h>
+#include <direct.h>
 #include "emu/emu.h"
 #include "emu/commands.h"
 #include "misc/log.h"
@@ -43,15 +44,59 @@ int running = 0;
 char configfilename[1024] = CONFIG_FILENAME;
 char exepath[1024] = "";
 
-char datapath[1024];
+//filename of the currently loaded rom
 char romfilename[1024];
-char statefilename[1024];
 static palette_t *pal = 0;
 
 static int keydown = 0;
 
+static void makestatefilename(char *dest,int len)
+{
+	char *p,*tmp = mem_strdup(romfilename);
+
+	//clear the string
+	memset(dest,0,len);
+
+	//parse the state path
+	paths_parse(config->path.state,dest,len);
+
+	//append the path seperator
+	dest[strlen(dest)] = PATH_SEPERATOR;
+
+	//normalize the path seperators
+	for(p=tmp;*p;p++) {
+		if(*p == '/' || *p == '\\')
+			*p = PATH_SEPERATOR;
+	}
+
+	//find the last path seperator
+	p = strrchr(tmp,PATH_SEPERATOR);
+
+	//if not found then it is plain filename
+	p = (p == 0) ? tmp : p + 1;
+
+/*	//this code removed because if you have smb.fds and smb.nes they use the same state filename
+	//find the extension
+	p2 = strrchr(tmp,'.');
+
+	//if found, end the string here
+	if(p2) {
+		*p2 = 0;
+	}*/
+
+	//append the rom filename
+	strcat(dest,p);
+
+	//append the state extension)
+	strcat(dest,".state");
+
+	//free the temporary string
+	mem_free(tmp);
+}
+
 int mainloop()
 {
+	static char statefilename[1024];
 	u32 t,total = 0,frames = 0;
 
 	console_init();
@@ -94,6 +139,7 @@ int mainloop()
 			keydown |= 4;
 		}
 		else if(keydown & 4) {
+			makestatefilename(statefilename,1024);
 			nes_savestate(statefilename);
 			keydown &= ~4;
 		}
@@ -101,6 +147,7 @@ int mainloop()
 			keydown |= 8;
 		}
 		else if(keydown & 8) {
+			makestatefilename(statefilename,1024);
 			nes_loadstate(statefilename);
 			keydown &= ~8;
 		}
@@ -232,8 +279,6 @@ int main(int argc,char *argv[])
 			nes_set_inputdev(0,I_JOYPAD0);
 			nes_set_inputdev(1,I_JOYPAD1);
 			nes_reset(1);
-			strncpy(statefilename,romfilename,1024);
-			strcat(statefilename,".state");
 			running = 1;
 		}
 	}

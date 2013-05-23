@@ -59,6 +59,14 @@ hlefds
     xferdone					- Aki to Tsukasa no Fushigi no Kabe
     readdownexppads			- Bakutoushi Patton-Kun
 
+ . Tobidase Daisakusen uses many internal disk functions
+    tries to load hidden files.
+     --calls GetNumFiles, compares $6 to #8.  increments $6.
+     --calls CheckBlockType, checks nothing, proceeds to call:
+     --calls FileMatchTest, again no checking anything, calls:
+     --calls LoadData, repeats
+     --finally calls XferDone
+
 roms
  . need mapper 104 (golden five) roms
  . need mapper 194 (Dai-2-Ji - Super Robot Taisen (As)) roms

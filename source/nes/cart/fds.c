@@ -24,25 +24,20 @@
 #include "misc/memutil.h"
 #include "misc/log.h"
 #include "misc/config.h"
+#include "misc/paths.h"
 #include "nes/cart/cart.h"
 #include "mappers/mapperid.h"
 
 static u8 fdsident[] = "FDS\x1a";
 static u8 fdsident2[] = "\x01*NINTENDO-HVC*";
 
-int cart_load_fds(cart_t *ret,const char *filename)
+static int loadbios(cart_t *ret,char *filename)
 {
-	u8 header[16];
 	FILE *fp;
-	u32 size;
-	char *biosfile;
-
-	//get bios filename
-	biosfile = config->nes.fds.bios;
 
 	//open bios file
-	if((fp = fopen(biosfile,"rb")) == 0) {
-		log_printf("cart_load_fds:  error opening fds bios '%s'\n",biosfile);
+	if((fp = fopen(filename,"rb")) == 0) {
+		log_printf("loadbios:  error opening fds bios '%s'\n",filename);
 		return(1);
 	}
 
@@ -52,14 +47,46 @@ int cart_load_fds(cart_t *ret,const char *filename)
 
 	//read bios
 	if(fread(ret->prg.data,1,0x2000,fp) != 0x2000) {
-		log_printf("cart_load_fds:  error reading bios file '%s'\n",biosfile);
+		log_printf("loadbios:  error reading bios file '%s'\n",filename);
 		fclose(fp);
 		return(1);
 	}
 
 	//close bios file handle
 	fclose(fp);
-	log_printf("cart_load_fds:  loaded bios file '%s'\n",biosfile);
+	log_printf("loadbios:  loaded bios file '%s'\n",filename);
+
+	//success
+	return(0);
+}
+
+int cart_load_fds(cart_t *ret,const char *filename)
+{
+	u8 header[16];
+	FILE *fp;
+	u32 size;
+	char biosfile[1024];
+
+	//clear the string
+	memset(biosfile,0,1024);
+
+	//parse the bios path
+	paths_parse(config->path.bios,biosfile,1024);
+
+	//append the path seperator
+	biosfile[strlen(biosfile)] = PATH_SEPERATOR;
+
+	//append the bios filename
+	strcat(biosfile,config->nes.fds.bios);
+
+	//try to load bios from the bios directory
+	if(loadbios(ret,biosfile) != 0) {
+
+		//see if bios is in the current directory
+		if(loadbios(ret,config->nes.fds.bios) != 0) {
+			return(1);
+		}
+	}
 
 	//open disk file
 	if((fp = fopen(filename,"rb")) == 0) {

@@ -147,9 +147,9 @@ cart_t *cart_load(const char *filename)
 		case FORMAT_INES:		n = cart_load_ines(ret,filename);	break;
 		case FORMAT_INES20:	n = cart_load_ines20(ret,filename);	break;
 		case FORMAT_UNIF:		n = cart_load_unif(ret,filename);	break;
-		case FORMAT_FDS:		n = cart_load_fds(ret,filename);		break;
+		case FORMAT_FDS:
 		case FORMAT_RAWFDS:	n = cart_load_fds(ret,filename);		break;
-//		case FORMAT_NSF:		n = cart_load_nsf(ret,filename);		break;
+		case FORMAT_NSF:		n = cart_load_nsf(ret,filename);		break;
 //		case FORMAT_SPLIT:	n = cart_load_split(ret,filename);	break;
 	}
 

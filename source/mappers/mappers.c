@@ -37,6 +37,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_NINTENDO_AxROM);
 	MAPPER(B_NINTENDO_BxROM);
 	MAPPER(B_NINTENDO_CNROM);
+	MAPPER(B_NINTENDO_CNROM_CP);
 	MAPPER(B_NINTENDO_CPROM);
 	MAPPER(B_NINTENDO_DxROM);
 	MAPPER(B_NINTENDO_ExROM);
@@ -139,12 +140,13 @@ static mapper_t *get_mapper(int mapperid)
 	//waixing
 	MAPPER(B_WAIXING_SGZ);
 	MAPPER(B_WAIXING_FFV);
+	MAPPER(B_WAIXING_SH2);
 
 	//ntdec
 	MAPPER(B_NTDEC_TC112);
+	MAPPER(B_NTDEC_CALTRON6IN1);
 
 	//other (unknown)
-	MAPPER(B_MLT_CALTRON6IN1);
 	MAPPER(B_BMC_15IN1);
 	MAPPER(B_BMC_36IN1);
 	MAPPER(B_BMC_70IN1);
@@ -173,7 +175,7 @@ static mapper_t *get_mapper(int mapperid)
 
 	//others
 	MAPPER(B_FDS);
-//	MAPPER(B_NSF);
+	MAPPER(B_NSF);
 
 	return(0);
 }

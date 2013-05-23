@@ -19,39 +19,77 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
+#include "mappers/chips/mmc3.h"
 
-static u8 reg[2];
+static u8 latch[2][2],latchstate[2];
+static readfunc_t ppuread;
+
+static INLINE void syncchr()
+{
+	u8 bank;
+
+	bank = mmc3_getchrreg(latchstate[0] ? 2 : 0) >> 2;
+	if(bank == 0)
+		mem_setvram4(0,0);
+	else
+		mem_setchr4(0,bank);
+	bank = mmc3_getchrreg(latchstate[1] ? 6 : 4) >> 2;
+	if(bank == 0)
+		mem_setvram4(4,0);
+	else
+		mem_setchr4(4,bank);
+}
 
 static void sync()
 {
-	mem_setprg32(8,reg[0] & 7);
-	mem_setchr8(0,((reg[0] & 0x18) >> 1) | (reg[1] & 3));
-	mem_setmirroring(((~reg[0]) >> 5) & 1);
+	mmc3_syncprg(0xFF,0);
+	syncchr();
+	mem_setmirroring(mmc3_getmirror() ^ 1);
+	mmc3_syncsram();
 }
 
-static void write(u32 addr,u8 data)
+static u8 readtile(u32 addr)
 {
-	if(addr < 0x6800)
-		reg[0] = addr & 0x3F;
-	else if((addr >= 0x8000) && (reg[0] & 4))
-		reg[1] = data & 3;
-	sync();
+	switch(addr & 0xFFF8) {
+		case 0x0FD8:
+			latchstate[0] = 0;
+			syncchr();
+			break;
+		case 0x0FE8:
+			latchstate[0] = 1;
+			syncchr();
+			break;
+		case 0x1FD8:
+			latchstate[1] = 0;
+			syncchr();
+			break;
+		case 0x1FE8:
+			latchstate[1] = 1;
+			syncchr();
+			break;
+	}
+	return(ppuread(addr));
 }
 
 static void reset(int hard)
 {
-	int i;
+	mem_setvramsize(4);
+	latch[0][0] = latch[0][1] = 0;
+	latch[1][0] = latch[1][1] = 0;
+	latchstate[0] = latchstate[1] = 0;
+	ppuread = ppu_getreadfunc();
+	ppu_setreadfunc(readtile);
+	mmc3_reset(C_MMC3B,sync,hard);
+}
 
-	for(i=6;i<16;i++)
-		mem_setwritefunc(i,write);
-	reg[0] = reg[1] = 0;
-	sync();
+static void ppucycle()
+{
+	mmc3_ppucycle();
 }
 
 static void state(int mode,u8 *data)
 {
-	STATE_ARRAY_U8(reg,2);
-	sync();
+	mmc3_state(mode,data);
 }
 
-MAPPER(B_MLT_CALTRON6IN1,reset,0,0,state);
+MAPPER(B_WAIXING_SH2,reset,ppucycle,0,state);

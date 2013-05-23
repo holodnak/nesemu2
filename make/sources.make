@@ -22,7 +22,7 @@ SOURCE_INPUTDEV = $(foreach dir,$(PATH_SOURCE)/inputdev,$(wildcard $(dir)/*.c))
 # nes core
 SOURCE_NES = source/nes/memory.c source/nes/nes.c source/nes/io.c source/nes/genie.c
 SOURCE_NES += source/nes/cart/cart.c source/nes/cart/ines.c source/nes/cart/ines20.c
-SOURCE_NES += source/nes/cart/unif.c source/nes/cart/fds.c
+SOURCE_NES += source/nes/cart/unif.c source/nes/cart/fds.c source/nes/cart/nsf.c
 SOURCE_NES += source/nes/state/state.c source/nes/state/block.c
 SOURCE_NES += source/nes/cpu/cpu.c source/nes/cpu/disassemble.c
 SOURCE_NES += source/nes/ppu/io.c source/nes/ppu/ppu.c source/nes/ppu/step.c

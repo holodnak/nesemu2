@@ -19,20 +19,27 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+#include "mappers/sound/s_FDS.h"
+#include "misc/log.h"
 
-static void sync()
+static readfunc_t read4;
+
+static u8 read_bios(u32 addr)
 {
-	mem_setvram4(0,0);
-	mem_setvram4(4,latch_data & 3);
+	addr &= 0xFFF;
 }
 
 static void reset(int hard)
 {
-	mem_setvramsize(16);
-	latch_init(sync);
-	mem_setprg16(0x8,0);
-	mem_setprg16(0xC,(u32)-1);
+	read4 = mem_getreadfunc(4);
 }
 
-MAPPER(B_NINTENDO_CPROM,reset,0,0,latch_state);
+static void cpucycle()
+{
+}
+	
+static void state(int mode,u8 *data)
+{
+}
+
+MAPPER(B_NSF,reset,0,cpucycle,state);

@@ -66,6 +66,11 @@ u8 mmc3_getcommand()
 	return(command);
 }
 
+u8 mmc3_getmirror()
+{
+	return(mirror);
+}
+
 void mmc3_syncprg(int a,int o)
 {
 	mem_setprg8(0x8,(mmc3_getprgbank(0) & a) | o);

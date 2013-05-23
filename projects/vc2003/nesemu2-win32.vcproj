@@ -694,6 +694,21 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath="..\..\source\nes\cart\nsf.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/nes/cart/"/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="..\..\source\nes\cart\unif.c">
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -799,6 +814,9 @@
 							RelativePath="..\..\source\mappers\boards\nintendo\cnrom.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\cnrom_cp.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\cprom.c">
 						</File>
 						<File
@@ -901,6 +919,9 @@
 						Name="jaleco"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\jaleco\jf11.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\jaleco\ss88006.c">
 						</File>
 					</Filter>
@@ -914,13 +935,7 @@
 							RelativePath="..\..\source\mappers\boards\other\magicseries.c">
 						</File>
 						<File
-							RelativePath="..\..\source\mappers\boards\other\mlt-caltron6in1.c">
-						</File>
-						<File
 							RelativePath="..\..\source\mappers\boards\other\rumblestation.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\union-bond-ffv.c">
 						</File>
 						<Filter
 							Name="bmc"
@@ -1000,6 +1015,9 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\sachen\sachen-74ls374n.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sachen\sachen-8259x.c">
 						</File>
 					</Filter>
 					<Filter
@@ -1084,7 +1102,13 @@
 						Name="waixing"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\waixing\ffv.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\waixing\sgz.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\waixing\sh2.c">
 						</File>
 					</Filter>
 					<Filter
@@ -1109,6 +1133,9 @@
 					<Filter
 						Name="ntdec"
 						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\ntdec\caltron6in1.c">
+						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\ntdec\tc-112.c">
 						</File>
@@ -1137,6 +1164,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\namcot-108.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\sachen-8259.c">
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\taito-tc0190fmc.c">
@@ -1300,6 +1330,13 @@
 							</FileConfiguration>
 						</File>
 					</Filter>
+				</Filter>
+				<Filter
+					Name="nsf"
+					Filter="">
+					<File
+						RelativePath="..\..\source\mappers\nsf\nsf.c">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

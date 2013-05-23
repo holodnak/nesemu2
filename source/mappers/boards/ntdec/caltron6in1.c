@@ -19,20 +19,39 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+
+static u8 reg[2];
 
 static void sync()
 {
-	mem_setvram4(0,0);
-	mem_setvram4(4,latch_data & 3);
+	mem_setprg32(8,reg[0] & 7);
+	mem_setchr8(0,((reg[0] & 0x18) >> 1) | (reg[1] & 3));
+	mem_setmirroring(((~reg[0]) >> 5) & 1);
+}
+
+static void write(u32 addr,u8 data)
+{
+	if(addr < 0x6800)
+		reg[0] = addr & 0x3F;
+	else if((addr >= 0x8000) && (reg[0] & 4))
+		reg[1] = data & 3;
+	sync();
 }
 
 static void reset(int hard)
 {
-	mem_setvramsize(16);
-	latch_init(sync);
-	mem_setprg16(0x8,0);
-	mem_setprg16(0xC,(u32)-1);
+	int i;
+
+	for(i=6;i<16;i++)
+		mem_setwritefunc(i,write);
+	reg[0] = reg[1] = 0;
+	sync();
 }
 
-MAPPER(B_NINTENDO_CPROM,reset,0,0,latch_state);
+static void state(int mode,u8 *data)
+{
+	STATE_ARRAY_U8(reg,2);
+	sync();
+}
+
+MAPPER(B_NTDEC_CALTRON6IN1,reset,0,0,state);

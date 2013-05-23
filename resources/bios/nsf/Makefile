@@ -1,0 +1,27 @@
+# Makefile for nsfbios
+
+TARGET = nsfbios.bin
+SOURCE = nsfbios.s
+OBJECT = $(patsubst %.s,%.o,$(SOURCE))
+
+AS = wla-6502
+LD = wlalink
+
+ASFLAGS =
+LDFLAGS = -d linkfile
+
+$(TARGET): $(OBJECT)
+	$(LD) $(LDFLAGS) $@
+
+all: $(TARGET)
+	cp $(TARGET) ../../../test/data/bios/
+
+clean:
+	rm -f $(OBJECT) $(TARGET)
+
+.SUFFIXES: .s
+
+.s.o:
+	$(AS) -$(ASFLAGS)o $< $@
+
+.PHONY: all clean

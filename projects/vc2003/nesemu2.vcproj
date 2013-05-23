@@ -710,6 +710,9 @@
 						RelativePath="..\..\source\nes\cart\ines20.c">
 					</File>
 					<File
+						RelativePath="..\..\source\nes\cart\nsf.c">
+					</File>
+					<File
 						RelativePath="..\..\source\nes\cart\unif.c">
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -807,6 +810,9 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\cnrom.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\nintendo\cnrom_cp.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\nintendo\cprom.c">
@@ -952,9 +958,6 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\magicseries.c">
-						</File>
-						<File
-							RelativePath="..\..\source\mappers\boards\other\mlt-caltron6in1.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\rumblestation.c">
@@ -1121,10 +1124,16 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\waixing\sgz.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\waixing\sh2.c">
+						</File>
 					</Filter>
 					<Filter
 						Name="ntdec"
 						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\ntdec\caltron6in1.c">
+						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\ntdec\tc-112.c">
 						</File>
@@ -1319,6 +1328,25 @@
 							</FileConfiguration>
 						</File>
 					</Filter>
+				</Filter>
+				<Filter
+					Name="nsf"
+					Filter="">
+					<File
+						RelativePath="..\..\source\mappers\nsf\nsf.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/mappers/nsf/"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/mappers/nsf/"/>
+						</FileConfiguration>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -1588,6 +1616,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\nes\cart\ines20.h">
+					</File>
+					<File
+						RelativePath="..\..\source\nes\cart\nsf.h">
 					</File>
 					<File
 						RelativePath="..\..\source\nes\cart\unif.h">

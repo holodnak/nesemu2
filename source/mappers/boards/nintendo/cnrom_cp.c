@@ -21,18 +21,35 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/latch.h"
 
+static u8 readchr(u32 addr)
+{
+	return(0x12);
+}
+
 static void sync()
 {
-	mem_setvram4(0,0);
-	mem_setvram4(4,latch_data & 3);
+	int i;
+
+	//chr enabled
+	if((latch_data & 0xF) && latch_data != 0x13) {
+		mem_setchr8(0,0);
+		for(i=0;i<8;i++)
+			nes.ppu.readfuncs[i] = 0;
+	}
+
+	//chr disabled
+	else {
+		mem_unsetppu8(0);
+		for(i=0;i<8;i++)
+			nes.ppu.readfuncs[i] = readchr;
+	}
 }
 
 static void reset(int hard)
 {
-	mem_setvramsize(16);
 	latch_init(sync);
 	mem_setprg16(0x8,0);
 	mem_setprg16(0xC,(u32)-1);
 }
 
-MAPPER(B_NINTENDO_CPROM,reset,0,0,latch_state);
+MAPPER(B_NINTENDO_CNROM_CP,reset,0,0,latch_state);

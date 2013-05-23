@@ -19,53 +19,70 @@
  ***************************************************************************/
 
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "misc/memutil.h"
-#include "misc/log.h"
-#include "misc/config.h"
-#include "misc/paths.h"
 #include "nes/cart/cart.h"
+#include "nes/cart/nsf.h"
+#include "misc/log.h"
+#include "misc/paths.h"
+#include "misc/config.h"
+#include "misc/memutil.h"
 #include "mappers/mapperid.h"
-
-static u8 fdsident[] = "FDS\x1a";
-static u8 fdsident2[] = "\x01*NINTENDO-HVC*";
 
 static int loadbios(cart_t *ret,char *filename)
 {
 	FILE *fp;
+	size_t size;
+	u8 header[12];
 
 	//open bios file
 	if((fp = fopen(filename,"rb")) == 0) {
-		log_printf("loadbios:  error opening fds bios '%s'\n",filename);
+		log_printf("loadbios:  error opening nsf bios '%s'\n",filename);
 		return(1);
 	}
 
-	//setup prg for bios
-	ret->prg.size = 0x2000;
-	ret->prg.mask = 0x1FFF;
-	ret->prg.data = (u8*)mem_alloc(0x2000);
+	//get size of the nsf bios
+	fseek(fp,0,SEEK_END);
+	size = ftell(fp);
+	fseek(fp,0,SEEK_SET);
+
+	//bios has a 12 byte header:
+	// addr size description
+	// ---- ---- -----------
+	//  00   07   ident string (NSFBIOS)
+   //  07   01   version hi
+   //  08   01   version lo
+	//  09   01   number of 1kb prg banks
+	//  0A   02   chr size in bytes
+	fread(header,1,12,fp);
+
+	if(memcmp(header,"NSFBIOS",7) != 0) {
+		log_printf("loadbios:  nsf bios ident is bad\n");
+		fclose(fp);
+		return(1);
+	}
+
+	//load bios prg into sram, load the chr into chr
+	ret->sram.size = header[9] * 1024;
+	ret->sram.mask = ret->sram.size - 1;
+	ret->sram.data = (u8*)mem_alloc(ret->sram.size);
 
 	//read bios
-	if(fread(ret->prg.data,1,0x2000,fp) != 0x2000) {
-		log_printf("loadbios:  error reading bios file '%s'\n",filename);
+	if(fread(ret->sram.data,1,ret->sram.size,fp) != ret->sram.size) {
+		log_printf("loadbios:  error reading nsf bios file '%s'\n",filename);
 		fclose(fp);
 		return(1);
 	}
 
 	//close bios file handle
 	fclose(fp);
-	log_printf("loadbios:  loaded bios file '%s'\n",filename);
+	log_printf("loadbios:  nsf bios loaded.  version %d.%d\n",header[7],header[8]);
 
 	//success
 	return(0);
 }
 
-int cart_load_fds(cart_t *ret,const char *filename)
+int cart_load_nsf(cart_t *ret,const char *filename)
 {
-	u8 header[16];
-	FILE *fp;
-	u32 size;
+	nsf_t header;
 	char biosfile[1024];
 
 	//clear the string
@@ -78,71 +95,18 @@ int cart_load_fds(cart_t *ret,const char *filename)
 	biosfile[strlen(biosfile)] = PATH_SEPERATOR;
 
 	//append the bios filename
-	strcat(biosfile,config->nes.fds.bios);
+	strcat(biosfile,"nsfbios.bin");
 
 	//try to load bios from the bios directory
 	if(loadbios(ret,biosfile) != 0) {
 
 		//see if bios is in the current directory
-		if(loadbios(ret,config->nes.fds.bios) != 0) {
+		if(loadbios(ret,"nsfbios.bin") != 0) {
 			return(1);
 		}
 	}
 
-	//open disk file
-	if((fp = fopen(filename,"rb")) == 0) {
-		log_printf("cart_load_fds:  error opening '%s'\n",filename);
-		return(1);
-	}
+	ret->mapperid = B_NSF;
 
-	//get length of file
-	fseek(fp,0,SEEK_END);
-	size = ftell(fp);
-	fseek(fp,0,SEEK_SET);
-
-	//read the header
-	fread(header,1,16,fp);
-
-	//check if this is raw fds disk
-	if(memcmp(header,fdsident2,15) == 0) {
-
-		//check if the file is a valid size
-		if((size % 65500) != 0) {
-			log_printf("cart_load_fds:  fds disk image size not multiple of 65500, aborting\n");
-			fclose(fp);
-			return(1);
-		}
-
-		//set number of disk sides
-//		ret->disksides = size / 65500;
-
-		//skip back to the beginning
-		fseek(fp,0,SEEK_SET);
-	}
-
-	//check if this is 16-byte header fds disk
-	else if(memcmp(header,fdsident,4) == 0) {
-
-		//set number of disk sides
-//		ret->disksides = header[4];
-		size -= 16;
-
-	}
-
-	ret->mapperid = B_FDS;
-
-	//setup the disk data pointers
-	ret->disk.size = size;
-	ret->disk.data = (u8*)mem_alloc(size);
-	ret->diskoriginal.size = size;
-	ret->diskoriginal.data = (u8*)mem_alloc(size);
-
-	//read disk data into pointer
-	fread(ret->disk.data,1,size,fp);
-
-	//copy to original disk data pointer
-	memcpy(ret->diskoriginal.data,ret->disk.data,size);
-
-	log_printf("cart_load_fds:  loaded disk, %d sides (%d bytes)\n",ret->disk.size / 65500,size);
 	return(0);
 }

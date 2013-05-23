@@ -28,9 +28,9 @@ static void sync()
 
 static void reset(int hard)
 {
-	mem_setvramsize(8);
 	latch_init(sync);
-	mem_setprg32(8,0);
+	mem_setprg16(0x8,0);
+	mem_setprg16(0xC,(u32)-1);
 }
 
 MAPPER(B_NINTENDO_CNROM,reset,0,0,latch_state);

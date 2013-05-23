@@ -39,6 +39,7 @@ u8 mmc3_getprgbank(int n);
 u8 mmc3_getchrbank(int n);
 u8 mmc3_getchrreg(int n);
 u8 mmc3_getcommand();
+u8 mmc3_getmirror();
 void mmc3_syncprg(int a,int o);
 void mmc3_syncchr(int a,int o);
 void mmc3_syncvram(int a,int o);

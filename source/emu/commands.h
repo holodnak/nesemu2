@@ -30,7 +30,7 @@
 	}
 
 #define CHECK_CART()							\
-	if(nes.cart == 0) {						\
+	if(nes->cart == 0) {						\
 		log_printf("no rom loaded!\n");	\
 		return(1);								\
 	}

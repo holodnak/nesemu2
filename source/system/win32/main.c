@@ -43,27 +43,16 @@ char exepath[1024] = "";
 
 void video_resize();
 
-__inline void checkmessages()
-{
-	MSG msg;
-
-	while(PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
-		if(IsDialogMessage(hConsole,&msg) == FALSE &&
-			IsDialogMessage(hDebugger,&msg) == FALSE) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-}
+void checkmessages();
 
 int mainloop()
 {
 	while(quit == 0) {
 		checkmessages();
-		if(running && nes.cart) {
+		video_startframe();
+		if(running && nes->cart) {
 			nes_frame();
 		}
-		video_startframe();
 		video_endframe();
 		input_poll();
 	}
@@ -78,6 +67,8 @@ static void console_loghook(char *str)
 	Edit_SetSel(hCtrl,index,index);
 	Edit_ReplaceSel(hCtrl,str);
 }
+
+void resizeclient(HWND hwnd,int w,int h);
 
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -105,6 +96,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 	if(emu_init() != 0)
 		return(FALSE);
+
+	resizeclient(hWnd,config->video.scale * 256,config->video.scale * 240);
+   ShowWindow(hWnd, nCmdShow);
+   UpdateWindow(hWnd);
 
 	//this is temporary
 	nes_set_inputdev(0,I_JOYPAD0);

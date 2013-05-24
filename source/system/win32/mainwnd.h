@@ -28,5 +28,6 @@ extern HWND hDebugger;
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow);
+void resizeclient(HWND hwnd,int w,int h);
 
 #endif

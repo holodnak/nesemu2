@@ -33,11 +33,11 @@ static u8 *sram7;
 void mmc3_sync()
 {
 	mmc3_syncprg(0xFF,0);
-	if(nes.cart->chr.size)
+	if(nes->cart->chr.size)
 		mmc3_syncchr(0xFF,0);
 	else
 		mmc3_syncvram(7,0);
-	if(nes.cart->mirroring == MIRROR_4)
+	if(nes->cart->mirroring == MIRROR_4)
 	   mem_setmirroring(MIRROR_4);
 	else
 		mmc3_syncmirror();
@@ -143,7 +143,7 @@ void mmc3_reset(int t,void (*s)(),int hard)
 
 	type = t;
 	mem_setsramsize(2);
-	if(nes.cart->chr.size == 0)
+	if(nes->cart->chr.size == 0)
 		mem_setvramsize(8);
 	for(i=8;i<0x10;i++)
 		mem_setwritefunc(i,mmc3_write);
@@ -260,7 +260,7 @@ void mmc3_ppucycle()
 
 	if(irqwait)
 		irqwait--;
-	if((irqwait == 0) && (nes.ppu.busaddr & 0x1000)) {
+	if((irqwait == 0) && (nes->ppu.busaddr & 0x1000)) {
 /*		if((irqcounter == 0) || irqreload) {
 			irqcounter = irqlatch;
 			log_printf("mmc3_cycle:  RELOADED!  irq counter = %d (frame %d, line %d, pixel %d)\n",irqcounter,FRAMES,SCANLINE,LINECYCLES);
@@ -288,9 +288,9 @@ void mmc3_ppucycle()
 		}
 		irqreload = 0;
 	}
-	if(nes.ppu.busaddr & 0x1000) {
+	if(nes->ppu.busaddr & 0x1000) {
 //		if(FRAMES >= 16)
-//		log_printf("mmc3_cycle:  busaddr A12 high ($%04X), line %d, pixel %d\n",nes.ppu.busaddr,nes.ppu.scanline,nes.ppu.linecycles);
+//		log_printf("mmc3_cycle:  busaddr A12 high ($%04X), line %d, pixel %d\n",nes->ppu.busaddr,nes->ppu.scanline,nes->ppu.linecycles);
 		irqwait = 8;
 	}
 }

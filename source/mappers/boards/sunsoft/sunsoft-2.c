@@ -25,7 +25,7 @@ static void sync()
 {
 	mem_setprg16(0x8,(latch_data >> 4) & 7);
 	mem_setprg16(0xC,0xFF);
-	if(nes.cart->chr.size == 0) {
+	if(nes->cart->chr.size == 0) {
 		mem_setvram8(0,0);
 	}
 	else {
@@ -36,7 +36,7 @@ static void sync()
 
 static void reset(int hard)
 {
-	if(nes.cart->chr.size == 0) {
+	if(nes->cart->chr.size == 0) {
 		mem_setvramsize(8);
 	}
 	latch_init(sync);

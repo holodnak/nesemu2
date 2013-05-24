@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#define dpcm nes.apu.dpcm
+#define dpcm nes->apu.dpcm
 
 static u32 DpcmFreqTable[16] = {
 	0x1AC,0x17C,0x154,0x140,0x11E,0x0FE,0x0E2,0x0D6,

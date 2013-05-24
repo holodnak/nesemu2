@@ -29,13 +29,13 @@ static u8 lastreg;
 void mmc1_sync()
 {
 	mmc1_syncmirror();
-	if(nes.cart->prg.size > 0x40000) {
+	if(nes->cart->prg.size > 0x40000) {
 		mem_setprg16(0x8,(mmc1_getlowprg() & 0xf) | (mmc1_getlowchr() & 0x10));
 		mem_setprg16(0xC,(mmc1_gethighprg() & 0xf) | (mmc1_getlowchr() & 0x10));
 	}
 	else
 		mmc1_syncprg(0xF,0);
-	if(nes.cart->chr.size)
+	if(nes->cart->chr.size)
 		mmc1_syncchr(0x1F,0);
 	else
 		mmc1_syncvram(1,0);

@@ -38,7 +38,7 @@ void sachen8259_sync()
 			case 6: mem_setmirroring(MIRROR_1L); break;
 		}
 	}
-	if(nes.cart->chr.size)
+	if(nes->cart->chr.size)
 		syncchr();
 }
 

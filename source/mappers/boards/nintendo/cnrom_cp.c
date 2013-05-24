@@ -34,14 +34,14 @@ static void sync()
 	if((latch_data & 0xF) && latch_data != 0x13) {
 		mem_setchr8(0,0);
 		for(i=0;i<8;i++)
-			nes.ppu.readfuncs[i] = 0;
+			nes->ppu.readfuncs[i] = 0;
 	}
 
 	//chr disabled
 	else {
 		mem_unsetppu8(0);
 		for(i=0;i<8;i++)
-			nes.ppu.readfuncs[i] = readchr;
+			nes->ppu.readfuncs[i] = readchr;
 	}
 }
 

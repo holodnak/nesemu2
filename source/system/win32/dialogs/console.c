@@ -25,7 +25,7 @@
 #include "system/win32/mainwnd.h"
 #include "system/win32/resource.h"
 
-BOOL CALLBACK ConsoleProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK ConsoleProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	char *str;
 	int len;

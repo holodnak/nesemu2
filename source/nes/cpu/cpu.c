@@ -29,28 +29,28 @@
 #define SHOW_DISASM
 
 //defines to make easier reading
-#define PC					nes.cpu.pc
-#define A					nes.cpu.a
-#define X					nes.cpu.x
-#define Y					nes.cpu.y
-#define P					nes.cpu.p
-#define SP					nes.cpu.sp
-#define TMPADDR			nes.cpu.tmpaddr
-#define EFFADDR			nes.cpu.effaddr
-#define FLAG_C				nes.cpu.flags.c
-#define FLAG_Z				nes.cpu.flags.z
-#define FLAG_I				nes.cpu.flags.i
-#define FLAG_D				nes.cpu.flags.d
-#define FLAG_V				nes.cpu.flags.v
-#define FLAG_N				nes.cpu.flags.n
-#define OPCODE				nes.cpu.opcode
-#define OPADDR				nes.cpu.opaddr
-#define TMPREG				nes.cpu.tmpreg
-#define CYCLES				nes.cpu.cycles
-#define NMISTATE			nes.cpu.nmistate
-#define IRQSTATE			nes.cpu.irqstate
-#define PREV_NMISTATE	nes.cpu.prev_nmistate
-#define PREV_IRQSTATE	nes.cpu.prev_irqstate
+#define PC					nes->cpu.pc
+#define A					nes->cpu.a
+#define X					nes->cpu.x
+#define Y					nes->cpu.y
+#define P					nes->cpu.p
+#define SP					nes->cpu.sp
+#define TMPADDR			nes->cpu.tmpaddr
+#define EFFADDR			nes->cpu.effaddr
+#define FLAG_C				nes->cpu.flags.c
+#define FLAG_Z				nes->cpu.flags.z
+#define FLAG_I				nes->cpu.flags.i
+#define FLAG_D				nes->cpu.flags.d
+#define FLAG_V				nes->cpu.flags.v
+#define FLAG_N				nes->cpu.flags.n
+#define OPCODE				nes->cpu.opcode
+#define OPADDR				nes->cpu.opaddr
+#define TMPREG				nes->cpu.tmpreg
+#define CYCLES				nes->cpu.cycles
+#define NMISTATE			nes->cpu.nmistate
+#define IRQSTATE			nes->cpu.irqstate
+#define PREV_NMISTATE	nes->cpu.prev_nmistate
+#define PREV_IRQSTATE	nes->cpu.prev_irqstate
 
 //cpu memory read/write functions
 readfunc_t cpu_read;
@@ -99,15 +99,15 @@ void cpu_kill()
 
 void cpu_reset(int hard)
 {
-	nes.cpu.readpages[0] = nes.cpu.writepages[0] = (u8*)nes.cpu.ram;
-	nes.cpu.readpages[1] = nes.cpu.writepages[1] = (u8*)nes.cpu.ram + 0x400;
+	nes->cpu.readpages[0] = nes->cpu.writepages[0] = (u8*)nes->cpu.ram;
+	nes->cpu.readpages[1] = nes->cpu.writepages[1] = (u8*)nes->cpu.ram + 0x400;
 
 	if(hard) {
 		A = X = Y = 0;
 		SP = 0xFD;
 		P = 0x24;
 		expand_flags();
-		memset(nes.cpu.ram,0,0x800);
+		memset(nes->cpu.ram,0,0x800);
 	}
 	else {
 		FLAG_I = 1;
@@ -123,7 +123,7 @@ void cpu_reset(int hard)
 
 u64 cpu_getcycles()
 {
-	return(nes.cpu.cycles);
+	return(nes->cpu.cycles);
 }
 
 void cpu_set_nmi()
@@ -164,7 +164,7 @@ void cpu_tick()
 	apu_step();
 
 	//call the mapper callback
-	nes.mapper->cpucycle();
+	nes->mapper->cpucycle();
 }
 
 static u8 read_cpu_memory(u32 addr)
@@ -172,13 +172,13 @@ static u8 read_cpu_memory(u32 addr)
 	u32 page = addr >> 10;
 
 	//see if this page is handled by a memory pointer
-	if(nes.cpu.readpages[page] != 0) {
-		return(nes.cpu.readpages[page][addr & 0x3FF]);
+	if(nes->cpu.readpages[page] != 0) {
+		return(nes->cpu.readpages[page][addr & 0x3FF]);
 	}
 
 	//see if this page is handled by a read function
-	if(nes.cpu.readfuncs[page] != 0) {
-		return(nes.cpu.readfuncs[page](addr));
+	if(nes->cpu.readfuncs[page] != 0) {
+		return(nes->cpu.readfuncs[page](addr));
 	}
 
 	//not handled
@@ -192,14 +192,14 @@ static void write_cpu_memory(u32 addr,u8 data)
 	u32 page = addr >> 10;
 
 	//see if this page is handled by a memory pointer
-	if(nes.cpu.writepages[page] != 0) {
-		nes.cpu.writepages[page][addr & 0x3FF] = data;
+	if(nes->cpu.writepages[page] != 0) {
+		nes->cpu.writepages[page][addr & 0x3FF] = data;
 		return;
 	}
 
 	//see if this page is handled by a read function
-	if(nes.cpu.writefuncs[page] != 0) {
-		nes.cpu.writefuncs[page](addr,data);
+	if(nes->cpu.writefuncs[page] != 0) {
+		nes->cpu.writefuncs[page](addr,data);
 		return;
 	}
 
@@ -245,5 +245,5 @@ void cpu_state(int mode,u8 *data)
 	STATE_U64(CYCLES);
 	STATE_U8(PREV_NMISTATE);
 	STATE_U8(PREV_IRQSTATE);
-	STATE_ARRAY_U8(nes.cpu.ram,0x800);
+	STATE_ARRAY_U8(nes->cpu.ram,0x800);
 }

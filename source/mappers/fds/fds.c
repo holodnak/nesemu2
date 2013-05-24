@@ -86,7 +86,7 @@ static u8 read(u32 addr)
 		//status register
 		case 0x4030:
 			ret = status;
-//			log_printf("fds.c:  irq ack. (%02X - %02X)\n",nes.cpu.prev_irqstate,nes.cpu.irqstate);
+//			log_printf("fds.c:  irq ack. (%02X - %02X)\n",nes->cpu.prev_irqstate,nes->cpu.irqstate);
 			clearirq(IRQ_DISK | IRQ_TIMER);
 			return(ret);
 
@@ -98,7 +98,7 @@ static u8 read(u32 addr)
 				return(diskread);
 
 			//get byte read from disk
-			diskread = nes.cart->disk.data[(diskside * 65500) + diskaddr];
+			diskread = nes->cart->disk.data[(diskside * 65500) + diskaddr];
 //			log_printf("fds.c:  $4031 read:  side = %d, diskaddr = %d, diskdata = $%02X\n",diskside,diskaddr,diskread);
 
 			//increment disk data address
@@ -186,7 +186,7 @@ static void write(u32 addr,u8 data)
 					if(writeskip)
 						writeskip--;
 					else if(diskaddr >= 2) {
-						nes.cart->disk.data[(diskside * 65500) + (diskaddr - 2)] = data;
+						nes->cart->disk.data[(diskside * 65500) + (diskaddr - 2)] = data;
 //						log_printf("fds.c:  writing data to disk %d addr (%d - 2) data $%02X\n",diskside,diskaddr,data);
 					}
 			}

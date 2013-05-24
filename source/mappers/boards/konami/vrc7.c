@@ -42,7 +42,7 @@ static void sync()
 	mem_setprg8(0xA,prg[1]);
 	mem_setprg8(0xC,prg[2]);
 	mem_setprg8(0xE,0xFF);
-	if(nes.cart->chr.size) {
+	if(nes->cart->chr.size) {
 		for(i=0;i<8;i++)
 			mem_setchr1(i,chr[i]);
 	}

@@ -19,6 +19,7 @@
 #define IDD_CONSOLE                     135
 #define IDD_CONFIG_GENERAL3             136
 #define IDD_BREAKPOINT                  137
+#define IDR_ACCELERATOR                 138
 #define IDC_EDIT1                       1000
 #define IDC_AEDIT                       1000
 #define IDC_DATAPATHEDIT                1000
@@ -100,6 +101,7 @@
 #define ID_VIEW_CONSOLE                 32792
 #define ID_NES_FDS                      32793
 #define ID_FDS_FLIPDISK                 32794
+#define ID_VIEW_FULLSCREEN              32797
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -107,8 +109,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        138
-#define _APS_NEXT_COMMAND_VALUE         32795
+#define _APS_NEXT_RESOURCE_VALUE        139
+#define _APS_NEXT_COMMAND_VALUE         32801
 #define _APS_NEXT_CONTROL_VALUE         1047
 #define _APS_NEXT_SYMED_VALUE           110
 #endif

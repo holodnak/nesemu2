@@ -101,10 +101,10 @@ static void genie_write(u32 addr,u8 data)
 					cpu_setreadfunc(genie_read_cheat);
 
 					//restore the old mapper
-					nes.mapper = mapper_init(nes.cart->mapperid);
+					nes->mapper = mapper_init(nes->cart->mapperid);
 
 					//reset the mapper
-					nes.mapper->reset(1);
+					nes->mapper->reset(1);
 				}
 				else {
 					reg = 0x80 | (data & 0x7E);
@@ -225,7 +225,7 @@ int genie_load()
 	}
 
 	//load in the genie mapper
-	nes.mapper = &mapperB_GENIE;
+	nes->mapper = &mapperB_GENIE;
 
 	return(0);
 }
@@ -254,10 +254,10 @@ void genie_reset(int hard)
 
 	//manually map the game genie chr/cache
 	for(i=0;i<8;i++) {
-		nes.ppu.readpages[i] = genierom + 0x1000;
-		nes.ppu.writepages[i] = 0;
-		nes.ppu.cachepages[i] = geniecache;
-		nes.ppu.cachepages_hflip[i] = geniecache;
+		nes->ppu.readpages[i] = genierom + 0x1000;
+		nes->ppu.writepages[i] = 0;
+		nes->ppu.cachepages[i] = geniecache;
+		nes->ppu.cachepages_hflip[i] = geniecache;
 	}
 
 	//setup genie registers

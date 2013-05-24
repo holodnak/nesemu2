@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#define noi nes.apu.noise
+#define noi nes->apu.noise
 
 static u32 NoiseFreqTable[16] = {
 	0x004,0x008,0x010,0x020,0x040,0x060,0x080,0x0A0,

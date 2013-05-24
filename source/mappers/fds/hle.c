@@ -229,7 +229,7 @@ u32 hle_getparam(int n)
 	u32 tmp,retaddr,addr;
 
 	//current stack address
-	tmp = 0x100 + nes.cpu.sp;
+	tmp = 0x100 + nes->cpu.sp;
 
 	//get the return address off the stack
 	retaddr = cpu_read(tmp + 1);
@@ -251,7 +251,7 @@ void hle_fixretaddr(int n)
 	u32 tmp,retaddr;
 
 	//current stack address
-	tmp = 0x100 + nes.cpu.sp;
+	tmp = 0x100 + nes->cpu.sp;
 
 	//get the return address off the stack
 	retaddr = cpu_read(tmp + 1);
@@ -318,7 +318,7 @@ void hlefds_write(u32 addr,u8 data)
 	}
 }
 
-#define READPAGE(addr)	nes.cpu.readpages[(addr) >> 10][(addr) & 0x3FF]
+#define READPAGE(addr)	nes->cpu.readpages[(addr) >> 10][(addr) & 0x3FF]
 
 extern int showdisasm;
 
@@ -332,10 +332,10 @@ void hlefds_intercept()
 //	showdisasm = 1;
 
 	//if the opaddr changes, we are reading an opcode
-	if(nes.cpu.opaddr >= 0xE000 && nes.cpu.opaddr != lastopaddr) {
+	if(nes->cpu.opaddr >= 0xE000 && nes->cpu.opaddr != lastopaddr) {
 
 		//save op address
-		lastopaddr = nes.cpu.opaddr;
+		lastopaddr = nes->cpu.opaddr;
 
 		for(i=0;hle_call_table[i].name;i++) {
 
@@ -344,16 +344,16 @@ void hlefds_intercept()
 				continue;
 
 			//check for match and if we have matching hle function
-			if(nes.cpu.opaddr == hle_call_table[i].addr && hle_call_table[i].hle != 0xFF) {
+			if(nes->cpu.opaddr == hle_call_table[i].addr && hle_call_table[i].hle != 0xFF) {
 
-				log_printf("intercepting at $%04X (%s) with hle call $%02X\n",nes.cpu.opaddr,hle_call_table[i].name,hle_call_table[i].hle);
+				log_printf("intercepting at $%04X (%s) with hle call $%02X\n",nes->cpu.opaddr,hle_call_table[i].name,hle_call_table[i].hle);
 
 				//if first byte of 'code' is 0, use default calling method
 				if(hle_call_table[i].code[0] == 0) {
 
 					//insert NOP + RTS
-					READPAGE(nes.cpu.opaddr+0) = 0xEA;
-					READPAGE(nes.cpu.opaddr+1) = 0x60;
+					READPAGE(nes->cpu.opaddr+0) = 0xEA;
+					READPAGE(nes->cpu.opaddr+1) = 0x60;
 
 					//call the hle function
 					hlefds_write(0x4221,hle_call_table[i].hle);
@@ -363,7 +363,7 @@ void hlefds_intercept()
 				else {
 
 					//NOP
-					READPAGE(nes.cpu.opaddr) = 0xEA;
+					READPAGE(nes->cpu.opaddr) = 0xEA;
 
 					//copy the code data
 					for(j=0;;j++) {
@@ -374,7 +374,7 @@ void hlefds_intercept()
 							hlefds_write(0x4221,hle_call_table[i].hle);
 							break;
 						}
-						READPAGE(nes.cpu.opaddr + 1 + j) = byte;
+						READPAGE(nes->cpu.opaddr + 1 + j) = byte;
 					}
 				}
 
@@ -391,21 +391,21 @@ void hlefds_cpucycle()
 	int i,found = 0;
 
 //	showdisasm = 1;
-	if(nes.cpu.opaddr >= 0xE000 && lastopaddr < 0xE000) {
+	if(nes->cpu.opaddr >= 0xE000 && lastopaddr < 0xE000) {
 		for(i=0;hle_call_table[i].name;i++) {
-			if(hle_call_table[i].addr == nes.cpu.opaddr) {
+			if(hle_call_table[i].addr == nes->cpu.opaddr) {
 				int t = hle_call_table[i].group;
 				char *types[9] = {"???","VECTOR","DISK","PAD","PPU","VRAM","UTIL","MISC","DISK2"};
 
 				t = abs(t);
 				t = (t > 8) ? 0 : t;
 				found = 1;
-				log_printf("hle.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X SP:%02X)\n",types[t],hle_call_table[i].addr,hle_call_table[i].name,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y,nes.cpu.sp);
+				log_printf("hle.c:  bios %s:  calling $%04X ('%s') (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X SP:%02X)\n",types[t],hle_call_table[i].addr,hle_call_table[i].name,LINECYCLES,SCANLINE,FRAMES,nes->cpu.a,nes->cpu.x,nes->cpu.y,nes->cpu.sp);
 			}
 		}
 		if(found == 0) {
-			log_printf("hle.c:  bios:  calling $%04X (unknown) from $%04X (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X SP:%02X)\n",nes.cpu.opaddr,lastopaddr,LINECYCLES,SCANLINE,FRAMES,nes.cpu.a,nes.cpu.x,nes.cpu.y,nes.cpu.sp);
+			log_printf("hle.c:  bios:  calling $%04X (unknown) from $%04X (pixel %d, line %d, frame %d) (A:%02X X:%02X Y:%02X SP:%02X)\n",nes->cpu.opaddr,lastopaddr,LINECYCLES,SCANLINE,FRAMES,nes->cpu.a,nes->cpu.x,nes->cpu.y,nes->cpu.sp);
 		}
 	}
-	lastopaddr = nes.cpu.opaddr;
+	lastopaddr = nes->cpu.opaddr;
 }

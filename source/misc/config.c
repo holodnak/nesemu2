@@ -109,6 +109,9 @@ int config_init()
 	GET_VAR_INT(nes.log_unhandled_io,	0);
 	GET_VAR_INT(nes.pause_on_load,		0);
 
+	//kludge...we need vars_get_bool
+	config->video.fullscreen = config->video.fullscreen ? 1 : 0;
+
 	configvars = v;
 	return(0);
 }

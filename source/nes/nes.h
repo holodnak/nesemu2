@@ -38,22 +38,22 @@
 #define IRQ_DPCM		0x80		//apu
 
 //timing
-#define LINECYCLES	nes.ppu.linecycles
-#define SCANLINE		nes.ppu.scanline
-#define FRAMES			nes.ppu.frames
+#define LINECYCLES	nes->ppu.linecycles
+#define SCANLINE		nes->ppu.scanline
+#define FRAMES			nes->ppu.frames
 
 //scroll registers
-#define SCROLLX		nes.ppu.scrollx
-#define SCROLL			nes.ppu.scroll
-#define TMPSCROLL		nes.ppu.tmpscroll
-#define TOGGLE			nes.ppu.toggle
+#define SCROLLX		nes->ppu.scrollx
+#define SCROLL			nes->ppu.scroll
+#define TMPSCROLL		nes->ppu.tmpscroll
+#define TOGGLE			nes->ppu.toggle
 
 //registers
-#define PPUCONTROL	nes.ppu.control0		//'correct' names
-#define PPUMASK		nes.ppu.control1
-#define CONTROL0		nes.ppu.control0		//old names
-#define CONTROL1		nes.ppu.control1
-#define STATUS			nes.ppu.status
+#define PPUCONTROL	nes->ppu.control0		//'correct' names
+#define PPUMASK		nes->ppu.control1
+#define CONTROL0		nes->ppu.control0		//old names
+#define CONTROL1		nes->ppu.control1
+#define STATUS			nes->ppu.status
 
 typedef struct nes_s {
 
@@ -77,7 +77,7 @@ typedef struct nes_s {
 	u8				frame_irq;
 } nes_t;
 
-extern nes_t nes;
+extern nes_t *nes;
 
 int nes_init();
 void nes_kill();

@@ -36,16 +36,16 @@ typedef struct square_s {
 	race_t race;
 } square_t;
 
-#define apu_square0_reset(hard)			apu_square_reset(&nes.apu.square[0],hard)
-#define apu_square0_write(addr,data)	apu_square_write(&nes.apu.square[0],addr,data)
-#define apu_square0_step()					apu_square_step(&nes.apu.square[0])
-#define apu_square0_quarter()				apu_square_quarter(&nes.apu.square[0])
-#define apu_square0_half()					apu_square_half(&nes.apu.square[0])
+#define apu_square0_reset(hard)			apu_square_reset(&nes->apu.square[0],hard)
+#define apu_square0_write(addr,data)	apu_square_write(&nes->apu.square[0],addr,data)
+#define apu_square0_step()					apu_square_step(&nes->apu.square[0])
+#define apu_square0_quarter()				apu_square_quarter(&nes->apu.square[0])
+#define apu_square0_half()					apu_square_half(&nes->apu.square[0])
 
-#define apu_square1_reset(hard)			apu_square_reset(&nes.apu.square[1],hard)
-#define apu_square1_write(addr,data)	apu_square_write(&nes.apu.square[1],addr,data)
-#define apu_square1_step()					apu_square_step(&nes.apu.square[1])
-#define apu_square1_quarter()				apu_square_quarter(&nes.apu.square[1])
-#define apu_square1_half()					apu_square_half(&nes.apu.square[1])
+#define apu_square1_reset(hard)			apu_square_reset(&nes->apu.square[1],hard)
+#define apu_square1_write(addr,data)	apu_square_write(&nes->apu.square[1],addr,data)
+#define apu_square1_step()					apu_square_step(&nes->apu.square[1])
+#define apu_square1_quarter()				apu_square_quarter(&nes->apu.square[1])
+#define apu_square1_half()					apu_square_half(&nes->apu.square[1])
 
 #endif

@@ -54,11 +54,11 @@ static void sync()
 	}
 	mmc3_syncchr(0xFF,0);
 	mmc3_syncmirror();
-/*	if(nes.cart->chr.size)
+/*	if(nes->cart->chr.size)
 		mmc3_syncchr(0xFF,0);
 	else
 		mmc3_syncvram(7,0);
-	if(nes.cart->mirroring & 8)
+	if(nes->cart->mirroring & 8)
 	   mem_setmirroring(MIRROR_4);
 	else
 		mmc3_syncmirror();

@@ -25,7 +25,7 @@ static u8 reg;
 static void sync()
 {
 	mem_setprg32(8,(reg >> 4) | reg);
-	if(nes.cart->chr.size == 0)
+	if(nes->cart->chr.size == 0)
 		mem_setvram8(0,0);
 	else
 		mem_setchr8(0,0);

@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#define tri	nes.apu.triangle
+#define tri	nes->apu.triangle
 
 static s8 TriangleDuty[32] = {
 	+7,+6,+5,+4,+3,+2,+1,+0,

@@ -89,3 +89,13 @@ void sound_setcallback(void (*cb)(void *buffer, int length))
 void sound_update()
 {
 }
+
+void sound_lock()
+{
+	SDL_LockAudio();
+}
+
+void sound_unlock()
+{
+	SDL_UnlockAudio();
+}

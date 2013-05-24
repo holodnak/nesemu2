@@ -26,43 +26,43 @@ static void race_reset(race_t *r)
 
 static INLINE void apu_race_reset(int hard)
 {
-	race_reset(&nes.apu.square[0].race);
-	race_reset(&nes.apu.square[1].race);
-//	race_reset(&nes.apu.triangle.race);
-//	race_reset(&nes.apu.noise.race);
+	race_reset(&nes->apu.square[0].race);
+	race_reset(&nes->apu.square[1].race);
+//	race_reset(&nes->apu.triangle.race);
+//	race_reset(&nes->apu.noise.race);
 }
 
 static INLINE void apu_race_step()
 {
-	nes.apu.square[0].wavehold = nes.apu.square[0].race.wavehold;
-	if (nes.apu.square[0].race.LengthCtr1)
+	nes->apu.square[0].wavehold = nes->apu.square[0].race.wavehold;
+	if (nes->apu.square[0].race.LengthCtr1)
 	{
-		if (nes.apu.square[0].LengthCtr == nes.apu.square[0].race.LengthCtr2)
-			nes.apu.square[0].LengthCtr = nes.apu.square[0].race.LengthCtr1;
-		nes.apu.square[0].race.LengthCtr1 = 0;
+		if (nes->apu.square[0].LengthCtr == nes->apu.square[0].race.LengthCtr2)
+			nes->apu.square[0].LengthCtr = nes->apu.square[0].race.LengthCtr1;
+		nes->apu.square[0].race.LengthCtr1 = 0;
 	}
 
-	nes.apu.square[1].wavehold = nes.apu.square[1].race.wavehold;
-	if (nes.apu.square[1].race.LengthCtr1)
+	nes->apu.square[1].wavehold = nes->apu.square[1].race.wavehold;
+	if (nes->apu.square[1].race.LengthCtr1)
 	{
-		if (nes.apu.square[1].LengthCtr == nes.apu.square[1].race.LengthCtr2)
-			nes.apu.square[1].LengthCtr = nes.apu.square[1].race.LengthCtr1;
-		nes.apu.square[1].race.LengthCtr1 = 0;
+		if (nes->apu.square[1].LengthCtr == nes->apu.square[1].race.LengthCtr2)
+			nes->apu.square[1].LengthCtr = nes->apu.square[1].race.LengthCtr1;
+		nes->apu.square[1].race.LengthCtr1 = 0;
 	}
 
-	nes.apu.triangle.wavehold = nes.apu.triangle.race.wavehold;
-	if (nes.apu.triangle.race.LengthCtr1)
+	nes->apu.triangle.wavehold = nes->apu.triangle.race.wavehold;
+	if (nes->apu.triangle.race.LengthCtr1)
 	{
-		if (nes.apu.triangle.LengthCtr == nes.apu.triangle.race.LengthCtr2)
-			nes.apu.triangle.LengthCtr = nes.apu.triangle.race.LengthCtr1;
-		nes.apu.triangle.race.LengthCtr1 = 0;
+		if (nes->apu.triangle.LengthCtr == nes->apu.triangle.race.LengthCtr2)
+			nes->apu.triangle.LengthCtr = nes->apu.triangle.race.LengthCtr1;
+		nes->apu.triangle.race.LengthCtr1 = 0;
 	}
 
-	nes.apu.noise.wavehold = nes.apu.noise.race.wavehold;
-	if (nes.apu.noise.race.LengthCtr1)
+	nes->apu.noise.wavehold = nes->apu.noise.race.wavehold;
+	if (nes->apu.noise.race.LengthCtr1)
 	{
-		if (nes.apu.noise.LengthCtr == nes.apu.noise.race.LengthCtr2)
-			nes.apu.noise.LengthCtr = nes.apu.noise.race.LengthCtr1;
-		nes.apu.noise.race.LengthCtr1 = 0;
+		if (nes->apu.noise.LengthCtr == nes->apu.noise.race.LengthCtr2)
+			nes->apu.noise.LengthCtr = nes->apu.noise.race.LengthCtr1;
+		nes->apu.noise.race.LengthCtr1 = 0;
 	}
 }

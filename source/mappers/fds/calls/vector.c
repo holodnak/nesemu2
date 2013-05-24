@@ -41,13 +41,13 @@ HLECALL(nmi)
 			cpu_read(0x2002);
 
 			//eat nmi return address
-			nes.cpu.sp += 3;
+			nes->cpu.sp += 3;
 
 			//restore old nmi action
-			cpu_write(0x100,cpu_read(++nes.cpu.sp | 0x100));
+			cpu_write(0x100,cpu_read(++nes->cpu.sp | 0x100));
 
 			//restore a
-			nes.cpu.a = cpu_read(++nes.cpu.sp | 0x100);
+			nes->cpu.a = cpu_read(++nes->cpu.sp | 0x100);
 
 			//rts
 			hlemem[0] = 0x60;
@@ -68,16 +68,16 @@ HLECALL(nmi)
 static void irqdisktransfer()
 {
 	//eat the irq return address and pushed flags
-	nes.cpu.sp += 3;
+	nes->cpu.sp += 3;
 
 	//read data from disk into the a register
-	nes.cpu.x = cpu_read(0x4031);
+	nes->cpu.x = cpu_read(0x4031);
 
 	//write data in a reg to disk
-	cpu_write(0x4024,nes.cpu.a);
+	cpu_write(0x4024,nes->cpu.a);
 
 	//txa
-	nes.cpu.a = nes.cpu.x;
+	nes->cpu.a = nes->cpu.x;
 
 	//set hle register to rts opcode
 	hlemem[8] = 0x60;		//rts
@@ -165,8 +165,8 @@ HLECALL(reset)
 //	showdisasm = 1;
 
 	//flag setup
-	nes.cpu.flags.i = 1;
-	nes.cpu.flags.d = 0;
+	nes->cpu.flags.i = 1;
+	nes->cpu.flags.d = 0;
 
 	cpu_write(0x101,0xC0);		//action on irq
 	cpu_write(0x100,0xC0);		//action on nmi
@@ -200,7 +200,7 @@ HLECALL(reset)
 	cpu_write(0x408A,0xE8);
 	cpu_write(0x4017,0xC0);
 
-	nes.cpu.sp = 0xFF;
+	nes->cpu.sp = 0xFF;
 	m102 = cpu_read(0x102);
 	m103 = cpu_read(0x103);
 
@@ -223,12 +223,12 @@ $EE9B JSR RstPPU05
 $EE9E CLI; enable interrupts
 $EE9F JMP ($DFFC)*/
 
-	memset(nes.ppu.nametables,0,0x1000);
+	memset(nes->ppu.nametables,0,0x1000);
 	{//if(m102 == 0x35 && (m103 == 0x53 || m103 == 0xAC)) {
 		cpu_write(0x103,0x53);
 		hle_setscroll();
 		hle_loadbootfiles();
 	}
 	cpu_write(0x102,0xAC);		//action on reset
-	nes.cpu.flags.i = 0;
+	nes->cpu.flags.i = 0;
 }

@@ -187,7 +187,7 @@ static void cpucycle()
 static void ppucycle()
 {
 	prevbusaddr = busaddr;
-	busaddr = nes.ppu.busaddr;
+	busaddr = nes->ppu.busaddr;
 }
 
 static void state(int mode,u8 *data)

@@ -45,8 +45,8 @@ HLECALL(readpads)
 	cpu_write(0x00,tmp2);
 	cpu_write(0xF6,tmp3);
 	cpu_write(0x01,tmp4);
-	nes.cpu.flags.z = 1;
-	nes.cpu.flags.n = 0;
+	nes->cpu.flags.z = 1;
+	nes->cpu.flags.n = 0;
 }
 
 HLECALL(readverifypads)
@@ -95,12 +95,12 @@ HLECALL(downpads)
 	int i;
 
 	for(i = 1; i >= 0; i--) {
-		nes.cpu.a = cpu_read(0xF5 + i);
-		nes.cpu.y = nes.cpu.a;
-		nes.cpu.a ^= cpu_read(0xF7 + i);
-		nes.cpu.a &= cpu_read(0xF5 + i);
-		cpu_write(0xF5 + i,nes.cpu.a);
-		cpu_write(0xF7 + i,nes.cpu.y);
+		nes->cpu.a = cpu_read(0xF5 + i);
+		nes->cpu.y = nes->cpu.a;
+		nes->cpu.a ^= cpu_read(0xF7 + i);
+		nes->cpu.a &= cpu_read(0xF5 + i);
+		cpu_write(0xF5 + i,nes->cpu.a);
+		cpu_write(0xF7 + i,nes->cpu.y);
 	}
 }
 

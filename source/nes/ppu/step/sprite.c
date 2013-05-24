@@ -20,10 +20,10 @@
 
 #ifndef QUICK_SPRITES
 
-#define OAM2		nes.ppu.oam2
-#define OAM2POS	nes.ppu.oam2pos
-#define OAM2MODE	nes.ppu.oam2mode
-#define OAM2READ	nes.ppu.oam2read
+#define OAM2		nes->ppu.oam2
+#define OAM2POS	nes->ppu.oam2pos
+#define OAM2MODE	nes->ppu.oam2mode
+#define OAM2READ	nes->ppu.oam2read
 
 static INLINE void process_sprites()
 {
@@ -63,7 +63,7 @@ static INLINE void process_sprites()
 		if(OAM2MODE == 0) {
 			if(LINECYCLES & 1) {
 				//read byte from oam
-				OAM2READ = nes.ppu.oam[nes.ppu.oamaddr];
+				OAM2READ = nes->ppu.oam[nes->ppu.oamaddr];
 			}
 			else {
 				//store y coordinate into oam2
@@ -93,7 +93,7 @@ static INLINE void process_sprites()
 		else if(OAM2MODE == 1) {
 			if(LINECYCLES & 1) {
 				//read byte from oam
-				OAM2READ = nes.ppu.oam[nes.ppu.oamaddr++];
+				OAM2READ = nes->ppu.oam[nes->ppu.oamaddr++];
 			}
 			else {
 				//store byte into oam2
@@ -171,7 +171,7 @@ static INLINE void quick_process_sprites()
 	for(sprinrange=0,i=0;i<64;i++) {
 
 		//sprite data pointer
-		s = &nes.ppu.oam[i * 4];
+		s = &nes->ppu.oam[i * 4];
 
 		//get the sprite tile line to draw
 		sprline = line - s[0];
@@ -223,7 +223,7 @@ static INLINE void sprite0_hit_check()
 {
 	int i;
 	sprtemp_t *spr = (sprtemp_t*)sprtemp + 7;
-	u8 *dest = nes.ppu.linebuffer;
+	u8 *dest = nes->ppu.linebuffer;
 	u8 *line;
 	int xpos;
 	int x = LINECYCLES - 1;

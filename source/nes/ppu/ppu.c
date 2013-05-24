@@ -34,10 +34,10 @@ void ppu_kill()
 
 void ppu_reset(int hard)
 {
-	nes.ppu.scanline = 0;
-	nes.ppu.linecycles = 0;
-	nes.ppu.frames = 0;
-	nes.ppu.cursprite = 0;
+	nes->ppu.scanline = 0;
+	nes->ppu.linecycles = 0;
+	nes->ppu.frames = 0;
+	nes->ppu.cursprite = 0;
 }
 
 void ppu_sync()
@@ -59,14 +59,14 @@ void ppu_state(int mode,u8 *data)
 	STATE_U16(SCROLL);
 	STATE_U8(SCROLLX);
 	STATE_U8(TOGGLE);
-	STATE_U8(nes.ppu.buf);
-	STATE_U8(nes.ppu.latch);
-	STATE_U8(nes.ppu.oamaddr);
-	STATE_ARRAY_U8(nes.ppu.oam,256);
+	STATE_U8(nes->ppu.buf);
+	STATE_U8(nes->ppu.latch);
+	STATE_U8(nes->ppu.oamaddr);
+	STATE_ARRAY_U8(nes->ppu.oam,256);
 	STATE_U32(LINECYCLES);
 	STATE_U32(SCANLINE);
 	STATE_U32(FRAMES);
-	STATE_ARRAY_U8(nes.ppu.nametables,0x1000);
-	STATE_ARRAY_U8(nes.ppu.palette,32);
+	STATE_ARRAY_U8(nes->ppu.nametables,0x1000);
+	STATE_ARRAY_U8(nes->ppu.palette,32);
 	ppu_sync();
 }

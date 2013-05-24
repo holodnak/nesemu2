@@ -39,15 +39,15 @@ u8 nes_read_4000(u32 addr)
 
 		//sprite memory read
 		case 0x4014:
-			return(nes.ppu.oam[nes.ppu.oamaddr]);
+			return(nes->ppu.oam[nes->ppu.oamaddr]);
 
 		//input port 0 read
 		case 0x4016:
-			return(nes.inputdev[0]->read());
+			return(nes->inputdev[0]->read());
 
 		//input port 1 read
 		case 0x4017:
-			return(nes.inputdev[1]->read());
+			return(nes->inputdev[1]->read());
 
 		default:
 			if(config->nes.log_unhandled_io)
@@ -78,22 +78,22 @@ void nes_write_4000(u32 addr,u8 data)
 			temp2 = data << 8;
 			for(temp=0;temp<256;temp++,temp2++)
 				cpu_write(0x2004,cpu_read(temp2));
-			temp2 = 513 + ((u32)nes.cpu.cycles & 1);
+			temp2 = 513 + ((u32)nes->cpu.cycles & 1);
 			for(temp=0;temp<temp2;temp++)
 				cpu_tick();
 			break;
 
 		//strobe joypads
 		case 0x4016:
-			nes.inputdev[0]->write(data);
-			nes.inputdev[1]->write(data);
-			nes.expdev->write(data);
-			if(((data & 1) == 0) && (nes.strobe & 1)) {
-				nes.inputdev[0]->strobe();
-				nes.inputdev[1]->strobe();
-				nes.expdev->strobe();
+			nes->inputdev[0]->write(data);
+			nes->inputdev[1]->write(data);
+			nes->expdev->write(data);
+			if(((data & 1) == 0) && (nes->strobe & 1)) {
+				nes->inputdev[0]->strobe();
+				nes->inputdev[1]->strobe();
+				nes->expdev->strobe();
 			}
-			nes.strobe = data;
+			nes->strobe = data;
 			break;
 
 		default:
@@ -105,19 +105,19 @@ void nes_write_4000(u32 addr,u8 data)
 
 u8 nes_read_mem(u32 addr)
 {
-	if(nes.cpu.readpages[addr >> 10])
-		return(nes.cpu.readpages[addr >> 10][addr & 0x3FF]);
+	if(nes->cpu.readpages[addr >> 10])
+		return(nes->cpu.readpages[addr >> 10][addr & 0x3FF]);
 	return(0);
 }
 
 void nes_write_mem(u32 addr,u8 data)
 {
-	if(nes.cpu.writepages[addr >> 10])
-		nes.cpu.writepages[addr >> 10][addr & 0x3FF] = data;
+	if(nes->cpu.writepages[addr >> 10])
+		nes->cpu.writepages[addr >> 10][addr & 0x3FF] = data;
 }
 
 //read nes rom memory area ($8000-FFFF)
 u8 nes_read_rom(u32 addr)
 {
-	return(nes.cpu.readpages[addr >> 10][addr & 0x3FF]);
+	return(nes->cpu.readpages[addr >> 10][addr & 0x3FF]);
 }

@@ -218,8 +218,17 @@ static INLINE void scanline_prerender()
 		//fetch sprite pattern high (update scroll registers on cycle 304)
 		case 304:
 			update_vscroll();
-		case 264:	case 272:	case 280:	case 288:	case 296:	case 312:	case 320:
+		case 264:
+		case 272:
+		case 280:
+		case 288:
+		case 296:
+		case 312:
 			fetch_spt1byte();
+			break;
+		case 320:
+			fetch_spt1byte();
+			nes->ppu.oamaddr = 0;
 			break;
 
 		//nametable byte for next scanline
@@ -456,8 +465,12 @@ static INLINE void scanline_visible()
 			break;
 
 		//fetch sprite pattern high
-		case 264:	case 272:	case 280:	case 288:	case 296:	case 304:	case 312:	case 320:
+		case 264:	case 272:	case 280:	case 288:	case 296:	case 304:	case 312:
 			fetch_spt1byte();
+			break;
+		case 320:
+			fetch_spt1byte();
+			nes->ppu.oamaddr = 0;
 			break;
 
 		//nametable byte for next scanline
@@ -531,7 +544,7 @@ void ppu_step()
 {
 //blargg test debug output
 /*	if(SCANLINE == 0 && LINECYCLES == 0) {
-		u8 *sram = nes.cart->sram.size ? nes.cart->sram.data : 0;
+		u8 *sram = nes->cart->sram.size ? nes->cart->sram.data : 0;
 
 		if(sram && sram[0] == 3 && sram[1] == 0xDE && sram[2] == 0xB0 && sram[3] == 0x61) {
 			sram[0] = 0;
@@ -566,11 +579,11 @@ void ppu_step()
 			if(CONTROL1 & 0x18)
 				scanline_visible();
 			else {
-				nes.ppu.busaddr = SCROLL;
+				nes->ppu.busaddr = SCROLL;
 				if(LINECYCLES < 256)
-					nes.ppu.linebuffer[LINECYCLES] = 0;
+					nes->ppu.linebuffer[LINECYCLES] = 0;
 				else if(LINECYCLES == 256) {
-					video_updateline(SCANLINE,nes.ppu.linebuffer);
+					video_updateline(SCANLINE,nes->ppu.linebuffer);
 				}
 			}
 			break;
@@ -587,6 +600,6 @@ void ppu_step()
 			break;
 	}
 	if(LINECYCLES & 1)
-		nes.mapper->ppucycle();
+		nes->mapper->ppucycle();
 	inc_linecycles();
 }

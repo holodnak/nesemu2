@@ -23,35 +23,36 @@
 #include <string.h>
 #include "misc/log.h"
 #include "misc/config.h"
+#include "misc/memutil.h"
 #include "nes/nes.h"
 #include "nes/io.h"
 #include "nes/memory.h"
 #include "nes/genie.h"
 #include "nes/state/state.h"
 
-nes_t nes;
+nes_t *nes = 0;
 
 //kludge (or possibly not)
-static void mapper_state(int mode,u8 *data)	{	nes.mapper->state(mode,data);		}
+static void mapper_state(int mode,u8 *data)	{	nes->mapper->state(mode,data);		}
 
 //non-kludges
-static void wram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes.cart->wram.data,nes.cart->wram.size);		}
-static void sram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes.cart->sram.data,nes.cart->sram.size);		}
+static void wram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes->cart->wram.data,nes->cart->wram.size);		}
+static void sram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes->cart->sram.data,nes->cart->sram.size);		}
 static void vram_state(int mode,u8 *data)
 {
-	STATE_ARRAY_U8(nes.cart->vram.data,nes.cart->vram.size);
+	STATE_ARRAY_U8(nes->cart->vram.data,nes->cart->vram.size);
 	if(mode == STATE_LOAD) {
-		cache_tiles(nes.cart->vram.data,nes.cart->vcache,nes.cart->vram.size / 16,0);
-		cache_tiles(nes.cart->vram.data,nes.cart->vcache_hflip,nes.cart->vram.size / 16,1);
+		cache_tiles(nes->cart->vram.data,nes->cart->vcache,nes->cart->vram.size / 16,0);
+		cache_tiles(nes->cart->vram.data,nes->cart->vcache_hflip,nes->cart->vram.size / 16,1);
 	}
 }
 
 static void svram_state(int mode,u8 *data)
 {
-	STATE_ARRAY_U8(nes.cart->svram.data,nes.cart->svram.size);
+	STATE_ARRAY_U8(nes->cart->svram.data,nes->cart->svram.size);
 	if(mode == STATE_LOAD) {
-		cache_tiles(nes.cart->svram.data,nes.cart->svcache,nes.cart->svram.size / 16,0);
-		cache_tiles(nes.cart->svram.data,nes.cart->svcache_hflip,nes.cart->svram.size / 16,1);
+		cache_tiles(nes->cart->svram.data,nes->cart->svcache,nes->cart->svram.size / 16,0);
+		cache_tiles(nes->cart->svram.data,nes->cart->svcache_hflip,nes->cart->svram.size / 16,1);
 	}
 }
 
@@ -59,17 +60,19 @@ int nes_init()
 {
 	int ret = 0;
 	
-	memset(&nes,0,sizeof(nes_t));
+	nes = (nes_t*)mem_alloc(sizeof(nes_t));
+	memset(nes,0,sizeof(nes_t));
 	nes_set_inputdev(0,I_NULL);
 	nes_set_inputdev(1,I_NULL);
 	nes_set_inputdev(2,I_NULL);
-	state_init();
-	state_register(B_NES,nes_state);
-	state_register(B_MAPR,mapper_state);
-	state_register(B_WRAM,wram_state);
-	state_register(B_SRAM,sram_state);
-	state_register(B_VRAM,vram_state);
-	state_register(B_SVRAM,svram_state);
+	if((ret = state_init()) == 0) {
+		state_register(B_NES,nes_state);
+		state_register(B_MAPR,mapper_state);
+		state_register(B_WRAM,wram_state);
+		state_register(B_SRAM,sram_state);
+		state_register(B_VRAM,vram_state);
+		state_register(B_SVRAM,svram_state);
+	}
 	ret += cpu_init();
 	ret += ppu_init();
 	ret += apu_init();
@@ -78,12 +81,16 @@ int nes_init()
 
 void nes_kill()
 {
-	state_kill();
-	cpu_kill();
-	ppu_kill();
-	apu_kill();
-	cart_unload(nes.cart);
-	genie_unload();
+	if(nes) {
+		state_kill();
+		cpu_kill();
+		ppu_kill();
+		apu_kill();
+		cart_unload(nes->cart);
+		genie_unload();
+		mem_free(nes);
+		nes = 0;
+	}
 }
 
 int nes_load_cart(cart_t *c)
@@ -99,8 +106,8 @@ int nes_load_cart(cart_t *c)
 		return(1);
 	}
 	log_printf("nes_load_cart:  success\n");
-	nes.cart = c;
-	nes.mapper = m;
+	nes->cart = c;
+	nes->mapper = m;
 	return(0);
 }
 
@@ -133,18 +140,18 @@ int nes_load(char *filename)
 
 void nes_unload()
 {
-	if(nes.cart)
-		cart_unload(nes.cart);
-	nes.cart = 0;
-	nes.mapper = 0;
+	if(nes->cart)
+		cart_unload(nes->cart);
+	nes->cart = 0;
+	nes->mapper = 0;
 }
 
 void nes_set_inputdev(int n,int id)
 {
 	if(n < 2)
-		nes.inputdev[n] = inputdev_get(id);
+		nes->inputdev[n] = inputdev_get(id);
 	else
-		nes.expdev = inputdev_get(id);
+		nes->expdev = inputdev_get(id);
 }
 
 void nes_reset(int hard)
@@ -153,14 +160,14 @@ void nes_reset(int hard)
 
 	//zero out all read/write pages/functions
 	for(i=0;i<64;i++) {
-		nes.cpu.readfuncs[i] = 0;
-		nes.cpu.readpages[i] = 0;
-		nes.cpu.writefuncs[i] = 0;
-		nes.cpu.writepages[i] = 0;
-		nes.ppu.readfuncs[i / 4] = 0;
-		nes.ppu.readpages[i / 4] = 0;
-		nes.ppu.writefuncs[i / 4] = 0;
-		nes.ppu.writepages[i / 4] = 0;
+		nes->cpu.readfuncs[i] = 0;
+		nes->cpu.readpages[i] = 0;
+		nes->cpu.writefuncs[i] = 0;
+		nes->cpu.writepages[i] = 0;
+		nes->ppu.readfuncs[i / 4] = 0;
+		nes->ppu.readpages[i / 4] = 0;
+		nes->ppu.writefuncs[i / 4] = 0;
+		nes->ppu.writepages[i / 4] = 0;
 	}
 
 	//setup read/write funcs
@@ -172,7 +179,7 @@ void nes_reset(int hard)
 	mem_setwritefunc(4,nes_write_4000);
 
 	//set cart mirroring
-	mem_setmirroring(nes.cart->mirroring);
+	mem_setmirroring(nes->cart->mirroring);
 
 	//setup default cpu/ppu read/write funcs
 	cpu_setreadfunc(0);
@@ -191,7 +198,7 @@ void nes_reset(int hard)
 	}
 
 	//reset the mapper
-	nes.mapper->reset(hard);
+	nes->mapper->reset(hard);
 
 	//reset the cpu, ppu, and apu
 	ppu_reset(hard);
@@ -200,10 +207,10 @@ void nes_reset(int hard)
 
 	//clear some memory for hard reset
 	if(hard) {
-		memset(nes.cpu.ram,0,0x800);
-		memset(nes.ppu.nametables,0,0x800);
-		memset(nes.ppu.oam,0,256);
-		memset(nes.ppu.palette,0,32);
+		memset(nes->cpu.ram,0,0x800);
+		memset(nes->ppu.nametables,0,0x800);
+		memset(nes->ppu.oam,0,256);
+		memset(nes->ppu.palette,0,32);
 	}
 }
 
@@ -214,7 +221,7 @@ void nes_frame()
 
 void nes_state(int mode,u8 *data)
 {
-	STATE_U8(nes.strobe);
+	STATE_U8(nes->strobe);
 }
 
 void nes_savestate(char *filename)

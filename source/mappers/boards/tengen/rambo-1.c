@@ -139,10 +139,10 @@ static void ppucycle()
 		if(irqwait) {
 			irqwait--;
 		}
-		if((irqwait == 0) && (nes.ppu.busaddr & 0x1000)) {
+		if((irqwait == 0) && (nes->ppu.busaddr & 0x1000)) {
 			clockirq();
 		}
-		if(nes.ppu.busaddr & 0x1000) {
+		if(nes->ppu.busaddr & 0x1000) {
 			irqwait = 8;
 		}
 	}

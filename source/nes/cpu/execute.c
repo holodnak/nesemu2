@@ -44,7 +44,7 @@ static INLINE void cpu_step()
 	}
 #endif
 	PC++;
-	switch(nes.cpu.opcode) {
+	switch(nes->cpu.opcode) {
 
 #ifdef CPU_UNDOC
 		OP(00, BRK,IMM) OP(01, ORA,INX) OP(02, UNK,UNK) OP(03, SLO,INX) OP(04,NOPR,ZPG) OP(05, ORA,ZPG) OP(06, ASL,ZPG) OP(07, SLO,ZPG)

@@ -26,12 +26,12 @@ HLECALL(xferdone)
 {
 	log_printf("xferdone:  not implemented\n");
 	//no error
-	if(nes.cpu.flags.z == 0) {
-		nes.cpu.a = (cpu_read(0xFA) & 9) | 0x26;
-		cpu_write(0xFA,nes.cpu.a);
-		cpu_write(0x4025,nes.cpu.a);
-		nes.cpu.a = nes.cpu.x = 0;
-		nes.cpu.flags.i = 0;
+	if(nes->cpu.flags.z == 0) {
+		nes->cpu.a = (cpu_read(0xFA) & 9) | 0x26;
+		cpu_write(0xFA,nes->cpu.a);
+		cpu_write(0x4025,nes->cpu.a);
+		nes->cpu.a = nes->cpu.x = 0;
+		nes->cpu.flags.i = 0;
 		return;
 	}
 	else {
@@ -53,7 +53,7 @@ HLECALL(getnumfiles)
 	pos = diskside * 65500;
 
 	//pointer to disk header
-	disk_header = (fds_disk_header_t*)(nes.cart->disk.data + pos);
+	disk_header = (fds_disk_header_t*)(nes->cart->disk.data + pos);
 
 	cpu_write(6,disk_header->numfiles);
 

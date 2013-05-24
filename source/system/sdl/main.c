@@ -165,7 +165,7 @@ int mainloop()
 			keydown |= 0x8000;
 			log_printf("dumping disk as dump.fds\n");
 			if((fp = fopen("dump.fds","wb")) != 0) {
-				fwrite(nes.cart->disk.data,1,nes.cart->disk.size,fp);
+				fwrite(nes->cart->disk.data,1,nes->cart->disk.size,fp);
 				fclose(fp);
 			}
 
@@ -174,17 +174,17 @@ int mainloop()
 			keydown &= ~0x8000;
 		}
 
-		if(nes.cart && (nes.cart->mapperid & B_TYPEMASK) == B_FDS) {
+		if(nes->cart && (nes->cart->mapperid & B_TYPEMASK) == B_FDS) {
 			if(joykeys[SDLK_F9] && (keydown & 0x10) == 0) {
 				u8 data[4] = {0,0,0,0};
 
 				keydown |= 0x10;
-				nes.mapper->state(CFG_SAVE,data);
+				nes->mapper->state(CFG_SAVE,data);
 				if(data[0] == 0xFF)
 					data[0] = 0;
 				else
 					data[0] ^= 1;
-				nes.mapper->state(CFG_LOAD,data);
+				nes->mapper->state(CFG_LOAD,data);
 				log_printf("disk inserted!  side = %d\n",data[0]);
 			}
 			else if(joykeys[SDLK_F9] == 0) {
@@ -287,7 +287,7 @@ int main(int argc,char *argv[])
 	ret = mainloop();
 
 	//check if a cart was loaded
-	if(nes.cart) {
+	if(nes->cart) {
 		//save sram
 		//save disk
 		nes_unload();

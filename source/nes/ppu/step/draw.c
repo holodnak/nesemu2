@@ -20,12 +20,12 @@
 
 static INLINE void drawpixel()
 {
-	u8 *dest = nes.ppu.linebuffer;
-	u8 *src = nes.ppu.tilebuffer;
+	u8 *dest = nes->ppu.linebuffer;
+	u8 *src = nes->ppu.tilebuffer;
 	int pos = LINECYCLES - 1;
 
-	if(pos >= 8 || (nes.ppu.control1 & 2))
-		dest[pos] = src[pos + nes.ppu.scrollx] | (nes.ppu.control1 & 0xE0);
+	if(pos >= 8 || (nes->ppu.control1 & 2))
+		dest[pos] = src[pos + nes->ppu.scrollx] | (nes->ppu.control1 & 0xE0);
 	else
 		dest[pos] = 0;
 #ifdef ACCURATE_SPRITE0
@@ -35,11 +35,11 @@ static INLINE void drawpixel()
 
 static INLINE void drawpixelclipped()
 {
-	u8 *dest = nes.ppu.linebuffer;
-	u8 *src = nes.ppu.tilebuffer;
+	u8 *dest = nes->ppu.linebuffer;
+	u8 *src = nes->ppu.tilebuffer;
 	int pos = LINECYCLES - 1;
 
-	dest[pos] = src[pos + nes.ppu.scrollx];
+	dest[pos] = src[pos + nes->ppu.scrollx];
 }
 
 static INLINE void drawspriteline()
@@ -47,7 +47,7 @@ static INLINE void drawspriteline()
 	static u8 spriteline[256 + 8];
 	sprtemp_t *spr = (sprtemp_t*)sprtemp + 7;
 	u64 *spriteline64 = (u64*)spriteline;
-	u8 *dest = nes.ppu.linebuffer;
+	u8 *dest = nes->ppu.linebuffer;
 	int n;
 
 	//clear sprite line
@@ -130,5 +130,5 @@ static INLINE void update_line()
 	if(CONTROL1 & 0x10)
 		drawspriteline();
 #endif
-	video_updateline(SCANLINE,nes.ppu.linebuffer);
+	video_updateline(SCANLINE,nes->ppu.linebuffer);
 }

@@ -61,7 +61,7 @@ static INLINE void update_hscroll()
 		SCROLL &= ~0x041F;
 		SCROLL |= TMPSCROLL & 0x041F;
 	}
-	nes.ppu.cursprite = 0;
+	nes->ppu.cursprite = 0;
 }
 
 static INLINE void update_vscroll()

@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib"
+				AdditionalDependencies="comctl32.lib dxguid.lib ddraw.lib"
 				OutputFile="$(OutDir)/nesemu2-win32.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -134,13 +134,13 @@
 						RelativePath="..\..\source\system\win32\mainwnd.c">
 					</File>
 					<File
-						RelativePath="..\..\source\system\win32\sound.c">
+						RelativePath="..\..\source\system\win32\sound.cpp">
 					</File>
 					<File
 						RelativePath="..\..\source\system\win32\system.c">
 					</File>
 					<File
-						RelativePath="..\..\source\system\win32\video.c">
+						RelativePath="..\..\source\system\win32\video.cpp">
 					</File>
 					<Filter
 						Name="dialogs"

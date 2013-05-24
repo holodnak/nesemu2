@@ -28,10 +28,10 @@ writefunc_t ppu_memwrite;
 
 static u8 read_ppu_memory(u32 addr)
 {
-	if(nes.ppu.readpages[addr >> 10])
-		return(nes.ppu.readpages[addr >> 10][addr & 0x3FF]);
-	else if(nes.ppu.readfuncs[addr >> 10])
-		return(nes.ppu.readfuncs[addr >> 10](addr));
+	if(nes->ppu.readpages[addr >> 10])
+		return(nes->ppu.readpages[addr >> 10][addr & 0x3FF]);
+	else if(nes->ppu.readfuncs[addr >> 10])
+		return(nes->ppu.readfuncs[addr >> 10](addr));
 	else if(config->nes.log_unhandled_io)
 		log_printf("ppu_memread: read from unmapped memory at $%04X\n",addr);
 	return(0);
@@ -42,15 +42,15 @@ static void write_ppu_memory(u32 addr,u8 data)
 	u8 page = (addr >> 10) & 0xF;
 
 	//check if mapped to memory pointer
-	if(nes.ppu.writepages[page]) {
-		nes.ppu.writepages[page][addr & 0x3FF] = data;
+	if(nes->ppu.writepages[page]) {
+		nes->ppu.writepages[page][addr & 0x3FF] = data;
 
 		//if address is in chr ram, update the cache
 		if(addr < 0x2000) {
 		/*	if((addr & 0xF) == 0xF)*/ {
-				cache_t *cache = nes.ppu.cachepages[page];
-				cache_t *cache_hflip = nes.ppu.cachepages_hflip[page];
-				u8 *chr = nes.ppu.readpages[page];
+				cache_t *cache = nes->ppu.cachepages[page];
+				cache_t *cache_hflip = nes->ppu.cachepages_hflip[page];
+				u8 *chr = nes->ppu.readpages[page];
 				u32 a = addr & 0x3F0;
 
 				cache_tile(chr + a,cache + (a / 8));
@@ -60,8 +60,8 @@ static void write_ppu_memory(u32 addr,u8 data)
 	}
 
 	//see if write function is mapped
-	else if(nes.ppu.writefuncs[page])
-		nes.ppu.writefuncs[page](addr,data);
+	else if(nes->ppu.writefuncs[page])
+		nes->ppu.writefuncs[page](addr,data);
 
 	//not mapped, report error
 	else if(config->nes.log_unhandled_io)
@@ -90,12 +90,12 @@ void ppu_setwritefunc(writefunc_t writefunc)
 
 u8 ppu_pal_read(u32 addr)
 {
-	return(nes.ppu.palette[addr]);
+	return(nes->ppu.palette[addr]);
 }
 
 void ppu_pal_write(u32 addr,u8 data)
 {
-	nes.ppu.palette[addr] = data;
+	nes->ppu.palette[addr] = data;
 	video_updatepalette(addr,data);
 }
 
@@ -106,12 +106,12 @@ u8 ppu_read(u32 addr)
 	switch(addr & 7) {
 		case 2:
 			//bottom 5 bits come from the $2007 buffer
-			ret = (nes.ppu.status & 0xE0) | (nes.ppu.buf & 0x1F);
+			ret = (nes->ppu.status & 0xE0) | (nes->ppu.buf & 0x1F);
 
 			//clear vblank flag
 			if(ret & 0x80) {
 //				log_printf("ppu_read:  frame %d, scanline %d, cycle %d:  clearing VBLANK flag\n",FRAMES,SCANLINE,LINECYCLES);
-				nes.ppu.status &= 0x60;
+				nes->ppu.status &= 0x60;
 			}
 
 			//nmi suppression
@@ -127,34 +127,34 @@ u8 ppu_read(u32 addr)
 
 //			log_printf("ppu_read:  read $2002 @ cycle %d (line %d, frame %d)\n",LINECYCLES,SCANLINE,FRAMES);
 			TOGGLE = 0;
-			nes.ppu.buf = ret;
+			nes->ppu.buf = ret;
 //			if(SCANLINE >= 260)
 //				log_printf("ppu_read:  read $2002 @ cycle %d (line %d, frame %d)\n",LINECYCLES,SCANLINE,FRAMES);
 			break;
 		case 4:
-			nes.ppu.buf = nes.ppu.oam[nes.ppu.oamaddr];
+			nes->ppu.buf = nes->ppu.oam[nes->ppu.oamaddr];
 			break;
 		case 7:
 //			log_message("2007 read: ppuscroll = $%04X, scanline = %d\n",nes->ppu.scroll,nes->scanline);
-			nes.ppu.buf = nes.ppu.latch;
+			nes->ppu.buf = nes->ppu.latch;
 			SCROLL &= 0x7FFF;
-			nes.ppu.latch = ppu_memread(SCROLL);
+			nes->ppu.latch = ppu_memread(SCROLL);
 			if((SCROLL & 0x3F00) == 0x3F00)
-				nes.ppu.buf = ppu_pal_read(SCROLL & 0x1F);
+				nes->ppu.buf = ppu_pal_read(SCROLL & 0x1F);
 			if(CONTROL0 & 4)
 				SCROLL += 32;
 			else
 				SCROLL += 1;
 			break;
 	}
-	return(nes.ppu.buf);
+	return(nes->ppu.buf);
 }
 
 void ppu_write(u32 addr,u8 data)
 {
 	int i;
 
-	nes.ppu.buf = data;
+	nes->ppu.buf = data;
 	switch(addr & 7) {
 		case 0:
 			if((STATUS & 0x80) && (data & 0x80) && ((CONTROL0 & 0x80) == 0))
@@ -169,10 +169,10 @@ void ppu_write(u32 addr,u8 data)
 			CONTROL1 = data;
 			return;
 		case 3:
-			nes.ppu.oamaddr = data;
+			nes->ppu.oamaddr = data;
 			return;
 		case 4:
-			nes.ppu.oam[nes.ppu.oamaddr++] = data;
+			nes->ppu.oam[nes->ppu.oamaddr++] = data;
 			return;
 		case 5:				//scroll
 //			log_printf("ppu_write:  write to $%04X (tog=%d) @ cycle %d, line %d, frame %d\n",addr,TOGGLE,LINECYCLES,SCANLINE,FRAMES);
@@ -197,7 +197,7 @@ void ppu_write(u32 addr,u8 data)
 				SCROLL = TMPSCROLL = (TMPSCROLL & ~0x00FF) | data;
 				TOGGLE = 0;
 				//kludge
-				nes.ppu.busaddr = SCROLL;
+				nes->ppu.busaddr = SCROLL;
 			}
 			return;
 		case 7:				//vram data

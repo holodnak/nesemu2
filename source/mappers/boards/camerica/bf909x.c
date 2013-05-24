@@ -74,7 +74,7 @@ static void reset(int t,int hard)
 	mem_setwritefunc(0xF,write_prgselect);
 	mem_setvramsize(8);
 	prg = outerprg = 0;
-	mirroring = nes.cart->mirroring;
+	mirroring = nes->cart->mirroring;
 	sync();
 }
 

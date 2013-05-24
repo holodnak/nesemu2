@@ -18,12 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#define FRAME_REG			nes.apu.frame.reg
-#define FRAME_CYCLES		nes.apu.frame.cycles
-#define FRAME_QUARTER	nes.apu.frame.quarter
-#define FRAME_HALF		nes.apu.frame.half
-#define FRAME_IRQ			nes.apu.frame.irq
-#define FRAME_ZERO		nes.apu.frame.zero
+#define FRAME_REG			nes->apu.frame.reg
+#define FRAME_CYCLES		nes->apu.frame.cycles
+#define FRAME_QUARTER	nes->apu.frame.quarter
+#define FRAME_HALF		nes->apu.frame.half
+#define FRAME_IRQ			nes->apu.frame.irq
+#define FRAME_ZERO		nes->apu.frame.zero
 
 static s32 cycletable[5] = {7456,14912,22370,29828,37280};
 
@@ -42,7 +42,7 @@ static INLINE void apu_frame_reset(int hard)
 static INLINE void apu_frame_write(u32 addr,u8 data)
 {
 	FRAME_REG = data & 0xC0;
-	if(nes.cpu.cycles & 1)
+	if(nes->cpu.cycles & 1)
 		FRAME_ZERO = 3;
 	else
 		FRAME_ZERO = 2;
@@ -92,7 +92,7 @@ static INLINE void apu_frame_step()
 	}
 	if(FRAME_IRQ) {
 		if(FRAME_REG == 0) {
-//			if(nes.cpu.flags.i == 0)
+//			if(nes->cpu.flags.i == 0)
 //				log_printf("apu_frame_step:  frame irq!  cycle %d, line %d, frame %d\n",LINECYCLES,SCANLINE,FRAMES);
 			cpu_set_irq(IRQ_FRAME);
 		}

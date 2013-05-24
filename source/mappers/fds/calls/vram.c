@@ -36,9 +36,9 @@ HLECALL(vramfill)
 	u8 data,count;
 
 	//bios saves these here
-	cpu_write(0,nes.cpu.a);
-	cpu_write(1,nes.cpu.x);
-	cpu_write(2,nes.cpu.y);
+	cpu_write(0,nes->cpu.a);
+	cpu_write(1,nes->cpu.x);
+	cpu_write(2,nes->cpu.y);
 
 	//reset ppu toggle
 	cpu_read(0x2002);
@@ -50,15 +50,15 @@ HLECALL(vramfill)
 	cpu_write(0x2000,cpu_read(0xFF));
 
 	//set vram address
-	cpu_write(0x2006,nes.cpu.a);
+	cpu_write(0x2006,nes->cpu.a);
 	cpu_write(0x2006,0);
 
 	//data to fill with
-	data = nes.cpu.x;
+	data = nes->cpu.x;
 
 	//fill vram
-	if(nes.cpu.a < 0x20) {
-		count = nes.cpu.y + 1;
+	if(nes->cpu.a < 0x20) {
+		count = nes->cpu.y + 1;
 	}
 
 	//fill nametable
@@ -66,7 +66,7 @@ HLECALL(vramfill)
 		count = 4;
 	}
 
-	log_hle("vramfill:  fill at $%04X, %d iterations\n",nes.cpu.a << 8,count);
+	log_hle("vramfill:  fill at $%04X, %d iterations\n",nes->cpu.a << 8,count);
 
 	while(count--) {
 		for(i=0;i<256;i++) {
@@ -75,11 +75,11 @@ HLECALL(vramfill)
 	}
 
 	//see if we fill attributes now
-	if(nes.cpu.a >= 0x20) {
-		cpu_write(0x2006,nes.cpu.a + 3);
+	if(nes->cpu.a >= 0x20) {
+		cpu_write(0x2006,nes->cpu.a + 3);
 		cpu_write(0x2006,0xC0);
 		for(i=0;i<0x40;i++) {
-			cpu_write(0x2007,nes.cpu.y);
+			cpu_write(0x2007,nes->cpu.y);
 		}
 	}
 }
@@ -125,8 +125,8 @@ HLECALL(vramstructwrite)
 			tmp32 += 2;
 
 			//write return address to stack
-			cpu_write(nes.cpu.sp-- | 0x100,(u8)(tmp32 >> 8));
-			cpu_write(nes.cpu.sp-- | 0x100,(u8)tmp32);
+			cpu_write(nes->cpu.sp-- | 0x100,(u8)(tmp32 >> 8));
+			cpu_write(nes->cpu.sp-- | 0x100,(u8)tmp32);
 			log_hle("vramstructwrite:  jsr:  old addr, new addr = $%04X, $%04X\n",tmp32-3,srcaddr);
 		}
 
@@ -134,8 +134,8 @@ HLECALL(vramstructwrite)
 		else if(data == 0x60) {
 			log_hle("vramstructwrite:  rts @ $%04X\n",srcaddr-1);
 			//read return address from the stack
-			srcaddr = cpu_read(++nes.cpu.sp | 0x100);
-			srcaddr |= cpu_read(++nes.cpu.sp | 0x100) << 8;
+			srcaddr = cpu_read(++nes->cpu.sp | 0x100);
+			srcaddr |= cpu_read(++nes->cpu.sp | 0x100) << 8;
 		}
 
 		//data!
@@ -230,14 +230,14 @@ HLECALL(readvrambuffer)
 //appends data to end of the buffer
 HLECALL(preparevramstring)
 {
-	u8 i,len = nes.cpu.y;
+	u8 i,len = nes->cpu.y;
 	u8 bufsize,buflen,bufpos;
 	u32 srcaddr;
 
 	srcaddr = hle_getparam(0);
 	hle_fixretaddr(1);
 
-	log_hle("preparevramstring:  destaddr = $%04X, srcaddr = $%04X, len = %d\n",nes.cpu.x | (nes.cpu.a << 8),srcaddr,len);
+	log_hle("preparevramstring:  destaddr = $%04X, srcaddr = $%04X, len = %d\n",nes->cpu.x | (nes->cpu.a << 8),srcaddr,len);
 
 	//get max buffer size
 	bufsize = cpu_read(0x300);
@@ -249,7 +249,7 @@ HLECALL(preparevramstring)
 
 	//see if data is too big
 	if((int)(buflen + len + 3) > (int)bufsize) {
-		nes.cpu.a = 1;
+		nes->cpu.a = 1;
 		return;
 	}
 
@@ -262,15 +262,15 @@ HLECALL(preparevramstring)
 	//bios doesnt modify this byte?
 //	cpu_write(0x300,len);
 	cpu_write(0x301,buflen);
-	cpu_write(0x302 + bufpos,nes.cpu.a);
-	cpu_write(0x303 + bufpos,nes.cpu.x);
-	cpu_write(0x304 + bufpos,nes.cpu.y);
+	cpu_write(0x302 + bufpos,nes->cpu.a);
+	cpu_write(0x303 + bufpos,nes->cpu.x);
+	cpu_write(0x304 + bufpos,nes->cpu.y);
 	for(i=0;i<len;i++) {
 		cpu_write(0x305 + bufpos + i,cpu_read(srcaddr++));
 	}
 	cpu_write(0x305 + bufpos + i,0xFF);
 
-	nes.cpu.a = 0xFF;
+	nes->cpu.a = 0xFF;
 }
 
 HLECALL(preparevramstrings)
@@ -286,9 +286,9 @@ HLECALL(getvrambufferbyte)
 //todo:  revise this to use $2007 and its (the bios') internal functions
 HLECALL(loadtileset)
 {
-	int units = nes.cpu.x;
-	u16 ppuaddr = (nes.cpu.y << 8) | (nes.cpu.a & 0xF0);
-	u8 fill,mode = nes.cpu.a;
+	int units = nes->cpu.x;
+	u16 ppuaddr = (nes->cpu.y << 8) | (nes->cpu.a & 0xF0);
+	u8 fill,mode = nes->cpu.a;
 	u32 i,addr;
 
 	addr = hle_getparam(0);
@@ -361,7 +361,7 @@ static void inc00bya()
 	u16 tmp;
 
 	tmp = cpu_read(0) | (cpu_read(1) << 8);
-	tmp += nes.cpu.a;
+	tmp += nes->cpu.a;
 	cpu_write(0,(u8)tmp);
 	cpu_write(1,(u8)(tmp >> 8));
 	cpu_write(2,cpu_read(2) - 1);
@@ -369,7 +369,7 @@ static void inc00bya()
 
 static void inc00by8()
 {
-	nes.cpu.a = 8;
+	nes->cpu.a = 8;
 	inc00bya();
 }
 */

@@ -20,6 +20,10 @@
 
 #include <windows.h>
 
+extern "C" {
+	#include "system/sound.h"
+}
+
 static int sound_bps = 16;
 static int sound_samplerate = 44100;
 static int sound_fragsize = 1024;//SOUND_HZ / 60;
@@ -53,5 +57,13 @@ void sound_setcallback(void (*cb)(void *buffer, int length))
 }
 
 void sound_update()
+{
+}
+
+void sound_lock()
+{
+}
+
+void sound_unlock()
 {
 }

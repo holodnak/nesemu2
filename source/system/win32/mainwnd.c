@@ -19,16 +19,18 @@
  ***************************************************************************/
 
 #include <windows.h>
-#include "resource.h"
 #include "misc/log.h"
 #include "misc/config.h"
 #include "nes/nes.h"
 #include "nes/state/state.h"
 #include "system/win32/dialogs.h"
+#include "system/win32/resource.h"
+#include "system/video.h"
 
 #define MAX_LOADSTRING 100
 
 HINSTANCE hInst;									//current instance
+HACCEL hAccelTable;								//accelerators
 HWND hWnd;											//main window
 HWND hConsole = 0;								//console/debug message window
 HWND hDebugger = 0;								//debugger window
@@ -39,6 +41,9 @@ int consoleshowing = 0;
 
 //defined in main.c
 extern int quit,running;
+
+//defined in video.cpp
+void video_resize();
 
 void resizeclient(HWND hwnd,int w,int h)
 {
@@ -136,31 +141,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			file_open(hWnd);
 			break;
 		case ID_NES_SOFTRESET:
-			if(nes.cart)
+			if(nes->cart)
 				nes_reset(0);
 			break;
 		case ID_NES_HARDRESET:
-			if(nes.cart)
+			if(nes->cart)
 				nes_reset(1);
 			break;
 		case ID_NES_LOADSTATE:
-//			if(nes.cart)
+//			if(nes->cart)
 //				nes_loadstate();
 			break;
 		case ID_NES_SAVESTATE:
-//			if(nes.cart)
+//			if(nes->cart)
 //				nes_savestate();
 			break;
 		case ID_FDS_FLIPDISK:
-			if(nes.cart) {
+			if(nes->cart) {
 				u8 data[4] = {0,0,0,0};
 
-				nes.mapper->state(CFG_SAVE,data);
+				nes->mapper->state(CFG_SAVE,data);
 				if(data[0] == 0xFF)
 					data[0] = 0;
 				else
 					data[0] ^= 1;
-				nes.mapper->state(CFG_LOAD,data);
+				nes->mapper->state(CFG_LOAD,data);
 				log_printf("disk inserted!  side = %d\n",data[0]);
 			}
 			break;
@@ -189,6 +194,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
+			break;
+		case ID_VIEW_FULLSCREEN:
+			video_kill();
+			config->video.fullscreen ^= 1;
+			video_init();
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
@@ -264,21 +274,25 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance; // Store instance handle in our global variable
-
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
-
 	hConsole = CreateDialog(hInstance,MAKEINTRESOURCE(IDD_CONSOLE),hWnd,ConsoleProc);
+	hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDR_ACCELERATOR));
 	if(consoleshowing)
 		ShowWindow(hConsole,SW_SHOW);
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+	return((hWnd == 0) ? FALSE : TRUE);
+}
 
-	resizeclient(hWnd,256,240);
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+void checkmessages()
+{
+	MSG msg;
 
-   return TRUE;
+	while(PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
+		if(IsDialogMessage(hConsole,&msg) || IsDialogMessage(hDebugger,&msg))
+			continue;
+		if(TranslateAccelerator(msg.hwnd,hAccelTable,&msg))
+			continue;
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 }

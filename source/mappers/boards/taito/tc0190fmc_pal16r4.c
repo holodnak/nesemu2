@@ -63,7 +63,7 @@ static void ppucycle()
 		cpu_set_irq(IRQ_MAPPER);
 	if(irqwait)
 		irqwait--;
-	if((irqwait == 0) && (nes.ppu.busaddr & 0x1000)) {
+	if((irqwait == 0) && (nes->ppu.busaddr & 0x1000)) {
 		tmp = irqcounter;
 		if((irqcounter == 0) || irqreload)
 			irqcounter = irqlatch;
@@ -73,7 +73,7 @@ static void ppucycle()
 			needirq = 12;
 		irqreload = 0;
 	}
-	if(nes.ppu.busaddr & 0x1000) {
+	if(nes->ppu.busaddr & 0x1000) {
 		irqwait = 8;
 	}
 }

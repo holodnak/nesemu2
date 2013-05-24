@@ -43,12 +43,12 @@ static void update_disasm(HWND hwnd)
 	ListBox_ResetContent(hctrl);
 
 	if(pc == -1)
-		pc = nes.cpu.pc;
+		pc = nes->cpu.pc;
 
 	//draw lines
 	for(i=0;i<29;i++) {
 		sprintf(str,"%04X:  ",pc);
-		if(nes.cpu.pc == pc)
+		if(nes->cpu.pc == pc)
 			highlight = i;
 		pc = cpu_disassemble(&str[6],pc);
 		ListBox_AddString(hctrl,str);
@@ -65,20 +65,20 @@ static void update_registers(HWND hwnd)
 {
 	char str[32];
 
-	sprintf(str,"%04X",nes.cpu.pc);	SetWindowText(GetDlgItem(hwnd,IDC_PCEDIT),str);
-	sprintf(str,"%02X",nes.cpu.a);	SetWindowText(GetDlgItem(hwnd,IDC_AEDIT),str);
-	sprintf(str,"%02X",nes.cpu.x);	SetWindowText(GetDlgItem(hwnd,IDC_XEDIT),str);
-	sprintf(str,"%02X",nes.cpu.y);	SetWindowText(GetDlgItem(hwnd,IDC_YEDIT),str);
-	sprintf(str,"%02X",nes.cpu.sp);	SetWindowText(GetDlgItem(hwnd,IDC_SPEDIT),str);
+	sprintf(str,"%04X",nes->cpu.pc);	SetWindowText(GetDlgItem(hwnd,IDC_PCEDIT),str);
+	sprintf(str,"%02X",nes->cpu.a);	SetWindowText(GetDlgItem(hwnd,IDC_AEDIT),str);
+	sprintf(str,"%02X",nes->cpu.x);	SetWindowText(GetDlgItem(hwnd,IDC_XEDIT),str);
+	sprintf(str,"%02X",nes->cpu.y);	SetWindowText(GetDlgItem(hwnd,IDC_YEDIT),str);
+	sprintf(str,"%02X",nes->cpu.sp);	SetWindowText(GetDlgItem(hwnd,IDC_SPEDIT),str);
 }
 
 static void update_timing(HWND hwnd)
 {
 	char str[32];
 
-	sprintf(str,"%d",nes.ppu.linecycles);	SetWindowText(GetDlgItem(hwnd,IDC_PIXELSTATIC),str);
-	sprintf(str,"%d",nes.ppu.scanline);		SetWindowText(GetDlgItem(hwnd,IDC_LINESTATIC),str);
-	sprintf(str,"%d",nes.ppu.frames);		SetWindowText(GetDlgItem(hwnd,IDC_FRAMESTATIC),str);
+	sprintf(str,"%d",nes->ppu.linecycles);	SetWindowText(GetDlgItem(hwnd,IDC_PIXELSTATIC),str);
+	sprintf(str,"%d",nes->ppu.scanline);		SetWindowText(GetDlgItem(hwnd,IDC_LINESTATIC),str);
+	sprintf(str,"%d",nes->ppu.frames);		SetWindowText(GetDlgItem(hwnd,IDC_FRAMESTATIC),str);
 }
 
 static void update(HWND hwnd)
@@ -127,7 +127,7 @@ LRESULT CALLBACK DebuggerDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 				si.fMask = SIF_PAGE | SIF_POS | SIF_RANGE;
 				GetScrollInfo((HWND)lParam,SB_CTL,&si);
 				if(pc == (u32)-1)
-					pc = nes.cpu.pc;
+					pc = nes->cpu.pc;
 				switch(LOWORD(wParam)) {
 					case SB_LINEUP:
 						pc--;

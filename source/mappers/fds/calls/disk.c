@@ -39,14 +39,14 @@ HLECALL(loadbootfiles)
 
 	//load disk header
 	pos = diskside * 65500;
-	memcpy(&disk_header,nes.cart->disk.data + pos,sizeof(fds_disk_header_t));
+	memcpy(&disk_header,nes->cart->disk.data + pos,sizeof(fds_disk_header_t));
 	pos += 57;
 
 	//load boot files
 	for(i=0;i<disk_header.numfiles;i++) {
 		char fn[10] = "        \0";
 
-		memcpy(&file_header,nes.cart->disk.data + pos,sizeof(fds_file_header_t));
+		memcpy(&file_header,nes->cart->disk.data + pos,sizeof(fds_file_header_t));
 		pos += 17;
 		if(file_header.fileid <= disk_header.bootid) {
 			memcpy(fn,file_header.name,8);
@@ -56,23 +56,23 @@ HLECALL(loadbootfiles)
 			//load into cpu
 			if(file_header.loadarea == 0) {
 				for(j=0;j<file_header.filesize;j++)
-					cpu_write(j + file_header.loadaddr,nes.cart->disk.data[pos + j + 1]);
+					cpu_write(j + file_header.loadaddr,nes->cart->disk.data[pos + j + 1]);
 			}
 
 			//load into ppu
 			else {
 				for(j=0;j<file_header.filesize;j++)
-					ppu_memwrite(j + file_header.loadaddr,nes.cart->disk.data[pos + j + 1]);
+					ppu_memwrite(j + file_header.loadaddr,nes->cart->disk.data[pos + j + 1]);
 			}
 		}
 		pos += file_header.filesize;
 	}
 
 	//put loaded files into y register
-	nes.cpu.y = loadedfiles;
+	nes->cpu.y = loadedfiles;
 
 	//put error code in accumulator
-	nes.cpu.a = 0;
+	nes->cpu.a = 0;
 }
 
 HLECALL(loadfiles)
@@ -85,12 +85,12 @@ HLECALL(loadfiles)
 	u8 fileidlist[0x20];
 
 	//bios needs these flags set
-	nes.cpu.flags.z = 1;
-	nes.cpu.flags.n = 0;
-	nes.cpu.flags.v = 0;
-	nes.cpu.flags.c = 0;
-	nes.cpu.a = 0;
-	nes.cpu.y = 0;
+	nes->cpu.flags.z = 1;
+	nes->cpu.flags.n = 0;
+	nes->cpu.flags.v = 0;
+	nes->cpu.flags.c = 0;
+	nes->cpu.a = 0;
+	nes->cpu.y = 0;
 
 	if(diskside == 0xFF) {
 		log_hle("loadfiles:  hax:  disk not inserted, setting to 0\n");
@@ -120,7 +120,7 @@ HLECALL(loadfiles)
 
 	//read in disk header
 	pos = diskside * 65500;
-	memcpy(&disk_header,nes.cart->disk.data + pos,sizeof(fds_disk_header_t));
+	memcpy(&disk_header,nes->cart->disk.data + pos,sizeof(fds_disk_header_t));
 	pos += 57;
 
 	//$FF indicates to load system boot files
@@ -134,7 +134,7 @@ HLECALL(loadfiles)
 		char fn[10] = "        \0";
 		int wasloaded = 0;
 
-		memcpy(&file_header,nes.cart->disk.data + pos,sizeof(fds_file_header_t));
+		memcpy(&file_header,nes->cart->disk.data + pos,sizeof(fds_file_header_t));
 		pos += 17;                 
 		memcpy(fn,file_header.name,8);
 		for(k=0;fileidlist[k] != 0xFF && k < 20;k++) {
@@ -148,13 +148,13 @@ HLECALL(loadfiles)
 				//load into cpu
 				if(file_header.loadarea == 0) {
 					for(j=0;j<file_header.filesize;j++)
-						cpu_write(j + file_header.loadaddr,nes.cart->disk.data[pos + j + 1]);
+						cpu_write(j + file_header.loadaddr,nes->cart->disk.data[pos + j + 1]);
 				}
 
 				//load into ppu
 				else {
 					for(j=0;j<file_header.filesize;j++)
-						ppu_memwrite(j + file_header.loadaddr,nes.cart->disk.data[pos + j + 1]);
+						ppu_memwrite(j + file_header.loadaddr,nes->cart->disk.data[pos + j + 1]);
 				}
 			}
 		}
@@ -166,10 +166,10 @@ HLECALL(loadfiles)
 	log_hle("loadfiles: loaded %d files\n",loadedfiles);
 
 	//put loaded files into y register
-	nes.cpu.y = loadedfiles;
+	nes->cpu.y = loadedfiles;
 
 	//put error code in accumulator
-	nes.cpu.a = 0;
+	nes->cpu.a = 0;
 }
 
 HLECALL(writefile)
@@ -191,9 +191,9 @@ HLECALL(writefile)
 	pos = diskside * 65500;
 
 	//pointer to disk header
-	disk_header = (fds_disk_header_t*)(nes.cart->disk.data + pos);
+	disk_header = (fds_disk_header_t*)(nes->cart->disk.data + pos);
 
-	log_hle("hle writefile: %d files on disk (A = %d)\n",disk_header->numfiles,nes.cpu.a);
+	log_hle("hle writefile: %d files on disk (A = %d)\n",disk_header->numfiles,nes->cpu.a);
 
 	//seek past the disk header
 	pos += 57;
@@ -227,7 +227,7 @@ HLECALL(writefile)
 
 	//loop thru all the files
 	for(i=0;i<disk_header->numfiles;i++) {
-		file_header = (fds_file_header_t*)(nes.cart->disk.data + pos);
+		file_header = (fds_file_header_t*)(nes->cart->disk.data + pos);
 		pos += 17;
 		if(file_header->fileid == file_header2.fileid) {
 			log_hle("hle writefile: match! '%s', id $%X, size $%X, load addr $%04X\n",fn,file_header->fileid,file_header->filesize,file_header->loadaddr);
@@ -239,11 +239,11 @@ HLECALL(writefile)
 			file_header->loadarea = file_header2.loadarea;
 			for(i=0;i<file_header2.filesize;i++) {
 				if(file_header2.srcarea == 0)
-					nes.cart->disk.data[pos + i + 1] = cpu_read(file_header2.srcaddr + i);
+					nes->cart->disk.data[pos + i + 1] = cpu_read(file_header2.srcaddr + i);
 				else
-					nes.cart->disk.data[pos + i + 1] = ppu_memread(file_header2.srcaddr + i);
+					nes->cart->disk.data[pos + i + 1] = ppu_memread(file_header2.srcaddr + i);
 			}
-			nes.cart->disk.data[pos + i + 1] = 0xFF;
+			nes->cart->disk.data[pos + i + 1] = 0xFF;
 			break;
 		}
 		pos += file_header->filesize;
@@ -251,23 +251,23 @@ HLECALL(writefile)
 		log_hle("hle writefile: seeking over '%s', id $%X, size $%X, load addr $%04X\n",fn,file_header->fileid,file_header->filesize,file_header->loadaddr);
 	}
 
-	if(nes.cpu.a != 0xFF)
-		disk_header->numfiles = nes.cpu.a + 1;
+	if(nes->cpu.a != 0xFF)
+		disk_header->numfiles = nes->cpu.a + 1;
 	else
 		log_printf("appendfile!\n");
 
 	cpu_write(6,disk_header->numfiles);
 
-	nes.cpu.a = 0;
-	nes.cpu.x = 0;
-	nes.cpu.flags.n = 0;
-	nes.cpu.flags.z = 1;
+	nes->cpu.a = 0;
+	nes->cpu.x = 0;
+	nes->cpu.flags.n = 0;
+	nes->cpu.flags.z = 1;
 }
 
 HLECALL(appendfile)
 {
 	log_printf("appendfile!\n");
-	nes.cpu.a = 0xFF;
+	nes->cpu.a = 0xFF;
 	hle_writefile();
 }
 

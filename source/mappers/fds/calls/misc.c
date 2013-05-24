@@ -31,7 +31,7 @@ HLECALL(delay132)
 
 HLECALL(delayms)
 {
-	int delay = 1790 * nes.cpu.y + 5;
+	int delay = 1790 * nes->cpu.y + 5;
 	int i;
 
 	for(i=0;i<delay;i++)
@@ -43,10 +43,10 @@ HLECALL(vintwait)
 	u8 tmp;
 
 	//save a
-	cpu_write(nes.cpu.sp-- | 0x100,nes.cpu.a);
+	cpu_write(nes->cpu.sp-- | 0x100,nes->cpu.a);
 
 	//save old nmi action
-	cpu_write(nes.cpu.sp-- | 0x100,cpu_read(0x100));
+	cpu_write(nes->cpu.sp-- | 0x100,cpu_read(0x100));
 
 	//write new nmi action
 	cpu_write(0x100,0);
@@ -57,8 +57,8 @@ HLECALL(vintwait)
 	cpu_write(0x2000,tmp);
 
 	//clear zero flag, set negative flag
-	nes.cpu.flags.z = 0;
-	nes.cpu.flags.n = 1;
+	nes->cpu.flags.z = 0;
+	nes->cpu.flags.n = 1;
 
 	log_hle("vintwait!\n");
 }

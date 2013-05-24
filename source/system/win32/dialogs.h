@@ -21,7 +21,7 @@
 #ifndef __dialogs_h__
 #define __dialogs_h__
 
-BOOL CALLBACK ConsoleProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK ConsoleProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK AboutDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK MappersDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ConfigurationDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);

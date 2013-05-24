@@ -94,8 +94,8 @@ int apu_init()
 
 void apu_kill()
 {
-	if(nes.apu.external)
-		nes.apu.external->kill();
+	if(nes->apu.external)
+		nes->apu.external->kill();
 	if(soundbuf) {
 		mem_free(soundbuf);
 		soundbuf = 0;
@@ -115,8 +115,8 @@ void apu_reset(int hard)
 	apu_triangle_reset(hard);
 	apu_noise_reset(hard);
 	apu_dpcm_reset(hard);
-	if(nes.apu.external)
-		nes.apu.external->reset();
+	if(nes->apu.external)
+		nes->apu.external->reset();
 	cycles = 0;
 }
 
@@ -127,13 +127,13 @@ u8 apu_read(u32 addr)
 	switch(addr) {
 		case 0x4015:
 			ret = 0;
-			if(nes.apu.square[0].LengthCtr)	ret |= 0x01;
-			if(nes.apu.square[1].LengthCtr)	ret |= 0x02;
-			if(nes.apu.triangle.LengthCtr)	ret |= 0x04;
-			if(nes.apu.noise.LengthCtr)		ret |= 0x08;
-			if(nes.apu.dpcm.LengthCtr)			ret |= 0x10;
-			if(nes.cpu.irqstate & IRQ_FRAME)	ret |= 0x40;
-			if(nes.cpu.irqstate & IRQ_DPCM)	ret |= 0x80;
+			if(nes->apu.square[0].LengthCtr)	ret |= 0x01;
+			if(nes->apu.square[1].LengthCtr)	ret |= 0x02;
+			if(nes->apu.triangle.LengthCtr)	ret |= 0x04;
+			if(nes->apu.noise.LengthCtr)		ret |= 0x08;
+			if(nes->apu.dpcm.LengthCtr)			ret |= 0x10;
+			if(nes->cpu.irqstate & IRQ_FRAME)	ret |= 0x40;
+			if(nes->cpu.irqstate & IRQ_DPCM)	ret |= 0x80;
 			cpu_clear_irq(IRQ_FRAME);
 //			log_printf("apu_read:  $4015:  ret = %02X (cycle %d, line %d, frame %d)\n",ret,LINECYCLES,SCANLINE,FRAMES);
 			return(ret);
@@ -203,16 +203,18 @@ static INLINE void updatebuffer()
 //			log_printf("soundbuffer overflow!  %d! (cycles = %d)\n",soundbuflen,cycles);
 		return;
 	}
-	sample = nes.apu.square[0].Pos + nes.apu.square[1].Pos + nes.apu.triangle.Pos + nes.apu.noise.Pos + nes.apu.dpcm.Pos;
+	sample = nes->apu.square[0].Pos + nes->apu.square[1].Pos + nes->apu.triangle.Pos + nes->apu.noise.Pos + nes->apu.dpcm.Pos;
 	sample *= 64;
-	if(nes.apu.external)
-		sample += nes.apu.external->process(40);
+	if(nes->apu.external)
+		sample += nes->apu.external->process(40);
 	if(sample < -0x8000)
 		sample = -0x8000;
 	if(sample > 0x7FFF)
 		sample = 0x7FFF;
+	sound_lock();
 	n = (soundbuflen++ + soundbufpos) % soundbufsize;
 	soundbuf[n] = (s16)sample;
+	sound_unlock();
 }
 
 //this is called every cycle
@@ -236,9 +238,9 @@ void apu_step()
 
 void apu_setexternal(external_t *ext)
 {
-	if(nes.apu.external)
-		nes.apu.external->kill();
-	nes.apu.external = ext;
+	if(nes->apu.external)
+		nes->apu.external->kill();
+	nes->apu.external = ext;
 	ext->init();
 }
 

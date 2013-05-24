@@ -62,6 +62,8 @@ BEGIN
             MENUITEM "&Mapper...",                  ID_CONFIGURATION_MAPPER
         END
         MENUITEM "&Console",                    ID_VIEW_CONSOLE
+        MENUITEM SEPARATOR
+        MENUITEM "&Fullscreen",                 ID_VIEW_FULLSCREEN
     END
     POPUP "&Help"
     BEGIN
@@ -369,6 +371,20 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_MAIN                ICON                    "mainicon.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR ACCELERATORS 
+BEGIN
+    VK_RETURN,      ID_VIEW_FULLSCREEN,     VIRTKEY, ALT, NOINVERT
+    VK_F5,          ID_NES_LOADSTATE,       VIRTKEY, NOINVERT
+    VK_F8,          ID_NES_LOADSTATE,       VIRTKEY, NOINVERT
+    VK_F9,          ID_FDS_FLIPDISK,        VIRTKEY, NOINVERT
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

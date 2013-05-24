@@ -27,7 +27,7 @@ static void sync()
 {
 	mem_setprg8(6,prg);
 	mem_setprg32(8,3);
-	if(nes.cart->chr.size)
+	if(nes->cart->chr.size)
 		mem_setchr8(0,chr);
 	else
 		mem_setvram8(0,0);
@@ -81,7 +81,7 @@ static void reset(int hard)
 
 	for(i=0x8;i<0x10;i++)
 		mem_setwritefunc(i,write);
-	if(nes.cart->chr.size == 0)
+	if(nes->cart->chr.size == 0)
 		mem_setvramsize(8);
 	prg = 0;
 	chr = 0;

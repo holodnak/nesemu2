@@ -23,30 +23,30 @@
 
 HLECALL(enpf)
 {
-	nes.cpu.a = cpu_read(0xFE) | 0x08;
-	cpu_write(0xFE,nes.cpu.a);
-	cpu_write(0x2001,nes.cpu.a);
+	nes->cpu.a = cpu_read(0xFE) | 0x08;
+	cpu_write(0xFE,nes->cpu.a);
+	cpu_write(0x2001,nes->cpu.a);
 }
 
 HLECALL(dispf)
 {
-	nes.cpu.a = cpu_read(0xFE) & 0xF7;
-	cpu_write(0xFE,nes.cpu.a);
-	cpu_write(0x2001,nes.cpu.a);
+	nes->cpu.a = cpu_read(0xFE) & 0xF7;
+	cpu_write(0xFE,nes->cpu.a);
+	cpu_write(0x2001,nes->cpu.a);
 }
 
 HLECALL(enobj)
 {
-	nes.cpu.a = cpu_read(0xFE) | 0x10;
-	cpu_write(0xFE,nes.cpu.a);
-	cpu_write(0x2001,nes.cpu.a);
+	nes->cpu.a = cpu_read(0xFE) | 0x10;
+	cpu_write(0xFE,nes->cpu.a);
+	cpu_write(0x2001,nes->cpu.a);
 }
 
 HLECALL(disobj)
 {
-	nes.cpu.a = cpu_read(0xFE) & 0xEF;
-	cpu_write(0xFE,nes.cpu.a);
-	cpu_write(0x2001,nes.cpu.a);
+	nes->cpu.a = cpu_read(0xFE) & 0xEF;
+	cpu_write(0xFE,nes->cpu.a);
+	cpu_write(0x2001,nes->cpu.a);
 }
 
 HLECALL(enpfobj)

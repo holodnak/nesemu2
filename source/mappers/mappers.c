@@ -100,6 +100,7 @@ static mapper_t *get_mapper(int mapperid)
 	//unlicensed
 	//tengen
 	MAPPER(B_TENGEN_RAMBO_1);
+	MAPPER(B_TENGEN_MIMIC_1);
 
 	//camerica
 	MAPPER(B_CAMERICA_BF9093);
@@ -128,6 +129,7 @@ static mapper_t *get_mapper(int mapperid)
 
 	//ave
 	MAPPER(B_AVE_NINA_001);
+	MAPPER(B_AVE_NINA_006);
 
 	//cne
 	MAPPER(B_CNE_FSB);
@@ -168,6 +170,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_MAGICSERIES);
 	MAPPER(B_COLORDREAMS);
 	MAPPER(B_RUMBLESTATION);
+	MAPPER(B_HES);
 
 	//homebrew
 	MAPPER(B_TEPPLES);

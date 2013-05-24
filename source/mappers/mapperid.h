@@ -119,6 +119,7 @@ enum boardid_e {
 	B_MAGICSERIES,
 	B_COLORDREAMS,
 	B_RUMBLESTATION,
+	B_HES,
 
 	//c&e
 	B_CNE_FSB,
@@ -168,6 +169,7 @@ enum boardid_e {
 
 	//ave
 	B_AVE_NINA_001,
+	B_AVE_NINA_006,
 
 	//kaiser
 	B_KAISER_KS202,

@@ -957,6 +957,9 @@
 							RelativePath="..\..\source\mappers\boards\other\colordreams.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\other\hes.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\other\magicseries.c">
 						</File>
 						<File
@@ -1034,6 +1037,9 @@
 						Filter="">
 						<File
 							RelativePath="..\..\source\mappers\boards\ave\nina-001.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\ave\nina-006.c">
 						</File>
 					</Filter>
 					<Filter

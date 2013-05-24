@@ -121,7 +121,7 @@ void mem_setprg(int banksize,int page,int bank)
 
 	page <<= 2;
 	for(i=0;i<(banksize);i++) {
-		nes->cpu.readpages[page + i] = ptr + i * 0x400;
+		nes->cpu.readpages[page + i] = ptr + ((i * 0x400) & nes->cart->prg.mask);
 		nes->cpu.writepages[page + i] = 0;
 	}
 }

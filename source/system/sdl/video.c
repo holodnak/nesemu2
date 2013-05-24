@@ -96,7 +96,8 @@ static int timer_init()
 	return(0);
 }
 #endif
-int video_reinit()
+
+int video_init()
 {
 	int filter = get_filter_int(config->video.filter);
 
@@ -151,13 +152,6 @@ int video_reinit()
 	log_printf("video initialized:  %dx%dx%d %s\n",screenw,screenh,screenbpp,(flags & SDL_FULLSCREEN) ? "fullscreen" : "windowed");
 
 	return(0);
-}
-
-int video_init()
-{
-	int ret = video_reinit();
-
-	return(ret);
 }
 
 void video_kill()

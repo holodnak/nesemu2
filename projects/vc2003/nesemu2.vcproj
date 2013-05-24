@@ -927,6 +927,9 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\sachen\sachen-8259x.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sachen\sachen-tca01.c">
+						</File>
 					</Filter>
 					<Filter
 						Name="konami"

@@ -116,6 +116,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_TXC_STRIKEWOLF);
 
 	//sachen
+	MAPPER(B_SACHEN_TCA01);
 	MAPPER(B_SACHEN_74LS374N);
 //	MAPPER(B_SACHEN_74LS374NA);
 	MAPPER(B_SACHEN_8259A);

@@ -115,3 +115,47 @@ char *paths_parse(char *src,char *dest,int len)
 	mem_free(tmp);
 	return(dest);
 }
+
+void paths_makestatefilename(char *romfilename,char *dest,int len)
+{
+	char *p,*tmp = mem_strdup(romfilename);
+
+	//clear the string
+	memset(dest,0,len);
+
+	//parse the state path
+	paths_parse(config->path.state,dest,len);
+
+	//append the path seperator
+	dest[strlen(dest)] = PATH_SEPERATOR;
+
+	//normalize the path seperators
+	for(p=tmp;*p;p++) {
+		if(*p == '/' || *p == '\\')
+			*p = PATH_SEPERATOR;
+	}
+
+	//find the last path seperator
+	p = strrchr(tmp,PATH_SEPERATOR);
+
+	//if not found then it is plain filename
+	p = (p == 0) ? tmp : p + 1;
+
+/*	//this code removed because if you have smb.fds and smb.nes they use the same state filename
+	//find the extension
+	p2 = strrchr(tmp,'.');
+
+	//if found, end the string here
+	if(p2) {
+		*p2 = 0;
+	}*/
+
+	//append the rom filename
+	strcat(dest,p);
+
+	//append the state extension)
+	strcat(dest,".state");
+
+	//free the temporary string
+	mem_free(tmp);
+}

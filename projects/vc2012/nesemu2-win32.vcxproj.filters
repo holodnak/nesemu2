@@ -181,6 +181,15 @@
     <Filter Include="Source Files\mappers\sound">
       <UniqueIdentifier>{e4f89b71-fe49-4185-b21c-6a62a5b2868b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\mappers\fds">
+      <UniqueIdentifier>{9e1adbfb-5f6d-428d-ac62-bc482f154151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\nsf">
+      <UniqueIdentifier>{590e2a81-03ff-4306-b564-de2dcf2c243b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mappers\fds\calls">
+      <UniqueIdentifier>{af371ed3-5ec5-4dcc-af5e-5c5dac09b608}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\win32\input.c">
@@ -189,13 +198,7 @@
     <ClCompile Include="..\..\source\system\win32\main.c">
       <Filter>Source Files\system\win32</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\system\win32\sound.c">
-      <Filter>Source Files\system\win32</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\system\win32\system.c">
-      <Filter>Source Files\system\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\system\win32\video.c">
       <Filter>Source Files\system\win32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\io.c">
@@ -456,13 +459,7 @@
     <ClCompile Include="..\..\source\mappers\boards\other\magicseries.c">
       <Filter>Source Files\mappers\boards\other</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\other\mlt-caltron6in1.c">
-      <Filter>Source Files\mappers\boards\other</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\other\rumblestation.c">
-      <Filter>Source Files\mappers\boards\other</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\other\union-bond-ffv.c">
       <Filter>Source Files\mappers\boards\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\15in1.c">
@@ -624,9 +621,6 @@
     <ClCompile Include="..\..\source\mappers\boards\namcot\3425.c">
       <Filter>Source Files\mappers\boards\namcot</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\nintendo\fds.c">
-      <Filter>Source Files\mappers\boards\nintendo</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\inputdev\powerpad.c">
       <Filter>Source Files\inputdev</Filter>
     </ClCompile>
@@ -695,6 +689,87 @@
     </ClCompile>
     <ClCompile Include="..\..\source\nes\genie.c">
       <Filter>Source Files\nes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\nsf\nsf.c">
+      <Filter>Source Files\mappers\nsf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\fds.c">
+      <Filter>Source Files\mappers\fds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\hle.c">
+      <Filter>Source Files\mappers\fds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\disk.c">
+      <Filter>Source Files\mappers\fds\calls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\diskutil.c">
+      <Filter>Source Files\mappers\fds\calls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\misc.c">
+      <Filter>Source Files\mappers\fds\calls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\pads.c">
+      <Filter>Source Files\mappers\fds\calls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\ppu.c">
+      <Filter>Source Files\mappers\fds\calls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\util.c">
+      <Filter>Source Files\mappers\fds\calls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\vector.c">
+      <Filter>Source Files\mappers\fds\calls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\vram.c">
+      <Filter>Source Files\mappers\fds\calls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\waixing\ffv.c">
+      <Filter>Source Files\mappers\boards\waixing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\waixing\sh2.c">
+      <Filter>Source Files\mappers\boards\waixing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\active.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\hes.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\ntdec\caltron6in1.c">
+      <Filter>Source Files\mappers\boards\ntdec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\cnrom_cp.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\ave\nina-006.c">
+      <Filter>Source Files\mappers\boards\ave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\jaleco\jf11.c">
+      <Filter>Source Files\mappers\boards\jaleco</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\nsf.c">
+      <Filter>Source Files\nes\cart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\sound.cpp">
+      <Filter>Source Files\system\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\video.cpp">
+      <Filter>Source Files\system\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-8259x.c">
+      <Filter>Source Files\mappers\boards\sachen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-tca01.c">
+      <Filter>Source Files\mappers\boards\sachen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\misc\paths.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\misc\vars.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\chips\sachen-8259.c">
+      <Filter>Source Files\mappers\chips</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

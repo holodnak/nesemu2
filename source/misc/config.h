@@ -52,7 +52,9 @@ typedef struct config_s {
 		char bios[1024];
 		char save[1024];
 		char state[1024];
+		char patch[1024];
 		char palette[1024];
+		char cheat[1024];
 	} path;
 
 	struct {

@@ -172,6 +172,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_COLORDREAMS);
 	MAPPER(B_RUMBLESTATION);
 	MAPPER(B_HES);
+	MAPPER(B_ACTIVE);
 
 	//homebrew
 	MAPPER(B_TEPPLES);

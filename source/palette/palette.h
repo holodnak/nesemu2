@@ -35,5 +35,7 @@ palette_t *palette_create();
 void palette_destroy(palette_t *p);
 palette_t *palette_load(char *filename);
 int palette_save(char *filename,palette_t *p);
+int palette_init();
+void palette_kill();
 
 #endif

@@ -61,11 +61,15 @@ int mainloop()
 
 static void console_loghook(char *str)
 {
-	HWND hCtrl = GetDlgItem(hConsole,IDC_CONSOLEEDIT);
-	int index = GetWindowTextLength(hCtrl);
+	HWND hCtrl;
+	int index;
 
-	Edit_SetSel(hCtrl,index,index);
-	Edit_ReplaceSel(hCtrl,str);
+	if(hConsole) {
+		hCtrl = GetDlgItem(hConsole,IDC_CONSOLEEDIT);
+		index = GetWindowTextLength(hCtrl);
+		Edit_SetSel(hCtrl,index,index);
+		Edit_ReplaceSel(hCtrl,str);
+	}
 }
 
 void resizeclient(HWND hwnd,int w,int h);
@@ -79,11 +83,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	char *p;
 
 	MyRegisterClass(hInstance);
-
-	// Perform application initialization:
-	if (!InitInstance (hInstance, nCmdShow)) 
-	{
-		return FALSE;
+	if(InitInstance(hInstance,nCmdShow) == 0) {
+		return(FALSE);
 	}
 
 	log_sethook(console_loghook);
@@ -104,15 +105,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	//this is temporary
 	nes_set_inputdev(0,I_JOYPAD0);
 
-//this palette crap could be made common to all system targets...palette_init() maybe?
-	if(strcmp(config->palette.source,"file") == 0) {
-		pal = palette_load(config->palette.filename);
-	}
-	if(pal == 0) {
-		pal = palette_generate(config->palette.hue,config->palette.saturation);
-	}
-	video_setpalette(pal);
-
 	log_printf("trying lpcmdline as filename (%s)...\n",lpCmdLine);
 	if(nes_load(lpCmdLine) == 0) {
 		nes_reset(1);
@@ -120,9 +112,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 
 	log_printf("starting main loop...\n");
-	ret = mainloop();
-
-	palette_destroy(pal);
+	ret = (mainloop() == 0) ? TRUE : FALSE;
 
 	emu_kill();
 

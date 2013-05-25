@@ -72,9 +72,8 @@ typedef struct nes_s {
 	u8				strobe;
 	inputdev_t	*inputdev[2],*expdev;
 
-	//frame irq
-	u8				frame_irqmode;
-	u8				frame_irq;
+	//currently loaded file's name
+	char			romfilename[1024];
 } nes_t;
 
 extern nes_t *nes;

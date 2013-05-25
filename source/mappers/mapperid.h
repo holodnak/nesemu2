@@ -120,6 +120,7 @@ enum boardid_e {
 	B_COLORDREAMS,
 	B_RUMBLESTATION,
 	B_HES,
+	B_ACTIVE,
 
 	//c&e
 	B_CNE_FSB,

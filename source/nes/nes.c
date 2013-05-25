@@ -135,6 +135,11 @@ int nes_load(char *filename)
 	//see if the nes accepts it (mapper is supported)
 	if((ret = nes_load_cart(c)) != 0)
 		cart_unload(c);
+
+	//nes accepted it, save away the filename
+	else
+		strncpy(nes->romfilename,filename,1024);
+
 	return(ret);
 }
 
@@ -144,6 +149,7 @@ void nes_unload()
 		cart_unload(nes->cart);
 	nes->cart = 0;
 	nes->mapper = 0;
+	memset(nes->romfilename,0,1024);
 }
 
 void nes_set_inputdev(int n,int id)

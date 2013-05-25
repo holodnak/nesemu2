@@ -18,10 +18,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -70,13 +72,13 @@
       <ProgramDatabaseFile>$(OutDir)nesemu2-win32.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);comctl32.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);comctl32.lib;ddraw.lib;dxguid.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);QUICK_SPRITES</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);QUICK_SPRITES;ACCURATE_SPRITE0</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -91,7 +93,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);comctl32.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);comctl32.lib;ddraw.lib;dxguid.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -101,19 +103,23 @@
     <ClCompile Include="..\..\source\emu\emu.c" />
     <ClCompile Include="..\..\source\inputdev\powerpad.c" />
     <ClCompile Include="..\..\source\inputdev\zapper.c" />
+    <ClCompile Include="..\..\source\mappers\boards\ave\nina-006.c" />
     <ClCompile Include="..\..\source\mappers\boards\cne\decathlon.c" />
     <ClCompile Include="..\..\source\mappers\boards\cne\fsb.c" />
     <ClCompile Include="..\..\source\mappers\boards\cne\shlz.c" />
     <ClCompile Include="..\..\source\mappers\boards\homebrew\dripgame.c" />
     <ClCompile Include="..\..\source\mappers\boards\homebrew\tepples.c" />
     <ClCompile Include="..\..\source\mappers\boards\irem\tam-s1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\jaleco\jf11.c" />
     <ClCompile Include="..\..\source\mappers\boards\kaiser\ks202.c" />
     <ClCompile Include="..\..\source\mappers\boards\namcot\3425.c" />
     <ClCompile Include="..\..\source\mappers\boards\namcot\34x3.c" />
-    <ClCompile Include="..\..\source\mappers\boards\nintendo\fds.c" />
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\cnrom_cp.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\qj.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\unrom_74hc08.c" />
+    <ClCompile Include="..\..\source\mappers\boards\ntdec\caltron6in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\ntdec\tc-112.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\active.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\150in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\15in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\21in1.c" />
@@ -131,12 +137,13 @@
     <ClCompile Include="..\..\source\mappers\boards\other\btl\mario1-malee2.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl\smb2b.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\colordreams.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\hes.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\magicseries.c" />
-    <ClCompile Include="..\..\source\mappers\boards\other\mlt-caltron6in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\rumblestation.c" />
-    <ClCompile Include="..\..\source\mappers\boards\other\union-bond-ffv.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\h2288.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\racermate.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-8259x.c" />
+    <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-tca01.c" />
     <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-1.c" />
     <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-2.c" />
     <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-3.c" />
@@ -151,9 +158,56 @@
     <ClCompile Include="..\..\source\mappers\boards\txc\mxmdhtwo.c" />
     <ClCompile Include="..\..\source\mappers\boards\txc\strikewolf.c" />
     <ClCompile Include="..\..\source\mappers\boards\txc\tw.c" />
+    <ClCompile Include="..\..\source\mappers\boards\waixing\ffv.c" />
     <ClCompile Include="..\..\source\mappers\boards\waixing\sgz.c" />
+    <ClCompile Include="..\..\source\mappers\boards\waixing\sh2.c" />
     <ClCompile Include="..\..\source\mappers\chips\namcot-108.c" />
+    <ClCompile Include="..\..\source\mappers\chips\sachen-8259.c" />
     <ClCompile Include="..\..\source\mappers\chips\taito-tc0190fmc.c" />
+    <ClCompile Include="..\..\source\mappers\fds\calls\disk.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\diskutil.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\misc.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\pads.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\ppu.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\util.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\vector.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\calls\vram.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/fds/calls/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\fds.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/fds/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/fds/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\fds\hle.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/fds/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/fds/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\nsf\nsf.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)mappers/nsf/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)mappers/nsf/</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\source\mappers\sound\s_DRIP.c" />
     <ClCompile Include="..\..\source\mappers\sound\s_FDS.c" />
     <ClCompile Include="..\..\source\mappers\sound\s_FME7.c" />
@@ -161,16 +215,37 @@
     <ClCompile Include="..\..\source\mappers\sound\s_N106.c" />
     <ClCompile Include="..\..\source\mappers\sound\s_VRC6.c" />
     <ClCompile Include="..\..\source\mappers\sound\s_VRC7.c" />
-    <ClCompile Include="..\..\source\nes\apu\race.c" />
-    <ClCompile Include="..\..\source\nes\apu\units\dpcm.c" />
-    <ClCompile Include="..\..\source\nes\apu\units\frame.c" />
-    <ClCompile Include="..\..\source\nes\apu\units\noise.c" />
-    <ClCompile Include="..\..\source\nes\apu\units\square.c" />
-    <ClCompile Include="..\..\source\nes\apu\units\triangle.c" />
+    <ClCompile Include="..\..\source\misc\paths.c" />
+    <ClCompile Include="..\..\source\misc\vars.c" />
+    <ClCompile Include="..\..\source\nes\apu\race.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\apu\units\dpcm.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\apu\units\frame.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\apu\units\noise.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\apu\units\square.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\apu\units\triangle.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\source\nes\cart\fds.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\nsf.c" />
     <ClCompile Include="..\..\source\nes\genie.c" />
     <ClCompile Include="..\..\source\nes\ppu\step\calc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -204,9 +279,8 @@
     <ClCompile Include="..\..\source\system\win32\input.c" />
     <ClCompile Include="..\..\source\system\win32\main.c" />
     <ClCompile Include="..\..\source\system\win32\mainwnd.c" />
-    <ClCompile Include="..\..\source\system\win32\sound.c" />
+    <ClCompile Include="..\..\source\system\win32\sound.cpp" />
     <ClCompile Include="..\..\source\system\win32\system.c" />
-    <ClCompile Include="..\..\source\system\win32\video.c" />
     <ClCompile Include="..\..\source\nes\io.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)nes/</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)nes/</ObjectFileName>
@@ -346,6 +420,7 @@
     <ClCompile Include="..\..\source\inputdev\joypad0.c" />
     <ClCompile Include="..\..\source\inputdev\joypad1.c" />
     <ClCompile Include="..\..\source\inputdev\null.c" />
+    <ClCompile Include="..\..\source\system\win32\video.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\system\win32\dialogs.h" />

@@ -21,6 +21,7 @@
 #include <SDL/SDL.h>
 #include <stdio.h>
 #include <direct.h>
+#include <io.h>
 #include "emu/emu.h"
 #include "emu/commands.h"
 #include "misc/log.h"
@@ -44,55 +45,7 @@ int running = 0;
 char configfilename[1024] = CONFIG_FILENAME;
 char exepath[1024] = "";
 
-//filename of the currently loaded rom
-char romfilename[1024];
-static palette_t *pal = 0;
-
 static int keydown = 0;
-
-static void makestatefilename(char *dest,int len)
-{
-	char *p,*tmp = mem_strdup(romfilename);
-
-	//clear the string
-	memset(dest,0,len);
-
-	//parse the state path
-	paths_parse(config->path.state,dest,len);
-
-	//append the path seperator
-	dest[strlen(dest)] = PATH_SEPERATOR;
-
-	//normalize the path seperators
-	for(p=tmp;*p;p++) {
-		if(*p == '/' || *p == '\\')
-			*p = PATH_SEPERATOR;
-	}
-
-	//find the last path seperator
-	p = strrchr(tmp,PATH_SEPERATOR);
-
-	//if not found then it is plain filename
-	p = (p == 0) ? tmp : p + 1;
-
-/*	//this code removed because if you have smb.fds and smb.nes they use the same state filename
-	//find the extension
-	p2 = strrchr(tmp,'.');
-
-	//if found, end the string here
-	if(p2) {
-		*p2 = 0;
-	}*/
-
-	//append the rom filename
-	strcat(dest,p);
-
-	//append the state extension)
-	strcat(dest,".state");
-
-	//free the temporary string
-	mem_free(tmp);
-}
 
 int mainloop()
 {
@@ -100,15 +53,6 @@ int mainloop()
 	u32 t,total = 0,frames = 0;
 
 	console_init();
-
-//this palette crap could be made common to all system targets...palette_init() maybe?
-	if(strcmp(config->palette.source,"file") == 0) {
-		pal = palette_load(config->palette.filename);
-	}
-	if(pal == 0) {
-		pal = palette_generate(config->palette.hue,config->palette.saturation);
-	}
-	video_setpalette(pal);
 
 	log_printf("starting main loop...\n");
 
@@ -139,7 +83,7 @@ int mainloop()
 			keydown |= 4;
 		}
 		else if(keydown & 4) {
-			makestatefilename(statefilename,1024);
+			paths_makestatefilename(nes->romfilename,statefilename,1024);
 			nes_savestate(statefilename);
 			keydown &= ~4;
 		}
@@ -147,7 +91,7 @@ int mainloop()
 			keydown |= 8;
 		}
 		else if(keydown & 8) {
-			makestatefilename(statefilename,1024);
+			paths_makestatefilename(nes->romfilename,statefilename,1024);
 			nes_loadstate(statefilename);
 			keydown &= ~8;
 		}
@@ -202,8 +146,6 @@ int mainloop()
 
 	log_printf("fps:  %f (%d frames in %f seconds)\n",(double)frames / (double)total * 1000.0f,frames,(double)((double)total / 1000.0f));
 
-	palette_destroy(pal);
-
 	console_kill();
 
 	return(0);
@@ -233,6 +175,15 @@ static void mkdirr(char *path)
 	mem_free(tmp);
 }
 
+static void makepath(char *str)
+{
+	char tmp[1024];
+
+	paths_parse(str,tmp,1024);
+	if(access(tmp,0) != 0)
+		mkdirr(tmp);
+}
+
 int main(int argc,char *argv[])
 {
 	int i,ret;
@@ -258,7 +209,7 @@ int main(int argc,char *argv[])
 			strcpy(configfilename,argv[++i]);
 		}
 		else
-			strcpy(romfilename,argv[i]);
+			strcpy(tmp,argv[i]);
 	}
 
 	//initialize the emulator
@@ -268,14 +219,13 @@ int main(int argc,char *argv[])
 	}
 
 	//make the directories
-	paths_parse(config->path.save,tmp,1024);
-	mkdirr(tmp);
-	paths_parse(config->path.state,tmp,1024);
-	mkdirr(tmp);
+	makepath(config->path.save);
+	makepath(config->path.state);
+	makepath(config->path.cheat);
 
-	if(strcmp(romfilename,"") != 0) {
+	if(strcmp(tmp,"") != 0) {
 		//load file into the nes
-		if(nes_load(romfilename) == 0) {
+		if(nes_load(tmp) == 0) {
 			nes_set_inputdev(0,I_JOYPAD0);
 			nes_set_inputdev(1,I_JOYPAD1);
 			nes_reset(1);

@@ -1,5 +1,6 @@
 nes
  ! fix game genie + save states
+ ! i think the nes struct should hold the rom filename
 
 cpu
  . add the BRK + NMI bug

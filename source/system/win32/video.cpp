@@ -34,6 +34,14 @@ extern "C" {
 	#include "system/win32/mainwnd.h"
 }
 
+#undef _MSC_VER
+
+#if (_MSC_VER >= 1400)
+typedef HRESULT (WINAPI *LPDIRECTDRAWCREATEEX)(GUID FAR *, LPVOID *, REFIID,IUnknown FAR *);
+HINSTANCE ddrawdll;
+LPDIRECTDRAWCREATEEX DirectDrawCreateEx;
+#endif
+
 static int screenw,screenh,screenbpp;
 static int screenscale;
 static u16 palette15[8][256];
@@ -55,6 +63,7 @@ static LPDIRECTDRAWSURFACE7 lpPrimaryDDS,lpSecondaryDDS;
 static LPDIRECTDRAWCLIPPER lpDirectDrawClipper;
 static DDSURFACEDESC2 ddsd;
 static HMENU hMenu = 0;
+static RECT rect;
 
 static void (*drawline)(int,u8*) = 0;
 static void (*blankline)(int) = 0;
@@ -279,10 +288,13 @@ static int initwindowed()
 
 static int initfullscreen()
 {
-	ShowWindow(hConsole,SW_MINIMIZE);
-	ShowWindow(hDebugger,SW_MINIMIZE);
+	if(hConsole)
+		ShowWindow(hConsole,SW_MINIMIZE);
+	if(hDebugger)
+		ShowWindow(hDebugger,SW_MINIMIZE);
 	SetWindowLongPtr(hWnd,GWL_STYLE,WS_POPUP);
 	SetMenu(hWnd,NULL);
+	GetWindowRect(hWnd,&rect);
 	if(FAILED(lpDD->SetCooperativeLevel(hWnd,DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_NOWINDOWCHANGES))) {
 		MessageBox(hWnd,"Error setting DirectDraw cooperative level","nesemu2",MB_OK | MB_ICONERROR);
 		return(1);
@@ -319,7 +331,7 @@ static int initfullscreen()
 		return(1);
 	}
 	ddsd.ddsCaps.dwCaps = DDSCAPS_BACKBUFFER;
-	if(FAILED(lpPrimaryDDS->GetAttachedSurface(&ddsd.ddsCaps, &lpSecondaryDDS))) {
+	if(FAILED(lpPrimaryDDS->GetAttachedSurface(&ddsd.ddsCaps,&lpSecondaryDDS))) {
 		MessageBox(hWnd,"Error creating secondary surface","nesemu2",MB_OK | MB_ICONERROR);
 		return(1);
 	}
@@ -348,6 +360,9 @@ static int video_reinit()
 			MessageBox(hWnd,"Failed to retrieve surface description","nesemu2",MB_OK | MB_ICONERROR);
 			return(1);
 		}
+		video_startframe();
+		memset(ddsd.lpSurface,0,ddsd.lPitch * ddsd.dwHeight);
+		video_endframe();
 		pitch = ddsd.lPitch;
 		switch(ddsd.ddpfPixelFormat.dwRGBBitCount) {
 			case 16:
@@ -409,11 +424,14 @@ void video_kill()
 	SAFE_RELEASE(lpSecondaryDDS);
 	SAFE_RELEASE(lpPrimaryDDS);
 	if(config->video.fullscreen) {
+		SetWindowPos(hWnd,0,rect.left,rect.top,0,0,SWP_NOCOPYBITS | SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER);
 		SetWindowLongPtr(hWnd,GWL_STYLE,WS_OVERLAPPEDWINDOW);
 		SetMenu(hWnd,hMenu);
 		ShowWindow(hWnd,SW_RESTORE);
-		ShowWindow(hConsole,SW_RESTORE);
-		ShowWindow(hDebugger,SW_RESTORE);
+		if(hConsole)
+			ShowWindow(hConsole,SW_RESTORE);
+		if(hDebugger)
+			ShowWindow(hDebugger,SW_RESTORE);
 	}
 	killddraw();
 }

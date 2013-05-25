@@ -957,6 +957,9 @@
 						Name="other"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\other\active.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\other\colordreams.c">
 						</File>
 						<File

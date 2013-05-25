@@ -93,7 +93,9 @@ int config_init()
 	GET_VAR_STR(path.bios,					"%config.path.data%/bios");
 	GET_VAR_STR(path.save,					"%config.path.data%/save");
 	GET_VAR_STR(path.state,					"%config.path.data%/state");
+	GET_VAR_STR(path.patch,					"%config.path.data%/patch");
 	GET_VAR_STR(path.palette,				"%config.path.data%/palette");
+	GET_VAR_STR(path.cheat,					"%config.path.data%/cheat");
 
 	GET_VAR_STR(palette.source,			"generator");
 	GET_VAR_INT(palette.hue,				-15);
@@ -159,7 +161,9 @@ void config_kill()
 	SET_VAR_STR(path.bios);
 	SET_VAR_STR(path.save);
 	SET_VAR_STR(path.state);
+	SET_VAR_STR(path.patch);
 	SET_VAR_STR(path.palette);
+	SET_VAR_STR(path.cheat);
 
 	SET_VAR_STR(palette.source);
 	SET_VAR_INT(palette.hue);

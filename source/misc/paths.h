@@ -28,5 +28,6 @@
 #endif
 
 char *paths_parse(char *src,char *dest,int len);
+void paths_makestatefilename(char *romfilename,char *dest,int len);
 
 #endif

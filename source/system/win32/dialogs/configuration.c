@@ -23,14 +23,13 @@
 #include <prsht.h>
 #include "system/win32/resource.h"
 #include "system/win32/mainwnd.h"
+#include "misc/config.h"
 
 LRESULT CALLBACK GeneralProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
 	case WM_INITDIALOG:
-		CheckDlgButton(hDlg,IDC_PAUSEAFTERLOADCHECK,BST_UNCHECKED);
-		CheckDlgButton(hDlg,IDC_LOGUNHANDLEDIOCHECK,BST_CHECKED);
 		return TRUE;
 
 	case WM_COMMAND:
@@ -49,6 +48,37 @@ LRESULT CALLBACK PathsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 	switch (message)
 	{
 	case WM_INITDIALOG:
+		SetDlgItemText(hDlg,IDC_DATAPATHEDIT,config->path.data);
+		SetDlgItemText(hDlg,IDC_BIOSPATHEDIT,config->path.bios);
+		SetDlgItemText(hDlg,IDC_SRAMPATHEDIT,config->path.save);
+		SetDlgItemText(hDlg,IDC_STATEPATHEDIT,config->path.state);
+		SetDlgItemText(hDlg,IDC_PATCHPATHEDIT,config->path.patch);
+		SetDlgItemText(hDlg,IDC_PALETTEPATHEDIT,config->path.palette);
+		SetDlgItemText(hDlg,IDC_CHEATPATHEDIT,config->path.cheat);
+		return TRUE;
+
+	case WM_COMMAND:
+		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) 
+		{
+			EndDialog(hDlg, LOWORD(wParam));
+			return TRUE;
+		}
+		break;
+	}
+	return FALSE;
+}
+
+LRESULT CALLBACK NesProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		CheckDlgButton(hDlg,IDC_PAUSEAFTERLOADCHECK,config->nes.pause_on_load ? BST_CHECKED : BST_UNCHECKED);
+		CheckDlgButton(hDlg,IDC_LOGUNHANDLEDIOCHECK,config->nes.log_unhandled_io ? BST_CHECKED : BST_UNCHECKED);
+		CheckDlgButton(hDlg,IDC_FDSHLECHECK,config->nes.fds.hle ? BST_CHECKED : BST_UNCHECKED);
+		SetDlgItemText(hDlg,IDC_FDSBIOSEDIT,config->nes.fds.bios);
+		CheckDlgButton(hDlg,IDC_GENIECHECK,config->nes.gamegenie.enabled ? BST_CHECKED : BST_UNCHECKED);
+		SetDlgItemText(hDlg,IDC_GENIEBIOSEDIT,config->nes.gamegenie.bios);
 		return TRUE;
 
 	case WM_COMMAND:
@@ -64,29 +94,33 @@ LRESULT CALLBACK PathsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 
 VOID ConfigurationPropertySheet(HWND hWnd)
 {
-    PROPSHEETPAGE psp[2];
-    PROPSHEETHEADER psh;
+	PROPSHEETPAGE psp[3];
+	PROPSHEETHEADER psh;
+	int i;
 
-	 memset(psp,0,sizeof(PROPSHEETPAGE) * 2);
-	 memset(&psh,0,sizeof(PROPSHEETHEADER));
+	memset(psp,0,sizeof(PROPSHEETPAGE) * 3);
+	memset(&psh,0,sizeof(PROPSHEETHEADER));
 
-	 psp[0].dwSize = sizeof(PROPSHEETPAGE);
-    psp[0].hInstance = hInst;
-    psp[0].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL1);
-    psp[0].pfnDlgProc = GeneralProc;
+	for(i=0;i<3;i++) {
+		psp[i].dwSize = sizeof(PROPSHEETPAGE);
+		psp[i].hInstance = hInst;
+	}
+	psp[0].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL1);
+	psp[0].pfnDlgProc = GeneralProc;
 
-	 psp[1].dwSize = sizeof(PROPSHEETPAGE);
-    psp[1].hInstance = hInst;
-    psp[1].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL2);
-    psp[1].pfnDlgProc = PathsProc;
+	psp[1].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL2);
+	psp[1].pfnDlgProc = PathsProc;
 
-	 psh.dwSize = sizeof(PROPSHEETHEADER);
-    psh.dwFlags = PSH_USEICONID | PSH_PROPSHEETPAGE;
-    psh.hwndParent = hWnd;
-    psh.hInstance = hInst;
-    psh.pszCaption = (LPSTR) "Configuration";
-    psh.nPages = sizeof(psp) / sizeof(PROPSHEETPAGE);
-    psh.ppsp = (LPCPROPSHEETPAGE)&psp;
+	psp[2].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL3);
+	psp[2].pfnDlgProc = NesProc;
 
-	 PropertySheet(&psh);
+	psh.dwSize = sizeof(PROPSHEETHEADER);
+	psh.dwFlags = PSH_USEICONID | PSH_PROPSHEETPAGE;
+	psh.hwndParent = hWnd;
+	psh.hInstance = hInst;
+	psh.pszCaption = (LPSTR) "Configuration";
+	psh.nPages = sizeof(psp) / sizeof(PROPSHEETPAGE);
+	psh.ppsp = (LPCPROPSHEETPAGE)&psp;
+
+	PropertySheet(&psh);
 }

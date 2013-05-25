@@ -21,6 +21,7 @@
 #include <windows.h>
 #include "misc/log.h"
 #include "misc/config.h"
+#include "misc/paths.h"
 #include "nes/nes.h"
 #include "nes/state/state.h"
 #include "system/win32/dialogs.h"
@@ -36,8 +37,6 @@ HWND hConsole = 0;								//console/debug message window
 HWND hDebugger = 0;								//debugger window
 CHAR szTitle[MAX_LOADSTRING];					//title bar text
 CHAR szWindowClass[MAX_LOADSTRING];			//the main window class name
-
-int consoleshowing = 0;
 
 //defined in main.c
 extern int quit,running;
@@ -124,6 +123,7 @@ static void file_open(HWND hWnd)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	static char dest[1024];
 	int wmId, wmEvent;
 	PAINTSTRUCT ps;
 	HDC hdc;
@@ -149,12 +149,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				nes_reset(1);
 			break;
 		case ID_NES_LOADSTATE:
-//			if(nes->cart)
-//				nes_loadstate();
+			if(nes->cart) {
+				paths_makestatefilename(nes->romfilename,dest,1024);
+				nes_loadstate(dest);
+			}
 			break;
 		case ID_NES_SAVESTATE:
-//			if(nes->cart)
-//				nes_savestate();
+			if(nes->cart) {
+				paths_makestatefilename(nes->romfilename,dest,1024);
+				nes_savestate(dest);
+			}
 			break;
 		case ID_FDS_FLIPDISK:
 			if(nes->cart) {
@@ -169,22 +173,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				log_printf("disk inserted!  side = %d\n",data[0]);
 			}
 			break;
-		case ID_CONFIGURATION_GENERAL:
+		case ID_VIEW_CONFIGURATION:
 			ConfigurationPropertySheet(hWnd);
 			break;
 		case ID_VIEW_DEBUGGER:
 			DialogBox(hInst,(LPCTSTR)IDD_DEBUGGER,hWnd,(DLGPROC)DebuggerDlg);
 			break;
 		case ID_VIEW_CONSOLE:
-			if(consoleshowing == 0) {
+			if(hConsole == 0) {
+				hConsole = CreateDialog(hInst,MAKEINTRESOURCE(IDD_CONSOLE),hWnd,ConsoleProc);
 				ShowWindow(hConsole,SW_SHOW);
 			}
 			else {
-				ShowWindow(hConsole,SW_HIDE);
+				DestroyWindow(hConsole);
+				hConsole = 0;
 			}
 			hMenu = GetMenu(hWnd);
-			consoleshowing ^= 1;
-			CheckMenuItem(hMenu,ID_VIEW_CONSOLE,consoleshowing ? MF_CHECKED : MF_UNCHECKED);
+			CheckMenuItem(hMenu,ID_VIEW_CONSOLE,(hConsole != 0) ? MF_CHECKED : MF_UNCHECKED);
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst,(LPCTSTR)IDD_ABOUT,hWnd,(DLGPROC)AboutDlg);
@@ -211,7 +216,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_DESTROY:
 		quit++;
-		DestroyWindow(hConsole);
+		if(hConsole)
+			DestroyWindow(hConsole);
 		PostQuitMessage(0);
 		break;
 	case WM_SIZE:
@@ -276,10 +282,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	hInst = hInstance; // Store instance handle in our global variable
 	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
-	hConsole = CreateDialog(hInstance,MAKEINTRESOURCE(IDD_CONSOLE),hWnd,ConsoleProc);
 	hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDR_ACCELERATOR));
-	if(consoleshowing)
-		ShowWindow(hConsole,SW_SHOW);
 	return((hWnd == 0) ? FALSE : TRUE);
 }
 

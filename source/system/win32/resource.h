@@ -24,7 +24,9 @@
 #define IDC_AEDIT                       1000
 #define IDC_DATAPATHEDIT                1000
 #define IDC_CONSOLEEDIT                 1000
+#define IDC_FDSBIOSEDIT                 1000
 #define IDC_XEDIT                       1001
+#define IDC_GENIEBIOSEDIT               1001
 #define IDC_YEDIT                       1002
 #define IDC_DISASM                      1003
 #define IDC_DISASMLIST                  1003
@@ -44,8 +46,7 @@
 #define IDC_STEPFRAMEBUTTON             1014
 #define IDC_RUNBUTTON                   1015
 #define IDC_LOGUNHANDLEDIOCHECK         1016
-#define IDC_LOGUNHANDLEDIOCHECKIDC_LOGUNHANDLEDIOCHECK 1016
-#define IDC_STATEPATHEDIT               1017
+#define IDC_BIOSPATHEDIT                1017
 #define IDC_CHEATPATHEDIT               1018
 #define IDC_PAUSEAFTERLOADCHECK         1018
 #define IDC_SRAMPATHEDIT                1019
@@ -77,6 +78,9 @@
 #define IDC_READCHECK                   1044
 #define IDC_EDIT2                       1045
 #define IDC_EDIT3                       1046
+#define IDC_STATEPATHEDIT               1047
+#define IDC_GENIECHECK                  1048
+#define IDC_FDSHLECHECK                 1049
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -102,6 +106,7 @@
 #define ID_NES_FDS                      32793
 #define ID_FDS_FLIPDISK                 32794
 #define ID_VIEW_FULLSCREEN              32797
+#define ID_CONFIGURATION_VIDEO          32801
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -110,8 +115,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        139
-#define _APS_NEXT_COMMAND_VALUE         32801
-#define _APS_NEXT_CONTROL_VALUE         1047
+#define _APS_NEXT_COMMAND_VALUE         32803
+#define _APS_NEXT_CONTROL_VALUE         1050
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

@@ -23,21 +23,12 @@
 #include <string.h>
 #include "misc/memutil.h"
 #include "misc/log.h"
+#include "misc/config.h"
 #include "palette/palette.h"
+#include "palette/generator.h"
+#include "system/video.h"
 
-/* measurement by Chris Covell */
-/*
-const float emphasis_factor[8][3]={
-   {1.0,  1.0,  1.0},
-   {1.239,0.915,0.743},
-   {0.794,1.086,0.882},
-   {1.019,0.98, 0.653},
-   {0.905,1.026,1.277},
-   {1.023,0.908,0.979},
-   {0.741,0.987,1.001},
-   {0.75, 0.75, 0.75}
-};
-*/
+static palette_t *pal = 0;
 
 /* measurement by Quietust */
 static const double emphasis_factor[8][3]={
@@ -111,4 +102,21 @@ int palette_save(char *filename,palette_t *p)
 {
 	//not implemented yet
 	return(1);
+}
+
+int palette_init()
+{
+	if(strcmp(config->palette.source,"file") == 0) {
+		pal = palette_load(config->palette.filename);
+	}
+	if(pal == 0) {
+		pal = palette_generate(config->palette.hue,config->palette.saturation);
+	}
+	video_setpalette(pal);
+	return(0);
+}
+
+void palette_kill()
+{
+	palette_destroy(pal);
 }

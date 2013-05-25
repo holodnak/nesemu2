@@ -78,7 +78,7 @@ ifeq ($(OSTARGET),WIN32)
 		TARGET = $(OUTPUT)-sdl.exe
 	else
 		SOURCES += $(SOURCE_SYSTEM_WIN32)
-		LIBS += -lcomctl32 -lgdi32 -lcomdlg32
+		LIBS += -lcomctl32 -lgdi32 -lcomdlg32 -lddraw -ldxguid
 		TARGET = $(OUTPUT)-win32.exe
 	endif
 endif

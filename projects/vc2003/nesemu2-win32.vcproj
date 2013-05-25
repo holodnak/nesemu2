@@ -904,6 +904,9 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\ave\nina-001.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\ave\nina-006.c">
+						</File>
 					</Filter>
 					<Filter
 						Name="irem"
@@ -929,7 +932,13 @@
 						Name="other"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\other\active.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\other\colordreams.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\hes.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\magicseries.c">
@@ -1018,6 +1027,9 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\sachen\sachen-8259x.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\sachen\sachen-tca01.c">
 						</File>
 					</Filter>
 					<Filter
@@ -1450,10 +1462,6 @@
 					RelativePath="..\..\source\system\video.h">
 				</File>
 				<Filter
-					Name="sdl"
-					Filter="">
-				</Filter>
-				<Filter
 					Name="win32"
 					Filter="">
 					<File
@@ -1465,6 +1473,10 @@
 					<File
 						RelativePath="..\..\source\system\win32\resource.h">
 					</File>
+				</Filter>
+				<Filter
+					Name="common"
+					Filter="">
 				</Filter>
 			</Filter>
 			<Filter

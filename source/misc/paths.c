@@ -71,6 +71,11 @@ char *paths_parse(char *src,char *dest,int len)
 					p2 = exepath;
 				}
 
+				//user home directory
+				else if(strcmp("home",varname) == 0) {
+					p2 = exepath;
+				}
+
 				//see if it comes from the configuration
 				else if(strncmp("config.",varname,7) == 0) {
 					p2 = config_get_string((char*)varname + 7,"");

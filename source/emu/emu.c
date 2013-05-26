@@ -23,6 +23,7 @@
 #include "misc/memutil.h"
 #include "misc/config.h"
 #include "misc/crc32.h"
+#include "misc/vars.h"
 #include "system/system.h"
 #include "system/video.h"
 #include "system/input.h"
@@ -45,8 +46,8 @@ typedef struct subsystem_s {
 SUBSYSTEM_START
 	SUBSYSTEM(memutil)
 	SUBSYSTEM(config)
-	SUBSYSTEM(log)
 	SUBSYSTEM(vars)
+	SUBSYSTEM(log)
 	SUBSYSTEM(system)
 	SUBSYSTEM(video)
 	SUBSYSTEM(input)

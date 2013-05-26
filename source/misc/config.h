@@ -82,7 +82,6 @@ typedef struct config_s {
 } config_t;
 
 extern config_t *config;
-extern vars_t *vars;
 
 int config_init();
 void config_kill();

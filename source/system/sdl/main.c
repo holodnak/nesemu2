@@ -20,8 +20,12 @@
 
 #include <SDL/SDL.h>
 #include <stdio.h>
-#include <direct.h>
-#include <io.h>
+#ifdef WIN32
+	#include <direct.h>
+	#include <io.h>
+#else
+	#include <unistd.h>
+#endif
 #include "emu/emu.h"
 #include "emu/commands.h"
 #include "misc/log.h"

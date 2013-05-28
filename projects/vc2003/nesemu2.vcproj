@@ -1813,6 +1813,9 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\..\Readme">
+		</File>
+		<File
 			RelativePath="..\..\docs\Todo">
 		</File>
 	</Files>

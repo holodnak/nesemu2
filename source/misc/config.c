@@ -162,14 +162,14 @@ int config_init()
 	GET_VAR_INT(nes.log_unhandled_io,	0);
 	GET_VAR_INT(nes.pause_on_load,		0);
 
+	//save the config var list
+	configvars = v;
+
 	//kludge...we need to ditch the struct and store all of them in the var list
 	config_update();
 
 	//kludge...we need vars_get_bool
 	config->video.fullscreen = config->video.fullscreen ? 1 : 0;
-
-	//save the config var list
-	configvars = v;
 
 	//make the directories
 	makepath(config->path.data);

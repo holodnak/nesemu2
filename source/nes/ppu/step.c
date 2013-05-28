@@ -543,14 +543,14 @@ static INLINE void scanline_startvblank()
 void ppu_step()
 {
 //blargg test debug output
-/*	if(SCANLINE == 0 && LINECYCLES == 0) {
+	if(SCANLINE == 0 && LINECYCLES == 0) {
 		u8 *sram = nes->cart->sram.size ? nes->cart->sram.data : 0;
 
-		if(sram && sram[0] == 3 && sram[1] == 0xDE && sram[2] == 0xB0 && sram[3] == 0x61) {
-			sram[0] = 0;
-			printf("%s",sram + 4);
+		if(sram && sram[0] < 0x80 && sram[1] == 0xDE && sram[2] == 0xB0 && sram[3] == 0x61) {
+			sram[0] = 0xFF;
+			log_printf("%s",sram + 4);
 		}
-	}*/
+	}
 	switch(SCANLINE) {
 		case 0:		case 1:		case 2:		case 3:		case 4:		case 5:		case 6:		case 7:		case 8:		case 9:
 		case 10:		case 11:		case 12:		case 13:		case 14:		case 15:		case 16:		case 17:		case 18:		case 19:

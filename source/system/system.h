@@ -25,5 +25,6 @@ int system_init();
 void system_kill();
 void system_check_events();
 char *system_getcwd();
+int system_findconfig(char *dest);
 
 #endif

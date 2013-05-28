@@ -155,14 +155,20 @@ int main(int argc,char *argv[])
 	char *p;
 	char tmp[1024];
 
-	//set default configuration filename
-	strcpy(configfilename,CONFIG_FILENAME);
+	//clear the tmp string
+	memset(tmp,0,1024);
 
 	//make the exe path variable
 	strcpy(exepath,argv[0]);
 	if((p = strrchr(exepath,PATH_SEPERATOR)) != 0) {
 		*p = 0;
 	}
+
+	//find configuration file
+	if(system_findconfig(configfilename) == 0)
+		log_printf("main:  found configuration at '%s'\n",configfilename);
+	else
+		log_printf("main:  creating new configuration at '%s'\n",configfilename);
 
 	//process the command line
 	for(i=1;i<argc;i++) {
@@ -202,7 +208,7 @@ int main(int argc,char *argv[])
 		//save disk
 		nes_unload();
 	}
-	
+
 	//destroy emulator
 	emu_kill();
 

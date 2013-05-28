@@ -86,3 +86,8 @@ void emu_kill()
 		subsystems[i].kill();
 	}
 }
+
+int emu_main()
+{
+	return(0);
+}

@@ -177,7 +177,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ConfigurationPropertySheet(hWnd);
 			break;
 		case ID_VIEW_DEBUGGER:
-			DialogBox(hInst,(LPCTSTR)IDD_DEBUGGER,hWnd,(DLGPROC)DebuggerDlg);
+			if(nes->cart) {
+				DialogBox(hInst,(LPCTSTR)IDD_DEBUGGER,hWnd,(DLGPROC)DebuggerDlg);
+			}
 			break;
 		case ID_VIEW_CONSOLE:
 			if(hConsole == 0) {

@@ -41,6 +41,9 @@ The Win32 API target operates like a standard Win32 program.  Use File -> Open.
 
 Configuration Files
 -------------------
+The program will search for configuration files to use, and if one isn't found it
+will put the configuration in the same directory as the executable.
+
 Be careful with the variables in the configuration files.  Do not have a variable
 reference itself, for example:
 

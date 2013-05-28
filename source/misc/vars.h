@@ -21,8 +21,12 @@
 #ifndef __vars_h__
 #define __vars_h__
 
+#define T_VAR		0
+#define T_CONFIG	1
+
 typedef struct var_s {
 	struct var_s *next;
+	int type;
 	char *name;
 	char *data;
 } var_t;

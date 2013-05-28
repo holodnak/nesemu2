@@ -1,3 +1,21 @@
+-------------------
+system related todo
+-------------------
+input
+ . input device code is crap
+ . need lookup table to standardize the buttons used in the config file
+
+misc
+ . implement reading of the xml rom databases
+
+win32
+ . finish the (crappy) input code.  translatekey() misses some keys
+ . add a system/timer.h and system dependent timer functions to each target
+
+
+----------------
+nes related todo
+----------------
 nes
  ! fix game genie + save states
  ! i think the nes struct should hold the rom filename
@@ -19,7 +37,6 @@ ppu
 mappers
  ! better method of changing mapper dips
  . find mapper 172/173 games to test (TXC-22211B + TXC-22211C)
- . find mapper 206 (dxrom) games to test
  . mapper 88/206 (dxrom) needs work
  . what is mapper 150?
  . sachen 74ls374 broken (chess academy)
@@ -72,21 +89,16 @@ roms
  . need mapper 104 (golden five) roms
  . need mapper 194 (Dai-2-Ji - Super Robot Taisen (As)) roms
  . need mapper 195 roms
+ . find mapper 206 (dxrom) games to test
 
-input
- . input device code is crap
- . need lookup table to standardize the buttons used in the config file
-
-misc
- . implement reading of the xml rom databases
- . go thru and fix the hard/soft reset code, not everything checks for hard
+info
+ . reflect world (fds) uses undocument opcode $89
+ . $EC22:  ??? (some kind of logic)
 
 broken games
  . guardian legend status bar...still broken
  . famicom wars intro/title screen is broken
  . ms. pac-man (tengen)
 
-info
- . reflect world (fds) uses undocument opcode $89 (maybe more?)
- . $EA52:  some game jumps into the middle!
- . $EC22:  ??? (some kind of logic)
+misc
+ . go thru and fix the hard/soft reset code, not everything checks for hard

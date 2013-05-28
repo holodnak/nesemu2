@@ -22,7 +22,7 @@
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\..\source"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;QUICK_SPRITES"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;QUICK_SPRITES;ACCURATE_SPRITE0;CPU_UNDOC"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -81,7 +81,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib"
+				AdditionalDependencies="comctl32.lib ddraw.lib dxguid.lib"
 				OutputFile="$(OutDir)/nesemu2-win32.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
@@ -178,6 +178,12 @@
 							Name="VCCLCompilerTool"
 							ObjectFile="$(IntDir)/nes/"/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\source\nes\io.c">
@@ -202,11 +208,23 @@
 							Name="VCCLCompilerTool"
 							ObjectFile="$(IntDir)/nes/"/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\source\nes\nes.c">
 					<FileConfiguration
 						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/nes/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
 							ObjectFile="$(IntDir)/nes/"/>

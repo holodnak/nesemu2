@@ -60,7 +60,7 @@ int log_init()
 	//try to open
 	if((logfd = fopen(logfilename,"wt")) == 0) {
 		strcpy(logfilename,LOGFILENAME);
-		if((logfd = fopen(logfilename,"wt")) == 0) {
+		if((logfd = fopen(LOGFILENAME,"wt")) == 0) {
 			printf("log_init:  error opening log file '%s'\n",logfilename);
 			return(1);
 		}

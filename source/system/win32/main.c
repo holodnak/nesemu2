@@ -25,6 +25,7 @@
 #include "misc/log.h"
 #include "misc/config.h"
 #include "misc/paths.h"
+#include "misc/memutil.h"
 #include "palette/palette.h"
 #include "palette/generator.h"
 #include "system/main.h"
@@ -80,7 +81,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      int       nCmdShow)
 {
 	int ret;
-	char *p;
+	char *p,*p2,*cmdline;
 
 	MyRegisterClass(hInstance);
 	if(InitInstance(hInstance,nCmdShow) == 0) {
@@ -95,6 +96,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		*p = 0;
 	}
 
+	sprintf(configfilename,"%s%c%s",exepath,PATH_SEPERATOR,CONFIG_FILENAME);
+
 	if(emu_init() != 0)
 		return(FALSE);
 
@@ -105,11 +108,19 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	//this is temporary
 	nes_set_inputdev(0,I_JOYPAD0);
 
-	log_printf("trying lpcmdline as filename (%s)...\n",lpCmdLine);
-	if(nes_load(lpCmdLine) == 0) {
+	p = cmdline = mem_strdup(lpCmdLine);
+	if(*p == '\"') {
+		p++;
+		if((p2 = strchr(p,'\"')) != 0)
+			*p2 = 0;
+	}
+	log_printf("trying lpcmdline as filename (%s)...\n",p);
+	if(nes_load(p) == 0) {
 		nes_reset(1);
 		running = 1;
 	}
+
+	mem_free(cmdline);
 
 	log_printf("starting main loop...\n");
 	ret = (mainloop() == 0) ? TRUE : FALSE;

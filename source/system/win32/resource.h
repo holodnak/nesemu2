@@ -56,6 +56,7 @@
 #define IDC_PALETTEPATHEDIT             1021
 #define IDC_NESCHECK                    1021
 #define IDC_UNIFCHECK                   1022
+#define IDC_UNFCHECK                    1022
 #define IDC_FDSCHECK                    1023
 #define IDC_CHECK1                      1025
 #define IDC_BREAKPOINTLIST              1026

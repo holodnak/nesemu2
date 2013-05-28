@@ -51,8 +51,8 @@ static u8 palettecache[32];
 static u16 palettecache16[256];
 static u32 palettecache32[256];
 static palette_t *palette = 0;
-static u32 interval = 1000 / 60;
-static u32 lasttime = 0;
+static double interval = 0;
+static u64 lasttime = 0;
 
 static int pitch;
 static int surfoffset;
@@ -68,6 +68,25 @@ static RECT rect;
 static void (*drawline)(int,u8*) = 0;
 static void (*blankline)(int) = 0;
 static void (*updatepalette)(u32,u8) = 0;
+
+static u64 timer_gettick()
+{
+	LARGE_INTEGER li;
+
+	QueryPerformanceCounter(&li);
+	return(li.QuadPart);
+}
+
+static int timer_init()
+{
+	LARGE_INTEGER li;
+
+	if(QueryPerformanceFrequency(&li) == 0)
+		return(1);
+	interval = ((double)li.QuadPart) / 60.0f;
+	lasttime = timer_gettick();
+	return(0);
+}
 
 static void drawline1x_16(int line,u8 *src)
 {
@@ -397,7 +416,7 @@ static int video_reinit()
 		}
 		for(i=0;i<32;i++)
 			updatepalette(i,palettecache[i]);
-		log_printf("video_reinit:  ddraw video inited, %ix%i %ibpp",ddsd.dwWidth,ddsd.dwHeight,screenbpp);
+		log_printf("video_reinit:  ddraw video inited, %ix%i %ibpp\n",ddsd.dwWidth,ddsd.dwHeight,screenbpp);
 	}
 	return(ret);
 }
@@ -406,6 +425,8 @@ int video_init()
 {
 	int ret;
 
+	timer_init();
+	lasttime = timer_gettick();
 	hMenu = GetMenu(hWnd);
 	if(initddraw() != 0) {
 		killddraw();
@@ -445,17 +466,24 @@ void video_endframe()
 {
 	RECT rect;
 	POINT pt = {0, 0};
+	u64 t;
 
 	lpSecondaryDDS->Unlock(NULL);
-	GetClientRect(hWnd, &rect);
+	GetClientRect(hWnd,&rect);
 	if((rect.right == 0) || (rect.bottom == 0))
 		return;
-	ClientToScreen(hWnd, &pt);
+	ClientToScreen(hWnd,&pt);
 	rect.left += pt.x;
 	rect.right += pt.x;
 	rect.top += pt.y;
 	rect.bottom += pt.y;
 	lpPrimaryDDS->Blt(&rect,lpSecondaryDDS,NULL,DDBLT_WAIT,NULL);
+	if(config->video.framelimit) {
+		do {
+			t = timer_gettick();
+		} while((double)(t - lasttime) < interval);
+		lasttime = t;
+	}
 }
 
 //this handles lines coming directly from the nes engine

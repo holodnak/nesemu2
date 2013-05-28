@@ -8,7 +8,7 @@
 //#include	"..\..\interface.h"
 #include <string.h>
 #include	"s_MMC5.h"
-#include	"types.h"
+#include	"nes/state/state.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -202,14 +202,12 @@ int	MMC5sound_Get (int Cycles)
 	return z << 6;
 }
 
-int	MMC5sound_SaveLoad (int mode, int x, unsigned char *data)
+int	MMC5sound_SaveLoad(int mode, int x, unsigned char *data)
 {
-/*	if (mode == STATE_SAVE)
+	if (mode == STATE_SAVE)
 		memcpy(data+x,&MMC5sound,sizeof(MMC5sound));
 	else if (mode == STATE_LOAD)
 		memcpy(&MMC5sound,data+x,sizeof(MMC5sound));
-	else if (mode != STATE_SIZE)
-		MessageBox(hWnd,_T("Invalid save/load type!"),_T(__FILE__),MB_OK);*/
 	x += sizeof(MMC5sound);
 	return x;
 }

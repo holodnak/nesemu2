@@ -20,6 +20,15 @@
 
 #include "mappers/mapperinc.h"
 #include "mappers/chips/mmc5.h"
+#include "mappers/sound/s_MMC5.h"
+
+static apu_external_t drip = {
+	MMC5sound_Load,
+	MMC5sound_Unload,
+	MMC5sound_Reset,
+	MMC5sound_Get,
+	0
+};
 
 static u8 prg[4],chrhi,prgram,mirror;
 static u16 chra[8],chrb[4];
@@ -86,13 +95,13 @@ void mmc5_setmirror(int bank,int data)
 		case 2:
 			//map in exram as nametable data
 			if(exrammode < 2) {
-				log_printf("mmc5:  exram mapped into ppu bank %d!\n",bank);
+//				log_printf("mmc5:  exram mapped into ppu bank %d!\n",bank);
 				mem_setppureadptr(bank,exram);
 				mem_setppuwriteptr(bank,exram);
 			}
 			//map in disabled exram
 			else {
-				log_printf("mmc5:  disabled exram mapped into ppu bank %d!\n",bank);
+//				log_printf("mmc5:  disabled exram mapped into ppu bank %d!\n",bank);
 				mem_setppureadptr(bank,exram + 0xC00);
 				mem_setppuwriteptr(bank,exram + 0xC00);
 			}
@@ -221,6 +230,10 @@ u8 mmc5_read(u32 addr)
 		return(0xFF);
 	}
 	switch(addr) {
+		//sound
+		case 0x5015:
+			return(MMC5sound_Read(addr));
+
 		//irq status
 		case 0x5204:
 			//return value
@@ -266,6 +279,7 @@ void mmc5_write(u32 addr,u8 data)
 		case 0x5010:
 		case 0x5011:
 		case 0x5015:
+			MMC5sound_Write(addr,data);
 			break;
 
 		//prg mode select
@@ -502,4 +516,5 @@ void mmc5_state(int mode,u8 *data)
 	STATE_U8(irqtarget);
 	STATE_U8(irqcounter);
 	STATE_U8(irqenable);
+	MMC5sound_SaveLoad(mode,0,data);
 }

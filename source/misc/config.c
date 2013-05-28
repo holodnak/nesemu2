@@ -18,11 +18,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#ifdef WIN32
+	#include <direct.h>
+	#include <io.h>
+#else
+	#include <unistd.h>
+#endif
 #include <string.h>
 #include "misc/config.h"
 #include "misc/vars.h"
 #include "misc/memutil.h"
 #include "misc/log.h"
+#include "misc/paths.h"
 #include "system/main.h"
 
 static vars_t *configvars = 0;
@@ -41,6 +48,50 @@ config_t *config = 0;
 
 #define SET_VAR_STR(name) \
 	vars_set_string(v,#name,config-> name);
+
+static void mkdirr(char *path)
+{
+	char *tmp = mem_strdup(path);
+	char *p = tmp;
+	int num = 0;
+
+	//normalize the path string
+	for(p=tmp;*p;p++) {
+		if(*p == '/' || *p == '\\')
+			*p = PATH_SEPERATOR;
+	}
+	log_printf("mkdirr:  creating directory '%s'\n",path);
+
+	//make all the directories between the root and the desired directory
+	for(num=0,p=tmp;(p = strchr(p,PATH_SEPERATOR));num++) {
+		if(num == 0) {
+			p++;
+			continue;
+		}
+		*p = 0;
+		mkdir(tmp);
+		*p = PATH_SEPERATOR;
+		p++;
+	}
+
+	//now create the directory we want
+	mkdir(path);
+
+	//free tmp string
+	mem_free(tmp);
+}
+
+static void makepath(char *str)
+{
+	char tmp[1024];
+
+	//parse the string for our variables
+	paths_parse(str,tmp,1024);
+
+	//test if the path exists already, if not create it
+	if(access(tmp,0) != 0)
+		mkdirr(tmp);
+}
 
 int config_init()
 {
@@ -117,7 +168,15 @@ int config_init()
 	//kludge...we need vars_get_bool
 	config->video.fullscreen = config->video.fullscreen ? 1 : 0;
 
+	//save the config var list
 	configvars = v;
+
+	//make the directories
+	makepath(config->path.data);
+	makepath(config->path.save);
+	makepath(config->path.state);
+	makepath(config->path.cheat);
+
 	return(0);
 }
 

@@ -162,7 +162,7 @@ BEGIN
     CONTROL         "iNES (*.nes)",IDC_NESCHECK,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,149,26,55,10
     GROUPBOX        "File Associations",IDC_STATIC,138,7,101,77
-    CONTROL         "UNIF (*.unf, *.unif)",IDC_UNIFCHECK,"Button",
+    CONTROL         "UNIF (*.unf, *.unif)",IDC_UNFCHECK,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,149,42,80,10
     CONTROL         "FDS (*.fds)",IDC_FDSCHECK,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,149,58,53,10

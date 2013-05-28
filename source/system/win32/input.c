@@ -22,6 +22,7 @@
 #include "system/input.h"
 #include "system/system.h"
 #include "misc/config.h"
+#include "system/common/SDL_keysym.h"
 
 //these global variables provide information for the device input code
 int joyx,joyy;			//x and y coords for paddle/mouse
@@ -76,8 +77,133 @@ void input_poll()
 	}
 }
 
+typedef struct keymapentry_s {
+
+	//sdl key id
+	int sdlkey;
+
+	//os-depenedent key id
+	int oskey;
+
+} keymapentry_t;
+
+//we are missing some keys!  todo!
+static keymapentry_t keymap[] = {
+	{SDLK_BACKSPACE,		VK_BACK},
+	{SDLK_TAB,				VK_TAB},
+	{SDLK_CLEAR,			VK_CLEAR},
+	{SDLK_RETURN,			VK_RETURN},
+	{SDLK_PAUSE,			VK_PAUSE},
+	{SDLK_ESCAPE,			VK_ESCAPE},
+	{SDLK_SPACE,			VK_SPACE},
+
+	//alphanumeric
+	{SDLK_0,					'0'},
+	{SDLK_1,					'1'},
+	{SDLK_2,					'2'},
+	{SDLK_3,					'3'},
+	{SDLK_4,					'4'},
+	{SDLK_5,					'5'},
+	{SDLK_6,					'6'},
+	{SDLK_7,					'7'},
+	{SDLK_8,					'8'},
+	{SDLK_9,					'9'},
+	{SDLK_a,					'A'},
+	{SDLK_b,					'B'},
+	{SDLK_c,					'C'},
+	{SDLK_d,					'D'},
+	{SDLK_e,					'E'},
+	{SDLK_f,					'F'},
+	{SDLK_g,					'G'},
+	{SDLK_h,					'H'},
+	{SDLK_i,					'I'},
+	{SDLK_j,					'J'},
+	{SDLK_k,					'K'},
+	{SDLK_l,					'L'},
+	{SDLK_m,					'M'},
+	{SDLK_n,					'N'},
+	{SDLK_o,					'O'},
+	{SDLK_p,					'P'},
+	{SDLK_q,					'Q'},
+	{SDLK_r,					'R'},
+	{SDLK_s,					'S'},
+	{SDLK_t,					'T'},
+	{SDLK_u,					'U'},
+	{SDLK_v,					'V'},
+	{SDLK_w,					'W'},
+	{SDLK_x,					'X'},
+	{SDLK_y,					'Y'},
+	{SDLK_z,					'Z'},
+
+	//function keys
+	{SDLK_F1,				VK_F1},
+	{SDLK_F2,				VK_F2},
+	{SDLK_F3,				VK_F3},
+	{SDLK_F4,				VK_F4},
+	{SDLK_F5,				VK_F5},
+	{SDLK_F6,				VK_F6},
+	{SDLK_F7,				VK_F7},
+	{SDLK_F8,				VK_F8},
+	{SDLK_F9,				VK_F9},
+	{SDLK_F10,				VK_F10},
+	{SDLK_F11,				VK_F11},
+	{SDLK_F12,				VK_F12},
+	{SDLK_F13,				VK_F13},
+	{SDLK_F14,				VK_F14},
+	{SDLK_F15,				VK_F15},
+
+	//middle keys
+	{SDLK_DELETE,			VK_DELETE},
+	{SDLK_INSERT,			VK_INSERT},
+	{SDLK_END,				VK_END},
+	{SDLK_HOME,				VK_HOME},
+	{SDLK_PAGEDOWN,		VK_NEXT},
+	{SDLK_PAGEUP,			VK_PRIOR},
+	{SDLK_UP,				VK_UP},
+	{SDLK_DOWN,				VK_DOWN},
+	{SDLK_LEFT,				VK_LEFT},
+	{SDLK_RIGHT,			VK_RIGHT},
+
+	//numpad
+	{SDLK_KP0,				VK_NUMPAD0},
+	{SDLK_KP1,				VK_NUMPAD1},
+	{SDLK_KP2,				VK_NUMPAD2},
+	{SDLK_KP3,				VK_NUMPAD3},
+	{SDLK_KP4,				VK_NUMPAD4},
+	{SDLK_KP5,				VK_NUMPAD5},
+	{SDLK_KP6,				VK_NUMPAD6},
+	{SDLK_KP7,				VK_NUMPAD7},
+	{SDLK_KP8,				VK_NUMPAD8},
+	{SDLK_KP9,				VK_NUMPAD9},
+	{SDLK_KP_PERIOD,		VK_DECIMAL},
+	{SDLK_KP_DIVIDE,		VK_DIVIDE},
+	{SDLK_KP_MULTIPLY,	VK_MULTIPLY},
+	{SDLK_KP_MINUS,		VK_SUBTRACT},
+	{SDLK_KP_PLUS,			VK_ADD},
+//	{SDLK_KP_ENTER,		VK_DIVIDE},
+//	{SDLK_KP_EQUALS,		VK_DIVIDE},
+
+	{-1,-1}
+};
+
+//we store sdl key id in the config file, translate to win32
+static int translatekey(int key)
+{
+	int i;
+
+	for(i=0;keymap[i].sdlkey;i++) {
+		if(keymap[i].sdlkey == key)
+			return(keymap[i].oskey);
+	}
+	log_printf("translatekey:  key %d is unmapped\n",key);
+	return(key);
+}
+
 void input_update_config()
 {
+	int i;
+
+	//get the keys from the configuration
 	joyconfig[0][0] = config->input.joypad0.a;
 	joyconfig[0][1] = config->input.joypad0.b;
 	joyconfig[0][2] = config->input.joypad0.select;
@@ -94,4 +220,10 @@ void input_update_config()
 	joyconfig[1][5] = config->input.joypad1.down;
 	joyconfig[1][6] = config->input.joypad1.left;
 	joyconfig[1][7] = config->input.joypad1.right;
+
+	//translate keys into something windows understands
+	for(i=0;i<8;i++) {
+		joyconfig[0][i] = translatekey(joyconfig[0][i]);
+		joyconfig[1][i] = translatekey(joyconfig[1][i]);
+	}
 }

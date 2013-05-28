@@ -20,12 +20,6 @@
 
 #include <SDL/SDL.h>
 #include <stdio.h>
-#ifdef WIN32
-	#include <direct.h>
-	#include <io.h>
-#else
-	#include <unistd.h>
-#endif
 #include "emu/emu.h"
 #include "emu/commands.h"
 #include "misc/log.h"
@@ -155,39 +149,6 @@ int mainloop()
 	return(0);
 }
 
-static void mkdirr(char *path)
-{
-	char *tmp = mem_strdup(path);
-	char *p = tmp;
-	int num = 0;
-
-	for(p=tmp;*p;p++) {
-		if(*p == '/' || *p == '\\')
-			*p = PATH_SEPERATOR;
-	}
-	log_printf("mkdirr:  creating directory '%s'\n",path);
-	for(num=0,p=tmp;(p = strchr(p,PATH_SEPERATOR));num++) {
-		if(num == 0) {
-			p++;
-			continue;
-		}
-		*p = 0;
-		mkdir(path);
-		*p = PATH_SEPERATOR;
-		p++;
-	}
-	mem_free(tmp);
-}
-
-static void makepath(char *str)
-{
-	char tmp[1024];
-
-	paths_parse(str,tmp,1024);
-	if(access(tmp,0) != 0)
-		mkdirr(tmp);
-}
-
 int main(int argc,char *argv[])
 {
 	int i,ret;
@@ -221,11 +182,6 @@ int main(int argc,char *argv[])
         log_printf("main:  emu_init() failed\n");
         return(2);
 	}
-
-	//make the directories
-	makepath(config->path.save);
-	makepath(config->path.state);
-	makepath(config->path.cheat);
 
 	if(strcmp(tmp,"") != 0) {
 		//load file into the nes

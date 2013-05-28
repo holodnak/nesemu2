@@ -49,7 +49,6 @@ static u64 lasttime = 0;
 static palette_t *palette = 0;
 static u32 *screen = 0;
 static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
-static int framelimit = 0;
 
 enum filters_e {
 	F_NONE,
@@ -106,7 +105,6 @@ int video_init()
 		log_printf("video_reinit:  timer_init() failed!\n");
 		return(1);
 	}
-	framelimit = config->video.framelimit;
 
 	//clear palette cache
 	memset(palettecache,0,256*sizeof(u32));
@@ -189,7 +187,7 @@ void video_endframe()
 	SDL_UnlockSurface(surface);
 
 	//simple frame limiter
-	if(framelimit) {
+	if(config->video.framelimit) {
 		t = timer_gettick();
 		while((double)(t - lasttime) < interval) {
 #ifdef WIN32

@@ -21,6 +21,14 @@
 #include "mappers/fds/calls.h"
 #include "mappers/fds/hle.h"
 
+static void writeppu(u32 addr,u8 data)
+{
+	if(addr >= 0x3F00)
+		ppu_pal_write(addr & 0x1F,data);
+	else
+		ppu_memwrite(addr,data);
+}
+
 /*
 vram fill
 ---------
@@ -70,7 +78,8 @@ HLECALL(vramfill)
 
 	while(count--) {
 		for(i=0;i<256;i++) {
-			cpu_write(0x2007,data);
+			writeppu(SCROLL++,data);
+			SCROLL &= 0x3FFF;
 		}
 	}
 
@@ -79,7 +88,8 @@ HLECALL(vramfill)
 		cpu_write(0x2006,nes->cpu.a + 3);
 		cpu_write(0x2006,0xC0);
 		for(i=0;i<0x40;i++) {
-			cpu_write(0x2007,nes->cpu.y);
+			writeppu(SCROLL++,nes->cpu.y);
+			SCROLL &= 0x3FFF;
 		}
 	}
 }
@@ -89,7 +99,7 @@ HLECALL(vramstructwrite)
 	u8 data,len,tmp,i;
 	u32 srcaddr,destaddr,tmp32;
 
-	//setup vram increment
+	//setup vram increment to 1
 	data = cpu_read(0xFF);
 	data &= ~4;
 	cpu_write(0xFF,data);
@@ -101,7 +111,7 @@ HLECALL(vramstructwrite)
 	//fix the return address
 	hle_fixretaddr(1);
 
-	log_hle("vramstructwrite: param = $%04X\n",srcaddr);		
+	log_hle("vramstructwrite: param = $%04X\n",srcaddr);
 
 	//process!
 	for(;;) {
@@ -165,7 +175,12 @@ HLECALL(vramstructwrite)
 
 			//fill/copy data
 			for(i=0;i<len;i++) {
-				cpu_write(0x2007,cpu_read(srcaddr));
+//				cpu_write(0x2007,cpu_read(srcaddr));
+				writeppu(SCROLL,cpu_read(srcaddr));
+				if((data & 0x80) == 0)
+					SCROLL++;
+				else
+					SCROLL += 32;
 				if((data & 0x40) == 0)		//copy?
 					srcaddr++;					//if copy, increment address pointer
 			}
@@ -212,7 +227,9 @@ HLECALL(writevrambuffer)
 
 		//write data
 		for(i=0;i<data;i++) {
-			cpu_write(0x2007,cpu_read(srcaddr++));
+//			cpu_write(0x2007,cpu_read(srcaddr++));
+			writeppu(SCROLL++,cpu_read(srcaddr++));
+			SCROLL &= 0x3FFF;
 		}
 
 	}
@@ -283,7 +300,6 @@ HLECALL(getvrambufferbyte)
 	log_printf("preparevramstrings not implemented\n");
 }
 
-//todo:  revise this to use $2007 and its (the bios') internal functions
 HLECALL(loadtileset)
 {
 	int units = nes->cpu.x;

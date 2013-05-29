@@ -28,13 +28,20 @@ writefunc_t ppu_memwrite;
 
 static u8 read_ppu_memory(u32 addr)
 {
+	//see if a memory page is mapped
 	if(nes->ppu.readpages[addr >> 10])
 		return(nes->ppu.readpages[addr >> 10][addr & 0x3FF]);
+
+	//check for read function mapped
 	else if(nes->ppu.readfuncs[addr >> 10])
 		return(nes->ppu.readfuncs[addr >> 10](addr));
+
+	//spit out debug message
 	else if(config_get_bool("nes.log_unhandled_io"))
 		log_printf("ppu_memread: read from unmapped memory at $%04X\n",addr);
-	return(0);
+
+	//return open bus
+	return((u8)(addr >> 8));
 }
 
 static void write_ppu_memory(u32 addr,u8 data)
@@ -99,6 +106,36 @@ void ppu_pal_write(u32 addr,u8 data)
 	video_updatepalette(addr,data);
 }
 
+static INLINE void r2007increment()
+{
+	int i;
+
+	//see if we are rendering
+	if((SCANLINE < 240 || SCANLINE == 261) && (CONTROL1 & 0x18)) {
+		if((SCROLL >> 12) == 7) {
+			SCROLL &= 0xFFF;
+			i = SCROLL & 0x3E0;
+			if(i == 0x3A0)
+				SCROLL ^= 0xBA0;
+			else if(i == 0x3E0)
+				SCROLL ^= 0x3E0;
+			else
+				SCROLL += 0x20;
+		}
+		else
+			SCROLL += 0x1000;
+	}
+
+	//not rendering, increment normally
+	else {
+		if(CONTROL0 & 4)
+			SCROLL += 32;
+		else
+			SCROLL += 1;
+		SCROLL &= 0x7FFF;
+	}
+}
+
 u8 ppu_read(u32 addr)
 {
 	u8 ret = 0;
@@ -110,7 +147,6 @@ u8 ppu_read(u32 addr)
 
 			//clear vblank flag
 			if(ret & 0x80) {
-//				log_printf("ppu_read:  frame %d, scanline %d, cycle %d:  clearing VBLANK flag\n",FRAMES,SCANLINE,LINECYCLES);
 				nes->ppu.status &= 0x60;
 			}
 
@@ -124,27 +160,29 @@ u8 ppu_read(u32 addr)
 					cpu_clear_nmi();
 				}
 			}
-
-//			log_printf("ppu_read:  read $2002 @ cycle %d (line %d, frame %d)\n",LINECYCLES,SCANLINE,FRAMES);
 			TOGGLE = 0;
 			nes->ppu.buf = ret;
-//			if(SCANLINE >= 260)
-//				log_printf("ppu_read:  read $2002 @ cycle %d (line %d, frame %d)\n",LINECYCLES,SCANLINE,FRAMES);
 			break;
 		case 4:
 			nes->ppu.buf = nes->ppu.oam[nes->ppu.oamaddr];
 			break;
 		case 7:
-//			log_message("2007 read: ppuscroll = $%04X, scanline = %d\n",nes->ppu.scroll,nes->scanline);
-			nes->ppu.buf = nes->ppu.latch;
-			SCROLL &= 0x7FFF;
-			nes->ppu.latch = ppu_memread(SCROLL);
-			if((SCROLL & 0x3F00) == 0x3F00)
-				nes->ppu.buf = ppu_pal_read(SCROLL & 0x1F);
-			if(CONTROL0 & 4)
-				SCROLL += 32;
+			//setup io for ppu
+			IOADDR = SCROLL & 0x3FFF;
+			IOMODE = 5;
+
+			//increment registers
+			r2007increment();
+
+			//handle palette reads
+			if(IOADDR >= 0x3F00) {
+				nes->ppu.buf &= 0xC0;
+				nes->ppu.buf |= ppu_pal_read(IOADDR & 0x1F);
+			}
+
+			//regular read
 			else
-				SCROLL += 1;
+				nes->ppu.buf = nes->ppu.latch;
 			break;
 	}
 	return(nes->ppu.buf);
@@ -152,8 +190,6 @@ u8 ppu_read(u32 addr)
 
 void ppu_write(u32 addr,u8 data)
 {
-	int i;
-
 	nes->ppu.buf = data;
 	switch(addr & 7) {
 		case 0:
@@ -163,7 +199,6 @@ void ppu_write(u32 addr,u8 data)
 				cpu_clear_nmi();
 			CONTROL0 = data;
 			TMPSCROLL = (TMPSCROLL & 0x73FF) | ((data & 3) << 10);
-//			log_printf("control0:  $%02X (nmi %s) (pixel %d, line %d, frame %d)\n",CONTROL0,(CONTROL0&0x80)?"on":"off",LINECYCLES,SCANLINE,FRAMES);
 			return;
 		case 1:
 			CONTROL1 = data;
@@ -172,10 +207,12 @@ void ppu_write(u32 addr,u8 data)
 			nes->ppu.oamaddr = data;
 			return;
 		case 4:
+			//check if we are rendering
+			if((SCANLINE < 240 || SCANLINE == 261) && (CONTROL1 & 0x18))
+				data = 0xFF;
 			nes->ppu.oam[nes->ppu.oamaddr++] = data;
 			return;
 		case 5:				//scroll
-//			log_printf("ppu_write:  write to $%04X (tog=%d) @ cycle %d, line %d, frame %d\n",addr,TOGGLE,LINECYCLES,SCANLINE,FRAMES);
 			if(TOGGLE == 0) { //first write
 				TMPSCROLL = (TMPSCROLL & ~0x001F) | (data >> 3);
 				SCROLLX = data & 7;
@@ -188,7 +225,6 @@ void ppu_write(u32 addr,u8 data)
 			}
 			return;
 		case 6:				//vram addr
-//			log_printf("ppu_write:  write to $%04X (tog=%d) @ cycle %d, line %d, frame %d\n",addr,TOGGLE,LINECYCLES,SCANLINE,FRAMES);
 			if(TOGGLE == 0) { //first write
 				TMPSCROLL = (TMPSCROLL & ~0xFF00) | ((data & 0x7F) << 8);
 				TOGGLE = 1;
@@ -196,27 +232,26 @@ void ppu_write(u32 addr,u8 data)
 			else { //second write
 				SCROLL = TMPSCROLL = (TMPSCROLL & ~0x00FF) | data;
 				TOGGLE = 0;
-				//kludge
-				nes->ppu.busaddr = SCROLL;
 			}
 			return;
 		case 7:				//vram data
-			if(SCROLL < 0x3F00) {
-				ppu_memwrite(SCROLL,data);
+			if((SCROLL & 0x3F00) != 0x3F00) {
+				IOADDR = SCROLL & 0x3FFF;
+				IODATA = data;
+				IOMODE = 6;
 			}
 			else {
-				if((SCROLL & 0x0F) == 0) {
-					for(i=0;i<8;i++)
-						ppu_pal_write(i * 4,data);
+				addr = SCROLL & 0x1F;
+				if((SCROLL & 0xF) == 0) {
+					ppu_pal_write(0x0,data);	ppu_pal_write(0x10,data);
+					ppu_pal_write(0x4,data);	ppu_pal_write(0x14,data);
+					ppu_pal_write(0x8,data);	ppu_pal_write(0x18,data);
+					ppu_pal_write(0xC,data);	ppu_pal_write(0x1C,data);
 				}
 				else if(SCROLL & 3)
-					ppu_pal_write(SCROLL & 0x1F,data);
+					ppu_pal_write(addr,data);
 			}
-			if(CONTROL0 & 4)
-				SCROLL += 32;
-			else
-				SCROLL += 1;
-			SCROLL &= 0x7FFF;
+			r2007increment();
 			return;
 	}
 }

@@ -48,6 +48,11 @@
 #define TMPSCROLL		nes->ppu.tmpscroll
 #define TOGGLE			nes->ppu.toggle
 
+//ppu io
+#define IOADDR			nes->ppu.ioaddr
+#define IODATA			nes->ppu.iodata
+#define IOMODE			nes->ppu.iomode
+
 //registers
 #define PPUCONTROL	nes->ppu.control0		//'correct' names
 #define PPUMASK		nes->ppu.control1

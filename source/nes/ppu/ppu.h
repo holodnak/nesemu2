@@ -54,6 +54,10 @@ typedef struct ppu_s {
 	u8		oam2read;
 	u8		oam2mode;
 
+	//ppu external io
+	u32	ioaddr;
+	u8		iodata,iomode;
+
 	//rendering data, current address the ppu is accessing
 	u32	busaddr;
 
@@ -63,10 +67,10 @@ typedef struct ppu_s {
 	//current sprite we are fetching tile data for
 	u8		cursprite;
 
-	//line buffer (34 tiles)
+	//line buffer (34 tiles) output of the ppu (bg + sprites)
 	u8		linebuffer[256 + 16];
 
-	//tile buffer (34 tiles)
+	//tile buffer (34 tiles) hold tiles/attributes read
 	u8		tilebuffer[256 + 16];
 
 	//read/write pointers

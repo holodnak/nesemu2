@@ -38,6 +38,9 @@ void ppu_reset(int hard)
 	nes->ppu.linecycles = 0;
 	nes->ppu.frames = 0;
 	nes->ppu.cursprite = 0;
+	nes->ppu.ioaddr = 0;
+	nes->ppu.iodata = 0;
+	nes->ppu.iomode = 0;
 }
 
 void ppu_sync()

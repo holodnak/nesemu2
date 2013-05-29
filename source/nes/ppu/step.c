@@ -292,6 +292,28 @@ static INLINE void scanline_prerender()
 #endif
 }
 
+static INLINE void scanline_prerender_norender()
+{
+	switch(LINECYCLES) {
+
+		case 0:
+			clear_sp0hit_flag();
+			break;
+		case 1:
+			clear_nmi_flag();
+			break;
+		case 3:
+			clear_nmi_line();
+			break;
+		case 320:
+			nes->ppu.oamaddr = 0;
+			break;
+		case 338:
+			skip_cycle();
+			break;
+	}
+}
+
 //scanlines 0-239
 static INLINE void scanline_visible()
 {
@@ -542,15 +564,18 @@ static INLINE void scanline_startvblank()
 
 void ppu_step()
 {
+	int rendering = 0;
+	u32 addr;
+
 //blargg test debug output
-	if(SCANLINE == 0 && LINECYCLES == 0) {
+/*	if(SCANLINE == 0 && LINECYCLES == 0) {
 		u8 *sram = nes->cart->sram.size ? nes->cart->sram.data : 0;
 
 		if(sram && sram[0] < 0x80 && sram[1] == 0xDE && sram[2] == 0xB0 && sram[3] == 0x61) {
 			sram[0] = 0xFF;
 			log_printf("%s",sram + 4);
 		}
-	}
+	}*/
 	switch(SCANLINE) {
 		case 0:		case 1:		case 2:		case 3:		case 4:		case 5:		case 6:		case 7:		case 8:		case 9:
 		case 10:		case 11:		case 12:		case 13:		case 14:		case 15:		case 16:		case 17:		case 18:		case 19:
@@ -576,10 +601,11 @@ void ppu_step()
 		case 210:	case 211:	case 212:	case 213:	case 214:	case 215:	case 216:	case 217:	case 218:	case 219:
 		case 220:	case 221:	case 222:	case 223:	case 224:	case 225:	case 226:	case 227:	case 228:	case 229:
 		case 230:	case 231:	case 232:	case 233:	case 234:	case 235:	case 236:	case 237:	case 238:	case 239:
-			if(CONTROL1 & 0x18)
+			if(CONTROL1 & 0x18) {
 				scanline_visible();
+				rendering = 1;
+			}
 			else {
-				nes->ppu.busaddr = SCROLL;
 				if(LINECYCLES < 256)
 					nes->ppu.linebuffer[LINECYCLES] = 0;
 				else if(LINECYCLES == 256) {
@@ -596,10 +622,48 @@ void ppu_step()
 		case 252:	case 253:	case 254:	case 255:	case 256:	case 257:	case 258:	case 259:	case 260:
 			break;
 		case 261:
-			scanline_prerender();
+			if(CONTROL1 & 0x18) {
+				scanline_prerender();
+				rendering = 1;
+			}
+			else
+				scanline_prerender_norender();
 			break;
 	}
-	if(LINECYCLES & 1)
-		nes->mapper->ppucycle();
+	if(LINECYCLES & 1) {
+		if(IOMODE) {
+			addr = IOADDR & 0x3FFF;
+
+			//call to ppucycle
+			if(IOMODE >= 5 && rendering == 0) {
+				nes->ppu.busaddr = addr;
+				nes->mapper->ppucycle();
+			}
+
+			//perform delayed write
+			else if(IOMODE == 2) {
+				if(rendering == 0)
+					ppu_memwrite(addr,IODATA);
+			}
+
+			//perform delayed read
+			else if(IOMODE == 1) {
+				IOMODE++;
+				if(rendering == 0) {
+					nes->ppu.latch = ppu_memread(addr);
+				}
+			}
+			IOMODE -= 2;
+		}
+		if(rendering == 0) {
+			if(IOMODE == 0) {
+				nes->ppu.busaddr = SCROLL;
+				nes->mapper->ppucycle();
+			}
+		}
+		else {
+			nes->mapper->ppucycle();
+		}
+	}
 	inc_linecycles();
 }

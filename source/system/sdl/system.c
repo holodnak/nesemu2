@@ -20,6 +20,7 @@
 
 #include <SDL/SDL.h>
 #ifdef WIN32
+	#include <windows.h>
 	#include <direct.h>
 	#include <io.h>
 #else
@@ -104,6 +105,35 @@ char *system_getcwd()
 		memset(buf,0,_MAX_PATH);
 	return(buf);
 }
+
+#ifdef WIN32
+u64 system_gettick()
+{
+	LARGE_INTEGER li;
+
+	QueryPerformanceCounter(&li);
+	return(li.QuadPart);
+}
+
+u64 system_getfrequency()
+{
+	LARGE_INTEGER li;
+
+	if(QueryPerformanceFrequency(&li) == 0)
+		return(1);
+	return(li.QuadPart);
+}
+#else //#elif defined(SDL)
+u64 system_gettick()
+{
+	return(SDL_GetTicks());
+}
+
+u64 system_getfrequency()
+{
+	return(1000);
+}
+#endif
 
 //this function looks around for a configuration file.  it checks:
 //  1. current working directory

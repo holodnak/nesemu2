@@ -18,15 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifdef WIN32
-	#include <windows.h>
-	#include "../win32/resource.h"
-	#include <SDL/SDL_syswm.h>
-#endif
 #include <SDL/SDL.h>
 #include "misc/log.h"
 #include "palette/palette.h"
 #include "nes/nes.h"
+#include "system/system.h"
 #include "system/video.h"
 #include "system/win32/resource.h"
 #include "system/sdl/console/console.h"
@@ -63,57 +59,17 @@ static int get_filter_int(char *str)
 	return(F_NONE);
 }
 
-#ifdef WIN32
-static u64 timer_gettick()
-{
-	LARGE_INTEGER li;
-
-	QueryPerformanceCounter(&li);
-	return(li.QuadPart);
-}
-
-static int timer_init()
-{
-	LARGE_INTEGER li;
-
-	if(QueryPerformanceFrequency(&li) == 0)
-		return(1);
-	interval = ((double)li.QuadPart) / 60.0f;
-	lasttime = timer_gettick();
-	return(0);
-}
-#else
-static u64 timer_gettick()
-{
-	return(SDL_GetTicks());
-}
-
-static int timer_init()
-{
-	interval = 1000.0f / 60.0f;
-	lasttime = timer_gettick();
-	return(0);
-}
-#endif
-
 int video_init()
 {
 	int filter = get_filter_int(config->video.filter);
 
 	//setup timer to limit frames
-	if(timer_init() != 0) {
-		log_printf("video_reinit:  timer_init() failed!\n");
-		return(1);
-	}
+	interval = (double)system_getfrequency() / 60.0f;
+	lasttime = system_gettick();
 
+	log_printf("interval is %9.9f\n",interval);
 	//clear palette cache
 	memset(palettecache,0,256*sizeof(u32));
-
-	//debugging colors
-	palettecache[0x80] = 0xFFFFFF;
-	palettecache[0x81] = 0xFF0000;
-	palettecache[0x82] = 0x00FF00;
-	palettecache[0x83] = 0x0000FF;
 
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
@@ -170,16 +126,8 @@ void video_endframe()
 {
 	u64 t;
 
-/*	u32 *ptr1 = screen;
-	u32 *ptr2 = screen + 232 * 256;
-
-	for(t=0;t<256*8;t++) {
-		ptr1[t] = palettecache[0];
-		ptr2[t] = palettecache[0];
-	}*/
-
+	//draw everything
 	drawfunc(surface->pixels,surface->pitch,screen,256*4,256,240);
-
 	console_draw(surface->pixels,surface->pitch,screenh);
 
 	//flip buffers and unlock surface
@@ -188,13 +136,9 @@ void video_endframe()
 
 	//simple frame limiter
 	if(config->video.framelimit) {
-		t = timer_gettick();
-		while((double)(t - lasttime) < interval) {
-#ifdef WIN32
-//			Sleep(interval - (t - lasttime) + 0);
-#endif
-			t = timer_gettick();
-		}
+		do {
+			t = system_gettick();
+		} while((double)(t - lasttime) < interval);
 		lasttime = t;
 	}
 }
@@ -263,4 +207,3 @@ void *video_getscreen()
 {
 	return(screen);
 }
-

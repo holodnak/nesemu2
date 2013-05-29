@@ -22,6 +22,7 @@
 #define __mainwnd_h__
 
 extern HINSTANCE hInst;
+extern HACCEL hAccelTable;
 extern HWND hWnd;
 extern HWND hConsole;
 extern HWND hDebugger;

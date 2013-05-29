@@ -30,6 +30,7 @@ extern "C" {
 	#include "misc/config.h"
 	#include "misc/memutil.h"
 	#include "palette/palette.h"
+	#include "system/system.h"
 	#include "system/video.h"
 	#include "system/win32/mainwnd.h"
 }
@@ -68,25 +69,6 @@ static RECT rect;
 static void (*drawline)(int,u8*) = 0;
 static void (*blankline)(int) = 0;
 static void (*updatepalette)(u32,u8) = 0;
-
-static u64 timer_gettick()
-{
-	LARGE_INTEGER li;
-
-	QueryPerformanceCounter(&li);
-	return(li.QuadPart);
-}
-
-static int timer_init()
-{
-	LARGE_INTEGER li;
-
-	if(QueryPerformanceFrequency(&li) == 0)
-		return(1);
-	interval = ((double)li.QuadPart) / 60.0f;
-	lasttime = timer_gettick();
-	return(0);
-}
 
 static void drawline1x_16(int line,u8 *src)
 {
@@ -425,8 +407,8 @@ int video_init()
 {
 	int ret;
 
-	timer_init();
-	lasttime = timer_gettick();
+	interval = (double)system_getfrequency() / 60.0f;
+	lasttime = system_gettick();
 	hMenu = GetMenu(hWnd);
 	if(initddraw() != 0) {
 		killddraw();
@@ -480,7 +462,7 @@ void video_endframe()
 	lpPrimaryDDS->Blt(&rect,lpSecondaryDDS,NULL,DDBLT_WAIT,NULL);
 	if(config->video.framelimit) {
 		do {
-			t = timer_gettick();
+			t = system_gettick();
 		} while((double)(t - lasttime) < interval);
 		lasttime = t;
 	}

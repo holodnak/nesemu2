@@ -49,7 +49,7 @@ void checkmessages();
 int mainloop()
 {
 	while(quit == 0) {
-		checkmessages();
+		system_checkevents();
 		video_startframe();
 		if(running && nes->cart) {
 			nes_frame();

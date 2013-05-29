@@ -18,11 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <windows.h>
 #include <stdlib.h>
 #include <string.h>
 #include <direct.h>
 #include "types.h"
 #include "system/main.h"
+#include "system/win32/mainwnd.h"
 
 int system_init()
 {
@@ -33,9 +35,18 @@ void system_kill()
 {
 }
 
-void system_check_events()
+void system_checkevents()
 {
+	MSG msg;
 
+	while(PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
+		if(IsDialogMessage(hConsole,&msg) || IsDialogMessage(hDebugger,&msg))
+			continue;
+		if(TranslateAccelerator(msg.hwnd,hAccelTable,&msg))
+			continue;
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 }
 
 char *system_getcwd()
@@ -45,4 +56,21 @@ char *system_getcwd()
 	if(getcwd(buf,_MAX_PATH) == NULL)
 		memset(buf,0,_MAX_PATH);
 	return(buf);
+}
+
+u64 system_gettick()
+{
+	LARGE_INTEGER li;
+
+	QueryPerformanceCounter(&li);
+	return(li.QuadPart);
+}
+
+u64 system_getfrequency()
+{
+	LARGE_INTEGER li;
+
+	if(QueryPerformanceFrequency(&li) == 0)
+		return(1);
+	return(li.QuadPart);
 }

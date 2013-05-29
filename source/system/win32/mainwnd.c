@@ -287,17 +287,3 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDR_ACCELERATOR));
 	return((hWnd == 0) ? FALSE : TRUE);
 }
-
-void checkmessages()
-{
-	MSG msg;
-
-	while(PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
-		if(IsDialogMessage(hConsole,&msg) || IsDialogMessage(hDebugger,&msg))
-			continue;
-		if(TranslateAccelerator(msg.hwnd,hAccelTable,&msg))
-			continue;
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-}

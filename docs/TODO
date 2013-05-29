@@ -68,7 +68,6 @@ submappers
  . which needs?
 
 hlefds
- . with new ppu io system, using 2007 with hle doesnt work.  need direct writes now.
  . broken games:
     falsion - loadfiles?  doesnt work with it.
 

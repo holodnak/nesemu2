@@ -194,7 +194,7 @@ void nes_reset(int hard)
 	ppu_setwritefunc(0);
 
 	//load in the game genie if it is enabled and we doing hard reset
-	if(config->nes.gamegenie.enabled != 0) {
+	if(config_get_bool("nes.gamegenie.enabled") != 0) {
 		if(hard)
 			genie_load();
 	}

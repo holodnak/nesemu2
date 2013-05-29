@@ -58,7 +58,7 @@ void system_kill()
 	SDL_Quit();
 }
 
-void system_check_events()
+void system_checkevents()
 {
 	SDL_Event event; /* Event structure */
 
@@ -134,54 +134,3 @@ u64 system_getfrequency()
 	return(1000);
 }
 #endif
-
-//this function looks around for a configuration file.  it checks:
-//  1. current working directory
-//  2. $HOME directory
-//  3. same directory the executable is in
-//if it isnt found, it defaults the executable directory
-int system_findconfig(char *dest)
-{
-	char *cwd = system_getcwd();
-	char *home = getenv("HOME");
-
-	//first look in the current working directory
-	sprintf(dest,"%s%c%s",cwd,PATH_SEPERATOR,CONFIG_FILENAME);
-	log_printf("looking for configuration at '%s'\n",dest);
-	if(access(dest,06) == 0) {
-		return(0);
-	}
-
-	//check the users home directory
-	if(home) {
-		sprintf(dest,"%s%c.nesemu%c%s",home,PATH_SEPERATOR,PATH_SEPERATOR,CONFIG_FILENAME);
-		log_printf("looking for configuration at '%s'\n",dest);
-		if(access(dest,06) == 0) {
-			return(0);
-		}
-	}
-
-#ifdef WIN32
-	//win32 it is ok to store in the same directory as executable
-	//now check the executable directory
-	sprintf(dest,"%s%c%s",exepath,PATH_SEPERATOR,CONFIG_FILENAME);
-	log_printf("looking for configuration at '%s'\n",dest);
-	if(access(dest,06) == 0) {
-		return(0);
-	}
-
-	//set default configuration filename
-	sprintf(dest,"%s%c%s",exepath,PATH_SEPERATOR,CONFIG_FILENAME);
-
-#else
-	//linux it is not ok to store in the same directory as executable (/usr/bin or something)
-	if(home) {
-		sprintf(dest,"%s%c%s",home,PATH_SEPERATOR,CONFIG_FILENAME);
-	}
-	else {
-		log_printf("system_findconfig:  HOME environment var not set!  using current directory.\n");
-	}
-#endif
-
-	return(1);
-}

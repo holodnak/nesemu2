@@ -66,25 +66,7 @@ char *paths_parse(char *src,char *dest,int len)
 				//set new position in the string we parsing
 				p = p2 + 1;
 
-				//see if we need the exe path (special case)
-				if(strcmp("exepath",varname) == 0) {
-					p2 = exepath;
-				}
-
-				//user home directory
-				else if(strcmp("home",varname) == 0) {
-					p2 = exepath;
-				}
-
-				//see if it comes from the configuration
-				else if(strncmp("config.",varname,7) == 0) {
-					p2 = config_get_string((char*)varname + 7,"");
-				}
-
-				//else we are using a variable from our var list
-				else {
-					p2 = vars_get_string(vars,varname2,"");
-				}
+				p2 = var_get_string(varname2);
 
 				//see if it has a % in it
 				if(strrchr(p2,'%') != 0) {
@@ -129,7 +111,7 @@ void paths_makestatefilename(char *romfilename,char *dest,int len)
 	memset(dest,0,len);
 
 	//parse the state path
-	paths_parse(config->path.state,dest,len);
+	strcpy(dest,config_get_eval_string("path.state"));
 
 	//append the path seperator
 	dest[strlen(dest)] = PATH_SEPERATOR;

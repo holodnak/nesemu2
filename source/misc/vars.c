@@ -18,6 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+/* todo:
+
+vars_add_var is able to add another var with the same name
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +31,8 @@
 #include "misc/vars.h"
 #include "misc/log.h"
 
-vars_t *vars = 0;
+//variable list
+static vars_t *vars = 0;
 
 //check if a char is whitespace
 static int iswhitespace(char ch)
@@ -48,12 +55,14 @@ static char *eatwhitespace(char *str)
 	return(ret);
 }
 
+//init var list
 int vars_init()
 {
 	vars = vars_create();
 	return(0);
 }
 
+//destroy the var list
 void vars_kill()
 {
 	vars_destroy(vars);
@@ -109,7 +118,9 @@ vars_t *vars_load(char *filename)
 		*oldp++ = 0;
 		p = eatwhitespace(p);
 		oldp = eatwhitespace(oldp);
-		vars_add_var(ret,p,oldp);
+
+		//add the var to the list
+		vars_add_var(ret,F_CONFIG,p,oldp);
 	}
 
 	log_printf("vars_load:  loaded file '%s'\n",filename);
@@ -127,12 +138,23 @@ int vars_save(vars_t *vs,char *filename)
 		return(1);
 	}
 	while(v) {
-		fprintf(fp,"%s = %s\n",v->name,v->data);
+		if(v->flags == F_CONFIG)
+			fprintf(fp,"%s = %s\n",v->name,v->data);
 		v = v->next;
 	}
 	fclose(fp);
 	vs->changed = 0;
 	return(0);
+}
+
+void vars_merge(vars_t *dest,vars_t *src)
+{
+	var_t *v = src->vars;
+
+	while(v) {
+		vars_set_string(dest,v->flags,v->name,v->data);
+		v = v->next;
+	}
 }
 
 void vars_clear(vars_t *vs)
@@ -150,12 +172,13 @@ void vars_clear(vars_t *vs)
 	vs->vars = 0;
 }
 
-void vars_add_var(vars_t *vs,char *name,char *data)
+var_t *vars_add_var(vars_t *vs,int flags,char *name,char *data)
 {
 	var_t *v,*var;
 
 	var = (var_t*)mem_alloc(sizeof(var_t));
 	memset(var,0,sizeof(var_t));
+	var->flags = flags;
 	var->name = mem_strdup(name);
 	var->data = mem_strdup(data);
 	if(vs->vars == 0)
@@ -167,6 +190,7 @@ void vars_add_var(vars_t *vs,char *name,char *data)
 		v->next = var;
 	}
 	vs->changed++;
+	return(var);
 }
 
 void vars_delete_var(vars_t *vs,char *name)
@@ -194,19 +218,26 @@ void vars_delete_var(vars_t *vs,char *name)
 	vs->changed++;
 }
 
-static char tmpstr[64];
-
-char *vars_get_string(vars_t *vs,char *name,char *def)
+var_t *vars_get_var(vars_t *vs,char *name)
 {
 	var_t *v = vs->vars;
 
 	while(v) {
 		if(strcmp(name,v->name) == 0) {
-			return(v->data);
+			return(v);
 		}
 		v = v->next;
 	}
-	return(def);
+	return(0);
+}
+
+static char tmpstr[64];
+
+char *vars_get_string(vars_t *vs,char *name,char *def)
+{
+	var_t *v = vars_get_var(vs,name);
+
+	return(v ? v->data : def);
 }
 
 int vars_get_int(vars_t *vs,char *name,int def)
@@ -215,13 +246,18 @@ int vars_get_int(vars_t *vs,char *name,int def)
 	return(atoi(vars_get_string(vs,name,tmpstr)));
 }
 
+int vars_get_bool(vars_t *vs,char *name,int def)
+{
+	return(vars_get_int(vs,name,def) ? 1 : 0);
+}
+
 double vars_get_double(vars_t *vs,char *name,double def)
 {
 	sprintf(tmpstr,"%f",def);
 	return(atof(vars_get_string(vs,name,tmpstr)));
 }
 
-void vars_set_string(vars_t *vs,char *name,char *data)
+var_t *vars_set_string(vars_t *vs,int flags,char *name,char *data)
 {
 	var_t *v = vs->vars;
 
@@ -229,23 +265,28 @@ void vars_set_string(vars_t *vs,char *name,char *data)
 		if(strcmp(name,v->name) == 0) {
 			mem_free(v->data);
 			v->data = mem_strdup(data);
+			v->flags = flags;
 			vs->changed++;
-			return;
+			return(v);
 		}
 		v = v->next;
 	}
-	if(v == 0)
-		vars_add_var(vs,name,data);
+	return((v == 0) ? vars_add_var(vs,flags,name,data) : v);
 }
 
-void vars_set_int(vars_t *vs,char *name,int data)
+var_t *vars_set_int(vars_t *vs,int flags,char *name,int data)
 {
 	sprintf(tmpstr,"%d",data);
-	vars_set_string(vs,name,tmpstr);
+	return(vars_set_string(vs,flags,name,tmpstr));
 }
 
-void vars_set_double(vars_t *vs,char *name,double data)
+var_t *vars_set_bool(vars_t *vs,int flags,char *name,int data)
+{
+	return(vars_set_int(vs,flags,name,data ? 1 : 0));
+}
+
+var_t *vars_set_double(vars_t *vs,int flags,char *name,double data)
 {
 	sprintf(tmpstr,"%f",data);
-	vars_set_string(vs,name,tmpstr);
+	return(vars_set_string(vs,flags,name,tmpstr));
 }

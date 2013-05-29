@@ -23,7 +23,7 @@
 
 #include "misc/vars.h"
 
-typedef struct config_s {
+/*typedef struct config_s {
 
 	struct {
 		int framelimit;
@@ -81,11 +81,39 @@ typedef struct config_s {
 
 } config_t;
 
-extern config_t *config;
+extern config_t *config;*/
 
 int config_init();
 void config_kill();
-void config_update();
-char *config_get_string(char *name,char *def);
+void config_load();
+void config_save();
+
+//gets config string variable with variables expanded
+char *config_get_eval_string(char *name);
+
+//get config var (wraps the vars_get_*() functions)
+char *config_get_string(char *name);
+int config_get_int(char *name);
+int config_get_bool(char *name);
+double config_get_double(char *name);
+
+//set config var (wraps the vars_get_*() functions)
+void config_set_string(char *name,char *data);
+void config_set_int(char *name,int data);
+void config_set_bool(char *name,int data);
+void config_set_double(char *name,double data);
+
+//get var
+#define var_get_eval_string	config_get_eval_string
+#define var_get_string			config_get_string
+#define var_get_int				config_get_int
+#define var_get_bool				config_get_bool
+#define var_get_double			config_get_double
+
+//set var (wraps the vars_get_*() functions)
+void var_set_string(char *name,char *data);
+void var_set_int(char *name,int data);
+void var_set_bool(char *name,int data);
+void var_set_double(char *name,double data);
 
 #endif

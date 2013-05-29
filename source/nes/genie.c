@@ -203,19 +203,19 @@ int genie_load()
 		memset(biosfile,0,1024);
 
 		//parse the bios path
-		paths_parse(config->path.bios,biosfile,1024);
+		strcpy(biosfile,config_get_eval_string("path.bios"));
 
 		//append the path seperator
 		biosfile[strlen(biosfile)] = PATH_SEPERATOR;
 
 		//append the bios filename
-		strcat(biosfile,config->nes.gamegenie.bios);
+		strcat(biosfile,config_get_string("nes.gamegenie.bios"));
 
 		//try to load bios from the bios directory
 		if(genie_loadrom(biosfile) != 0) {
 
 			//see if bios is in the current directory
-			if(genie_loadrom(config->nes.gamegenie.bios) != 0) {
+			if(genie_loadrom(config_get_string("nes.gamegenie.bios")) != 0) {
 				return(1);
 			}
 		}

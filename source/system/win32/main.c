@@ -29,6 +29,7 @@
 #include "palette/palette.h"
 #include "palette/generator.h"
 #include "system/main.h"
+#include "system/system.h"
 #include "system/video.h"
 #include "system/input.h"
 #include "system/win32/mainwnd.h"
@@ -96,12 +97,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		*p = 0;
 	}
 
-	sprintf(configfilename,"%s%c%s",exepath,PATH_SEPERATOR,CONFIG_FILENAME);
-
 	if(emu_init() != 0)
 		return(FALSE);
 
-	resizeclient(hWnd,config->video.scale * 256,config->video.scale * 240);
+	resizeclient(hWnd,config_get_int("video.scale") * 256,config_get_int("video.scale") * 240);
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
@@ -123,6 +122,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	mem_free(cmdline);
 
 	log_printf("starting main loop...\n");
+
 	ret = (mainloop() == 0) ? TRUE : FALSE;
 
 	emu_kill();

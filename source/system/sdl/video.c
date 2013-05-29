@@ -61,20 +61,19 @@ static int get_filter_int(char *str)
 
 int video_init()
 {
-	int filter = get_filter_int(config->video.filter);
+	int filter = get_filter_int(config_get_string("video.filter"));
 
 	//setup timer to limit frames
 	interval = (double)system_getfrequency() / 60.0f;
 	lasttime = system_gettick();
 
-	log_printf("interval is %9.9f\n",interval);
 	//clear palette cache
 	memset(palettecache,0,256*sizeof(u32));
 
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
-	flags |= config->video.fullscreen ? SDL_FULLSCREEN : 0;
-	screenscale = config->video.scale;
+	flags |= config_get_bool("video.fullscreen") ? SDL_FULLSCREEN : 0;
+	screenscale = config_get_int("video.scale");
 	screenw = 256 * screenscale;
 	screenh = 240 * screenscale;
 	screenbpp = 32;
@@ -135,7 +134,7 @@ void video_endframe()
 	SDL_UnlockSurface(surface);
 
 	//simple frame limiter
-	if(config->video.framelimit) {
+	if(config_get_bool("video.framelimit")) {
 		do {
 			t = system_gettick();
 		} while((double)(t - lasttime) < interval);

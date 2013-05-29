@@ -21,12 +21,12 @@
 #ifndef __vars_h__
 #define __vars_h__
 
-#define T_VAR		0
-#define T_CONFIG	1
+#define F_VAR		0			//variable that is normal
+#define F_CONFIG	1			//variable that is part of the configuration (gets saved)
 
 typedef struct var_s {
 	struct var_s *next;
-	int type;
+	int flags;
 	char *name;
 	char *data;
 } var_t;
@@ -35,8 +35,6 @@ typedef struct vars_s {
 	var_t *vars;
 	int changed;
 } vars_t;
-
-extern vars_t *vars;
 
 //init vars
 int vars_init();
@@ -56,23 +54,31 @@ vars_t *vars_load(char *filename);
 //save vars to a file
 int vars_save(vars_t *vars,char *filename);
 
+//merge all vars from src into dest
+void vars_merge(vars_t *dest,vars_t *src);
+
 //delete all vars
-void vars_clear(vars_t *vars);
+void vars_clear(vars_t *vs);
 
 //add var
-void vars_add_var(vars_t *vars,char *name,char *data);
+var_t *vars_add_var(vars_t *vs,int flags,char *name,char *data);
 
 //delete var
-void vars_delete_var(vars_t *vars,char *name);
+void vars_delete_var(vars_t *vs,char *name);
+
+//add var
+var_t *vars_get_var(vars_t *vs,char *name);
 
 //get var
 char *vars_get_string(vars_t *vars,char *name,char *def);
 int vars_get_int(vars_t *vars,char *name,int def);
+int vars_get_bool(vars_t *vars,char *name,int def);
 double vars_get_double(vars_t *vars,char *name,double def);
 
 //set var
-void vars_set_string(vars_t *vars,char *name,char *data);
-void vars_set_int(vars_t *vars,char *name,int data);
-void vars_set_double(vars_t *vars,char *name,double data);
+var_t *vars_set_string(vars_t *vars,int flags,char *name,char *data);
+var_t *vars_set_int(vars_t *vars,int flags,char *name,int data);
+var_t *vars_set_bool(vars_t *vars,int flags,char *name,int data);
+var_t *vars_set_double(vars_t *vars,int flags,char *name,double data);
 
 #endif

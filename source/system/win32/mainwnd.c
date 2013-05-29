@@ -107,7 +107,7 @@ static void file_open(HWND hWnd)
 	if(nes_load(buffer) == 0) {
 		log_printf("WndProc:  resetting nes...\n");
 		nes_reset(1);
-		running = config->nes.pause_on_load ? 0 : 1;
+		running = config_get_bool("video.pause_on_load");
 	}
 }
 
@@ -204,7 +204,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case ID_VIEW_FULLSCREEN:
 			video_kill();
-			config->video.fullscreen ^= 1;
+			config_set_bool("video.fullscreen",config_get_bool("video.fullscreen") ^ 1);
 			video_init();
 			break;
 		default:

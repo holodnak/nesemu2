@@ -49,7 +49,7 @@ int log_init()
 	memset(logfilename,0,MAX_PATH);
 
 	//parse the bios path
-	paths_parse(config->path.data,logfilename,1024);
+	strcpy(logfilename,config_get_eval_string("path.data"));
 
 	//append the path seperator
 	logfilename[strlen(logfilename)] = PATH_SEPERATOR;

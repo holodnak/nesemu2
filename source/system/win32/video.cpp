@@ -312,10 +312,10 @@ static int initfullscreen()
 		MessageBox(hWnd,"Error setting display mode, trying windowed.","nesemu2",MB_OK | MB_ICONERROR);
 		video_kill();
 
-		screenscale = config->video.scale;
+		screenscale = config_get_int("video.scale");
 		screenw = 256 * screenscale;
 		screenh = 240 * screenscale;
-		config->video.fullscreen = 0;
+		config_set_bool("video.fullscreen",0);
 
 		return(initwindowed());
 	}
@@ -345,11 +345,11 @@ static int video_reinit()
 {
 	int i,ret;
 
-	screenscale = config->video.scale;
+	screenscale = config_get_int("video.scale");
 	screenw = 256 * screenscale;
 	screenh = 240 * screenscale;
 	screenbpp = 32;
-	if(config->video.fullscreen) {
+	if(config_get_bool("video.fullscreen")) {
 		ret = initfullscreen();
 	}
 	else {
@@ -426,7 +426,7 @@ void video_kill()
 	SAFE_RELEASE(lpDirectDrawClipper);
 	SAFE_RELEASE(lpSecondaryDDS);
 	SAFE_RELEASE(lpPrimaryDDS);
-	if(config->video.fullscreen) {
+	if(config_get_bool("video.fullscreen")) {
 		SetWindowPos(hWnd,0,rect.left,rect.top,0,0,SWP_NOCOPYBITS | SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER);
 		SetWindowLongPtr(hWnd,GWL_STYLE,WS_OVERLAPPEDWINDOW);
 		SetMenu(hWnd,hMenu);
@@ -460,7 +460,7 @@ void video_endframe()
 	rect.top += pt.y;
 	rect.bottom += pt.y;
 	lpPrimaryDDS->Blt(&rect,lpSecondaryDDS,NULL,DDBLT_WAIT,NULL);
-	if(config->video.framelimit) {
+	if(config_get_bool("video.framelimit")) {
 		do {
 			t = system_gettick();
 		} while((double)(t - lasttime) < interval);

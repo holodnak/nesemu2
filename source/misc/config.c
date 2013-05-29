@@ -24,6 +24,7 @@
 #else
 	#include <unistd.h>
 #endif
+#include <stdlib.h>
 #include <string.h>
 #include "misc/config.h"
 #include "misc/vars.h"
@@ -31,24 +32,11 @@
 #include "misc/log.h"
 #include "misc/paths.h"
 #include "system/main.h"
+#include "system/system.h"
 
 static vars_t *configvars = 0;
 
-config_t *config = 0;
-
-#define GET_VAR_INT(name,def) \
-	config-> name = vars_get_int(v,#name,def);
-
-#define GET_VAR_STR(name,def) \
-	p = vars_get_string(v,#name,def); \
-	strcpy(config-> name,p);
-
-#define SET_VAR_INT(name) \
-	vars_set_int(v,#name,config-> name);
-
-#define SET_VAR_STR(name) \
-	vars_set_string(v,#name,config-> name);
-
+//this path stuff needs to be moved
 static void mkdirr(char *path)
 {
 	char *tmp = mem_strdup(path);
@@ -93,89 +81,159 @@ static void makepath(char *str)
 		mkdirr(tmp);
 }
 
-int config_init()
+//this function looks around for a configuration file.  it checks:
+//  1. current working directory
+//  2. $HOME directory
+//  3. same directory the executable is in
+//if it isnt found, it defaults the executable directory
+static int findconfig(char *dest)
 {
-	char *p;
-	vars_t *v;
+	char *cwd = system_getcwd();
+	char *home = getenv("HOME");
 
-	config = (config_t*)mem_alloc(sizeof(config_t));
-	memset(config,0,sizeof(config_t));
-	if((v = vars_load(configfilename)) == 0) {
-		log_printf("config_init:  unable to load file, using defaults\n");
-		v = vars_create();
+	//first see if the configfilename string isnt empty
+	if(strcmp(dest,"") != 0) {
+		return(0);
 	}
 
-	GET_VAR_INT(video.framelimit,			1);
-	GET_VAR_INT(video.fullscreen,			0);
-	GET_VAR_INT(video.scale,				1);
-	GET_VAR_STR(video.filter,				"none");
+	//now look in the current working directory
+	sprintf(dest,"%s%c%s",cwd,PATH_SEPERATOR,CONFIG_FILENAME);
+	log_printf("looking for configuration at '%s'\n",dest);
+	if(access(dest,06) == 0) {
+		return(0);
+	}
 
-	GET_VAR_STR(input.port0,				"joypad0");
-	GET_VAR_STR(input.port1,				"joypad1");
-	GET_VAR_STR(input.expansion,			"none");
-
-	GET_VAR_INT(input.joypad0.a,			'x');
-	GET_VAR_INT(input.joypad0.b,			'z');
-	GET_VAR_INT(input.joypad0.select,	'a');
-	GET_VAR_INT(input.joypad0.start,		's');
-	GET_VAR_INT(input.joypad0.up,			273);
-	GET_VAR_INT(input.joypad0.down,		274);
-	GET_VAR_INT(input.joypad0.left,		276);
-	GET_VAR_INT(input.joypad0.right,		275);
-
-	GET_VAR_INT(input.joypad1.a,			'h');
-	GET_VAR_INT(input.joypad1.b,			'g');
-	GET_VAR_INT(input.joypad1.select,	't');
-	GET_VAR_INT(input.joypad1.start,		'y');
-	GET_VAR_INT(input.joypad1.up,			'i');
-	GET_VAR_INT(input.joypad1.down,		'k');
-	GET_VAR_INT(input.joypad1.left,		'j');
-	GET_VAR_INT(input.joypad1.right,		'l');
-
-	GET_VAR_INT(sound.enabled,				1);
+	//check the users home directory
+	if(home) {
+		sprintf(dest,"%s%c.nesemu%c%s",home,PATH_SEPERATOR,PATH_SEPERATOR,CONFIG_FILENAME);
+		log_printf("looking for configuration at '%s'\n",dest);
+		if(access(dest,06) == 0) {
+			return(0);
+		}
+	}
 
 #ifdef WIN32
-	GET_VAR_STR(path.data,					"%exepath%/data");
+	//win32 it is ok to store in the same directory as executable
+	//now check the executable directory
+	sprintf(dest,"%s%c%s",exepath,PATH_SEPERATOR,CONFIG_FILENAME);
+	log_printf("looking for configuration at '%s'\n",dest);
+	if(access(dest,06) == 0) {
+		return(0);
+	}
+
+	//set default configuration filename
+	sprintf(dest,"%s%c%s",exepath,PATH_SEPERATOR,CONFIG_FILENAME);
+
 #else
-	GET_VAR_STR(path.data,					"%home%/.nesemu2/data");
+	//linux it is not ok to store in the same directory as executable (/usr/bin or something)
+	if(home) {
+		sprintf(dest,"%s%c%s",home,PATH_SEPERATOR,CONFIG_FILENAME);
+	}
+	else {
+		log_printf("system_findconfig:  HOME environment var not set!  using current directory.\n");
+	}
 #endif
 
-	GET_VAR_STR(path.roms,					"%config.path.data%/roms");
-	GET_VAR_STR(path.bios,					"%config.path.data%/bios");
-	GET_VAR_STR(path.save,					"%config.path.data%/save");
-	GET_VAR_STR(path.state,					"%config.path.data%/state");
-	GET_VAR_STR(path.patch,					"%config.path.data%/patch");
-	GET_VAR_STR(path.palette,				"%config.path.data%/palette");
-	GET_VAR_STR(path.cheat,					"%config.path.data%/cheat");
+	return(1);
+}
 
-	GET_VAR_STR(palette.source,			"generator");
-	GET_VAR_INT(palette.hue,				-15);
-	GET_VAR_INT(palette.saturation,		45);
-	GET_VAR_STR(palette.filename,			"roni.pal");
+//initialize the configuration defaults
+static vars_t *config_get_defaults()
+{
+	vars_t *ret = vars_create();
 
-	GET_VAR_STR(nes.gamegenie.bios,		"genie.rom");
-	GET_VAR_INT(nes.gamegenie.enabled,	0);
+	vars_set_int   (ret,F_CONFIG,"video.framelimit",			1);
+	vars_set_int   (ret,F_CONFIG,"video.fullscreen",			0);
+	vars_set_int   (ret,F_CONFIG,"video.scale",					1);
+	vars_set_string(ret,F_CONFIG,"video.filter",					"none");
 
-	GET_VAR_STR(nes.fds.bios,				"disksys.rom");
-	GET_VAR_INT(nes.fds.hle,				1);
+	vars_set_string(ret,F_CONFIG,"input.port0",					"joypad0");
+	vars_set_string(ret,F_CONFIG,"input.port1",					"joypad1");
+	vars_set_string(ret,F_CONFIG,"input.expansion",				"none");
 
-	GET_VAR_INT(nes.log_unhandled_io,	0);
-	GET_VAR_INT(nes.pause_on_load,		0);
+	vars_set_int   (ret,F_CONFIG,"input.joypad0.a",				'x');
+	vars_set_int   (ret,F_CONFIG,"input.joypad0.b",				'z');
+	vars_set_int   (ret,F_CONFIG,"input.joypad0.select",		'a');
+	vars_set_int   (ret,F_CONFIG,"input.joypad0.start",		's');
+	vars_set_int   (ret,F_CONFIG,"input.joypad0.up",			273);
+	vars_set_int   (ret,F_CONFIG,"input.joypad0.down",			274);
+	vars_set_int   (ret,F_CONFIG,"input.joypad0.left",			276);
+	vars_set_int   (ret,F_CONFIG,"input.joypad0.right",		275);
 
-	//save the config var list
-	configvars = v;
+	vars_set_int   (ret,F_CONFIG,"input.joypad1.a",				'h');
+	vars_set_int   (ret,F_CONFIG,"input.joypad1.b",				'g');
+	vars_set_int   (ret,F_CONFIG,"input.joypad1.select",		't');
+	vars_set_int   (ret,F_CONFIG,"input.joypad1.start",		'y');
+	vars_set_int   (ret,F_CONFIG,"input.joypad1.up",			'i');
+	vars_set_int   (ret,F_CONFIG,"input.joypad1.down",			'k');
+	vars_set_int   (ret,F_CONFIG,"input.joypad1.left",			'j');
+	vars_set_int   (ret,F_CONFIG,"input.joypad1.right",		'l');
 
-	//kludge...we need to ditch the struct and store all of them in the var list
-	config_update();
+	vars_set_int   (ret,F_CONFIG,"sound.enabled",				1);
 
-	//kludge...we need vars_get_bool
-	config->video.fullscreen = config->video.fullscreen ? 1 : 0;
+#ifdef WIN32
+	vars_set_string(ret,F_CONFIG,"path.data",						"%exepath%/data");
+#else
+	vars_set_string(ret,F_CONFIG,"path.data",						"%home%/.nesemu2/data");
+#endif
+
+	vars_set_string(ret,F_CONFIG,"path.roms",						"%path.data%/roms");
+	vars_set_string(ret,F_CONFIG,"path.bios",						"%path.data%/bios");
+	vars_set_string(ret,F_CONFIG,"path.save",						"%path.data%/save");
+	vars_set_string(ret,F_CONFIG,"path.state",					"%path.data%/state");
+	vars_set_string(ret,F_CONFIG,"path.patch",					"%path.data%/patch");
+	vars_set_string(ret,F_CONFIG,"path.palette",					"%path.data%/palette");
+	vars_set_string(ret,F_CONFIG,"path.cheat",					"%path.data%/cheat");
+
+	vars_set_string(ret,F_CONFIG,"palette.source",				"generator");
+	vars_set_int   (ret,F_CONFIG,"palette.hue",					-15);
+	vars_set_int   (ret,F_CONFIG,"palette.saturation",			45);
+	vars_set_string(ret,F_CONFIG,"palette.filename",			"roni.pal");
+
+	vars_set_string(ret,F_CONFIG,"nes.gamegenie.bios",			"genie.rom");
+	vars_set_int   (ret,F_CONFIG,"nes.gamegenie.enabled",		0);
+
+	vars_set_string(ret,F_CONFIG,"nes.fds.bios",					"disksys.rom");
+	vars_set_int   (ret,F_CONFIG,"nes.fds.hle",					1);
+
+	vars_set_int   (ret,F_CONFIG,"nes.log_unhandled_io",		0);
+	vars_set_int   (ret,F_CONFIG,"nes.pause_on_load",			0);
+	return(ret);
+}
+
+int config_init()
+{
+	vars_t *v;
+	char *str;
+
+	//find configuration file
+	if(findconfig(configfilename) == 0)
+		log_printf("main:  found configuration at '%s'\n",configfilename);
+	else
+		log_printf("main:  creating new configuration at '%s'\n",configfilename);
+
+	configvars = config_get_defaults();
+	if((v = vars_load(configfilename)) == 0) {
+		log_printf("config_init:  unable to load file, using defaults\n");
+	}
+	else {
+		//merge the loaded variables with the defaults
+		vars_merge(configvars,v);
+
+		//destroy the loaded vars
+		vars_destroy(v);
+	}
+
+	//kludges, sort of
+	var_set_string("exepath",exepath);
+	if((str = getenv("home")) != 0)
+		var_set_string("home",str);
 
 	//make the directories
-	makepath(config->path.data);
-	makepath(config->path.save);
-	makepath(config->path.state);
-	makepath(config->path.cheat);
+	makepath(config_get_eval_string("path.data"));
+	makepath(config_get_eval_string("path.save"));
+	makepath(config_get_eval_string("path.state"));
+	makepath(config_get_eval_string("path.cheat"));
 
 	return(0);
 }
@@ -188,80 +246,89 @@ void config_kill()
 		log_printf("config_kill:  internal error!  configvars = 0.\n");
 		return;
 	}
-
-	config_update();
-
 	vars_save(v,configfilename);
 	vars_destroy(v);
-	mem_free(config);
 }
 
-//update the internal config var list with data from the config struct
-//todo: this should only update the var list if the variable changed
-void config_update()
+//gets config string variable with variables expanded
+char *config_get_eval_string(char *name)
 {
-	vars_t *v = configvars;
+	static char dest[1024];
+	char *tmp,*p,*p2;
+	char varname[64];
+	int pos;
 
-	if(v == 0) {
-		log_printf("config_update:  internal error!  configvars = 0.\n");
-		return;
+	//make a copy of the string
+	tmp = mem_strdup(config_get_string(name));
+
+	//clear the destination string
+	memset(dest,0,1024);
+
+	for(pos=0,p=tmp;*p;p++) {
+
+		//see if we find a '%'
+		if(*p == '%') {
+
+			//clear area to hold var name
+			memset(varname,0,64);
+
+			//see if it is missing the '%'
+			if((p2 = strchr(p + 1,'%')) == 0) {
+				log_printf("paths_parse:  missing ending '%', just copying\n");
+			}
+
+			//not missing, replace with variable data
+			else {
+				//skip over the '%'
+				p++;
+
+				//terminate the substring
+				*p2 = 0;
+
+				//copy substring to varname array
+				strcpy(varname,p);
+
+				//set new position in the string we parsing
+				p = p2 + 1;
+
+				p2 = var_get_eval_string(varname);
+
+				while(p2 && *p2) {
+					dest[pos++] = *p2++;
+				}
+			}
+		}
+
+		//copy the char
+		dest[pos++] = *p;
 	}
 
-	SET_VAR_INT(video.framelimit);
-	SET_VAR_INT(video.fullscreen);
-	SET_VAR_INT(video.scale);
-	SET_VAR_STR(video.filter);
+	//normalize the path
+	for(p=dest;*p;p++) {
+		if(*p == '/' || *p == '\\')
+			*p = PATH_SEPERATOR;
+	}
 
-	SET_VAR_STR(input.port0);
-	SET_VAR_STR(input.port1);
-	SET_VAR_STR(input.expansion);
-
-	SET_VAR_INT(input.joypad0.a);
-	SET_VAR_INT(input.joypad0.b);
-	SET_VAR_INT(input.joypad0.select);
-	SET_VAR_INT(input.joypad0.start);
-	SET_VAR_INT(input.joypad0.up);
-	SET_VAR_INT(input.joypad0.down);
-	SET_VAR_INT(input.joypad0.left);
-	SET_VAR_INT(input.joypad0.right);
-
-	SET_VAR_INT(input.joypad1.a);
-	SET_VAR_INT(input.joypad1.b);
-	SET_VAR_INT(input.joypad1.select);
-	SET_VAR_INT(input.joypad1.start);
-	SET_VAR_INT(input.joypad1.up);
-	SET_VAR_INT(input.joypad1.down);
-	SET_VAR_INT(input.joypad1.left);
-	SET_VAR_INT(input.joypad1.right);
-
-	SET_VAR_INT(sound.enabled);
-
-	SET_VAR_STR(path.data);
-	SET_VAR_STR(path.roms);
-	SET_VAR_STR(path.bios);
-	SET_VAR_STR(path.save);
-	SET_VAR_STR(path.state);
-	SET_VAR_STR(path.patch);
-	SET_VAR_STR(path.palette);
-	SET_VAR_STR(path.cheat);
-
-	SET_VAR_STR(palette.source);
-	SET_VAR_INT(palette.hue);
-	SET_VAR_INT(palette.saturation);
-	SET_VAR_STR(palette.filename);
-
-	SET_VAR_STR(nes.gamegenie.bios);
-	SET_VAR_INT(nes.gamegenie.enabled);
-
-	SET_VAR_STR(nes.fds.bios);
-	SET_VAR_INT(nes.fds.hle);
-
-	SET_VAR_INT(nes.log_unhandled_io);
-	SET_VAR_INT(nes.pause_on_load);
+	//free tmp string and return
+	mem_free(tmp);
+	return(dest);
+//	return(vars_get_string(configvars,name,""));
 }
 
-//kludge for the path parser
-char *config_get_string(char *name,char *def)
-{
-	return(vars_get_string(configvars,name,def));
-}
+//get config var (wraps the vars_get_*() functions)
+char *config_get_string(char *name)		{	return(vars_get_string(configvars,name,""));		}
+int config_get_int(char *name)			{	return(vars_get_int(configvars,name,0));			}
+int config_get_bool(char *name)			{	return(vars_get_bool(configvars,name,0));			}
+double config_get_double(char *name)	{	return(vars_get_double(configvars,name,0.0f));	}
+
+//set config var (wraps the vars_get_*() functions)
+void config_set_string(char *name,char *data)	{	vars_set_string(configvars,F_CONFIG,name,data);	}
+void config_set_int(char *name,int data)			{	vars_set_int   (configvars,F_CONFIG,name,data);		}
+void config_set_bool(char *name,int data)			{	vars_set_bool(configvars,F_CONFIG,name,data);	}
+void config_set_double(char *name,double data)	{	vars_set_double(configvars,F_CONFIG,name,data);	}
+
+//set var (wraps the vars_get_*() functions)
+void var_set_string(char *name,char *data)	{	vars_set_string(configvars,0,name,data);	}
+void var_set_int(char *name,int data)			{	vars_set_int   (configvars,0,name,data);		}
+void var_set_bool(char *name,int data)			{	vars_set_bool(configvars,0,name,data);		}
+void var_set_double(char *name,double data)	{	vars_set_double(configvars,0,name,data);	}

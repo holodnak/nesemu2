@@ -106,11 +106,11 @@ int palette_save(char *filename,palette_t *p)
 
 int palette_init()
 {
-	if(strcmp(config->palette.source,"file") == 0) {
-		pal = palette_load(config->palette.filename);
+	if(strcmp(config_get_string("palette.source"),"file") == 0) {
+		pal = palette_load(config_get_string("palette.filename"));
 	}
 	if(pal == 0) {
-		pal = palette_generate(config->palette.hue,config->palette.saturation);
+		pal = palette_generate(config_get_int("palette.hue"),config_get_int("palette.saturation"));
 	}
 	video_setpalette(pal);
 	return(0);

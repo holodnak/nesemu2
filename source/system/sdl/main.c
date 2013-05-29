@@ -137,7 +137,7 @@ int mainloop()
 		if(joykeys[SDLK_ESCAPE]) {
 			quit++;
 		}
-		system_check_events();
+		system_checkevents();
 		total += SDL_GetTicks() - t;
 		frames++;
 	}
@@ -155,20 +155,15 @@ int main(int argc,char *argv[])
 	char *p;
 	char tmp[1024];
 
-	//clear the tmp string
+	//clear the tmp string and configfile string
 	memset(tmp,0,1024);
+	memset(configfilename,0,1024);
 
 	//make the exe path variable
 	strcpy(exepath,argv[0]);
 	if((p = strrchr(exepath,PATH_SEPERATOR)) != 0) {
 		*p = 0;
 	}
-
-	//find configuration file
-	if(system_findconfig(configfilename) == 0)
-		log_printf("main:  found configuration at '%s'\n",configfilename);
-	else
-		log_printf("main:  creating new configuration at '%s'\n",configfilename);
 
 	//process the command line
 	for(i=1;i<argc;i++) {

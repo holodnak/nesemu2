@@ -89,7 +89,7 @@ int cart_load_nsf(cart_t *ret,const char *filename)
 	memset(biosfile,0,1024);
 
 	//parse the bios path
-	paths_parse(config->path.bios,biosfile,1024);
+	strcpy(biosfile,config_get_eval_string("path.bios"));
 
 	//append the path seperator
 	biosfile[strlen(biosfile)] = PATH_SEPERATOR;

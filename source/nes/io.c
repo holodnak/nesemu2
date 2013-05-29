@@ -50,7 +50,7 @@ u8 nes_read_4000(u32 addr)
 			return(nes->inputdev[1]->read());
 
 		default:
-			if(config->nes.log_unhandled_io)
+			if(config_get_bool("nes.log_unhandled_io"))
 				log_printf("nes_read_4000:  unhandled read at $%04X\n",addr);
 			break;
 	}
@@ -97,7 +97,7 @@ void nes_write_4000(u32 addr,u8 data)
 			break;
 
 		default:
-			if(config->nes.log_unhandled_io)
+			if(config_get_bool("nes.log_unhandled_io"))
 				log_printf("nes_write_4000:  unhandled write at $%04X = $%02X\n",addr,data);
 			break;
 	}

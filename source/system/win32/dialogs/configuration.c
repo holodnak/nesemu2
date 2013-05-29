@@ -207,32 +207,36 @@ LRESULT CALLBACK GeneralProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 	return(FALSE);
 }
 
+#define GetDlgItemText_SetConfig(hwnd,ctrlid,cfgvar)	\
+	GetDlgItemText(hwnd,ctrlid,tmpstr,1024);				\
+	config_set_string(cfgvar,tmpstr);
 LRESULT CALLBACK PathsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LPNMHDR nmhdr;
+	static char tmpstr[1024];
 
 	switch(message) {
 		case WM_INITDIALOG:
-			SetDlgItemText(hDlg,IDC_DATAPATHEDIT,config->path.data);
-			SetDlgItemText(hDlg,IDC_BIOSPATHEDIT,config->path.bios);
-			SetDlgItemText(hDlg,IDC_SRAMPATHEDIT,config->path.save);
-			SetDlgItemText(hDlg,IDC_STATEPATHEDIT,config->path.state);
-			SetDlgItemText(hDlg,IDC_PATCHPATHEDIT,config->path.patch);
-			SetDlgItemText(hDlg,IDC_PALETTEPATHEDIT,config->path.palette);
-			SetDlgItemText(hDlg,IDC_CHEATPATHEDIT,config->path.cheat);
+			SetDlgItemText(hDlg,IDC_DATAPATHEDIT,config_get_string("path.data"));
+			SetDlgItemText(hDlg,IDC_BIOSPATHEDIT,config_get_string("path.bios"));
+			SetDlgItemText(hDlg,IDC_SRAMPATHEDIT,config_get_string("path.save"));
+			SetDlgItemText(hDlg,IDC_STATEPATHEDIT,config_get_string("path.state"));
+			SetDlgItemText(hDlg,IDC_PATCHPATHEDIT,config_get_string("path.patch"));
+			SetDlgItemText(hDlg,IDC_PALETTEPATHEDIT,config_get_string("path.palette"));
+			SetDlgItemText(hDlg,IDC_CHEATPATHEDIT,config_get_string("path.cheat"));
 			return(TRUE);
 
 		case WM_NOTIFY:
 			nmhdr = (LPNMHDR)lParam;
 			switch(nmhdr->code) {
 				case PSN_APPLY:
-					GetDlgItemText(hDlg,IDC_DATAPATHEDIT,config->path.data,1024);
-					GetDlgItemText(hDlg,IDC_BIOSPATHEDIT,config->path.bios,1024);
-					GetDlgItemText(hDlg,IDC_SRAMPATHEDIT,config->path.save,1024);
-					GetDlgItemText(hDlg,IDC_STATEPATHEDIT,config->path.state,1024);
-					GetDlgItemText(hDlg,IDC_PATCHPATHEDIT,config->path.patch,1024);
-					GetDlgItemText(hDlg,IDC_PALETTEPATHEDIT,config->path.palette,1024);
-					GetDlgItemText(hDlg,IDC_CHEATPATHEDIT,config->path.cheat,1024);
+					GetDlgItemText_SetConfig(hDlg,IDC_DATAPATHEDIT,"path.data");
+					GetDlgItemText_SetConfig(hDlg,IDC_BIOSPATHEDIT,"path.bios");
+					GetDlgItemText_SetConfig(hDlg,IDC_SRAMPATHEDIT,"path.save");
+					GetDlgItemText_SetConfig(hDlg,IDC_STATEPATHEDIT,"path.state");
+					GetDlgItemText_SetConfig(hDlg,IDC_PATCHPATHEDIT,"path.patch");
+					GetDlgItemText_SetConfig(hDlg,IDC_PALETTEPATHEDIT,"path.palette");
+					GetDlgItemText_SetConfig(hDlg,IDC_CHEATPATHEDIT,"path.cheat");
 					return(TRUE);
 			}
 			break;
@@ -243,27 +247,28 @@ LRESULT CALLBACK PathsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 LRESULT CALLBACK NesProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LPNMHDR nmhdr;
+	static char tmpstr[1024];
 
 	switch(message) {
 		case WM_INITDIALOG:
-			CheckDlgButton(hDlg,IDC_PAUSEAFTERLOADCHECK,config->nes.pause_on_load ? BST_CHECKED : BST_UNCHECKED);
-			CheckDlgButton(hDlg,IDC_LOGUNHANDLEDIOCHECK,config->nes.log_unhandled_io ? BST_CHECKED : BST_UNCHECKED);
-			CheckDlgButton(hDlg,IDC_FDSHLECHECK,config->nes.fds.hle ? BST_CHECKED : BST_UNCHECKED);
-			SetDlgItemText(hDlg,IDC_FDSBIOSEDIT,config->nes.fds.bios);
-			CheckDlgButton(hDlg,IDC_GENIECHECK,config->nes.gamegenie.enabled ? BST_CHECKED : BST_UNCHECKED);
-			SetDlgItemText(hDlg,IDC_GENIEBIOSEDIT,config->nes.gamegenie.bios);
+			CheckDlgButton(hDlg,IDC_PAUSEAFTERLOADCHECK,config_get_bool("nes.pause_on_load") ? BST_CHECKED : BST_UNCHECKED);
+			CheckDlgButton(hDlg,IDC_LOGUNHANDLEDIOCHECK,config_get_bool("nes.log_unhandled_io") ? BST_CHECKED : BST_UNCHECKED);
+			CheckDlgButton(hDlg,IDC_FDSHLECHECK,config_get_bool("nes.fds.hle") ? BST_CHECKED : BST_UNCHECKED);
+			SetDlgItemText(hDlg,IDC_FDSBIOSEDIT,config_get_string("nes.fds.bios"));
+			CheckDlgButton(hDlg,IDC_GENIECHECK,config_get_bool("nes.gamegenie.enabled") ? BST_CHECKED : BST_UNCHECKED);
+			SetDlgItemText(hDlg,IDC_GENIEBIOSEDIT,config_get_string("nes.gamegenie.bios"));
 			return(TRUE);
 
 		case WM_NOTIFY:
 			nmhdr = (LPNMHDR)lParam;
 			switch(nmhdr->code) {
 				case PSN_APPLY:
-					config->nes.pause_on_load = IsDlgButtonChecked(hDlg,IDC_PAUSEAFTERLOADCHECK) ? 1 : 0;
-					config->nes.log_unhandled_io = IsDlgButtonChecked(hDlg,IDC_LOGUNHANDLEDIOCHECK) ? 1 : 0;
-					config->nes.fds.hle = IsDlgButtonChecked(hDlg,IDC_FDSHLECHECK) ? 1 : 0;
-					GetDlgItemText(hDlg,IDC_FDSBIOSEDIT,config->nes.fds.bios,1024);
-					config->nes.gamegenie.enabled = IsDlgButtonChecked(hDlg,IDC_GENIECHECK) ? 1 : 0;
-					GetDlgItemText(hDlg,IDC_GENIEBIOSEDIT,config->nes.gamegenie.bios,1024);
+					config_set_bool("nes.pause_on_load",IsDlgButtonChecked(hDlg,IDC_PAUSEAFTERLOADCHECK) ? 1 : 0);
+					config_set_bool("nes.log_unhandled_io",IsDlgButtonChecked(hDlg,IDC_LOGUNHANDLEDIOCHECK) ? 1 : 0);
+					config_set_bool("nes.fds.hle",IsDlgButtonChecked(hDlg,IDC_FDSHLECHECK) ? 1 : 0);
+					GetDlgItemText_SetConfig(hDlg,IDC_FDSBIOSEDIT,"nes.fds.bios");
+					config_set_bool("nes.gamegenie.enabled",IsDlgButtonChecked(hDlg,IDC_GENIECHECK) ? 1 : 0);
+					GetDlgItemText_SetConfig(hDlg,IDC_GENIEBIOSEDIT,"nes.gamegenie.bios");
 					return(TRUE);
 			}
 			break;

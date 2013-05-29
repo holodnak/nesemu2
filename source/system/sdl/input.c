@@ -85,20 +85,20 @@ void input_poll()
 
 void input_update_config()
 {
-	joyconfig[0][0] = config->input.joypad0.a;
-	joyconfig[0][1] = config->input.joypad0.b;
-	joyconfig[0][2] = config->input.joypad0.select;
-	joyconfig[0][3] = config->input.joypad0.start;
-	joyconfig[0][4] = config->input.joypad0.up;
-	joyconfig[0][5] = config->input.joypad0.down;
-	joyconfig[0][6] = config->input.joypad0.left;
-	joyconfig[0][7] = config->input.joypad0.right;
-	joyconfig[1][0] = config->input.joypad1.a;
-	joyconfig[1][1] = config->input.joypad1.b;
-	joyconfig[1][2] = config->input.joypad1.select;
-	joyconfig[1][3] = config->input.joypad1.start;
-	joyconfig[1][4] = config->input.joypad1.up;
-	joyconfig[1][5] = config->input.joypad1.down;
-	joyconfig[1][6] = config->input.joypad1.left;
-	joyconfig[1][7] = config->input.joypad1.right;
+	joyconfig[0][0] = config_get_int("input.joypad0.a");
+	joyconfig[0][1] = config_get_int("input.joypad0.b");
+	joyconfig[0][2] = config_get_int("input.joypad0.select");
+	joyconfig[0][3] = config_get_int("input.joypad0.start");
+	joyconfig[0][4] = config_get_int("input.joypad0.up");
+	joyconfig[0][5] = config_get_int("input.joypad0.down");
+	joyconfig[0][6] = config_get_int("input.joypad0.left");
+	joyconfig[0][7] = config_get_int("input.joypad0.right");
+	joyconfig[1][0] = config_get_int("input.joypad1.a");
+	joyconfig[1][1] = config_get_int("input.joypad1.b");
+	joyconfig[1][2] = config_get_int("input.joypad1.select");
+	joyconfig[1][3] = config_get_int("input.joypad1.start");
+	joyconfig[1][4] = config_get_int("input.joypad1.up");
+	joyconfig[1][5] = config_get_int("input.joypad1.down");
+	joyconfig[1][6] = config_get_int("input.joypad1.left");
+	joyconfig[1][7] = config_get_int("input.joypad1.right");
 }

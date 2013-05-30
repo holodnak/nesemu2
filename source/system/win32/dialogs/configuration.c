@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <windowsx.h>
 #include <prsht.h>
 #include "system/win32/resource.h"
 #include "system/win32/mainwnd.h"
@@ -276,29 +277,98 @@ LRESULT CALLBACK NesProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	return(FALSE);
 }
 
-VOID ConfigurationPropertySheet(HWND hWnd)
+static char *filters[] = {
+	"None",
+	"Scanlines",
+	"Interpolate",
+	"Scale",
+	"NTSC",
+	0
+};
+
+static char *inputdevices[] = {
+	"None",
+	"Joypad0",
+	"Joypad1",
+	"Zapper",
+	"Powerpad",
+	0
+};
+
+static char *inputexpansion[] = {
+	"None",
+	"Arkanoid",
+	"Famicom Keyboard",
+	0
+};
+
+LRESULT CALLBACK SystemProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	PROPSHEETPAGE psp[3];
-	PROPSHEETHEADER psh;
+	LPNMHDR nmhdr;
+	static char tmpstr[1024];
+	char *ptr;
 	int i;
 
-	memset(psp,0,sizeof(PROPSHEETPAGE) * 3);
-	memset(&psh,0,sizeof(PROPSHEETHEADER));
+	switch(message) {
+		case WM_INITDIALOG:
+			CheckDlgButton(hDlg,IDC_FRAMELIMITCHECK,config_get_bool("video.framelimit") ? BST_CHECKED : BST_UNCHECKED);
 
-	for(i=0;i<3;i++) {
-		psp[i].dwSize = sizeof(PROPSHEETPAGE);
-		psp[i].hInstance = hInst;
+			//video filters
+			ptr = config_get_string("video.filter");
+			for(i=0;filters[i];i++) {
+				ComboBox_AddString(GetDlgItem(hDlg,IDC_FILTERCOMBO),filters[i]);
+				if(stricmp(filters[i],ptr) == 0)
+					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_FILTERCOMBO),i);
+			}
+
+			//port1 input devices
+			ptr = config_get_string("input.port0");
+			for(i=0;inputdevices[i];i++) {
+				ComboBox_AddString(GetDlgItem(hDlg,IDC_PORT1COMBO),inputdevices[i]);
+				if(stricmp(inputdevices[i],ptr) == 0)
+					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_PORT1COMBO),i);
+			}
+
+			//port2 input devices
+			ptr = config_get_string("input.port1");
+			for(i=0;inputdevices[i];i++) {
+				ComboBox_AddString(GetDlgItem(hDlg,IDC_PORT2COMBO),inputdevices[i]);
+				if(stricmp(inputdevices[i],ptr) == 0)
+					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_PORT2COMBO),i);
+			}
+
+
+			//expansion port devices
+			ptr = config_get_string("input.expansion");
+			for(i=0;inputexpansion[i];i++) {
+				ComboBox_AddString(GetDlgItem(hDlg,IDC_EXPANSIONCOMBO),inputexpansion[i]);
+				if(stricmp(inputexpansion[i],ptr) == 0)
+					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_EXPANSIONCOMBO),i);
+			}
+
+			return(TRUE);
+
+		case WM_NOTIFY:
+			nmhdr = (LPNMHDR)lParam;
+			switch(nmhdr->code) {
+				case PSN_APPLY:
+					config_set_bool("video.framelimit",IsDlgButtonChecked(hDlg,IDC_FRAMELIMITCHECK) ? 1 : 0);
+//					GetDlgItemText_SetConfig(hDlg,IDC_FDSBIOSEDIT,"nes.fds.bios");
+					return(TRUE);
+			}
+			break;
 	}
+	return(FALSE);
+}
 
-	psp[0].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL1);
-	psp[0].pfnDlgProc = GeneralProc;
+VOID ConfigurationPropertySheet(HWND hWnd)
+{
+	PROPSHEETPAGE psp[4];
+	PROPSHEETHEADER psh;
+	UINT i;
 
-	psp[1].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL2);
-	psp[1].pfnDlgProc = PathsProc;
-
-	psp[2].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL3);
-	psp[2].pfnDlgProc = NesProc;
-
+	//setup propsheetheader
+	memset(&psh,0,sizeof(PROPSHEETHEADER));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
 	psh.dwFlags = PSH_USEICONID | PSH_PROPSHEETPAGE;
 	psh.hwndParent = hWnd;
@@ -307,5 +377,21 @@ VOID ConfigurationPropertySheet(HWND hWnd)
 	psh.nPages = sizeof(psp) / sizeof(PROPSHEETPAGE);
 	psh.ppsp = (LPCPROPSHEETPAGE)&psp;
 
+	//setup the propsheetpages
+	memset(psp,0,sizeof(PROPSHEETPAGE) * psh.nPages);
+	for(i=0;i<psh.nPages;i++) {
+		psp[i].dwSize = sizeof(PROPSHEETPAGE);
+		psp[i].hInstance = hInst;
+	}
+	psp[0].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL1);
+	psp[0].pfnDlgProc = GeneralProc;
+	psp[1].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL2);
+	psp[1].pfnDlgProc = PathsProc;
+	psp[2].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL3);
+	psp[2].pfnDlgProc = NesProc;
+	psp[3].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL4);
+	psp[3].pfnDlgProc = SystemProc;
+
+	//show the property sheet
 	PropertySheet(&psh);
 }

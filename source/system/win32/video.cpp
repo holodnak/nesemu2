@@ -33,7 +33,18 @@ extern "C" {
 	#include "system/system.h"
 	#include "system/video.h"
 	#include "system/win32/mainwnd.h"
+
+	#define NES_NTSC_NO_BLITTERS
+	#include "system/common/filters/nes_ntsc/nes_ntsc.inl"
 }
+
+typedef struct filter_s {
+	int (*init);
+	void (*kill);
+	void (*draw)(void*,void*,int);
+	int (*getminwidth)();
+	int (*getminheight)();
+} filter_t;
 
 #undef _MSC_VER
 
@@ -54,6 +65,7 @@ static u32 palettecache32[256];
 static palette_t *palette = 0;
 static double interval = 0;
 static u64 lasttime = 0;
+static int filter = 0;
 
 static int pitch;
 static int surfoffset;
@@ -341,10 +353,20 @@ static int initfullscreen()
 	return(0);
 }
 
+static int getfilterint(char *str)
+{
+	if(stricmp("Scanline",str) == 0)			return(1);
+	if(stricmp("Interpolate",str) == 0)		return(2);
+	if(stricmp("Scale",str) == 0)				return(3);
+	if(stricmp("NTSC",str) == 0)				return(4);
+	return(0);
+}
+
 static int video_reinit()
 {
 	int i,ret;
 
+	filter = getfilterint(config_get_string("video.filter"));
 	screenscale = config_get_int("video.scale");
 	screenw = 256 * screenscale;
 	screenh = 240 * screenscale;
@@ -403,9 +425,35 @@ static int video_reinit()
 	return(ret);
 }
 
+static nes_ntsc_t nesntsc;
+static nes_ntsc_setup_t setup;
+
 int video_init()
 {
 	int ret;
+
+	double sharpness = 100.0f;
+	double resolution = 100.0f;
+	double artifacts = 100.0f;
+	double fringing = 100.0f;
+	double bleed = 100.0f;
+	int fieldMerging = 0;
+	setup.hue = 0;
+	setup.saturation = 0;
+	setup.contrast = 0;
+	setup.brightness = 0;
+	setup.sharpness = sharpness / 100.0;
+	setup.gamma = 0;
+	setup.resolution = resolution / 100.0;
+	setup.artifacts = artifacts / 100.0;
+	setup.fringing = fringing / 100.0;
+	setup.bleed = bleed / 100.0;
+	setup.merge_fields = fieldMerging;
+	setup.decoder_matrix = NULL;
+	setup.palette_out = NULL;
+	setup.palette = NULL;
+	setup.base_palette = NULL;
+	nes_ntsc_init(&nesntsc,&setup);
 
 	interval = (double)system_getfrequency() / 60.0f;
 	lasttime = system_gettick();

@@ -31,9 +31,6 @@ vars_add_var is able to add another var with the same name
 #include "misc/vars.h"
 #include "misc/log.h"
 
-//variable list
-static vars_t *vars = 0;
-
 //check if a char is whitespace
 static int iswhitespace(char ch)
 {
@@ -53,19 +50,6 @@ static char *eatwhitespace(char *str)
 	while(iswhitespace(*p))
 		*p-- = 0;
 	return(ret);
-}
-
-//init var list
-int vars_init()
-{
-	vars = vars_create();
-	return(0);
-}
-
-//destroy the var list
-void vars_kill()
-{
-	vars_destroy(vars);
 }
 
 vars_t *vars_create()
@@ -125,6 +109,7 @@ vars_t *vars_load(char *filename)
 
 	log_printf("vars_load:  loaded file '%s'\n",filename);
 	fclose(fp);
+	strcpy(ret->filename,filename);
 	return(ret);
 }
 
@@ -133,6 +118,8 @@ int vars_save(vars_t *vs,char *filename)
 	FILE *fp;
 	var_t *v = vs->vars;
 
+	if(filename == 0)
+		filename = vs->filename;
 	if((fp = fopen(filename,"wt")) == 0) {
 		log_printf("vars_save:  error opening '%s'\n",filename);
 		return(1);
@@ -265,7 +252,8 @@ var_t *vars_set_string(vars_t *vs,int flags,char *name,char *data)
 		if(strcmp(name,v->name) == 0) {
 			mem_free(v->data);
 			v->data = mem_strdup(data);
-			v->flags = flags;
+//do not change flags, once added it stays with the flags it was created with
+//			v->flags = flags;
 			vs->changed++;
 			return(v);
 		}

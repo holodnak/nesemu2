@@ -61,16 +61,41 @@ int mainloop()
 	return(0);
 }
 
-static void console_loghook(char *str)
+static void console_addline(char *str)
 {
 	HWND hCtrl;
 	int index;
 
+	hCtrl = GetDlgItem(hConsole,IDC_CONSOLEEDIT);
+	index = GetWindowTextLength(hCtrl);
+	Edit_SetSel(hCtrl,index,index);
+	Edit_ReplaceSel(hCtrl,str);
+}
+
+static void console_loghook(char *str)
+{
 	if(hConsole) {
-		hCtrl = GetDlgItem(hConsole,IDC_CONSOLEEDIT);
-		index = GetWindowTextLength(hCtrl);
-		Edit_SetSel(hCtrl,index,index);
-		Edit_ReplaceSel(hCtrl,str);
+		char newline[3] = "\r\n";
+		char *tmp = mem_strdup(str);
+		char *p,*p2 = tmp;
+
+		//break up all lines
+		for(p=tmp;*p;p++) {
+			if(*p == '\n') {
+				*p = 0;
+				console_addline(p2);
+				console_addline(newline);
+				p2 = p + 1;
+			}
+		}
+
+		//output text after the last newline
+		if(*p2) {
+			console_addline(p2);
+		}
+
+		//free the temp string
+		mem_free(tmp);
 	}
 }
 
@@ -84,6 +109,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	int ret;
 	char *p,*p2,*cmdline;
 
+	memset(configfilename,0,1024);
 	MyRegisterClass(hInstance);
 	if(InitInstance(hInstance,nCmdShow) == 0) {
 		return(FALSE);

@@ -24,10 +24,13 @@ static void reset_nrom(int hard)
 {
 	mem_setprg16(0x8,0);
 	mem_setprg16(0xC,-1);
-	if(nes->cart->chr.size)
+	if(nes->cart->chr.size) {
 		mem_setchr8(0,0);
-	else
+	}
+	else {
+		mem_setvramsize(8);
 		mem_setvram8(0,0);
+	}
 }
 
 static void reset_nrom_sram(int hard)

@@ -40,6 +40,9 @@
 
 //general commands
 COMMAND_DECL(mappers);
+COMMAND_DECL(set);
+COMMAND_DECL(unset);
+COMMAND_DECL(quit);
 
 //nes commands
 COMMAND_DECL(load);

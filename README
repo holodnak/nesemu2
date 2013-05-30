@@ -41,13 +41,16 @@ The Win32 API target operates like a standard Win32 program.  Use File -> Open.
 
 Configuration Files
 -------------------
-The program will search for configuration files to use, and if one isn't found it
-will put the configuration in the same directory as the executable.
+The program will search for configuration files to use.  It looks for it like this:
 
-Be careful with the variables in the configuration files.  Do not have a variable
-reference itself, for example:
-
-   path.roms = %path.roms%/new
+  1.  Check the current working directory for nesemu2.cfg
+  2.  If the HOME environment variable is set, it tries ~/.nesemu/nesemu2.cfg
+  3.  (Win32 only) Check the directory the .exe is stored in.
   
-The program will die.  There is no need to reference itself anyway.
+If it is not found, it creates it in:
 
+  Win32:  The same directory as the executable.
+  Linux/OSX:  The users home directory (~/.nesemu/nesemu2.cfg)
+
+If you do not like any of these locations, you can use --config <filename> as a
+command line parameter.

@@ -107,7 +107,7 @@ static void file_open(HWND hWnd)
 	if(nes_load(buffer) == 0) {
 		log_printf("WndProc:  resetting nes...\n");
 		nes_reset(1);
-		running = config_get_bool("video.pause_on_load");
+		running = config_get_bool("video.pause_on_load") ? 0 : 1;
 	}
 }
 
@@ -139,6 +139,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case ID_FILE_OPEN:
 			file_open(hWnd);
+			break;
+		case ID_NES_PAUSE:
+			running ^= 1;
 			break;
 		case ID_NES_SOFTRESET:
 			if(nes->cart)

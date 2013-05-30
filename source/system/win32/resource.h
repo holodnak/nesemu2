@@ -20,6 +20,7 @@
 #define IDD_CONFIG_GENERAL3             136
 #define IDD_BREAKPOINT                  137
 #define IDR_ACCELERATOR                 138
+#define IDD_CONFIG_GENERAL4             138
 #define IDC_EDIT1                       1000
 #define IDC_AEDIT                       1000
 #define IDC_DATAPATHEDIT                1000
@@ -82,6 +83,13 @@
 #define IDC_STATEPATHEDIT               1047
 #define IDC_GENIECHECK                  1048
 #define IDC_FDSHLECHECK                 1049
+#define IDC_FILTERCOMBO                 1050
+#define IDC_FRAMELIMITCHECK             1051
+#define IDC_RESOLUTIONCOMBO             1052
+#define IDC_SOUNDENABLEDCHECK           1053
+#define IDC_PORT1COMBO                  1054
+#define IDC_PORT2COMBO                  1055
+#define IDC_EXPANSIONCOMBO              1056
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -108,6 +116,7 @@
 #define ID_FDS_FLIPDISK                 32794
 #define ID_VIEW_FULLSCREEN              32797
 #define ID_CONFIGURATION_VIDEO          32801
+#define ID_NES_PAUSE                    32803
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -116,8 +125,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        139
-#define _APS_NEXT_COMMAND_VALUE         32803
-#define _APS_NEXT_CONTROL_VALUE         1050
+#define _APS_NEXT_COMMAND_VALUE         32804
+#define _APS_NEXT_CONTROL_VALUE         1057
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

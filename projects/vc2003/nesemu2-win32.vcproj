@@ -71,7 +71,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\source"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;QUICK_SPRITES"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;QUICK_SPRITES;ACCURATE_SPRITE0"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -1652,6 +1652,9 @@
 				RelativePath="..\..\source\system\win32\nesemu2.rc">
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\..\Readme">
+		</File>
 		<File
 			RelativePath="..\..\docs\Todo">
 		</File>

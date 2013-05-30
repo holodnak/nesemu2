@@ -35,6 +35,9 @@ typedef struct command_s {
 
 COMMAND_START
 	COMMAND(mappers)
+	COMMAND(set)
+	COMMAND(unset)
+	COMMAND(quit)
 	COMMAND(load)
 	COMMAND(unload)
 	COMMAND(reset)

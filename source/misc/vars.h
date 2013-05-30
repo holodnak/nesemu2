@@ -34,13 +34,8 @@ typedef struct var_s {
 typedef struct vars_s {
 	var_t *vars;
 	int changed;
+	char filename[1024];
 } vars_t;
-
-//init vars
-int vars_init();
-
-//kill vars
-void vars_kill();
 
 //create empty var list
 vars_t *vars_create();

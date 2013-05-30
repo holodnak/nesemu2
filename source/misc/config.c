@@ -33,6 +33,7 @@
 #include "misc/paths.h"
 #include "system/main.h"
 #include "system/system.h"
+#include "version.h"
 
 static vars_t *configvars = 0;
 
@@ -130,6 +131,7 @@ static int findconfig(char *dest)
 		sprintf(dest,"%s%c%s",home,PATH_SEPERATOR,CONFIG_FILENAME);
 	}
 	else {
+		sprintf(dest,"%s%c%s",cwd,PATH_SEPERATOR,CONFIG_FILENAME);
 		log_printf("system_findconfig:  HOME environment var not set!  using current directory.\n");
 	}
 #endif
@@ -198,6 +200,8 @@ static vars_t *config_get_defaults()
 
 	vars_set_int   (ret,F_CONFIG,"nes.log_unhandled_io",		0);
 	vars_set_int   (ret,F_CONFIG,"nes.pause_on_load",			0);
+
+	vars_set_string(ret,0,"version",VERSION);
 	return(ret);
 }
 
@@ -274,7 +278,7 @@ char *config_get_eval_string(char *name)
 
 			//see if it is missing the '%'
 			if((p2 = strchr(p + 1,'%')) == 0) {
-				log_printf("paths_parse:  missing ending '%', just copying\n");
+				log_printf("config_get_eval_string:  missing ending '%', just copying\n");
 			}
 
 			//not missing, replace with variable data
@@ -291,10 +295,21 @@ char *config_get_eval_string(char *name)
 				//set new position in the string we parsing
 				p = p2 + 1;
 
-				p2 = var_get_eval_string(varname);
+				if(strcmp(varname,name) == 0) {
+					log_printf("config_get_eval_string:  variable cannot reference itself (var '%s')\n",varname);
+				}
+				else {
+					p2 = var_get_eval_string(varname);
 
-				while(p2 && *p2) {
-					dest[pos++] = *p2++;
+					if(p2 == 0) {
+						log_printf("config_get_eval_string:  variable '%s' referenced non-existant variable '%s', using '.'\n",name,varname);
+						dest[pos++] = '.';
+					}
+					else {
+						while(*p2) {
+							dest[pos++] = *p2++;
+						}
+					}
 				}
 			}
 		}
@@ -312,23 +327,33 @@ char *config_get_eval_string(char *name)
 	//free tmp string and return
 	mem_free(tmp);
 	return(dest);
-//	return(vars_get_string(configvars,name,""));
 }
 
 //get config var (wraps the vars_get_*() functions)
 char *config_get_string(char *name)		{	return(vars_get_string(configvars,name,""));		}
-int config_get_int(char *name)			{	return(vars_get_int(configvars,name,0));			}
-int config_get_bool(char *name)			{	return(vars_get_bool(configvars,name,0));			}
+int config_get_int(char *name)			{	return(vars_get_int   (configvars,name,0));		}
+int config_get_bool(char *name)			{	return(vars_get_bool  (configvars,name,0));		}
 double config_get_double(char *name)	{	return(vars_get_double(configvars,name,0.0f));	}
 
 //set config var (wraps the vars_get_*() functions)
 void config_set_string(char *name,char *data)	{	vars_set_string(configvars,F_CONFIG,name,data);	}
-void config_set_int(char *name,int data)			{	vars_set_int   (configvars,F_CONFIG,name,data);		}
-void config_set_bool(char *name,int data)			{	vars_set_bool(configvars,F_CONFIG,name,data);	}
+void config_set_int(char *name,int data)			{	vars_set_int   (configvars,F_CONFIG,name,data);	}
+void config_set_bool(char *name,int data)			{	vars_set_bool  (configvars,F_CONFIG,name,data);	}
 void config_set_double(char *name,double data)	{	vars_set_double(configvars,F_CONFIG,name,data);	}
 
 //set var (wraps the vars_get_*() functions)
 void var_set_string(char *name,char *data)	{	vars_set_string(configvars,0,name,data);	}
-void var_set_int(char *name,int data)			{	vars_set_int   (configvars,0,name,data);		}
-void var_set_bool(char *name,int data)			{	vars_set_bool(configvars,0,name,data);		}
+void var_set_int(char *name,int data)			{	vars_set_int   (configvars,0,name,data);	}
+void var_set_bool(char *name,int data)			{	vars_set_bool  (configvars,0,name,data);	}
 void var_set_double(char *name,double data)	{	vars_set_double(configvars,0,name,data);	}
+
+void var_unset(char *name)
+{
+	vars_delete_var(configvars,name);
+}
+
+//semi-kludge for the 'set' command
+var_t *config_get_head()
+{
+	return(configvars->vars);
+}

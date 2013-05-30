@@ -21,6 +21,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef WIN32
+	#include <io.h>
+#else
+	#include <unistd.h>
+#endif
 #include "misc/memutil.h"
 #include "misc/log.h"
 #include "misc/crc32.h"
@@ -29,6 +34,7 @@
 #include "nes/cart/ines20.h"
 #include "nes/cart/unif.h"
 #include "nes/cart/fds.h"
+#include "nes/cart/nsf.h"
 
 #define FREE(p) {	\
 	if(p) {			\
@@ -83,6 +89,12 @@ int determineformat(const char *filename)
 	u8 ident_nsf[] = "NESM\x1a";
 	u8 header[16];
 	FILE *fp;
+
+	//see if file exists and we can read
+	if(access(filename,04) != 0) {
+		log_printf("determineformat:  file '%s' doesnt exist or isnt readable\n",filename);
+		return(FORMAT_ERROR);
+	}
 
 	//open filename given
 	if((fp = fopen(filename,"rb")) == 0) {

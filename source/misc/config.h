@@ -23,66 +23,6 @@
 
 #include "misc/vars.h"
 
-/*typedef struct config_s {
-
-	struct {
-		int framelimit;
-		int fullscreen;
-		int scale;
-		char filter[64];
-	} video;
-
-	struct {
-		char port0[64],port1[64];
-		char expansion[64];
-		struct {
-			int a,b;
-			int select,start;
-			int up,down,left,right;
-		} joypad0,joypad1;
-	} input;
-
-	struct {
-		int enabled;
-	} sound;
-
-	struct {
-		char data[1024];
-		char roms[1024];
-		char bios[1024];
-		char save[1024];
-		char state[1024];
-		char patch[1024];
-		char palette[1024];
-		char cheat[1024];
-	} path;
-
-	struct {
-		char source[64];
-		int hue,saturation;
-		char filename[1024];
-	} palette;
-
-	struct {
-
-		struct {
-			char bios[1024];
-			int enabled;
-		} gamegenie;
-
-		struct {
-			char bios[1024];
-			int hle;
-		} fds;
-
-		int log_unhandled_io;
-		int pause_on_load;
-	} nes;
-
-} config_t;
-
-extern config_t *config;*/
-
 int config_init();
 void config_kill();
 void config_load();
@@ -115,5 +55,10 @@ void var_set_string(char *name,char *data);
 void var_set_int(char *name,int data);
 void var_set_bool(char *name,int data);
 void var_set_double(char *name,double data);
+
+//remove var from the list
+void var_unset(char *name);
+
+var_t *config_get_head();
 
 #endif

@@ -205,7 +205,7 @@ void input_update_config()
 
 	//get the keys from the configuration
 	joyconfig[0][0] = config_get_int("input.joypad0.a");
-	joyconfig[0][1] = config_get_int("nput.joypad0.b");
+	joyconfig[0][1] = config_get_int("input.joypad0.b");
 	joyconfig[0][2] = config_get_int("input.joypad0.select");
 	joyconfig[0][3] = config_get_int("input.joypad0.start");
 	joyconfig[0][4] = config_get_int("input.joypad0.up");

@@ -1013,6 +1013,12 @@
 							<File
 								RelativePath="..\..\source\mappers\boards\other\bmc\super700in1.c">
 							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\superhik4in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\superhikXin1.c">
+							</File>
 						</Filter>
 						<Filter
 							Name="btl"

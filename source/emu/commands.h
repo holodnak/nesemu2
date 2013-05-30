@@ -51,6 +51,7 @@ COMMAND_DECL(reset);
 COMMAND_DECL(hardreset);
 COMMAND_DECL(readcpu);
 COMMAND_DECL(writecpu);
+COMMAND_DECL(readppu);
 COMMAND_DECL(loadstate);
 COMMAND_DECL(savestate);
 

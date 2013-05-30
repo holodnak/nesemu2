@@ -69,6 +69,9 @@ void ppu_state(int mode,u8 *data)
 	STATE_U32(LINECYCLES);
 	STATE_U32(SCANLINE);
 	STATE_U32(FRAMES);
+	STATE_U8(nes->ppu.ioaddr);
+	STATE_U8(nes->ppu.iodata);
+	STATE_U8(nes->ppu.iomode);
 	STATE_ARRAY_U8(nes->ppu.nametables,0x1000);
 	STATE_ARRAY_U8(nes->ppu.palette,32);
 	ppu_sync();

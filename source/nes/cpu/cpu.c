@@ -26,7 +26,7 @@
 #include "misc/config.h"
 
 //show disassembly as we execute
-//#define SHOW_DISASM
+#define SHOW_DISASM
 
 //defines to make easier reading
 #define PC					nes->cpu.pc

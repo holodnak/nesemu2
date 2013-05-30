@@ -31,7 +31,7 @@ static int loadbios(cart_t *ret,char *filename)
 {
 	FILE *fp;
 	size_t size;
-	u8 header[12];
+	u8 header[10];
 
 	//open bios file
 	if((fp = fopen(filename,"rb")) == 0) {
@@ -44,15 +44,14 @@ static int loadbios(cart_t *ret,char *filename)
 	size = ftell(fp);
 	fseek(fp,0,SEEK_SET);
 
-	//bios has a 12 byte header:
+	//bios has a 10 byte header (actually part of the first bank)
 	// addr size description
 	// ---- ---- -----------
 	//  00   07   ident string (NSFBIOS)
    //  07   01   version hi
    //  08   01   version lo
-	//  09   01   number of 1kb prg banks
-	//  0A   02   chr size in bytes
-	fread(header,1,12,fp);
+	//  09   01   <NULL>
+	fread(header,1,10,fp);
 
 	if(memcmp(header,"NSFBIOS",7) != 0) {
 		log_printf("loadbios:  nsf bios ident is bad\n");
@@ -60,8 +59,11 @@ static int loadbios(cart_t *ret,char *filename)
 		return(1);
 	}
 
-	//load bios prg into sram, load the chr into chr
-	ret->sram.size = header[9] * 1024;
+	//seek back to the beginning
+	fseek(fp,0,SEEK_SET);
+
+	//load bios into sram
+	ret->sram.size = size;
 	ret->sram.mask = ret->sram.size - 1;
 	ret->sram.data = (u8*)mem_alloc(ret->sram.size);
 
@@ -74,7 +76,7 @@ static int loadbios(cart_t *ret,char *filename)
 
 	//close bios file handle
 	fclose(fp);
-	log_printf("loadbios:  nsf bios loaded.  version %d.%d\n",header[7],header[8]);
+	log_printf("loadbios:  nsf bios loaded, %d bytes.  version %d.%d\n",size,header[7],header[8]);
 
 	//success
 	return(0);

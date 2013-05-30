@@ -18,84 +18,39 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <string.h>
-#include "emu/commands.h"
-#include "misc/log.h"
+#include "mappers/mapperinc.h"
+#include "mappers/chips/mmc3.h"
 
-#define COMMAND_START	static command_t commands[] = {
-#define COMMAND(n)		{"" #n "", command_ ## n},
-#define COMMAND_END		{0,0}};
+static u8 reg;
 
-typedef int (*cmdfunc_t)(int argc,char **argv);
-
-typedef struct command_s {
-	char *name;
-	cmdfunc_t func;
-} command_t;
-
-int command_help(int,char**);
-
-COMMAND_START
-	COMMAND(help)
-	COMMAND(mappers)
-	COMMAND(set)
-	COMMAND(unset)
-	COMMAND(quit)
-	COMMAND(load)
-	COMMAND(unload)
-	COMMAND(reset)
-	COMMAND(hardreset)
-	COMMAND(readcpu)
-	COMMAND(writecpu)
-	COMMAND(readppu)
-COMMAND_END
-
-COMMAND_FUNC(help)
+static void sync()
 {
-	command_t *c = commands;
-
-	log_printf("available commands:\n\n   ");
-	for(c=commands;c->name;c++) {
-		log_printf("%s ",c->name);
-	}
+	if(reg & 1)
+		mmc3_syncprg(0xF,(reg & 0xC0) >> 2);
+	else
+		mem_setprg32(0x8,(reg & 0x30) >> 4);
+	mmc3_syncchr(0x7F,(reg & 0xC0) << 1);
+	mmc3_syncmirror();
 }
 
-int command_init()
+static void write(u32 addr,u8 data)
 {
-	return(0);
+	reg = data;
+	sync();
 }
 
-void command_kill()
+static void reset(int hard)
 {
-
+	mmc3_reset(C_MMC3B,sync,hard);
+	reg = 0;
+	mem_setwritefunc(6,write);
+	mem_setwritefunc(7,write);
 }
 
-int command_execute(char *str)
+static void state(int mode,u8 *data)
 {
-	int i,argc = 0;
-	char *argv[64];		//not more than 64 args!
-
-	//eat whitespace in front
-	while(*str == ' ') {
-		str++;
-	}
-
-	//split up the command line (needs improvement)
-	argv[argc] = strtok(str," \t");
-	while(argv[argc] != 0) {
-		argv[++argc] = strtok(0," \t");
-	}
-//	log_printf("command is:  '%s' -- %d args\n",str,argc);
-
-	//try to execute the command
-	for(i=0;commands[i].name;i++) {
-		if(strcmp(argv[0],commands[i].name) == 0) {
-			commands[i].func(argc,argv);
-			return(0);
-		}
-	}
-
-	//bad command or file name!
-	log_printf("invalid command '%s'\n",argv[0]);
-	return(1);
+	STATE_U8(reg);
+	mmc3_state(mode,data);
 }
+
+MAPPER(B_BMC_SUPERHIK4IN1,reset,0,mmc3_ppucycle,state);

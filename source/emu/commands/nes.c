@@ -130,3 +130,29 @@ COMMAND_FUNC(writecpu)
 	}
 	return(0);
 }
+
+COMMAND_FUNC(readppu)
+{
+	u32 addr,size,n;
+
+	CHECK_ARGS(2,"usage:  readppu <addr> [size]\n");
+	CHECK_CART();
+	addr = str2int(argv[1]);
+	if(addr == (u32)-1) {
+		log_printf("invalid address\n");
+	}
+	else {
+		if(argc >= 3) {
+			size = str2int(argv[2]);
+			for(n=0;n<size;n++) {
+				log_printf("$%02X ",ppu_memread(addr+n));
+				if((n & 0xF) == 0xF)
+					log_printf("\n");
+			}
+		}
+		else {
+			log_printf("$%04X = $%02X\n",addr,ppu_memread(addr));
+		}
+	}
+	return(0);
+}

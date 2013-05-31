@@ -29,9 +29,9 @@
 
 static readfunc_t read4;
 static writefunc_t write4;
-static u8 *bios;
-static int stringpos;
-static u8 *lastpage = 0;
+static readfunc_t oldread;
+static writefunc_t oldwrite;
+static u8 *bios,*biosbank;
 static u8 ram[0x40];
 static u32 playspeed;
 static u32 irqcounter,irqlatch;
@@ -83,9 +83,6 @@ static void sound_write(u32 addr,u8 data)
 					mem_setwram4(addr & 0xF,data & 1);
 				}
 
-				//kludge to force it to read our vectors
-				lastpage = nes->cpu.readpages[0xFFFF >> 10];
-				nes->cpu.readpages[0xFFFF >> 10] = 0;
 				return;
 			}
 			break;
@@ -93,17 +90,7 @@ static void sound_write(u32 addr,u8 data)
 	log_printf("nsf.c:  sound write $%04X = $%02X\n",addr,data);
 }
 
-static u8 read_vectors(u32 addr)
-{
-	if(addr >= 0xFFFA)
-		return(bios[addr & 0xF]);
-	if(lastpage)
-		return(lastpage[addr & 0x3FF]);
-	log_printf("nsf.c:  nothing mapped at $%04X\n",addr);
-	return(0);
-}
-
-static u8 read(u32 addr)
+static u8 read_bios(u32 addr)
 {
 	switch(addr & 0xFFC0) {
 
@@ -138,7 +125,7 @@ static u8 read(u32 addr)
 extern int showdisasm;
 
 //write nsf bios registers
-static void write(u32 addr,u8 data)
+static void write_bios(u32 addr,u8 data)
 {
 	switch(addr & 0xFFC0) {
 
@@ -148,7 +135,7 @@ static void write(u32 addr,u8 data)
 
 				//nsf bios bankswitch ($3C00)
 				case 0x3400:
-					nes->cpu.readpages[0x3C00 >> 10] = bios + (data * 0x400);
+					biosbank = bios + (data * 0x400);
 					break;
 
 				//irq enable
@@ -202,13 +189,52 @@ static void write(u32 addr,u8 data)
 	}
 }
 
+static u8 read(u32 addr)
+{
+	switch(addr & 0xFC00) {
+
+		//handling of the special bios stuff
+		case 0x3400:	return(read_bios(addr));
+		case 0x3800:	return(bios[addr & 0x3FF]);
+		case 0x3C00:	return(biosbank[addr & 0x3FF]);
+
+		//vector replacement
+		case 0xFC00:
+			if(addr >= 0xFFFA)
+				return(bios[addr & 0xF]);
+			break;
+
+	}
+	return(oldread(addr));
+}
+
+static void write(u32 addr,u8 data)
+{
+	switch(addr & 0xFC00) {
+
+		//handling of the special bios stuff
+		case 0x3400:
+			write_bios(addr,data);
+			return;
+	}
+	oldwrite(addr,data);
+}
+
 static void reset(int hard)
 {
 	int i;
 
+	//save pointer to bios
+	bios = nes->cart->sram.data;
+
+	//init sound chips
 	sound_init();
 
-	bios = nes->cart->sram.data;
+	//save original read/write funcs
+	oldread = cpu_getreadfunc();
+	oldwrite = cpu_getwritefunc();
+	cpu_setreadfunc(read);
+	cpu_setwritefunc(write);
 
 	//save original $4000 read/write funcs
 	read4 = mem_getreadfunc(4);
@@ -224,20 +250,6 @@ static void reset(int hard)
 	for(i=8;i<16;i++) {
 		mem_setwritefunc(i,sound_write);
 	}
-
-	//manually setup the read vector handler
-	nes->cpu.readfuncs[0xFFFF >> 10] = read_vectors;
-
-	//clear these functions to pass thru to the memory pointers
-	nes->cpu.readfuncs[0x3800 >> 10] = nes->cpu.readfuncs[0x3C00 >> 10] = 0;
-	nes->cpu.writefuncs[0x3800 >> 10] = nes->cpu.writefuncs[0x3C00 >> 10] = 0;
-
-	//manually setup the nsf bios register read/write handlers
-	nes->cpu.readfuncs[0x3400 >> 10] = read;
-	nes->cpu.writefuncs[0x3400 >> 10] = write;
-
-	//setup fixed bank
-	nes->cpu.readpages[0x3800 >> 10] = bios;
 
 	//setup vram
 	mem_setvramsize(8);
@@ -264,7 +276,6 @@ static void cpucycle()
 		if(irqcounter == 0) {
 			irqcounter = irqlatch;
 			cpu_set_irq(IRQ_MAPPER);
-			log_printf("irq!  cycle %ld\n",nes->cpu.cycles);
 		}
 	}
 }

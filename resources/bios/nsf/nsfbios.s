@@ -43,6 +43,8 @@
 .define NSF_RAM			$3440
 
 .define NSF_HEADER		$3480
+.define NSF_NUMSONGS		NSF_HEADER+$06		;;total number of songs
+.define NSF_STARTSONG	NSF_HEADER+$07		;;starting song number
 .define NSF_INIT			NSF_HEADER+$0A		;;init routine address
 .define NSF_PLAY			NSF_HEADER+$0C		;;play routine address
 .define NSF_TITLE			NSF_HEADER+$0E		;;nsf title
@@ -251,6 +253,8 @@ reset:
 	ldsty	$00,PPUSCROLL
 	ldsty	$1A,PPUMASK		;;enable rendering
 
+	lda	NSF_STARTSONG	;;load starting song
+	ldx	#0					;;this is ntsc/pal byte (shouldn't always be 0)
 	jsr	nsfinit			;;init song
 
 	ldsty	$01,IRQENABLE	;;enable irq counter
@@ -271,7 +275,7 @@ irq:
 	txa
 	pha
 	lda	IRQENABLE		;;acknowledge irq
-	sta	DISASM
+;;	sta	DISASM
 	jsr	nsfplay			;;execute play routine
 	pla						;;restore registers
 	tax
@@ -316,8 +320,3 @@ nowplaying:
 .INCBIN "ascii.chr" SKIP 1024 READ 512
 ;;palette data
 	.db	$0f,$00,$00,$30
-
-
-;;1786840 * 16666 / 1000000 =
-;;29779.47544
-;;29780.666666666666666666666666667

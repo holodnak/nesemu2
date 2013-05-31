@@ -38,7 +38,7 @@ static char opcodes[256][4] = {
 	"RTS","ADC","???","RRA","NOP","ADC","ROR","RRA","PLA","ADC","ROR","???","JMP","ADC","ROR","RRA", /*60-6F*/
 	"BVS","ADC","???","RRA","NOP","ADC","ROR","RRA","SEI","ADC","NOP","RRA","NOP","ADC","ROR","RRA", /*70-7F*/
 	"NOP","STA","NOP","SAX","STY","STA","STX","SAX","DEY","NOP","TXA","???","STY","STA","STX","SAX", /*80-8F*/
-	"BCC","STA","???","???","STY","STA","STX","SAX","TYA","STA","TXS","???","SYA","STA","SXA","???", /*90-9F*/
+	"BCC","STA","???","???","STY","STA","STX","SAX","TYA","STA","TXS","XAS","SYA","STA","SXA","???", /*90-9F*/
 	"LDY","LDA","LDX","LAX","LDY","LDA","LDX","LAX","TAY","LDA","TAX","ATX","LDY","LDA","LDX","LAX", /*A0-AF*/
 	"BCS","LDA","???","LAX","LDY","LDA","LDX","LAX","CLV","LDA","TSX","???","LDY","LDA","LDX","LAX", /*B0-BF*/
 	"CPY","CMP","NOP","DCP","CPY","CMP","DEC","DCP","INY","CMP","DEX","AXS","CPY","CMP","DEC","DCP", /*C0-CF*/
@@ -57,7 +57,7 @@ static u8 addrtable[256] = {
    no,ix,er,ix,zp,zp,zp,zp,no,im,ac,er,in,ab,ab,ab, /*60-6f*/
    re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*70-7f*/
  	im,ix,im,ix,zp,zp,zp,zp,no,im,no,er,ab,ab,ab,ab, /*80-8f*/
-   re,iy,er,er,zx,zx,zy,zy,no,ay,no,er,ax,ax,ay,er, /*90-9f*/
+   re,iy,er,er,zx,zx,zy,zy,no,ay,no,ay,ax,ax,ay,er, /*90-9f*/
    im,ix,im,ix,zp,zp,zp,zp,no,im,no,im,ab,ab,ab,ab, /*a0-af*/
    re,iy,er,iy,zx,zx,zy,zy,no,ay,no,er,ax,ax,ay,ay, /*b0-bf*/
    im,ix,im,ix,zp,zp,zp,zp,no,im,no,im,ab,ab,ab,ab, /*c0-cf*/

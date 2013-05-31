@@ -23,17 +23,18 @@
 
 #include "types.h"
 
-typedef struct cart_s {
+typedef struct cartinfo_s {
+	struct cartinfo_s *next;
 	char	*system;
 	u32	crc;
 	char	*sha1;
 	int	dump;
 	char	*dumper,*datedumped;
-} cart_t;
+} cartinfo_t;
 
 typedef struct game_s {
 	struct game_s *next;
-	struct cart_s *child;
+	struct cartinfo_t *child;
 	struct {
 		char	*name,*altname;
 		char	*cls,*catalog,*publisher,*developer;

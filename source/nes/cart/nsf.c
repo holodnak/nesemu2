@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <stdio.h>
+#include <string.h>
 #include "nes/cart/cart.h"
 #include "nes/cart/nsf.h"
 #include "misc/log.h"
@@ -63,7 +64,7 @@ static int loadbios(cart_t *ret,char *filename)
 	fseek(fp,0,SEEK_SET);
 
 	//load bios into sram
-	ret->sram.size = size;
+	ret->sram.size = (u32)size;
 	ret->sram.mask = ret->sram.size - 1;
 	ret->sram.data = (u8*)mem_alloc(ret->sram.size);
 
@@ -82,10 +83,25 @@ static int loadbios(cart_t *ret,char *filename)
 	return(0);
 }
 
+//makes the size a multiple of 4096 for padding
+static u32 padsize(u32 size)
+{
+	u32 ret = 0;
+
+	while(ret < size) {
+		ret += 0x1000;
+	}
+	return(ret);
+}
+
 int cart_load_nsf(cart_t *ret,const char *filename)
 {
-	nsf_t header;
+	int n = 0;
 	char biosfile[1024];
+	FILE *fp;
+	size_t size;
+	u32 loadaddr;
+	u8 nobankswitch[8 + 8] = {0,0,0,0,0,0,0,0,  0,1,2,3,4,5,6,7};
 
 	//clear the string
 	memset(biosfile,0,1024);
@@ -108,7 +124,51 @@ int cart_load_nsf(cart_t *ret,const char *filename)
 		}
 	}
 
-	ret->mapperid = B_NSF;
+	//try to open the nsf
+	if((fp = fopen(filename,"rb")) == 0) {
+		log_printf("cart_load_nsf:  error opening '%s'\n",filename);
+		return(1);
+	}
 
-	return(0);
+	//get length of file
+	fseek(fp,0,SEEK_END);
+	size = ftell(fp);
+	fseek(fp,0,SEEK_SET);
+
+	//discount for the header
+	size -= 0x80;
+
+	if(fread(ret->data,1,0x80,fp) != 0x80) {
+		log_printf("cart_load_nsf:  error reading header from '%s'\n",filename);
+		n = 1;
+	}
+	else {
+		loadaddr = ret->data[8] | (ret->data[9] << 8);
+
+		//if the nsf doesnt use bankswitching
+		if(memcmp((u8*)ret->data + 0x70,(u8*)nobankswitch,8) == 0) {
+			memcpy((u8*)ret->data + 0x70,(u8*)nobankswitch + 8,8);
+			ret->prg.size = (u32)size + (loadaddr & 0x7FFF);
+			ret->prg.data = (u8*)mem_alloc(ret->prg.size);
+			memset(ret->prg.data,0,ret->prg.size);
+			fread(ret->prg.data + (loadaddr & 0x7FFF),1,size,fp);
+		}
+
+		//else the nsf is bankswitched
+		else {
+			ret->prg.size = (u32)size + (loadaddr & 0xFFF);
+			ret->prg.data = (u8*)mem_alloc(ret->prg.size);
+			memset(ret->prg.data,0,ret->prg.size);
+			fread(ret->prg.data + (loadaddr & 0xFFF),1,size,fp);
+		}
+
+		//setup mapper
+		ret->mapperid = B_NSF;
+		log_printf("cart_load_nsf:  nsf v%d loaded, %d bytes (padded to %d), %d songs.\n",ret->data[5],size,ret->prg.size,ret->data[6]);
+		log_printf("init $%04X, play $%04X\n",ret->data[0xA] | (ret->data[0xB] << 8),ret->data[0xC] | (ret->data[0xD] << 8));
+	}
+
+	//close file and return
+	fclose(fp);
+	return(n);
 }

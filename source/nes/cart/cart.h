@@ -89,6 +89,9 @@ typedef struct cart_s {
 	//name of game
 	char		title[CART_TITLE_LEN];
 
+	//data to be used for anything (or for nsf header)
+	u8			data[0x80];
+
 	//cached tile data
 	cache_t	*cache,*cache_hflip;			//chr cache
 	cache_t	*vcache,*vcache_hflip;		//vram cache

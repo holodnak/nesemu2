@@ -99,8 +99,12 @@ void cpu_kill()
 
 void cpu_reset(int hard)
 {
-	nes->cpu.readpages[0] = nes->cpu.writepages[0] = (u8*)nes->cpu.ram;
-	nes->cpu.readpages[1] = nes->cpu.writepages[1] = (u8*)nes->cpu.ram + 0x400;
+	int i;
+
+	for(i=0;i<8;i+=2) {
+		nes->cpu.readpages[i + 0] = nes->cpu.writepages[i + 0] = (u8*)nes->cpu.ram;
+		nes->cpu.readpages[i + 1] = nes->cpu.writepages[i + 1] = (u8*)nes->cpu.ram + 0x400;
+	}
 
 	if(hard) {
 		A = X = Y = 0;

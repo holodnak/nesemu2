@@ -70,4 +70,4 @@ static void state(int mode,u8 *data)
 	mmc3_state(mode,data);
 }
 
-MAPPER(B_BMC_MARIO7IN1,reset,0,mmc3_ppucycle,state);
+MAPPER(B_BMC_MARIO7IN1,reset,mmc3_ppucycle,0,state);

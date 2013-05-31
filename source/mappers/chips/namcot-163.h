@@ -18,50 +18,30 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mappers/mapperinc.h"
-#include "mappers/chips/mmc3.h"
+#ifndef __namcot_163_h__
+#define __namcot_163_h__
 
-static u8 reg[4];
-static u8 regindex;
+#include "types.h"
 
-static void sync()
-{
-	mmc3_syncprg(~reg[3] & 0x3F,reg[1]);
-	if(nes->cart->chr.size)
-		mmc3_syncchr(0xFF >> ((~reg[2]) & 0xF),reg[0] | ((reg[2] & 0xF0) << 4));
-	else
-		mmc3_syncvram(7,0);
-	mmc3_syncmirror();
-	mmc3_syncsram();
-	if((reg[3] & 0x40) == 0)
-		mem_unsetcpu8(6);
-}
+#define NAMCOT_HAS_SOUND		0x01			//has sound registers
+#define NAMCOT_HAS_IRQ			0x02			//has irq registers
+#define NAMCOT_HAS_NTSELECT	0x04			//has nt selection registers
+#define NAMCOT_HAS_CHRDISABLE	0x08			//has chr disable register
+#define NAMCOT_HAS_WRITEPROT	0x10			//has wram write protection
+#define NAMCOT_HAS_RAMENABLE	0x20			//has prg ram enable register
+#define NAMCOT_HAS_MIRRCTRL	0x40			//has mirroring control register
 
-static void write(u32 addr,u8 data)
-{
-	if((reg[3] & 0x40) == 0) {
-		reg[regindex++] = data;
-		regindex &= 3;
-		sync();
-	}
-}
+#define MAKENAMCOT(n,f)	(((n) << 8) | (f))
 
-static void reset(int hard)
-{
-	mmc3_reset(C_MMC3B,sync,hard);
-	mem_unsetcpu8(6);
-	mem_setwritefunc(6,write);
-	mem_setwritefunc(7,write);
-	reg[0] = reg[1] = reg[2] = reg[3] = 0;
-	regindex = 0;
-	sync();
-}
+#define NAMCOT_129	MAKENAMCOT(0,NAMCOT_HAS_SOUND | NAMCOT_HAS_IRQ | NAMCOT_HAS_NTSELECT | NAMCOT_HAS_CHRDISABLE | NAMCOT_HAS_WRITEPROT)
+#define NAMCOT_163	MAKENAMCOT(1,NAMCOT_HAS_SOUND | NAMCOT_HAS_IRQ | NAMCOT_HAS_NTSELECT | NAMCOT_HAS_CHRDISABLE | NAMCOT_HAS_WRITEPROT)
+#define NAMCOT_175	MAKENAMCOT(2,NAMCOT_HAS_RAMENABLE)
+#define NAMCOT_340	MAKENAMCOT(3,NAMCOT_HAS_NTSELECT | NAMCOT_HAS_MIRRCTRL)
 
-static void state(int mode,u8 *data)
-{
-	STATE_ARRAY_U8(reg,4);
-	STATE_U8(regindex);
-	mmc3_state(mode,data);
-}
+void namcot163_sync();
+void namcot163_write(u32 addr,u8 data);
+void namcot163_reset(void (*syncfunc)(),int hard);
+void namcot163_cpucycle();
+void namcot163_state(int mode,u8 *data);
 
-MAPPER(B_BMC_SUPERHIKXIN1,reset,mmc3_ppucycle,0,state);
+#endif

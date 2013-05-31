@@ -22,7 +22,7 @@
 #include "mappers/chips/mmc5.h"
 #include "mappers/sound/s_MMC5.h"
 
-static apu_external_t drip = {
+static apu_external_t mmc5sound = {
 	MMC5sound_Load,
 	MMC5sound_Unload,
 	MMC5sound_Reset,
@@ -439,6 +439,7 @@ void mmc5_reset(int hard)
 	irqstatus = 0;
 	irqcounter = 0;
 	sync = mmc5_sync;
+	apu_setexternal(&mmc5sound);
 	sync();
 }
 

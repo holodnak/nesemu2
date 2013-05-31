@@ -19,49 +19,11 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/mmc3.h"
-
-static u8 reg[4];
-static u8 regindex;
-
-static void sync()
-{
-	mmc3_syncprg(~reg[3] & 0x3F,reg[1]);
-	if(nes->cart->chr.size)
-		mmc3_syncchr(0xFF >> ((~reg[2]) & 0xF),reg[0] | ((reg[2] & 0xF0) << 4));
-	else
-		mmc3_syncvram(7,0);
-	mmc3_syncmirror();
-	mmc3_syncsram();
-	if((reg[3] & 0x40) == 0)
-		mem_unsetcpu8(6);
-}
-
-static void write(u32 addr,u8 data)
-{
-	if((reg[3] & 0x40) == 0) {
-		reg[regindex++] = data;
-		regindex &= 3;
-		sync();
-	}
-}
+#include "mappers/chips/namcot-163.h"
 
 static void reset(int hard)
 {
-	mmc3_reset(C_MMC3B,sync,hard);
-	mem_unsetcpu8(6);
-	mem_setwritefunc(6,write);
-	mem_setwritefunc(7,write);
-	reg[0] = reg[1] = reg[2] = reg[3] = 0;
-	regindex = 0;
-	sync();
+	namcot163_reset(namcot163_sync,hard);
 }
 
-static void state(int mode,u8 *data)
-{
-	STATE_ARRAY_U8(reg,4);
-	STATE_U8(regindex);
-	mmc3_state(mode,data);
-}
-
-MAPPER(B_BMC_SUPERHIKXIN1,reset,mmc3_ppucycle,0,state);
+MAPPER(B_NAMCOT_163,reset,0,namcot163_cpucycle,namcot163_state);

@@ -1078,6 +1078,9 @@
 						Name="namcot"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\namcot\163.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\namcot\3425.c">
 						</File>
 						<File
@@ -1156,6 +1159,13 @@
 							RelativePath="..\..\source\mappers\boards\ntdec\tc-112.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="rexsoft"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\rexsoft\dbz5.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="chips"
@@ -1180,6 +1190,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\namcot-108.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\namcot-163.c">
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\sachen-8259.c">

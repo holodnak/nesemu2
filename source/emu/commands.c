@@ -58,6 +58,7 @@ COMMAND_FUNC(help)
 	for(c=commands;c->name;c++) {
 		log_printf("%s ",c->name);
 	}
+	return(0);
 }
 
 int command_init()

@@ -992,6 +992,9 @@
 								RelativePath="..\..\source\mappers\boards\other\bmc\76in1.c">
 							</File>
 							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\ballgames11in1.c">
+							</File>
+							<File
 								RelativePath="..\..\source\mappers\boards\other\bmc\big7in1.c">
 							</File>
 							<File
@@ -1108,6 +1111,9 @@
 						Name="namcot"
 						Filter="">
 						<File
+							RelativePath="..\..\source\mappers\boards\namcot\163.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\namcot\3425.c">
 						</File>
 						<File
@@ -1176,6 +1182,13 @@
 							RelativePath="..\..\source\mappers\boards\ntdec\tc-112.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="rexsoft"
+						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\rexsoft\dbz5.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="chips"
@@ -1200,6 +1213,9 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\namcot-108.c">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\namcot-163.c">
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\sachen-8259.c">
@@ -1598,6 +1614,18 @@
 					</File>
 					<File
 						RelativePath="..\..\source\mappers\chips\mmc5.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\namcot-108.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\namcot-163.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\sachen-8259.h">
+					</File>
+					<File
+						RelativePath="..\..\source\mappers\chips\taito-tc0190fmc.h">
 					</File>
 				</Filter>
 			</Filter>

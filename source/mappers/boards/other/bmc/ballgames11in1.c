@@ -19,49 +19,60 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/mmc3.h"
 
-static u8 reg[4];
-static u8 regindex;
+static u8 mode,bank;
 
 static void sync()
 {
-	mmc3_syncprg(~reg[3] & 0x3F,reg[1]);
-	if(nes->cart->chr.size)
-		mmc3_syncchr(0xFF >> ((~reg[2]) & 0xF),reg[0] | ((reg[2] & 0xF0) << 4));
+	if(mode & 1)
+		mem_setprg8(0x6,bank | 0x23);
 	else
-		mmc3_syncvram(7,0);
-	mmc3_syncmirror();
-	mmc3_syncsram();
-	if((reg[3] & 0x40) == 0)
-		mem_unsetcpu8(6);
+		mem_setprg8(0x6,bank | 0x2F);
+	if(mode == 2)
+		mem_setprg16(0x8,(bank >> 1) | 1);
+	else
+		mem_setprg16(0x8,bank >> 1);
+	if(mode & 1)
+		mem_setprg16(0xC,(bank >> 1) | 1);
+	else
+		mem_setprg16(0xC,(bank >> 1) | 7);
+	mem_setmirroring((mode == 3) ? MIRROR_H : MIRROR_V);
 }
 
-static void write(u32 addr,u8 data)
+static void write67(u32 addr,u8 data)
 {
-	if((reg[3] & 0x40) == 0) {
-		reg[regindex++] = data;
-		regindex &= 3;
-		sync();
-	}
+	mode = ((data >> 3) & 2) | ((data >> 1) & 1);
+	sync();
+}
+
+static void write_upper(u32 addr,u8 data)
+{
+	bank = (data & 0xF) << 2;
+	if(bank & 4)
+		mode = ((data >> 3) & 2) | (mode & 1);
+	sync();
 }
 
 static void reset(int hard)
 {
-	mmc3_reset(C_MMC3B,sync,hard);
-	mem_unsetcpu8(6);
-	mem_setwritefunc(6,write);
-	mem_setwritefunc(7,write);
-	reg[0] = reg[1] = reg[2] = reg[3] = 0;
-	regindex = 0;
+	int i;
+
+	for(i=6;i<8;i++)
+		mem_setwritefunc(i,write67);
+	for(i=8;i<16;i++)
+		mem_setwritefunc(i,write_upper);
+	mem_setvramsize(8);
+	mem_setvram8(0,0);
+	mode = 1;
+	bank = 0;
 	sync();
 }
 
 static void state(int mode,u8 *data)
 {
-	STATE_ARRAY_U8(reg,4);
-	STATE_U8(regindex);
-	mmc3_state(mode,data);
+	STATE_U8(mode);
+	STATE_U8(bank);
+	sync();
 }
 
-MAPPER(B_BMC_SUPERHIKXIN1,reset,mmc3_ppucycle,0,state);
+MAPPER(B_BMC_BALLGAMES11IN1,reset,0,0,state);

@@ -7,6 +7,7 @@ input
 
 misc
  . implement reading of the xml rom databases
+ . need cartdb now!  namco 163 and friends all have the same mapper number
 
 win32
  . finish the (crappy) input code.  translatekey() misses some keys
@@ -64,6 +65,9 @@ mappers
  . mapper 202 needs work
  . vrc7 needs work
  . mapper 45 needs tested
+ . need mapper 14 rom
+ . mapper 19 needs a lot of work
+ . mapper 51 is incomplete
 
 submappers
  . which needs?

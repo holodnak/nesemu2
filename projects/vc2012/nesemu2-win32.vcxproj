@@ -72,7 +72,7 @@
       <ProgramDatabaseFile>$(OutDir)nesemu2-win32.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);comctl32.lib;ddraw.lib;dxguid.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);comctl32.lib;ddraw.lib;dxguid.lib;dsound.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -93,7 +93,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);comctl32.lib;ddraw.lib;dxguid.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);comctl32.lib;ddraw.lib;dxguid.lib;dsound.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -112,6 +112,7 @@
     <ClCompile Include="..\..\source\mappers\boards\irem\tam-s1.c" />
     <ClCompile Include="..\..\source\mappers\boards\jaleco\jf11.c" />
     <ClCompile Include="..\..\source\mappers\boards\kaiser\ks202.c" />
+    <ClCompile Include="..\..\source\mappers\boards\namcot\163.c" />
     <ClCompile Include="..\..\source\mappers\boards\namcot\3425.c" />
     <ClCompile Include="..\..\source\mappers\boards\namcot\34x3.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\cnrom_cp.c" />
@@ -128,11 +129,14 @@
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\70in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\72in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\76in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\ballgames11in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\big7in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\contra-function-16.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\fk23c.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\mario7in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\super700in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\superhik4in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\superhikXin1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl\biomiraclea.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl\mario1-malee2.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl\smb2b.c" />
@@ -142,6 +146,7 @@
     <ClCompile Include="..\..\source\mappers\boards\other\rumblestation.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\h2288.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\racermate.c" />
+    <ClCompile Include="..\..\source\mappers\boards\rexsoft\dbz5.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-8259x.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-tca01.c" />
     <ClCompile Include="..\..\source\mappers\boards\sunsoft\sunsoft-1.c" />
@@ -162,6 +167,7 @@
     <ClCompile Include="..\..\source\mappers\boards\waixing\sgz.c" />
     <ClCompile Include="..\..\source\mappers\boards\waixing\sh2.c" />
     <ClCompile Include="..\..\source\mappers\chips\namcot-108.c" />
+    <ClCompile Include="..\..\source\mappers\chips\namcot-163.c" />
     <ClCompile Include="..\..\source\mappers\chips\sachen-8259.c" />
     <ClCompile Include="..\..\source\mappers\chips\taito-tc0190fmc.c" />
     <ClCompile Include="..\..\source\mappers\fds\calls\disk.c">
@@ -469,6 +475,7 @@
     <ClInclude Include="..\..\source\inputdev\null.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\README" />
     <None Include="..\..\source\system\win32\mainicon.ico" />
     <None Include="..\..\docs\Todo" />
   </ItemGroup>

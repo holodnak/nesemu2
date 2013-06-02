@@ -190,6 +190,9 @@
     <Filter Include="Source Files\mappers\fds\calls">
       <UniqueIdentifier>{af371ed3-5ec5-4dcc-af5e-5c5dac09b608}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\mappers\boards\rexsoft">
+      <UniqueIdentifier>{a6bf1817-38db-4add-9f47-42850c22ab12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\win32\input.c">
@@ -771,6 +774,24 @@
     <ClCompile Include="..\..\source\mappers\chips\sachen-8259.c">
       <Filter>Source Files\mappers\chips</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\rexsoft\dbz5.c">
+      <Filter>Source Files\mappers\boards\rexsoft</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\ballgames11in1.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\superhik4in1.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\superhikXin1.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\chips\namcot-163.c">
+      <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\namcot\163.c">
+      <Filter>Source Files\mappers\boards\namcot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">
@@ -911,6 +932,7 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\..\docs\Todo" />
+    <None Include="..\..\README" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\source\system\win32\nesemu2.rc">

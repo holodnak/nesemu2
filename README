@@ -54,3 +54,12 @@ If it is not found, it creates it in:
 
 If you do not like any of these locations, you can use --config <filename> as a
 command line parameter.
+
+Credits
+-------
+Thanks goes out to the following groups/individuals:
+
+  . the #nesdev irc channel.
+  . the nesdev wiki and message boards.
+  . Martin Freij for Nestopia's great mapper reference.
+  . Quietust for Nintendulator, my sound code was based upon his.

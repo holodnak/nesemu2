@@ -27,6 +27,7 @@
 #include "system/win32/dialogs.h"
 #include "system/win32/resource.h"
 #include "system/video.h"
+#include "system/sound.h"
 
 #define MAX_LOADSTRING 100
 
@@ -95,10 +96,12 @@ static void file_open(HWND hWnd)
 {
 	char buffer[1024];
 	static char filter[] =
-		"NES ROMs (*.nes, *.unf, *.unif *.fds)\0*.nes;*.unf;*.unif;*.fds\0"
+		"NES ROMs (*.nes, *.unf, *.unif *.fds *.nsf)\0*.nes;*.unf;*.unif;*.fds;*.nsf\0"
 		"iNES ROMs (*.nes)\0*.nes\0"
-		"UNIF ROMs (*.unf, *.unif)\0*.unf;*.unif\0";
-		"FDS Images (*.fds)\0*.fds\0";
+		"UNIF ROMs (*.unf, *.unif)\0*.unf;*.unif\0"
+		"FDS Images (*.fds)\0*.fds\0"
+		"NSF Files (*.nsf)\0*.nsf\0"
+		"All Files (*.*)\0*.*\0";
 
 	memset(buffer,0,1024);
 	if(filedialog(hWnd,0,buffer,"Open NES ROM...",filter,0) != 0)
@@ -207,7 +210,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case ID_VIEW_FULLSCREEN:
 			video_kill();
+			sound_pause();
 			config_set_bool("video.fullscreen",config_get_bool("video.fullscreen") ^ 1);
+			sound_play();
 			video_init();
 			break;
 		default:

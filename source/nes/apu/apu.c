@@ -68,11 +68,14 @@ static void apu_callback(void *data,int length)
 	s16 *dest = (s16*)data;
 	int i,pos,len;
 
-//	printf("apu_callback:  need %d bytes, have %d ready (pixel %d, line %d, frame %d)\n",length,soundbuflen,LINECYCLES,SCANLINE,FRAMES);
+	log_printf("apu_callback:  need %d bytes, have %d ready (pixel %d, line %d, frame %d)\n",length,soundbuflen,LINECYCLES,SCANLINE,FRAMES);
+	if(soundbuflen < length)
+		return;
 	len = ((length > soundbuflen) ? soundbuflen : length);
 	pos = soundbufpos;
 	for(i=0;i<length;i++) {
 		*dest++ = soundbuf[pos];
+		soundbuf[pos] = 0;
 		pos = (pos + 1) % soundbufsize;
 	}
 	soundbuflen -= len;
@@ -211,10 +214,15 @@ static INLINE void updatebuffer()
 		sample = -0x8000;
 	if(sample > 0x7FFF)
 		sample = 0x7FFF;
-	sound_lock();
 	n = (soundbuflen++ + soundbufpos) % soundbufsize;
 	soundbuf[n] = (s16)sample;
-	sound_unlock();
+
+	//see if we are done with a frame, and if so send it away to the sound system
+	if(soundbuflen == 735) {
+		sound_update((void*)soundbuf,735);
+		soundbufpos = 0;
+		soundbuflen = 0;
+	}
 }
 
 //this is called every cycle

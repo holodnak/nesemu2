@@ -132,8 +132,11 @@ ppuwait:
 
 ;;zero out a tile
 zerotile:
-	ldy	#16
 	lda	#0
+
+;;fill a tile with specific byte (A register)
+filltile:
+	ldy	#16
 -	sta	PPUDATA
 	dey
 	bne	-
@@ -215,7 +218,7 @@ reset:
 	jsr	ppuwait			;;let ppu warm up, wait for vblank
 
 	jsr	copyascii		;;copy the ascii chr to vram
-	ldx	#4					;;number of bytes to copy from the palette
+	ldx	#32				;;number of bytes to copy from the palette
 	jsr	copypalette		;;now copy palette, it is after the chr
 
 	;;setup tile 0
@@ -223,6 +226,12 @@ reset:
 	sty.w	PPUADDR			; load the destination address into the PPU
 	sty.w	PPUADDR
 	jsr	zerotile
+
+	;;setup tile $FF
+	ldsty	$0F,PPUADDR		;;upper byte of dest addr
+	ldsty	$F0,PPUADDR		;;lower byte of dest addr
+	lda	#$FF				;;byte to fill with
+	jsr	filltile
 
 	;;clear nametables
 	ldsty	$20,PPUADDR		;;high byte of destination
@@ -232,9 +241,24 @@ reset:
 
 	swap	1					;;map in the other bank
 
+	;;write sprite0 hit tile
+	ldsty	$23,PPUADDR		;;high byte of destination address
+	ldsty	$40,PPUADDR		;;low byte of destination address
+	ldsta	$FF,PPUDATA
+
+	;;write sprite0 hit tile attribute
+	ldsty	$23,PPUADDR		;;high byte of destination address
+	ldsty	$F0,PPUADDR		;;low byte of destination address
+	ldsta	$70,PPUDATA
+	;;write attributes for the status bar
+	ldsta	$50,PPUDATA
+	ldsta	$50,PPUDATA
+	ldsta	$50,PPUDATA
+	ldsta	$50,PPUDATA
+
 	;;copy the info string
-	ldsty	$20,PPUADDR		;;high byte of destination address
-	ldsty	$42,PPUADDR		;;low byte of destination address
+	ldsty	$23,PPUADDR		;;high byte of destination address
+	ldsty	$62,PPUADDR		;;low byte of destination address
 	ldsta	>title,$01		;;high byte of source address
 	ldsta	<title,$00		;;low byte of source address
 	jsr	copystring
@@ -246,14 +270,25 @@ reset:
 	ldsta	<NSF_TITLE,$00	;;low byte of source address
 	jsr	copystring		;;copy nsf title
 
+	;;setup sprite0
+	lda	#0					;;sprite data
+	sta	OAMADDR
+	ldsty	$CE,OAMDATA
+	ldsty	$FF,OAMDATA
+	ldsty	$20,OAMDATA
+	ldsty	$00,OAMDATA
+
 	jsr	setspeed			;;setup play speed
 	jsr	initbanks		;;initialize nsf banks
 
 	ldsty	$00,PPUSCROLL	;;reset scroll to 0,0
 	ldsty	$00,PPUSCROLL
-	ldsty	$1A,PPUMASK		;;enable rendering
+	ldsty	$1E,PPUMASK		;;enable rendering
 
 	lda	NSF_STARTSONG	;;load starting song
+	tax
+	dex
+	txa
 	ldx	#0					;;this is ntsc/pal byte (shouldn't always be 0)
 	jsr	nsfinit			;;init song
 
@@ -261,7 +296,31 @@ reset:
 	ldsty	$80,PPUCTRL		;;enable nmi
 	cli						;;enable irq
 
--	jmp	-					;;loop waiting for irq or nmi
+mainloop:
+
+
+-	lda	$2002				;;wait until sprite0 flag clears
+	and	#%01000000
+	bne	-
+
+	ldx	PPUSTATUS		;;reset toggle
+	ldx	#0					;;restore scroll to 0,0
+	stx.w	PPUSCROLL
+	stx.w	PPUSCROLL
+
+-	lda	$2002				;;wait for sprite0 hit
+	and	#%01000000
+	beq	-
+
+	lda	NSF_RAM			;;update scroll register with new x value
+	sta	$2005
+	lda	#$00
+	sta	$2005
+
+	lda	#%10000000		;;enable nmi
+	sta	PPUCTRL
+ 
+	jmp	mainloop			;;keep looping
 
 nsfinit:
 	jmp	(NSF_INIT)
@@ -275,7 +334,6 @@ irq:
 	txa
 	pha
 	lda	IRQENABLE		;;acknowledge irq
-;;	sta	DISASM
 	jsr	nsfplay			;;execute play routine
 	pla						;;restore registers
 	tax
@@ -285,20 +343,71 @@ irq:
 	rti
 
 nmi:
-	pha
+	rti
+	;;this code causes nsf's to lock up!
+
+	pha						;;save registers
 	txa
 	pha
-	ldx	PPUSTATUS
-	ldx	NSF_RAM
+	
+	lda	#%00000000		;;disable NMI
+	sta	PPUCTRL
+
+	ldx	NSF_RAM			;;increment scroll x
 	inx
 	stx.w	NSF_RAM
-	stx.w	PPUSCROLL
-	ldx	NSF_RAM+1
-	stx.w	PPUSCROLL
-	pla
+
+	jsr	counterinc		;;increment timer
+
+	ldsty	$21,PPUADDR		;;high byte of destination address
+	ldsty	$42,PPUADDR		;;low byte of destination address
+	lda	NSF_RAM+33
+	and	#$F0
+	lsr	a
+	lsr	a
+	lsr	a
+	lsr	a
+	clc
+	adc	#$30
+	sta	PPUDATA
+	lda	NSF_RAM+33
+	and	#$0F
+	clc
+	adc	#$30
+	sta	PPUDATA
+	ldsty	$00,PPUSCROLL		;;high byte of destination address
+	ldsty	$00,PPUSCROLL		;;low byte of destination address
+
+
+	pla						;;restore registers
 	tax
 	pla
-	rti
+
+	rti						;;return from interrupt
+
+counterinc:
+
+	;;increment frame count
+	ldx	(NSF_RAM+32)
+	inx
+	cpx	#60
+	bne	++
+	ldx	#0
+
+	;;increment seconds
+	ldy	(NSF_RAM+33)
+	iny
+	tya
+	and	#$0F
+	cmp	#$0A
+	bne	+
+	tya
+	clc
+	adc	#6
+	tay
++	sty.w	(NSF_RAM+33)
+++	stx.w	(NSF_RAM+32)
+	rts
 
 title:
 	.db	"nesemu2 nsf player",0
@@ -319,4 +428,12 @@ nowplaying:
 .ORG $000
 .INCBIN "ascii.chr" SKIP 1024 READ 512
 ;;palette data
-	.db	$0f,$00,$00,$30
+palette:
+	.db	$0f,$00,$10,$20,  $0f,$1a,$2a,$3a,  $0f,$0f,$0f,$0f,  $0f,$0f,$0f,$0f
+	.db	$0f,$0f,$0f,$0f,  $0f,$1a,$2a,$3a,  $0f,$12,$22,$32,  $0f,$1d,$2d,$3d
+
+;;sprite data
+;;y,tile,attrib,x
+.ORG $300
+sprites:
+	.db	$80,$88,$00,$80,  $C0,$60,$00,$00

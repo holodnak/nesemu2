@@ -347,6 +347,7 @@ static int initfullscreen()
 	}
 	ZeroMemory(&ddsd,sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
+	ShowCursor(FALSE);
 	return(0);
 }
 
@@ -446,6 +447,7 @@ void video_kill()
 	SAFE_RELEASE(lpSecondaryDDS);
 	SAFE_RELEASE(lpPrimaryDDS);
 	if(config_get_bool("video.fullscreen")) {
+		ShowCursor(TRUE);
 		SetWindowPos(hWnd,0,rect.left,rect.top,0,0,SWP_NOCOPYBITS | SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER);
 		SetWindowLongPtr(hWnd,GWL_STYLE,WS_OVERLAPPEDWINDOW);
 		SetMenu(hWnd,hMenu);

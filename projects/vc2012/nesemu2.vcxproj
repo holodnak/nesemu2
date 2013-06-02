@@ -181,6 +181,7 @@
     <ClCompile Include="..\..\source\mappers\boards\konami\vrc4.c" />
     <ClCompile Include="..\..\source\mappers\boards\konami\vrc6.c" />
     <ClCompile Include="..\..\source\mappers\boards\konami\vrc7.c" />
+    <ClCompile Include="..\..\source\mappers\boards\namcot\163.c" />
     <ClCompile Include="..\..\source\mappers\boards\namcot\3425.c" />
     <ClCompile Include="..\..\source\mappers\boards\namcot\34x3.c" />
     <ClCompile Include="..\..\source\mappers\boards\nintendo\axrom.c" />
@@ -213,11 +214,14 @@
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\70in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\72in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\76in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\ballgames11in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\big7in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\contra-function-16.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\fk23c.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\mario7in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\super700in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\superhik4in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\superhikXin1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl\biomiraclea.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl\mario1-malee2.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl\smb2b.c" />
@@ -227,6 +231,7 @@
     <ClCompile Include="..\..\source\mappers\boards\other\rumblestation.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\h2288.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\racermate.c" />
+    <ClCompile Include="..\..\source\mappers\boards\rexsoft\dbz5.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-003x.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-7200x.c" />
     <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-74ls374n.c" />
@@ -257,6 +262,7 @@
     <ClCompile Include="..\..\source\mappers\chips\mmc4.c" />
     <ClCompile Include="..\..\source\mappers\chips\mmc5.c" />
     <ClCompile Include="..\..\source\mappers\chips\namcot-108.c" />
+    <ClCompile Include="..\..\source\mappers\chips\namcot-163.c" />
     <ClCompile Include="..\..\source\mappers\chips\sachen-8259.c" />
     <ClCompile Include="..\..\source\mappers\chips\taito-tc0190fmc.c" />
     <ClCompile Include="..\..\source\mappers\fds\calls\disk.c">

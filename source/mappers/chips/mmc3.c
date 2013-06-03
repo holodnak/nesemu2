@@ -209,10 +209,10 @@ void mmc3_write(u32 addr,u8 data)
 					chr[7] = data;
 					break;
 				case 6:
-					prg[0] = data & 0x3F;
+					prg[0] = data;
 					break;
 				case 7:
-					prg[1] = data & 0x3F;
+					prg[1] = data;
 					break;
 			}
 			sync();

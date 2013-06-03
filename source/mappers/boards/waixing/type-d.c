@@ -21,49 +21,28 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/mmc3.h"
 
-static u8 prg[4],chr,mirror;
-static u8 r5ff1;
-
 static void sync()
 {
-	mem_setprg8(0x8,prg[0]);
-	mem_setprg8(0xA,prg[1]);
-	mem_setprg8(0xC,prg[2]);
-	mem_setprg8(0xE,prg[3]);
-	mem_setchr8(0,chr);
-	mem_setmirroring(mirror);
-	mem_setmirroring(MIRROR_H);
-}
+	int i,bank;
 
-static void write_5000(u32 addr,u8 data)
-{
-	log_printf("bmc-fk23c.c:  write_5000:  $%04X = $%02X\n",addr,data);
-}
-
-static void write(u32 addr,u8 data)
-{
-	log_printf("bmc-fk23c.c:  write:  $%04X = $%02X\n",addr,data);
+	mmc3_syncprg(0xFF,0x00);
+	for(i=0;i<8;i++) {
+		bank = mmc3_getchrbank(i);
+		if(bank < 2) {
+			mem_setvram1(i,bank);
+			log_printf("waixing/type-d.c:  sync:  mapping vram!\n");
+		}
+		else
+			mem_setchr1(i,bank);
+	}
+	mmc3_syncmirror();
+	mmc3_syncsram();
 }
 
 static void reset(int hard)
 {
-	int i;
-
-	mem_setwritefunc(5,write_5000);
-	for(i=8;i<16;i++)
-		mem_setwritefunc(i,write);
-	prg[0] = 0;
-	prg[1] = 1;
-	prg[2] = 0x7E;
-	prg[3] = 0x7F;
-	chr = 0;
-	mirror = nes->cart->mirroring;
-	sync();
+	mem_setvramsize(2);
+	mmc3_reset(C_MMC3B,sync,hard);
 }
 
-static void state(int mode,u8 *data)
-{
-//	STATE_ARRAY_U8(reg,8);
-}
-
-MAPPER(B_BMC_FK23C,reset,0,0,state);
+MAPPER(B_WAIXING_TYPE_D,reset,mmc3_ppucycle,0,mmc3_state);

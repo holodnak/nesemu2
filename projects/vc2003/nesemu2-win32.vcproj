@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib dxguid.lib ddraw.lib"
+				AdditionalDependencies="comctl32.lib dxguid.lib ddraw.lib dsound.lib"
 				OutputFile="$(OutDir)/nesemu2-win32.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -81,7 +81,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib ddraw.lib dxguid.lib"
+				AdditionalDependencies="comctl32.lib ddraw.lib dxguid.lib dsound.lib"
 				OutputFile="$(OutDir)/nesemu2-win32.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
@@ -899,6 +899,9 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\camerica\bf909x.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\camerica\goldenfive.c">
+						</File>
 					</Filter>
 					<Filter
 						Name="taito"
@@ -1104,6 +1107,9 @@
 							RelativePath="..\..\source\mappers\boards\homebrew\dripgame.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\homebrew\magicfloor.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\homebrew\tepples.c">
 						</File>
 					</Filter>
@@ -1151,6 +1157,9 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\waixing\sh2.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\waixing\type-d.c">
 						</File>
 					</Filter>
 					<Filter

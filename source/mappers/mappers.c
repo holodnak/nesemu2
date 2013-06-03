@@ -110,6 +110,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_CAMERICA_BF9093);
 	MAPPER(B_CAMERICA_BF9096);
 	MAPPER(B_CAMERICA_BF9097);
+	MAPPER(B_CAMERICA_GOLDENFIVE);
 
 	//txc
 	MAPPER(B_TXC_22211A);
@@ -148,6 +149,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_WAIXING_SGZ);
 	MAPPER(B_WAIXING_FFV);
 	MAPPER(B_WAIXING_SH2);
+	MAPPER(B_WAIXING_TYPE_D);
 
 	//ntdec
 	MAPPER(B_NTDEC_TC112);
@@ -187,6 +189,7 @@ static mapper_t *get_mapper(int mapperid)
 	//homebrew
 	MAPPER(B_TEPPLES);
 	MAPPER(B_DRIPGAME);
+	MAPPER(B_MAGICFLOOR);
 
 	//others
 	MAPPER(B_FDS);

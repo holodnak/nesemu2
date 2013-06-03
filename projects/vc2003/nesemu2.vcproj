@@ -879,6 +879,9 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\camerica\bf909x.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\camerica\goldenfive.c">
+						</File>
 					</Filter>
 					<Filter
 						Name="taito"
@@ -999,6 +1002,9 @@
 								RelativePath="..\..\source\mappers\boards\other\bmc\76in1.c">
 							</File>
 							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\ballgames11in1.c">
+							</File>
+							<File
 								RelativePath="..\..\source\mappers\boards\other\bmc\big7in1.c">
 							</File>
 							<File
@@ -1107,6 +1113,9 @@
 							RelativePath="..\..\source\mappers\boards\homebrew\dripgame.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\homebrew\magicfloor.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\homebrew\tepples.c">
 						</File>
 					</Filter>
@@ -1147,6 +1156,9 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\waixing\sh2.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\waixing\type-d.c">
 						</File>
 					</Filter>
 					<Filter

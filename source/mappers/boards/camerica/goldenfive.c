@@ -19,51 +19,47 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/mmc3.h"
 
-static u8 prg[4],chr,mirror;
-static u8 r5ff1;
+static u8 prg,outerprg;
 
 static void sync()
 {
-	mem_setprg8(0x8,prg[0]);
-	mem_setprg8(0xA,prg[1]);
-	mem_setprg8(0xC,prg[2]);
-	mem_setprg8(0xE,prg[3]);
-	mem_setchr8(0,chr);
-	mem_setmirroring(mirror);
-	mem_setmirroring(MIRROR_H);
-}
-
-static void write_5000(u32 addr,u8 data)
-{
-	log_printf("bmc-fk23c.c:  write_5000:  $%04X = $%02X\n",addr,data);
+	mem_setprg16(0x8,outerprg | prg);
+	mem_setprg16(0xC,outerprg | 0xF);
+	mem_setvram8(0,0);
 }
 
 static void write(u32 addr,u8 data)
 {
-	log_printf("bmc-fk23c.c:  write:  $%04X = $%02X\n",addr,data);
+	if(addr < 0xA000) {
+		if(data & 8)
+			outerprg = (data << 4) & 0x70;
+	}
+	else if(addr >= 0xC000) {
+		prg = data & 0xF;
+	}
+	else
+		return;
+	sync();
 }
 
 static void reset(int hard)
 {
 	int i;
 
-	mem_setwritefunc(5,write_5000);
-	for(i=8;i<16;i++)
+	for(i=8;i<16;i++) {
+		if(i == 0xA || i == 0xB)
+			continue;
 		mem_setwritefunc(i,write);
-	prg[0] = 0;
-	prg[1] = 1;
-	prg[2] = 0x7E;
-	prg[3] = 0x7F;
-	chr = 0;
-	mirror = nes->cart->mirroring;
+	}
+	mem_setvramsize(8);
+	prg = outerprg = 0;
 	sync();
 }
 
 static void state(int mode,u8 *data)
 {
-//	STATE_ARRAY_U8(reg,8);
+	sync();
 }
 
-MAPPER(B_BMC_FK23C,reset,0,0,state);
+MAPPER(B_CAMERICA_GOLDENFIVE,reset,0,0,state);

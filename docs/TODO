@@ -68,6 +68,7 @@ mappers
  . need mapper 14 rom
  . mapper 19 needs a lot of work
  . mapper 51 is incomplete
+ . mapper 218 (magicfloor) works but isnt implemented properly
 
 submappers
  . which needs?
@@ -91,8 +92,6 @@ hlefds
      --finally calls XferDone
 
 roms
- . need mapper 104 (golden five) roms
- . need mapper 194 (Dai-2-Ji - Super Robot Taisen (As)) roms
  . need mapper 195 roms
  . find mapper 206 (dxrom) games to test
 

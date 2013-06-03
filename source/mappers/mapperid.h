@@ -168,6 +168,7 @@ enum boardid_e {
 	B_CAMERICA_BF9093,
 	B_CAMERICA_BF9096,
 	B_CAMERICA_BF9097,
+	B_CAMERICA_GOLDENFIVE,
 
 	//ffe
 	B_FFE_MAPPER6,
@@ -185,6 +186,7 @@ enum boardid_e {
 	B_WAIXING_SGZ,
 	B_WAIXING_FFV,
 	B_WAIXING_SH2,
+	B_WAIXING_TYPE_D,
 
 	//ntdec
 	B_NTDEC_TC112,
@@ -196,6 +198,7 @@ enum boardid_e {
 	//homebrew
 	B_TEPPLES,
 	B_DRIPGAME,
+	B_MAGICFLOOR,
 
 	//for getting a count of supported boards
 	B_BOARDEND,

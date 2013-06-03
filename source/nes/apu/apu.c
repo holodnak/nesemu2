@@ -68,7 +68,7 @@ static void apu_callback(void *data,int length)
 	s16 *dest = (s16*)data;
 	int i,pos,len;
 
-	log_printf("apu_callback:  need %d bytes, have %d ready (pixel %d, line %d, frame %d)\n",length,soundbuflen,LINECYCLES,SCANLINE,FRAMES);
+//	log_printf("apu_callback:  need %d bytes, have %d ready (pixel %d, line %d, frame %d)\n",length,soundbuflen,LINECYCLES,SCANLINE,FRAMES);
 	if(soundbuflen < length)
 		return;
 	len = ((length > soundbuflen) ? soundbuflen : length);

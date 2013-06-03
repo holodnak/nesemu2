@@ -19,51 +19,19 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/mmc3.h"
 
-static u8 prg[4],chr,mirror;
-static u8 r5ff1;
-
-static void sync()
-{
-	mem_setprg8(0x8,prg[0]);
-	mem_setprg8(0xA,prg[1]);
-	mem_setprg8(0xC,prg[2]);
-	mem_setprg8(0xE,prg[3]);
-	mem_setchr8(0,chr);
-	mem_setmirroring(mirror);
-	mem_setmirroring(MIRROR_H);
-}
-
-static void write_5000(u32 addr,u8 data)
-{
-	log_printf("bmc-fk23c.c:  write_5000:  $%04X = $%02X\n",addr,data);
-}
-
-static void write(u32 addr,u8 data)
-{
-	log_printf("bmc-fk23c.c:  write:  $%04X = $%02X\n",addr,data);
-}
-
+//kludge.  we use vram instead of nametables because of the tile cache
 static void reset(int hard)
 {
 	int i;
 
-	mem_setwritefunc(5,write_5000);
-	for(i=8;i<16;i++)
-		mem_setwritefunc(i,write);
-	prg[0] = 0;
-	prg[1] = 1;
-	prg[2] = 0x7E;
-	prg[3] = 0x7F;
-	chr = 0;
-	mirror = nes->cart->mirroring;
-	sync();
+	mem_setvramsize(2);
+	mem_setprg16(0x8,0);
+	mem_setprg16(0xC,0);
+	for(i=0;i<8;i++) {
+		mem_setvram1(0 + i,0);
+		mem_setvram1(8 + i,1);
+	}
 }
 
-static void state(int mode,u8 *data)
-{
-//	STATE_ARRAY_U8(reg,8);
-}
-
-MAPPER(B_BMC_FK23C,reset,0,0,state);
+MAPPER(B_MAGICFLOOR,reset,0,0,0);

@@ -1177,6 +1177,9 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\rexsoft\dbz5.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\rexsoft\sl1632.c">
+						</File>
 					</Filter>
 				</Filter>
 				<Filter

@@ -194,6 +194,7 @@ enum boardid_e {
 
 	//rexsoft
 	B_REXSOFT_DBZ5,
+	B_REXSOFT_SL1632,
 
 	//homebrew
 	B_TEPPLES,

@@ -157,6 +157,7 @@ static mapper_t *get_mapper(int mapperid)
 
 	//rexsoft
 	MAPPER(B_REXSOFT_DBZ5);
+	MAPPER(B_REXSOFT_SL1632);
 
 	//other (unknown)
 	MAPPER(B_BMC_15IN1);

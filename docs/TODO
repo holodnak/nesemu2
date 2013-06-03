@@ -44,17 +44,13 @@ mappers
  . sachen 0036 broken (chr problems!) (taiwan mahjong 16)
  . sachen 0037 broken...why?
  . implement different mmc3 types
- . mapper 65 (irem h3001) "Daiku no Gen San 2 - Akage no Dan no Gyakushuu" graphical garbage.
-   --possibly related to bad timing?  mapper seems implemented ok.
  . finish strikewolf mapper
  . devil man broken (namcot 3453)
  . finish the namcot 108 based mappers
  . unl-h2288 (earthworm jim) broken
  . mmc5 needs finishing (just breed fails)
  . get roms to test the homebrew 'tepples' mapper and finish it
- . dripgame mostly works.  need to add sound and remove the hack.
  . finish mapper 205 (should be working?)
- . fk23c mapper is nightmare!  need documents!
  . mapper 82 (taito x1-017) working except for "Kyuukyoku Harikiri Stadium 3"
  . mapper 47 (nes-qj) needs $A001 register write disable
  . test mappers 67/68/69 more
@@ -69,6 +65,7 @@ mappers
  . mapper 19 needs a lot of work
  . mapper 51 is incomplete
  . mapper 218 (magicfloor) works but isnt implemented properly
+ . sl1632 (mapper 116) needs more work
 
 submappers
  . which needs?
@@ -94,6 +91,7 @@ hlefds
 roms
  . need mapper 195 roms
  . find mapper 206 (dxrom) games to test
+ . Garou Densetsu Special (mapper 116) for testing
 
 info
  . reflect world (fds) uses undocument opcode $89

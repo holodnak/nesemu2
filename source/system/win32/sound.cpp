@@ -32,7 +32,6 @@ static LPDIRECTSOUNDBUFFER PrimaryBuffer;
 static LPDIRECTSOUNDBUFFER Buffer;
 static unsigned long next_pos;
 static int isEnabled;
-//static short			*buffer;
 static int			buflen;
 static unsigned long		MHz;
 static unsigned long		LockSize;
@@ -43,8 +42,6 @@ static int sound_samplerate = 44100;
 static int sound_fragsize = 1024;//SOUND_HZ / 60;
 static void (*audio_callback)(void *buffer, int length) = 0;
 static int soundinited = 0;
-
-#define _T(s) s
 
 #define	FREQ		44100
 #define	BITS		16
@@ -93,12 +90,12 @@ void	Start()
 	WFX.nAvgBytesPerSec = WFX.nSamplesPerSec * WFX.nBlockAlign;
 	if(FAILED(PrimaryBuffer->SetFormat(&WFX))) {
 		Stop();
-		MessageBox(hWnd, _T("Failed to set output format!"),"nesemu2", MB_OK);
+		MessageBox(hWnd,"Failed to set output format!","nesemu2", MB_OK);
 		return;
 	}
 	if(FAILED(PrimaryBuffer->Play(0, 0, DSBPLAY_LOOPING))) {
 		Stop();
-		MessageBox(hWnd, _T("Failed to start playing primary buffer!"),"nesemu2", MB_OK);
+		MessageBox(hWnd,"Failed to start playing primary buffer!","nesemu2", MB_OK);
 		return;
 	}
 	DSBD.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_LOCSOFTWARE | DSBCAPS_GETCURRENTPOSITION2;
@@ -106,7 +103,7 @@ void	Start()
 	DSBD.lpwfxFormat = &WFX;
 	if(FAILED(DirectSound->CreateSoundBuffer(&DSBD, &Buffer, NULL))) {
 		Stop();
-		MessageBox(hWnd, _T("Failed to create secondary buffer!"),"nesemu2",MB_OK);
+		MessageBox(hWnd,"Failed to create secondary buffer!","nesemu2",MB_OK);
 		return;
 	}
 	log_printf("dsound init ok, %ihz, %i bits",WFX.nSamplesPerSec,WFX.wBitsPerSample);

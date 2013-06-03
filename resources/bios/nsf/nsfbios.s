@@ -46,14 +46,18 @@
 ;;nsf ram address (64 bytes)
 .define NSF_RAM			$3440
 
-;;nmi counter
-.define NMICOUNTER		NSF_RAM+16
+;;temp area (8 bytes)
+.define TEMP				NSF_RAM+8
 
 ;;x scroll value for scrolling area
-.define SCROLL_X			NSF_RAM+17
+.define SCROLL_X			NSF_RAM+16
 
 ;;current song number
-.define CURSONG			NSF_RAM+18
+.define CURSONG			NSF_RAM+17
+
+;;joypad data
+.define PADDATA			NSF_RAM+18
+.define PADDATA2			NSF_RAM+19
 
 ;;timer data
 .define TIME_FRAMES		NSF_RAM+32
@@ -120,6 +124,9 @@
 	.dw	nmi
 	.dw	reset
 	.dw	irq
+
+playername:
+	.db	"nesemu2 nsf player",0
 
 nsfinit:
 	jmp	(NSF_INIT)
@@ -261,16 +268,7 @@ setupppu:
 
 	rts						;;return
 
-;;initialize the nsf banks
-initbanks:
-	ldx	#7
--	lda	NSF_BANKS,x
-	sta	$5FF8,x
-	dex
-	bpl	-
-	rts
-
-;;copy string from ($00) to ppu memory
+;;copy string from ($00) to ppu memory (helper for init)
 copystring:
 	ldy	#0
 -	lda	($00),y
@@ -281,6 +279,15 @@ copystring:
 	bne	-
 +	rts
 
+;;initialize the nsf banks
+initbanks:
+	ldx	#7
+-	lda	NSF_BANKS,x
+	sta	$5FF8,x
+	dex
+	bpl	-
+	rts
+
 ;;setup nsf play speed
 setspeed:
 	lda	NSF_PLAYSPEED
@@ -289,42 +296,7 @@ setspeed:
 	sta	PLAYSPDHI
 	rts
 
-;;change nsf song (have a set to song, x for ntsc/pal)
-changesong:
-	rts
-
-reset:
-	sei						;;disable irq
-	cld						;;disable decimal mode
-	ldx	#$FF
-	txs						;;setup stack
-	inx
--	sta	$000,x			;;clear ram
-	sta	$100,x
-	sta	$200,x
-	sta	$300,x
-	sta	$400,x
-	sta	$500,x
-	sta	$600,x
-	sta	$700,x
-	inx
-	bne	-
-	
-	;;perform initialization
-	jsr	initnes			;;initialize the nes
-	jsr	ppuwait			;;let ppu warm up, wait for vblank
-	jsr	ppuwait
-	jsr	setupppu			;;copy all ppu data and setup other stuff
-
-	swap	1					;;map in the other bank
-
-	;;copy the now playing string
-	ldsty	$20,PPUADDR			;;high byte of destination address
-	ldsty	$60,PPUADDR			;;low byte of destination address
-	ldsta	>nowplaying,$01	;;high byte of source address
-	ldsta	<nowplaying,$00	;;low byte of source address
-	jsr	copystring			;;copy nsf title
-
+setupnsf:
 	;;copy the song title
 	ldsty	$20,PPUADDR				;;high byte of destination address
 	ldsty	$A1,PPUADDR				;;low byte of destination address
@@ -345,20 +317,51 @@ reset:
 	ldsta	>NSF_COPYRIGHT,$01	;;high byte of source address
 	ldsta	<NSF_COPYRIGHT,$00	;;low byte of source address
 	jsr	copystring				;;copy nsf copyright
+	
+	;;setup CURSONG variable
+	ldx	NSF_STARTSONG			;;load starting song
+	dex
+	stx.w	CURSONG					;;save it in the cursong variable
 
+	;;other nsf init stuff
 	jsr	setspeed					;;setup play speed
 	jsr	initbanks				;;initialize nsf banks
+	rts
+
+reset:
+	sei						;;disable irq
+	cld						;;disable decimal mode
+	ldx	#$FF
+	txs						;;setup stack
+	inx
+-	sta	$000,x			;;clear ram
+	sta	$100,x
+	sta	$200,x
+	sta	$300,x
+	sta	$400,x
+	sta	$500,x
+	sta	$600,x
+	sta	$700,x
+	inx
+	bne	-
+	
+	;;perform initialization
+	jsr	initnes					;;initialize the nes
+	jsr	ppuwait					;;let ppu warm up, wait for vblank
+	jsr	ppuwait
+	jsr	setupppu					;;copy all ppu data and setup other stuff
+	jsr	setupnsf					;;setup nsf and copy nsf strings to nametable
+
+	swap	1							;;map in the other bank, nmi will use it
 
 	ldsty	$00,PPUSCROLL			;;reset scroll to 0,0
 	ldsty	$00,PPUSCROLL
 	ldsty	$1E,PPUMASK				;;enable rendering
 
-	jsr	timerreset				;;reset timer
-	lda	NSF_STARTSONG			;;load starting song
-	sec
-	sbc	#1
-	ldx	#0							;;this is ntsc/pal byte (shouldn't always be 0)
-	jsr	nsfinit					;;init song
+	ldsty	$00,PADDATA
+	ldsty	$00,PADDATA2
+
+	jsr	startsong
 
 	ldsty	$01,IRQENABLE			;;enable irq counter
 	ldsty	$80,PPUCTRL				;;enable nmi
@@ -400,34 +403,199 @@ irq:
 nmi:
 	pushregs					;;save registers
 
-	inc	NMICOUNTER
-
 	lda	#%00000000		;;disable NMI
 	sta	PPUCTRL
 
-	ldx	PPUSTATUS		;;reset toggle
-	ldx	#0					;;restore scroll to 0,0
-	stx.w	PPUSCROLL
-	stx.w	PPUSCROLL
+	jsr	drawtimer
+	jsr	drawsong
+
+	ldsty	$00,PPUSCROLL	;;scroll x offset
+	ldsty	$00,PPUSCROLL	;;scroll y offset
 
 	jsr	scrollinc		;;increment scrolling
 	jsr	timerinc			;;increment nsf play timer
+	jsr	readpads2		;;read controller buttons
 
-	ldsty	$21,PPUADDR		;;high byte of destination address
-	ldsty	$44,PPUADDR		;;low byte of destination address
-	jsr	drawtimer
+	lda	PADDATA			;;load controller data
+	and	#$01				;;mask off right
+	beq	+					;;if 0, then branch
+	jsr	nextsong			;;go to next song
++	lda	PADDATA			;;load controller data
+	and	#$02				;;mask off left
+	beq	+					;;go to previous song
+	jsr	prevsong
 
-	ldsty	$00,PPUSCROLL	;;high byte of destination address
-	ldsty	$00,PPUSCROLL	;;low byte of destination address
-
-	popregs
++	popregs
 	rti
 
-;;increment bottom area scrolling
+;;misc stuff (nmi handler uses most of this)
+.BANK 1 SLOT 1
+.ORG $000
+
+;;draw the play timer
+drawtimer:
+
+	ldsty	$23,PPUADDR		;;high byte of destination address
+	ldsty	$19,PPUADDR		;;low byte of destination address
+
+	lda	#0
+	sta	PPUDATA
+
+	lda	TIME_MINUTES
+	and	#$F0
+	cmp	#0
+	beq	+
+	lsr	a
+	lsr	a
+	lsr	a
+	lsr	a
+	clc
+	adc	#$30
++	sta	PPUDATA
+	lda	TIME_MINUTES
+	and	#$0F
+	clc
+	adc	#$30
+	sta	PPUDATA
+
+	lda	#$3A
+	sta	PPUDATA
+
+	lda	TIME_SECONDS
+	and	#$F0
+	lsr	a
+	lsr	a
+	lsr	a
+	lsr	a
+	clc
+	adc	#$30
+	sta	PPUDATA
+	lda	TIME_SECONDS
+	and	#$0F
+	clc
+	adc	#$30
+	sta	PPUDATA
+
+	rts
+
+drawsong:
+
+	ldsty	$21,PPUADDR		;;high byte of destination address
+	ldsty	$64,PPUADDR		;;low byte of destination address
+
+	lda	CURSONG
+	lsr	a
+	lsr	a
+	lsr	a
+	lsr	a
+	clc
+	adc	#$30
+	sta	PPUDATA
+
+	lda	CURSONG
+	and	#$0F
+	clc
+	adc	#$30
+	sta	PPUDATA
+	
+	lda	#0
+	sta	PPUDATA
+
+	lda	NSF_NUMSONGS
+	lsr	a
+	lsr	a
+	lsr	a
+	lsr	a
+	clc
+	adc	#$30
+	sta	PPUDATA
+
+	lda	NSF_NUMSONGS
+	and	#$0F
+	clc
+	adc	#$30
+	sta	PPUDATA
+
+	rts
+
+;;start song pointed by CURSONG
+startsong:
+	lda	CURSONG
+initsong:
+	ldx	#0							;;this is ntsc/pal byte (shouldn't always be 0)
+	jsr	nsfinit					;;init song
+	jmp	timerreset				;;reset timer
+
+;;go to the next song
+nextsong:
+	lda	CURSONG			;;load current song number
+	tax
+	inx
+	cpx	NSF_NUMSONGS	;;check if we already at last song
+	beq	+					;;branch if already 0
+	clc						;;clear carry
+	adc	#1					;;add 1
+	sta	CURSONG
++	jmp	initsong
+
+;;go to previous song
+prevsong:
+	lda	CURSONG			;;load current song number
+	beq	+					;;branch if already 0
+	sec						;;set carry
+	sbc	#1					;;subtract 1
+	sta	CURSONG
++	jmp	initsong			;;initialize song
+
+;;read controller buttons, stores them in PADDATA
+readpads:
+	ldsty	1,$4016			;;strobe controllers
+	ldsty	0,$4016
+	lda	#0
+	sta	PADDATA
+	ldx	#8
+-	lda	$4016
+	lsr	a
+	rol	PADDATA
+	dex
+	bne	-
+	rts
+
+;;read controller buttons, store up->down changes in PADDATA
+readpads2:
+	jsr	readpads
+	lda	PADDATA
+	tay
+	eor	PADDATA2
+	and	PADDATA
+	sta	PADDATA
+	sty.w	PADDATA2
+	rts
+
+;;increment bottom scrolling area
 scrollinc:
 	ldx	SCROLL_X			;;increment scroll x
 	inx
 	stx.w	SCROLL_X
+	rts
+
+;;increment the play timer
+timerinc:
+	jsr	incframes
+	cpx	#0
+	bne	+
+	jsr	incseconds
+	cpx	#0
+	bne	+
+	jsr	incminutes
++	rts
+
+;;reset play timer
+timerreset:
+	lda	#0
+	sta	TIME_FRAMES
+	sta	TIME_SECONDS
+	sta	TIME_MINUTES
 	rts
 
 ;;increment frame counter
@@ -484,86 +652,6 @@ incminutes:
 	tax
 +	stx.w	TIME_MINUTES
 	rts
-
-;;increment the play timer
-timerinc:
-	jsr	incframes
-	cpx	#0
-	bne	+
-	jsr	incseconds
-	cpx	#0
-	bne	+
-	jsr	incminutes
-+	rts
-
-;;reset play timer
-timerreset:
-	lda	#0
-	sta	TIME_FRAMES
-	sta	TIME_SECONDS
-	sta	TIME_MINUTES
-	rts
-
-;;draw the play timer
-drawtimer:
-	lda	TIME_MINUTES
-	and	#$F0
-	cmp	#0
-	beq	+
-	lsr	a
-	lsr	a
-	lsr	a
-	lsr	a
-	clc
-	adc	#$30
-+	sta	PPUDATA
-	lda	TIME_MINUTES
-	and	#$0F
-	clc
-	adc	#$30
-	sta	PPUDATA
-
-	lda	#$3A
-	sta	PPUDATA
-
-	lda	TIME_SECONDS
-	and	#$F0
-	lsr	a
-	lsr	a
-	lsr	a
-	lsr	a
-	clc
-	adc	#$30
-	sta	PPUDATA
-	lda	TIME_SECONDS
-	and	#$0F
-	clc
-	adc	#$30
-	sta	PPUDATA
-
-	rts
-
-drawsong:
-	rts
-
-playername:
-	.db	"nesemu2 nsf player",0
-
-nowplaying:
-	.db	"Now Playing:",0
-
-songtitle:
-	.db	"Title:",0
-	
-songartist:
-	.db	"Artist:",0
-	
-songcopyright:
-	.db	"Copyright:",0
-
-;;misc stuff (nmi handler uses most of this)
-.BANK 1 SLOT 1
-.ORG $000
 
 ;;chr data
 .BANK 2 SLOT 1

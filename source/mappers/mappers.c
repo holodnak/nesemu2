@@ -122,6 +122,7 @@ static mapper_t *get_mapper(int mapperid)
 
 	//sachen
 	MAPPER(B_SACHEN_TCA01);
+	MAPPER(B_SACHEN_TCU01);
 	MAPPER(B_SACHEN_74LS374N);
 //	MAPPER(B_SACHEN_74LS374NA);
 	MAPPER(B_SACHEN_8259A);
@@ -136,6 +137,7 @@ static mapper_t *get_mapper(int mapperid)
 	//ave
 	MAPPER(B_AVE_NINA_001);
 	MAPPER(B_AVE_NINA_006);
+	MAPPER(B_AVE_D1012);
 
 	//cne
 	MAPPER(B_CNE_FSB);
@@ -159,7 +161,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_REXSOFT_DBZ5);
 	MAPPER(B_REXSOFT_SL1632);
 
-	//other (unknown)
+	//other (bootleg multicarts)
 	MAPPER(B_BMC_15IN1);
 	MAPPER(B_BMC_36IN1);
 	MAPPER(B_BMC_70IN1);
@@ -177,15 +179,30 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_BMC_SUPERHIK4IN1);
 	MAPPER(B_BMC_SUPERHIKXIN1);
 	MAPPER(B_BMC_BALLGAMES11IN1);
+	MAPPER(B_BMC_SUPER42IN1);
+	MAPPER(B_BMC_1200IN1);
+	MAPPER(B_BMC_20IN1);
+	MAPPER(B_BMC_22IN1);
+	MAPPER(B_BMC_31IN1);
+	MAPPER(B_BMC_RESET4IN1);
+	MAPPER(B_BMC_65IN1);
+
+	//other (bootlegs)
 	MAPPER(B_BTL_MARIO1_MALEE2);
 	MAPPER(B_BTL_BIOMIRACLEA);
 	MAPPER(B_BTL_SMB2B);
+
+	//other (unlicensed)
 	MAPPER(B_UNL_RACERMATE);
+
+	//others
 	MAPPER(B_MAGICSERIES);
 	MAPPER(B_COLORDREAMS);
 	MAPPER(B_RUMBLESTATION);
 	MAPPER(B_HES);
 	MAPPER(B_ACTIVE);
+	MAPPER(B_OPENCORP);
+	MAPPER(B_NITRA);
 
 	//homebrew
 	MAPPER(B_TEPPLES);

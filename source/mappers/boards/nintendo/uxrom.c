@@ -31,7 +31,7 @@ static void sync()
 static void reset(int hard)
 {
 	mem_setvramsize(8);
-	latch_init(sync);
+	latch_reset(sync,hard);
 }
 
 MAPPER(B_NINTENDO_UxROM,reset,0,0,latch_state);

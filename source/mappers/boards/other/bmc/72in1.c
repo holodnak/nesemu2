@@ -58,7 +58,7 @@ static void write(u32 addr,u8 data)
 
 static void reset(int hard)
 {
-	latch_init(sync);
+	latch_reset(sync,hard);
 	mem_setreadfunc(5,read);
 	mem_setwritefunc(5,write);
 	if(hard) {

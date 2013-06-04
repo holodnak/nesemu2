@@ -29,7 +29,7 @@ static void sync()
 
 static void reset(int hard)
 {
-	latch_init(sync);
+	latch_reset(sync,hard);
 }
 
 MAPPER(B_COLORDREAMS,reset,0,0,latch_state);

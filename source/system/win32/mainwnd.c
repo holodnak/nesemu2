@@ -92,6 +92,24 @@ static int filedialog(HWND parent,int type,char *buffer,char *title,char *filter
 	return(1);
 }
 
+void loadrom(char *filename)
+{
+	switch(nes_load(filename)) {
+		case 0:
+			log_printf("WndProc:  resetting nes...\n");
+			nes_reset(1);
+			running = config_get_bool("video.pause_on_load") ? 0 : 1;
+			break;
+		default:
+		case 1:
+			MessageBox(0,"Error loading rom","nesemu2",MB_OK);
+			break;
+		case 2:
+			MessageBox(0,"Mapper not supported","nesemu2",MB_OK);
+			break;
+	}
+}
+
 static void file_open(HWND hWnd)
 {
 	char buffer[1024];
@@ -107,11 +125,7 @@ static void file_open(HWND hWnd)
 	if(filedialog(hWnd,0,buffer,"Open NES ROM...",filter,0) != 0)
 		return;
 	log_printf("WndProc:  loading file '%s'\n",buffer);
-	if(nes_load(buffer) == 0) {
-		log_printf("WndProc:  resetting nes...\n");
-		nes_reset(1);
-		running = config_get_bool("video.pause_on_load") ? 0 : 1;
-	}
+	loadrom(buffer);
 }
 
 //

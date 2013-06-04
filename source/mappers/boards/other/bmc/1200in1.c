@@ -23,13 +23,35 @@
 
 static void sync()
 {
-	mem_setprg32(8,latch_addr & 0xFF);
-	mem_setchr8(0,latch_addr & 0xFF);
+	int i;
+	u8 prg;
+
+	prg = ((latch_addr >> 2) & 0x1F) | ((latch_addr & 0x100) >> 3);
+	if(latch_addr & 1) {
+		mem_setprg32(8,prg >> 1);
+	}
+	else {
+		mem_setprg16(0x8,prg);
+		mem_setprg16(0xC,prg);
+	}
+	mem_setvram8(0,0);
+	if(latch_addr & 0x80) {
+		for(i=0;i<8;i++)
+			nes->ppu.writepages[i] = 0;
+	}
+	else {
+		if(latch_addr & 0x200)
+			mem_setprg16(0xC,prg | 7);
+		else
+			mem_setprg16(0xC,prg & ~7);
+	}
+	mem_setmirroring(((latch_addr >> 1) & 1) ^ 1);
 }
 
 static void reset(int hard)
 {
+	mem_setvramsize(8);
 	latch_reset(sync,hard);
 }
 
-MAPPER(B_BMC_21IN1,reset,0,0,latch_state);
+MAPPER(B_BMC_1200IN1,reset,0,0,latch_state);

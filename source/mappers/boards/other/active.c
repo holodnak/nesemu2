@@ -65,7 +65,7 @@ static void writeram(u32 addr,u8 data)
 
 static void reset(int hard)
 {
-	latch_init(sync);
+	latch_reset(sync,hard);
 	read4 = mem_getreadfunc(4);
 	write4 = mem_getwritefunc(4);
 	mem_setreadfunc(4,readram);

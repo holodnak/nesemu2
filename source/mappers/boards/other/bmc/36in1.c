@@ -31,7 +31,7 @@ static void sync()
 
 static void reset(int hard)
 {
-	latch_init(sync);
+	latch_reset(sync,hard);
 }
 
 MAPPER(B_BMC_36IN1,reset,0,0,latch_state);

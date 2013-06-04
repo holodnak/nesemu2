@@ -2,12 +2,11 @@
 system related todo
 -------------------
 input
- . input device code is crap
- . need lookup table to standardize the buttons used in the config file
+ . input device code is still crap
 
 misc
  . implement reading of the xml rom databases
- . need cartdb now!  namco 163 and friends all have the same mapper number
+ . add support for loading multiple cartdb xml files
 
 win32
  . finish the (crappy) input code.  translatekey() misses some keys
@@ -19,7 +18,7 @@ nes related todo
 ----------------
 nes
  ! fix game genie + save states
- ! i think the nes struct should hold the rom filename
+ ? maybe the cart struct needs the filename
 
 cpu
  . add the BRK + NMI bug
@@ -62,6 +61,7 @@ mappers
  . mapper 51 is incomplete
  . mapper 218 (magicfloor) works but isnt implemented properly
  . sl1632 (mapper 116) needs more work
+ . mapper 227 (1200in1) needs chrram protection.
 
 submappers
  . which needs?
@@ -97,6 +97,10 @@ broken games
  . guardian legend status bar...still broken
  . famicom wars intro/title screen is broken
  . ms. pac-man (tengen)
+ . mmc3:  Family Circuit (1988-01-06)(Namco)(JP) (mirroring?)
 
 misc
  . go thru and fix the hard/soft reset code, not everything checks for hard
+
+wiki
+ . add mapper 250 to the nesdev wiki

@@ -37,7 +37,7 @@ static void sync()
 static void reset(int hard)
 {
 	mem_setvramsize(8);
-	latch_init(sync);
+	latch_reset(sync,hard);
 }
 
 MAPPER(B_IREM_TAM_S1,reset,0,0,latch_state);

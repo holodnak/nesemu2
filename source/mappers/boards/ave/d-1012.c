@@ -19,17 +19,66 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+
+static u8 reg[3];
+static readfunc_t oldread;
 
 static void sync()
 {
-	mem_setprg32(8,latch_addr & 0xFF);
-	mem_setchr8(0,latch_addr & 0xFF);
+	if(reg[0] & 0x40) {
+		mem_setprg32(8,(reg[0] & 0xE) | (reg[1] & 1));
+		mem_setchr8(0,((reg[0] & 0xE) << 2) | ((reg[2] >> 4) & 7));
+	}
+	else {
+		mem_setprg32(8,reg[0] & 0xF);
+		mem_setchr8(0,((reg[0] & 0xF) << 2) | ((reg[2] >> 4) & 3));
+	}
+	mem_setmirroring((reg[0] >> 7) ^ 1);
+}
+
+static void write(u32 addr,u8 data)
+{
+	switch(addr & 0xFFF8) {
+		case 0xFF80:
+		case 0xFF88:
+		case 0xFF90:
+		case 0xFF98:
+			if((reg[0] & 0x3F) == 0) {
+				reg[0] = data;
+				sync();
+			}
+			break;
+		case 0xFFE8:
+		case 0xFFF0:
+			reg[2] = data;
+			sync();
+			break;
+	}
+}
+
+static u8 read(u32 addr)
+{
+	u8 data = oldread(addr);
+
+	if(addr >= 0x8000 && (addr & 0xF80) == 0xF80)
+		write(addr,data);
+	return(data);
 }
 
 static void reset(int hard)
 {
-	latch_reset(sync,hard);
+	oldread = cpu_getreadfunc();
+	cpu_setreadfunc(read);
+	mem_setwritefunc(0xF,write);
+	if(hard)
+		reg[0] = reg[1] = reg[2] = 0;
+	sync();
 }
 
-MAPPER(B_BMC_21IN1,reset,0,0,latch_state);
+static void state(int mode,u8 *data)
+{
+	STATE_ARRAY_U8(reg,3);
+	sync();
+}
+
+MAPPER(B_AVE_D1012,reset,0,0,state);

@@ -32,15 +32,17 @@ void latch_write(u32 addr,u8 data)
 	sync();
 }
 
-void latch_init(void (*s)())
+void latch_reset(void (*s)(),int hard)
 {
 	int i;
 
 	sync = s;
 	for(i=8;i<16;i++)
 		mem_setwritefunc(i,latch_write);
-	latch_data = 0;
-	latch_addr = 0;
+	if(hard) {
+		latch_data = 0;
+		latch_addr = 0;
+	}
 	sync();
 }
 

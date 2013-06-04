@@ -65,7 +65,7 @@ static void reset(int r,int hard)
 	mem_setreadfunc(4,read_reg);
 	mem_setwritefunc(4,write_reg);
 	reg[0] = reg[1] = reg[2] = reg[3] = 0;
-	latch_init(sync);
+	latch_reset(sync,hard);
 	mem_setprg32(8,0);
 }
 

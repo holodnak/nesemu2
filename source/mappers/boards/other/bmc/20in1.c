@@ -23,13 +23,38 @@
 
 static void sync()
 {
-	mem_setprg32(8,latch_addr & 0xFF);
-	mem_setchr8(0,latch_addr & 0xFF);
+	u8 prg;
+
+	prg = ((latch_addr >> 8) & 0x3F) | (latch_addr & 0x40);
+	if(latch_addr & 0x20) {
+		mem_setprg16(0x8,prg);
+		mem_setprg16(0xC,prg);
+	}
+	else {
+		mem_setprg32(8,prg >> 1);
+	}
+
+	prg = latch_addr & 0x1E;
+	if(latch_addr & 0x20) {
+		mem_setprg32(8,prg >> 1);
+	}
+	else {
+		mem_setprg16(0x8,prg);
+		mem_setprg16(0xC,prg);
+	}
+	mem_setvram8(0,0);
+	switch((latch_addr >> 6) & 3) {
+		case 0:	mem_setmirroring(MIRROR_1L);	break;
+		case 1:	mem_setmirroring(MIRROR_V);	break;
+		case 2:	mem_setmirroring(MIRROR_H);	break;
+		case 3:	mem_setmirroring2(0,1,1,1);	break;
+	}
 }
 
 static void reset(int hard)
 {
+	mem_setvramsize(8);
 	latch_reset(sync,hard);
 }
 
-MAPPER(B_BMC_21IN1,reset,0,0,latch_state);
+MAPPER(B_BMC_20IN1,reset,0,0,latch_state);

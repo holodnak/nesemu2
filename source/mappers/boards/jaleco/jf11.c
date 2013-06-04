@@ -31,7 +31,7 @@ static void reset(int hard)
 {
 	int i;
 
-	latch_init(sync);
+	latch_reset(sync,hard);
 	for(i=8;i<16;i++)
 		mem_setwritefunc(i,0);
 	mem_setwritefunc(6,latch_write);

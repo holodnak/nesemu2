@@ -39,7 +39,7 @@ static void reset(int hard)
 	if(nes->cart->chr.size == 0) {
 		mem_setvramsize(8);
 	}
-	latch_init(sync);
+	latch_reset(sync,hard);
 }
 
 MAPPER(B_SUNSOFT_2,reset,0,0,latch_state);

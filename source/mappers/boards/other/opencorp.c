@@ -19,17 +19,71 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+
+static u8 prg,chr[8],chrhi[8];
 
 static void sync()
 {
-	mem_setprg32(8,latch_addr & 0xFF);
-	mem_setchr8(0,latch_addr & 0xFF);
+	int i;
+
+	mem_setwram8(0x6,0);
+	mem_setprg16(0x8,prg);
+	mem_setprg16(0xC,0xFF);
+	for(i=0;i<8;i++)
+		mem_setchr1(i,chr[i] | (chrhi[i] << 8));
+}
+
+static void write(u32 addr,u8 data)
+{
+	switch(addr) {
+		case 0xC000:
+		case 0xC001:
+		case 0xC002:
+		case 0xC003:
+			chr[addr & 3] = data;
+			break;
+		case 0xC004:
+		case 0xC005:
+		case 0xC006:
+		case 0xC007:
+			chrhi[addr & 3] = data;
+			break;
+		case 0xC008:
+		case 0xC009:
+		case 0xC00A:
+		case 0xC00B:
+			chr[(addr & 3) + 4] = data;
+			break;
+		case 0xC00C:
+		case 0xC00D:
+		case 0xC00E:
+		case 0xC00F:
+			chrhi[(addr & 3) + 4] = data;
+			break;
+		case 0xC010:
+			prg = data;	
+			break;
+		default:
+			log_printf("opencorp.c:  unhandled write $%04X = $%02X\n",addr,data);
+			break;
+	}
+	sync();
 }
 
 static void reset(int hard)
 {
-	latch_reset(sync,hard);
+	mem_setwramsize(8);
+	mem_setwritefunc(0xC,write);
+	prg = 0;
+	sync();
 }
 
-MAPPER(B_BMC_21IN1,reset,0,0,latch_state);
+static void state(int mode,u8 *data)
+{
+	STATE_U8(prg);
+	STATE_ARRAY_U8(chr,8);
+	STATE_ARRAY_U8(chrhi,8);
+	sync();
+}
+
+MAPPER(B_OPENCORP,reset,0,0,state);

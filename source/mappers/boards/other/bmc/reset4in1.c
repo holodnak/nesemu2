@@ -19,17 +19,28 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+
+static u8 reg = 0;
 
 static void sync()
 {
-	mem_setprg32(8,latch_addr & 0xFF);
-	mem_setchr8(0,latch_addr & 0xFF);
+	mem_setprg16(0x8,reg);
+	mem_setprg16(0xC,reg);
+	mem_setchr8(0,reg);
 }
 
 static void reset(int hard)
 {
-	latch_reset(sync,hard);
+	if(hard)
+		reg = 0;
+	else
+		reg++;
+	sync();
 }
 
-MAPPER(B_BMC_21IN1,reset,0,0,latch_state);
+static void state(int mode,u8 *data)
+{
+	STATE_U8(reg);
+}
+
+MAPPER(B_BMC_RESET4IN1,reset,0,0,state);

@@ -115,7 +115,6 @@ int nes_load_cart(cart_t *c)
 int nes_load(char *filename)
 {
 	cart_t *c;
-	int ret;
 
 	//make sure cart is unload
 	nes_unload();
@@ -135,14 +134,16 @@ int nes_load(char *filename)
 	cartdb_find(c);
 
 	//see if the nes accepts it (mapper is supported)
-	if((ret = nes_load_cart(c)) != 0)
+	if(nes_load_cart(c) != 0) {
 		cart_unload(c);
+		return(2);
+	}
 
 	//nes accepted it, save away the filename
 	else
 		strncpy(nes->romfilename,filename,1024);
 
-	return(ret);
+	return(0);
 }
 
 void nes_unload()

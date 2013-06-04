@@ -32,7 +32,7 @@ static xml_t *cartxml = 0;
 
 int cartdb_init()
 {
-	char *filename = config_get_string("cartdb.filename");
+	char *filename = config_get_eval_string("cartdb.filename");
 
 	if(cartxml) {
 		return(0);
@@ -162,11 +162,24 @@ int cartdb_find(cart_t *cart)
 					//not supported, use mapperid from the rom loader maybe it is different
 					id = cart->mapperid;
 				}
-				else
-				log_printf("cartdb_find:  cart found.  ines mapper %d supported.  (board '%s')\n",n,str ? str : "");
+				else {
+					log_printf("cartdb_find:  cart found.  ines mapper %d supported.  (board '%s')\n",n,str ? str : "");
+
+					//save ines -> unif conversions to add to the unif section
+				{{{{{{{
+					FILE *fp = fopen("c:\\mingw\\home\\ines2unf.txt","at");
+
+					if(fp) {
+						fprintf(fp,"%d = %s\n",n,str ? str : "<UNKNOWN>");
+						fclose(fp);
+					}
+				}}}}}}}
+				}
 			}
 			else
 				log_printf("cartdb_find:  cart found.  unif board '%s' supported.\n",str);
+
+			cart->mapperid = id;
 			return(0);
 		}
 	}

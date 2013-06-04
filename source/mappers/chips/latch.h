@@ -25,7 +25,7 @@ extern u8 latch_data;
 extern u32 latch_addr;
 
 void latch_write(u32 addr,u8 data);
-void latch_init(void (*sync)());
+void latch_reset(void (*sync)(),int hard);
 void latch_state(int mode,u8 *data);
 
 #endif

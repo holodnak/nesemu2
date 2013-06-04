@@ -19,17 +19,47 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+
+static writefunc_t write4;
+static u8 prg,chr;
 
 static void sync()
 {
-	mem_setprg32(8,latch_addr & 0xFF);
-	mem_setchr8(0,latch_addr & 0xFF);
+	mem_setprg32(8,prg);
+	mem_setchr8(0,chr);
+}
+
+static void write(u32 addr,u8 data)
+{
+	if(addr < 0x4020) {
+		write4(addr,data);
+		return;
+	}
+	if((addr & 0x103) == 0x102) {
+		prg = (data >> 2) & 1;
+		chr = (data >> 3) & 0xF;
+		sync();
+	}
 }
 
 static void reset(int hard)
 {
-	latch_reset(sync,hard);
+	int i;
+
+	write4 = mem_getwritefunc(4);
+	for(i=4;i<16;i++)
+		mem_setwritefunc(i,write);
+	if(hard) {
+		prg = chr = 0;
+	}
+	sync();
 }
 
-MAPPER(B_BMC_21IN1,reset,0,0,latch_state);
+static void state(int mode,u8 *data)
+{
+	STATE_U8(prg);
+	STATE_U8(chr);
+	sync();
+}
+
+MAPPER(B_SACHEN_TCU01,reset,0,0,0);

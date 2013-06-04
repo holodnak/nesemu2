@@ -32,7 +32,7 @@ static void sync()
 
 static void reset(int hard)
 {
-	latch_init(sync);
+	latch_reset(sync,hard);
 }
 
 MAPPER(B_NINTENDO_GxROM_MxROM,reset,0,0,latch_state);

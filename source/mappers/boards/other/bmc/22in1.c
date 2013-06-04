@@ -21,15 +21,38 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/latch.h"
 
+static u8 mode = 0;
+
 static void sync()
 {
-	mem_setprg32(8,latch_addr & 0xFF);
-	mem_setchr8(0,latch_addr & 0xFF);
+	//multicart mode
+	if(mode) {
+		if(latch_data & 0x20) {
+			mem_setprg16(0x8,(latch_data & 0x1F) + 8);
+			mem_setprg16(0x8,(latch_data & 0x1F) + 8);
+		}
+		else {
+			mem_setprg32(8,((latch_data >> 1) & 0xF) + 4);
+		}
+		mem_setmirroring((latch_data >> 6) & 1);
+	}
+
+	//contra mode
+	else {
+		mem_setprg16(0x8,latch_data);
+		mem_setprg16(0xC,7);
+		mem_setmirroring(MIRROR_V);
+	}
+	mem_setvram8(0,0);
 }
 
 static void reset(int hard)
 {
+	if(hard)
+		mode = 1;
+	mode ^= 1;
+	mem_setvramsize(8);
 	latch_reset(sync,hard);
 }
 
-MAPPER(B_BMC_21IN1,reset,0,0,latch_state);
+MAPPER(B_BMC_22IN1,reset,0,0,latch_state);

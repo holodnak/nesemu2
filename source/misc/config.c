@@ -201,7 +201,7 @@ static vars_t *config_get_defaults()
 	vars_set_int   (ret,F_CONFIG,"nes.log_unhandled_io",		0);
 	vars_set_int   (ret,F_CONFIG,"nes.pause_on_load",			0);
 
-	vars_set_string(ret,F_CONFIG,"cartdb.filename",				"NesCarts.xml");
+	vars_set_string(ret,F_CONFIG,"cartdb.filename",				"%path.data%/NesCarts.xml");
 
 	vars_set_string(ret,0,"version",VERSION);
 	return(ret);

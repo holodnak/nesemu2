@@ -64,10 +64,6 @@ static int parse_ines20_header(cart_t *ret,u8 *header)
 
 	//get internal board id
 	ret->mapperid = mapper_get_mapperid_ines20(mapper,submapper);
-	if(ret->mapperid < 0) {
-		log_printf("parse_ines20_header:  ines 2.0 mapper %d.%d unsupported\n",mapper,submapper);
-		return(1);
-	}
 
 	return(0);
 }

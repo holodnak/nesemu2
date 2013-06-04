@@ -100,8 +100,7 @@ enum boardid_e {
 	B_SUNSOFT_4,
 	B_SUNSOFT_5B,
 
-	//unlicensed
-	B_UNL_H2288,
+	//bootleg multicarts
 	B_BMC_15IN1,
 	B_BMC_36IN1,
 	B_BMC_70IN1,
@@ -119,22 +118,36 @@ enum boardid_e {
 	B_BMC_SUPERHIK4IN1,
 	B_BMC_SUPERHIKXIN1,
 	B_BMC_BALLGAMES11IN1,
+	B_BMC_SUPER42IN1,
+	B_BMC_1200IN1,
+	B_BMC_20IN1,
+	B_BMC_22IN1,
+	B_BMC_31IN1,
+	B_BMC_RESET4IN1,
+	B_BMC_65IN1,
+
+	//bootlegs
 	B_BTL_BIOMIRACLEA,
 	B_BTL_MARIO1_MALEE2,
 	B_BTL_SMB2B,
+
+	//unlicensed
+	B_UNL_H2288,
+	B_UNL_RACERMATE,
+
+	//others
 	B_MAGICSERIES,
 	B_COLORDREAMS,
 	B_RUMBLESTATION,
 	B_HES,
 	B_ACTIVE,
+	B_OPENCORP,
+	B_NITRA,
 
 	//c&e
 	B_CNE_FSB,
 	B_CNE_SHLZ,
 	B_CNE_DECATHLON,
-
-	//racermate
-	B_UNL_RACERMATE,
 
 	//colordreams + few others
 	B_74x377,
@@ -153,6 +166,7 @@ enum boardid_e {
 
 	//sachen
 	B_SACHEN_TCA01,
+	B_SACHEN_TCU01,
 	B_SACHEN_74LS374N,
 	B_SACHEN_74LS374NA,
 	B_SACHEN_8259A,
@@ -178,6 +192,7 @@ enum boardid_e {
 	//ave
 	B_AVE_NINA_001,
 	B_AVE_NINA_006,
+	B_AVE_D1012,
 
 	//kaiser
 	B_KAISER_KS202,

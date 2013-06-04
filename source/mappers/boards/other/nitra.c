@@ -19,17 +19,22 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+#include "mappers/chips/mmc3.h"
 
-static void sync()
+static void write(u32 addr,u8 data)
 {
-	mem_setprg32(8,latch_addr & 0xFF);
-	mem_setchr8(0,latch_addr & 0xFF);
+//	data = addr & 0xFF;
+//	addr = (addr & 0xE000) | (addr >> 10 & 1);
+	mmc3_write((addr & 0xE000) | (addr >> 10 & 1),addr & 0xFF);
 }
 
 static void reset(int hard)
 {
-	latch_reset(sync,hard);
+	int i;
+
+	mmc3_reset(C_MMC3B,mmc3_sync,hard);
+	for(i=8;i<16;i++)
+		mem_setwritefunc(i,write);
 }
 
-MAPPER(B_BMC_21IN1,reset,0,0,latch_state);
+MAPPER(B_NITRA,reset,mmc3_ppucycle,0,mmc3_state);

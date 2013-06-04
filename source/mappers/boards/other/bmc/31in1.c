@@ -23,8 +23,15 @@
 
 static void sync()
 {
-	mem_setprg32(8,latch_addr & 0xFF);
-	mem_setchr8(0,latch_addr & 0xFF);
+	if(latch_addr & 0x1E) {
+		mem_setprg16(0x8,latch_addr & 0x1F);
+		mem_setprg16(0xC,latch_addr & 0x1F);
+	}
+	else {
+		mem_setprg32(8,0);
+	}
+	mem_setchr8(0,latch_addr & 0x1F);
+	mem_setmirroring(((latch_addr >> 5) & 1) ^ 1);
 }
 
 static void reset(int hard)
@@ -32,4 +39,4 @@ static void reset(int hard)
 	latch_reset(sync,hard);
 }
 
-MAPPER(B_BMC_21IN1,reset,0,0,latch_state);
+MAPPER(B_BMC_31IN1,reset,0,0,latch_state);

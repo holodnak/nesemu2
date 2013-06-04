@@ -99,6 +99,7 @@ static void console_loghook(char *str)
 	}
 }
 
+void loadrom(char *filename);
 void resizeclient(HWND hwnd,int w,int h);
 
 int APIENTRY WinMain(HINSTANCE hInstance,
@@ -139,10 +140,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		if((p2 = strchr(p,'\"')) != 0)
 			*p2 = 0;
 	}
-	log_printf("trying lpcmdline as filename (%s)...\n",p);
-	if(nes_load(p) == 0) {
-		nes_reset(1);
-		running = 1;
+
+	if(strcmp(p,"") != 0) {
+		log_printf("trying lpcmdline as filename (%s)...\n",p);
+		loadrom(p);
 	}
 
 	mem_free(cmdline);

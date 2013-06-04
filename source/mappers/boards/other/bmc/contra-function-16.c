@@ -64,7 +64,7 @@ static void reset(int hard)
 {
 	mem_setvramsize(8);
 	mem_setvram8(0,0);
-	latch_init(sync);
+	latch_reset(sync,hard);
 }
 
 MAPPER(B_BMC_CONTRA_FUNCTION_16,reset,0,0,latch_state);

@@ -28,7 +28,7 @@ static void sync()
 
 static void reset(int hard)
 {
-	latch_init(sync);
+	latch_reset(sync,hard);
 	mem_setprg16(0x8,0);
 	mem_setprg16(0xC,(u32)-1);
 }

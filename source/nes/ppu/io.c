@@ -47,22 +47,21 @@ static u8 read_ppu_memory(u32 addr)
 static void write_ppu_memory(u32 addr,u8 data)
 {
 	u8 page = (addr >> 10) & 0xF;
+	cache_t *cache,*cache_hflip;
 
 	//check if mapped to memory pointer
 	if(nes->ppu.writepages[page]) {
 		nes->ppu.writepages[page][addr & 0x3FF] = data;
 
-		//if address is in chr ram, update the cache
-		if(addr < 0x2000) {
-		/*	if((addr & 0xF) == 0xF)*/ {
-				cache_t *cache = nes->ppu.cachepages[page];
-				cache_t *cache_hflip = nes->ppu.cachepages_hflip[page];
-				u8 *chr = nes->ppu.readpages[page];
-				u32 a = addr & 0x3F0;
+		//we have tile cache for this page, update it
+		cache = nes->ppu.cachepages[page];
+		if(cache) {
+			u8 *chr = nes->ppu.readpages[page];
+			u32 a = addr & 0x3F0;
 
-				cache_tile(chr + a,cache + (a / 8));
-				cache_tile_hflip(chr + a,cache_hflip + (a / 8));
-			}
+			cache_hflip = nes->ppu.cachepages_hflip[page];
+			cache_tile(chr + a,cache + (a / 8));
+			cache_tile_hflip(chr + a,cache_hflip + (a / 8));
 		}
 	}
 
@@ -214,23 +213,23 @@ void ppu_write(u32 addr,u8 data)
 			return;
 		case 5:				//scroll
 			if(TOGGLE == 0) { //first write
-				TMPSCROLL = (TMPSCROLL & ~0x001F) | (data >> 3);
+				TMPSCROLL = (TMPSCROLL & 0x7FE0) | (data >> 3);
 				SCROLLX = data & 7;
 				TOGGLE = 1;
 			}
 			else { //second write
-				TMPSCROLL &= ~0x73E0;
+				TMPSCROLL &= 0x0C1F;
 				TMPSCROLL |= ((data & 0xF8) << 2) | ((data & 7) << 12);
 				TOGGLE = 0;
 			}
 			return;
 		case 6:				//vram addr
 			if(TOGGLE == 0) { //first write
-				TMPSCROLL = (TMPSCROLL & ~0xFF00) | ((data & 0x7F) << 8);
+				TMPSCROLL = (TMPSCROLL & 0x00FF) | ((data & 0x7F) << 8);
 				TOGGLE = 1;
 			}
 			else { //second write
-				SCROLL = TMPSCROLL = (TMPSCROLL & ~0x00FF) | data;
+				SCROLL = TMPSCROLL = (TMPSCROLL & 0x7F00) | data;
 				TOGGLE = 0;
 			}
 			return;

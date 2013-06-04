@@ -36,31 +36,17 @@ static INLINE void inc_vscroll()
 
 	//update y coordinate
 	if((SCROLL >> 12) == 7) {
-		SCROLL &= ~0x7000;
-		n = (SCROLL >> 5) & 0x1F;
-		if(n == 29) {
-			SCROLL &= ~0x03E0;
-			SCROLL ^= 0x0800;
-		}
-		else if(n == 31)
-			SCROLL &= ~0x03E0;
+		SCROLL &= 0xFFF;
+		n = SCROLL & 0x3E0;
+		if(n == 0x3A0)
+			SCROLL ^= 0xBA0;
+		else if(n == 0x3E0)
+			SCROLL ^= 0x3E0;
 		else
 			SCROLL += 0x20;
 	}
 	else
 		SCROLL += 0x1000;
-/*		if((SCROLL >> 12) == 7) {
-			SCROLL &= 0xFFF;
-			i = SCROLL & 0x3E0;
-			if(i == 0x3A0)
-				SCROLL ^= 0xBA0;
-			else if(i == 0x3E0)
-				SCROLL ^= 0x3E0;
-			else
-				SCROLL += 0x20;
-		}
-		else
-			SCROLL += 0x1000;*/
 }
 
 static INLINE void update_hscroll()

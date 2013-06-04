@@ -28,11 +28,8 @@ cpu
  . LAR, AXA, XAS need verification.
 
 ppu
- . $2005/6 masks for internal scroll temp register (bit15 is ok?)
  . dirty buffer system for cache + vram...NECESSARY ASAP (wizards & warriors)
  . make the other two nametables for four screen handled by cart, not ppu
- ! we are allowing writes to chr-rom because of cache system
- . instead of using the 'fetchpos' variable, calculate where tile data goes
  . add mid-scanline palette changes
 
 mappers
@@ -61,7 +58,6 @@ mappers
  . mapper 202 needs work
  . vrc7 needs work
  . mapper 45 needs tested
- . need mapper 14 rom
  . mapper 19 needs a lot of work
  . mapper 51 is incomplete
  . mapper 218 (magicfloor) works but isnt implemented properly

@@ -22,32 +22,10 @@
 #define __cartdb_h__
 
 #include "types.h"
+#include "nes/cart/cart.h"
 
-typedef struct cartinfo_s {
-	struct cartinfo_s *next;
-	char	*system;
-	u32	crc;
-	char	*sha1;
-	int	dump;
-	char	*dumper,*datedumped;
-} cartinfo_t;
-
-typedef struct game_s {
-	struct game_s *next;
-	struct cartinfo_t *child;
-	struct {
-		char	*name,*altname;
-		char	*cls,*catalog,*publisher,*developer;
-		char	*region;
-		int	players;
-		char	*date;
-	} info;
-} game_t;
-
-typedef struct cartdb_s {
-	char *version;
-	char *author;
-	char *timestamp;
-} cartdb_t;
+int cartdb_init();
+void cartdb_kill();
+int cartdb_find(cart_t *cart);
 
 #endif

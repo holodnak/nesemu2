@@ -1197,6 +1197,9 @@
 						<File
 							RelativePath="..\..\source\mappers\boards\rexsoft\dbz5.c">
 						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\rexsoft\sl1632.c">
+						</File>
 					</Filter>
 				</Filter>
 				<Filter
@@ -1480,6 +1483,28 @@
 				<File
 					RelativePath="..\..\source\cartdb\cartdb.c">
 				</File>
+				<File
+					RelativePath="..\..\source\cartdb\parser.c">
+				</File>
+				<Filter
+					Name="expat"
+					Filter="">
+					<File
+						RelativePath="..\..\source\cartdb\expat\xmlparse.c">
+					</File>
+					<File
+						RelativePath="..\..\source\cartdb\expat\xmlrole.c">
+					</File>
+					<File
+						RelativePath="..\..\source\cartdb\expat\xmltok.c">
+					</File>
+					<File
+						RelativePath="..\..\source\cartdb\expat\xmltok_impl.c">
+					</File>
+					<File
+						RelativePath="..\..\source\cartdb\expat\xmltok_ns.c">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

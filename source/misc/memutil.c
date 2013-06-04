@@ -32,7 +32,7 @@ typedef struct memchunk_s {
 	int flags;
 } memchunk_t;
 
-static memchunk_t chunks[MAX_CHUNKS];
+static memchunk_t *chunks = 0;
 
 static int num_alloc;
 static int num_realloc;
@@ -54,7 +54,10 @@ static char *bytestr(size_t sz)
 
 int memutil_init()
 {
-	memset(chunks,0,sizeof(memchunk_t)*MAX_CHUNKS);
+	if(chunks == 0) {
+		chunks = (memchunk_t*)malloc(sizeof(memchunk_t) * MAX_CHUNKS);
+		memset(chunks,0,sizeof(memchunk_t)*MAX_CHUNKS);
+	}
 	num_alloc = 0;
 	num_realloc = 0;
 	num_free = 0;
@@ -71,6 +74,8 @@ void memutil_kill()
 			log_printf("mem_kill:  memory not free'd in file %s @ line %d\n",chunks[i].file,chunks[i].line);
 		}
 	}
+	free(chunks);
+	chunks = 0;
 	log_printf("mem_kill:  num alloc, realloc, free = %d, %d, %d (%s was allocated)\n",num_alloc,num_realloc,num_free,bytestr(num_bytes));
 }
 

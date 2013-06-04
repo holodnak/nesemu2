@@ -3,7 +3,9 @@
 
 #include "types.h"
 
-u32 crc32(unsigned char *block,unsigned int length);
 void crc32_gentab();
+u32 crc32(unsigned char *block,unsigned int length);
+u32 crc32_byte(u8 data,u32 crc);
+u32 crc32_block(u8 *data,u32 length,u32 crc);
 
 #endif

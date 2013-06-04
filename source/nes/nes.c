@@ -24,6 +24,7 @@
 #include "misc/log.h"
 #include "misc/config.h"
 #include "misc/memutil.h"
+#include "cartdb/cartdb.h"
 #include "nes/nes.h"
 #include "nes/io.h"
 #include "nes/memory.h"
@@ -130,7 +131,8 @@ int nes_load(char *filename)
 	else
 		log_printf("nes_load:  loaded file '%s'\n",filename);
 
-	//check cartdb here
+	//check cartdb for rom (will update the cart_t struct)
+	cartdb_find(c);
 
 	//see if the nes accepts it (mapper is supported)
 	if((ret = nes_load_cart(c)) != 0)

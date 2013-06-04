@@ -181,7 +181,7 @@ u8 ppu_read(u32 addr)
 			}
 
 			//regular read
-			else
+			else 
 				nes->ppu.buf = nes->ppu.latch;
 			break;
 	}
@@ -242,14 +242,10 @@ void ppu_write(u32 addr,u8 data)
 			}
 			else {
 				addr = SCROLL & 0x1F;
-				if((SCROLL & 0xF) == 0) {
-					ppu_pal_write(0x0,data);	ppu_pal_write(0x10,data);
-					ppu_pal_write(0x4,data);	ppu_pal_write(0x14,data);
-					ppu_pal_write(0x8,data);	ppu_pal_write(0x18,data);
-					ppu_pal_write(0xC,data);	ppu_pal_write(0x1C,data);
-				}
-				else if(SCROLL & 3)
-					ppu_pal_write(addr,data);
+				data &= 0x3F;
+				ppu_pal_write(addr,data);
+				if((addr & 3) == 0)
+					ppu_pal_write(addr ^ 0x10,data);
 			}
 			r2007increment();
 			return;

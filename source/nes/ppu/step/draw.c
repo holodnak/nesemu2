@@ -23,9 +23,14 @@ static INLINE void drawpixel()
 	u8 *dest = nes->ppu.linebuffer;
 	u8 *src = nes->ppu.tilebuffer;
 	int pos = LINECYCLES - 1;
+	u8 pixel;
 
-	if(pos >= 8 || (nes->ppu.control1 & 2))
-		dest[pos] = src[pos + nes->ppu.scrollx] | (nes->ppu.control1 & 0xE0);
+	if(pos >= 8 || (nes->ppu.control1 & 2)) {
+		pixel = src[pos + nes->ppu.scrollx];
+		if((pixel & 3) == 0)
+			pixel = 0;
+		dest[pos] = pixel | (nes->ppu.control1 & 0xE0);
+	}
 	else
 		dest[pos] = 0;
 #ifdef ACCURATE_SPRITE0

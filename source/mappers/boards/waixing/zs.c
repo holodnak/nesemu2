@@ -21,43 +21,19 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/latch.h"
 
-/*
-bmc/65in1.c:  write $8100 = $A2
-bmc/65in1.c:  write $8001 = $00
-
-bmc/65in1.c:  write $F044 = $00 -- 1111-0000 0100-0100
-
-bmc/65in1.c:  write $F06E = $00 -- 1111-0000 0110-1110
-
-bmc/65in1.c:  write $F282 = $00 -- 1111-0010 1000-0010
-
-bmc/65in1.c:  write $F2AB = $00 -- 1111-0010 1010-1011
-*/
 static void sync()
 {
-	u8 prg = 0;
-	u8 chr = 0;
-
-	prg = (latch_addr >> 5) & 0xF;
-	prg |= (latch_addr >> 1) & 0x10;
-	chr = latch_addr & 7;
-	mem_setprg32(8,prg);
-	mem_setchr8(0,chr);
-}
-
-static void write(u32 addr,u8 data)
-{
-	log_printf("bmc/65in1.c:  write $%04X = $%02X\n",addr,data);
-	latch_write(addr,data);
+	mem_setprg32(8,(latch_addr >> 3) & 0xF);
+	mem_setvram8(0,0);
+	mem_setwram8(6,0);
+	mem_setmirroring(((latch_addr >> 1) & 1) ^ 1);
 }
 
 static void reset(int hard)
 {
-	int i;
-
+	mem_setvramsize(8);
+	mem_setwramsize(2);
 	latch_reset(sync,hard);
-	for(i=8;i<16;i++)
-		mem_setwritefunc(i,write);
 }
 
-MAPPER(B_BMC_65IN1,reset,0,0,latch_state);
+MAPPER(B_WAIXING_ZS,reset,0,0,latch_state);

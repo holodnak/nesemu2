@@ -19,45 +19,67 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/latch.h"
+#include "mappers/chips/mmc3.h"
 
-/*
-bmc/65in1.c:  write $8100 = $A2
-bmc/65in1.c:  write $8001 = $00
+static u8 reg,xor;
+static writefunc_t writeA;
+static u8 *wram;
 
-bmc/65in1.c:  write $F044 = $00 -- 1111-0000 0100-0100
-
-bmc/65in1.c:  write $F06E = $00 -- 1111-0000 0110-1110
-
-bmc/65in1.c:  write $F282 = $00 -- 1111-0010 1000-0010
-
-bmc/65in1.c:  write $F2AB = $00 -- 1111-0010 1010-1011
-*/
 static void sync()
 {
-	u8 prg = 0;
-	u8 chr = 0;
+	mmc3_syncprg(0xFF,0);
+	mmc3_syncchr(0xFF,0);
+	mmc3_syncmirror();
+}
 
-	prg = (latch_addr >> 5) & 0xF;
-	prg |= (latch_addr >> 1) & 0x10;
-	chr = latch_addr & 7;
-	mem_setprg32(8,prg);
-	mem_setchr8(0,chr);
+static u8 read_wram(u32 addr)
+{
+	return(wram[addr & 0x1FFF] ^ (xor & reg));
+}
+
+static void write_wram(u32 addr,u8 data)
+{
+	wram[addr & 0x1FFF] = data;
 }
 
 static void write(u32 addr,u8 data)
 {
-	log_printf("bmc/65in1.c:  write $%04X = $%02X\n",addr,data);
-	latch_write(addr,data);
+	switch(addr & 0xF000) {
+		case 0x8000:
+		case 0x9000:
+			if((addr & 1) == 0)
+				reg = 0;
+			break;
+		case 0xA000:
+			if(addr & 1)
+				xor = data;
+			break;
+	}
+	mmc3_write(addr,data);
 }
 
 static void reset(int hard)
 {
-	int i;
-
-	latch_reset(sync,hard);
-	for(i=8;i<16;i++)
-		mem_setwritefunc(i,write);
+	mmc3_reset(C_MMC3,sync,hard);
+	reg = 0xFF;
+	mem_setwramsize(2);
+	wram = nes->cart->wram.data;
+	mem_unsetcpu8(6);
+	mem_setreadfunc(6,read_wram);
+	mem_setreadfunc(7,read_wram);
+	mem_setwritefunc(6,write_wram);
+	mem_setwritefunc(7,write_wram);
+	mem_setwritefunc(0x8,write);
+	mem_setwritefunc(0x9,write);
+	mem_setwritefunc(0xA,write);
+	sync();
 }
 
-MAPPER(B_BMC_65IN1,reset,0,0,latch_state);
+static void state(int mode,u8 *data)
+{
+	STATE_U8(reg);
+	STATE_U8(xor);
+	mmc3_state(mode,data);
+}
+
+MAPPER(B_BTL_PIKACHUY2K,reset,mmc3_ppucycle,0,state);

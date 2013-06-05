@@ -34,6 +34,10 @@ static int parse_ines_header(cart_t *ret,u8 *header)
 	ret->prg.size = header[4] * 0x4000;
 	ret->chr.size = header[5] * 0x2000;
 
+	//kludge necessary for 4mb of prgrom
+	if(ret->prg.size == 0)
+		ret->prg.size = 256 * 0x4000;
+
 	//mirroring info
 	ret->mirroring = header[6] & 1;
 	if(header[6] & 8)

@@ -191,9 +191,6 @@
 					<Filter
 						Name="ntsc"
 						Filter="">
-						<File
-							RelativePath="..\..\source\system\common\filters\nes_ntsc\ntsc.c">
-						</File>
 					</Filter>
 					<Filter
 						Name="draw"
@@ -1053,6 +1050,9 @@
 								RelativePath="..\..\source\mappers\boards\other\bmc\fk23c.c">
 							</File>
 							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\goldengame260in1.c">
+							</File>
+							<File
 								RelativePath="..\..\source\mappers\boards\other\bmc\mario7in1.c">
 							</File>
 							<File
@@ -1079,6 +1079,9 @@
 							</File>
 							<File
 								RelativePath="..\..\source\mappers\boards\other\btl\mario1-malee2.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\btl\pikachuy2k.c">
 							</File>
 							<File
 								RelativePath="..\..\source\mappers\boards\other\btl\smb2b.c">
@@ -1207,6 +1210,12 @@
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\waixing\type-d.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\waixing\type-h.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\waixing\zs.c">
 						</File>
 					</Filter>
 					<Filter

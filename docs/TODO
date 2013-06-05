@@ -19,6 +19,7 @@ nes related todo
 nes
  ! fix game genie + save states
  ? maybe the cart struct needs the filename
+ . how to load snynes encrypted roms?
 
 cpu
  . add the BRK + NMI bug
@@ -62,6 +63,7 @@ mappers
  . mapper 218 (magicfloor) works but isnt implemented properly
  . sl1632 (mapper 116) needs more work
  . mapper 227 (1200in1) needs chrram protection.
+ . finish the 65-in-1 mapper.  need docs.
 
 submappers
  . which needs?

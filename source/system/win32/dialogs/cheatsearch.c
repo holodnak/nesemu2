@@ -18,43 +18,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mappers/mapperinc.h"
+#include <windows.h>
 
-static u8 prg,chr;
-
-static void sync()
+LRESULT CALLBACK CheatSearchDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	mem_setprg32(8,prg);
-	mem_setchr8(0,chr);
-}
+	switch(message) {
 
-static void write(u32 addr,u8 data)
-{
-	if(addr >= 0x8065 && addr <= 0x80E4) {
-		addr -= 0x8065;
-		if(addr < 0x40)
-			prg = addr & 3;
-		else
-			chr = addr & 7;
-		sync();
+		case WM_INITDIALOG:
+			return(TRUE);
+
+		case WM_COMMAND:
+			if(LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+				EndDialog(hDlg,LOWORD(wParam));
+				return(TRUE);
+			}
+			break;
+
 	}
+	return(FALSE);
 }
-
-static void reset(int hard)
-{
-	mem_setwritefunc(8,write);
-	if(hard) {
-		prg = 0;
-		chr = 0;
-	}
-	sync();
-}
-
-static void state(int mode,u8 *data)
-{
-	STATE_U8(prg);
-	STATE_U8(chr);
-	sync();
-}
-
-MAPPER(B_CNE_DECATHLON,reset,0,0,state);

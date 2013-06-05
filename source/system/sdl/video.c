@@ -28,11 +28,10 @@
 #include "system/sdl/console/console.h"
 #include "misc/memutil.h"
 #include "misc/config.h"
-
-//video filters
-#include "system/common/filters/draw/draw.h"
-#include "system/common/filters/interpolate/interpolate.h"
-#include "system/common/filters/scale2x/scalebit.h"
+#include "system/common/filters.h"
+//#include "system/common/filters/draw/draw.h"
+//#include "system/common/filters/interpolate/interpolate.h"
+//#include "system/common/filters/scale2x/scalebit.h"
 
 static SDL_Surface *surface = 0;
 static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;// | SDL_NOFRAME;
@@ -45,23 +44,51 @@ static u64 lasttime = 0;
 static palette_t *palette = 0;
 static u32 *screen = 0;
 static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
+static filter_t *filter;
 
 enum filters_e {
 	F_NONE,
 	F_INTERPOLATE,
 	F_SCALE,
+	F_NTSC,
 };
 
 static int get_filter_int(char *str)
 {
 	if(stricmp("interpolate",str) == 0)	return(F_INTERPOLATE);
 	if(stricmp("scale",str) == 0)			return(F_SCALE);
+	if(stricmp("ntsc",str) == 0)			return(F_NTSC);
 	return(F_NONE);
+}
+
+static filter_t *get_filter(int flt)
+{
+	filter_t *ret = &filter_draw;
+
+	switch(flt) {
+		case F_INTERPOLATE:	ret = &filter_interpolate;		break;
+		case F_SCALE:			ret = &filter_scale;				break;
+//		case F_NTSC:			ret = &filter_ntsc;				break;
+	}
+	return(ret);
+}
+
+static int find_drawfunc()
+{
+	int i;
+
+	for(i=0;filter->modes[i].scale;i++) {
+		if(filter->modes[i].scale == screenscale) {
+			drawfunc = filter->modes[i].draw;
+			return(0);
+		}
+	}
+	return(1);
 }
 
 int video_init()
 {
-	int filter = get_filter_int(config_get_string("video.filter"));
+	int i;
 
 	//setup timer to limit frames
 	interval = (double)system_getfrequency() / 60.0f;
@@ -74,8 +101,18 @@ int video_init()
 	flags &= ~SDL_FULLSCREEN;
 	flags |= config_get_bool("video.fullscreen") ? SDL_FULLSCREEN : 0;
 	screenscale = config_get_int("video.scale");
-	screenw = 256 * screenscale;
-	screenh = 240 * screenscale;
+
+	i = get_filter_int(config_get_string("video.filter"));
+	filter = get_filter((screenscale == 1) ? F_NONE : i);
+
+	if(find_drawfunc() != 0) {
+		log_printf("video_init:  error finding appropriate draw func, using draw1x\n");
+		filter = &filter_draw;
+		drawfunc = filter->modes[0].draw;
+	}
+
+	screenw = filter->width * screenscale;
+	screenh = filter->height * screenscale;
 	screenbpp = 32;
 
 	//initialize surface/window
@@ -85,22 +122,7 @@ int video_init()
 
 	//allocate memory for temp screen buffer
 	screen = mem_realloc(screen,256 * (240 + 16) * (screenbpp / 8) * 4);
-	drawfunc = draw1x;
-	if(screenscale == 2) {
-		if(filter == F_NONE)				drawfunc = draw2x;
-		if(filter == F_INTERPOLATE)	drawfunc = interpolate2x;
-		if(filter == F_SCALE)			drawfunc = scale2x;
-	}
-	if(screenscale == 3) {
-		if(filter == F_NONE)				drawfunc = draw3x;
-		if(filter == F_INTERPOLATE)	drawfunc = interpolate3x;
-		if(filter == F_SCALE)			drawfunc = scale3x;
-	}
-	if(screenscale == 4) {
-		if(filter == F_NONE)				drawfunc = draw4x;
-		if(filter == F_INTERPOLATE)	drawfunc = interpolate4x;
-		if(filter == F_SCALE)			drawfunc = scale4x;
-	}
+
 	//print information
 	log_printf("video initialized:  %dx%dx%d %s\n",screenw,screenh,screenbpp,(flags & SDL_FULLSCREEN) ? "fullscreen" : "windowed");
 

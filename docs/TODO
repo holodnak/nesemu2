@@ -92,6 +92,7 @@ roms
 info
  . reflect world (fds) uses undocument opcode $89
  . $EC22:  ??? (some kind of logic)
+ . Decathlon first opcode is $80
 
 broken games
  . guardian legend status bar...still broken

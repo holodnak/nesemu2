@@ -53,8 +53,10 @@ BEGIN
     END
     POPUP "&View"
     BEGIN
-        MENUITEM "&Debugger...",                ID_VIEW_DEBUGGER
         MENUITEM "&Memory...",                  ID_VIEW_MEMORY
+        MENUITEM "&Debugger...",                ID_VIEW_DEBUGGER
+        MENUITEM "&Cheats...",                  ID_VIEW_CHEATS
+        MENUITEM "&Search...",                  ID_VIEW_SEARCH
         MENUITEM SEPARATOR
         MENUITEM "&Configuration...",           ID_VIEW_CONFIGURATION
         MENUITEM "&Console",                    ID_VIEW_CONSOLE
@@ -285,6 +287,26 @@ BEGIN
     LTEXT           "Expansion",IDC_STATIC,14,142,34,8
 END
 
+IDD_CHEATSEARCH DIALOGEX 0, 0, 244, 259
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Cheat Search"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,187,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,187,24,50,14
+    GROUPBOX        "Search",IDC_STATIC,7,7,172,206
+    LISTBOX         IDC_SEARCHLIST,16,40,83,140,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Begin",IDC_BEGINBUTTON,15,19,50,14
+    EDITTEXT        IDC_EDIT1,71,19,25,14,ES_UPPERCASE | ES_AUTOHSCROLL
+    GROUPBOX        "Refine Search",IDC_STATIC,107,27,65,86
+    PUSHBUTTON      "Equal",IDC_EQUALBUTTON,115,39,50,14
+    PUSHBUTTON      "Not Equal",IDC_NOTEQUALBUTTON,115,57,50,14
+    PUSHBUTTON      "Greater Than",IDC_BUTTON4,115,75,50,14
+    PUSHBUTTON      "Less Than",IDC_BUTTON5,115,93,50,14
+END
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -406,6 +428,14 @@ BEGIN
         RIGHTMARGIN, 239
         TOPMARGIN, 7
         BOTTOMMARGIN, 162
+    END
+
+    IDD_CHEATSEARCH, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 237
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 252
     END
 END
 #endif    // APSTUDIO_INVOKED

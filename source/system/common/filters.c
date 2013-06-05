@@ -18,43 +18,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mappers/mapperinc.h"
+#include "system/common/filters.h"
+#include "system/common/filters/draw/draw.h"
+#include "system/common/filters/interpolate/interpolate.h"
+#include "system/common/filters/scale2x/scalebit.h"
 
-static u8 prg,chr;
+#define FILTER_START(name,width,height)	filter_t filter_ ## name = { #name,width,height, {
+#define FILTER_MODE(scale,func)				{scale,func},
+#define FILTER_END()								{0,0}}};
 
-static void sync()
-{
-	mem_setprg32(8,prg);
-	mem_setchr8(0,chr);
-}
+FILTER_START(draw,256,240)
+	FILTER_MODE(1,draw1x)
+	FILTER_MODE(2,draw2x)
+	FILTER_MODE(3,draw3x)
+	FILTER_MODE(4,draw4x)
+FILTER_END()
 
-static void write(u32 addr,u8 data)
-{
-	if(addr >= 0x8065 && addr <= 0x80E4) {
-		addr -= 0x8065;
-		if(addr < 0x40)
-			prg = addr & 3;
-		else
-			chr = addr & 7;
-		sync();
-	}
-}
+FILTER_START(interpolate,256,240)
+	FILTER_MODE(2,interpolate2x)
+	FILTER_MODE(3,interpolate3x)
+	FILTER_MODE(4,interpolate4x)
+FILTER_END()
 
-static void reset(int hard)
-{
-	mem_setwritefunc(8,write);
-	if(hard) {
-		prg = 0;
-		chr = 0;
-	}
-	sync();
-}
+FILTER_START(scale,256,240)
+	FILTER_MODE(2,scale2x)
+	FILTER_MODE(3,scale3x)
+	FILTER_MODE(4,scale4x)
+FILTER_END()
 
-static void state(int mode,u8 *data)
-{
-	STATE_U8(prg);
-	STATE_U8(chr);
-	sync();
-}
-
-MAPPER(B_CNE_DECATHLON,reset,0,0,state);
+//FILTER_START(ntsc,301,240)
+//	FILTER_MODE(2,ntsc2x)
+//	FILTER_MODE(3,ntsc3x)
+//	FILTER_MODE(4,ntsc4x)
+//FILTER_END()

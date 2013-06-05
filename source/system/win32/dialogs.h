@@ -27,5 +27,6 @@ LRESULT CALLBACK MappersDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 LRESULT CALLBACK ConfigurationDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK DebuggerDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 VOID ConfigurationPropertySheet(HWND hWnd);
+LRESULT CALLBACK CheatSearchDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 #endif

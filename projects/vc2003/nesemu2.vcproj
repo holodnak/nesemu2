@@ -176,36 +176,51 @@
 				<Filter
 					Name="common"
 					Filter="">
+					<File
+						RelativePath="..\..\source\system\common\filters.c">
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								GeneratePreprocessedFile="0"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\system\common\filters.h">
+					</File>
 					<Filter
-						Name="filters"
+						Name="ntsc"
 						Filter="">
-						<Filter
-							Name="draw"
-							Filter="">
-							<File
-								RelativePath="..\..\source\system\common\filters\draw\draw.c">
-							</File>
-						</Filter>
-						<Filter
-							Name="scale2x"
-							Filter="">
-							<File
-								RelativePath="..\..\source\system\common\filters\scale2x\scale2x.c">
-							</File>
-							<File
-								RelativePath="..\..\source\system\common\filters\scale2x\scale3x.c">
-							</File>
-							<File
-								RelativePath="..\..\source\system\common\filters\scale2x\scalebit.c">
-							</File>
-						</Filter>
-						<Filter
-							Name="interpolate"
-							Filter="">
-							<File
-								RelativePath="..\..\source\system\common\filters\interpolate\interpolate.c">
-							</File>
-						</Filter>
+						<File
+							RelativePath="..\..\source\system\common\filters\nes_ntsc\ntsc.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="draw"
+						Filter="">
+						<File
+							RelativePath="..\..\source\system\common\filters\draw\draw.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="scale2x"
+						Filter="">
+						<File
+							RelativePath="..\..\source\system\common\filters\scale2x\scale2x.c">
+						</File>
+						<File
+							RelativePath="..\..\source\system\common\filters\scale2x\scale3x.c">
+						</File>
+						<File
+							RelativePath="..\..\source\system\common\filters\scale2x\scalebit.c">
+						</File>
+					</Filter>
+					<Filter
+						Name="interpolate"
+						Filter="">
+						<File
+							RelativePath="..\..\source\system\common\filters\interpolate\interpolate.c">
+						</File>
 					</Filter>
 				</Filter>
 			</Filter>

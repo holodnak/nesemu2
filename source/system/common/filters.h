@@ -18,43 +18,34 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mappers/mapperinc.h"
+#ifndef __filters_h__
+#define __filters_h__
 
-static u8 prg,chr;
+#include "types.h"
 
-static void sync()
-{
-	mem_setprg32(8,prg);
-	mem_setchr8(0,chr);
-}
+#define FILTER_DECL(name)	extern filter_t filter_ ##name ;
 
-static void write(u32 addr,u8 data)
-{
-	if(addr >= 0x8065 && addr <= 0x80E4) {
-		addr -= 0x8065;
-		if(addr < 0x40)
-			prg = addr & 3;
-		else
-			chr = addr & 7;
-		sync();
-	}
-}
+typedef struct filter_s {
 
-static void reset(int hard)
-{
-	mem_setwritefunc(8,write);
-	if(hard) {
-		prg = 0;
-		chr = 0;
-	}
-	sync();
-}
+	//name of filter
+	char	*name;
 
-static void state(int mode,u8 *data)
-{
-	STATE_U8(prg);
-	STATE_U8(chr);
-	sync();
-}
+	//minimum required output width/height for filter
+	int	width,height;
 
-MAPPER(B_CNE_DECATHLON,reset,0,0,state);
+	struct mode_s {
+		//number of times bigger than original
+		int	scale;
+
+		//function to draw from source to dest
+		void	(*draw)(void*,u32,void*,u32,u32,u32);
+	} modes[8];
+
+} filter_t;
+
+FILTER_DECL(draw);
+FILTER_DECL(interpolate);
+FILTER_DECL(scale);
+FILTER_DECL(ntsc);
+
+#endif

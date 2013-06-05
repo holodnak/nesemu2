@@ -71,7 +71,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\source"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;QUICK_SPRITES;ACCURATE_SPRITE0"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;CPU_UNDOC;QUICK_SPRITES;ACCURATE_SPRITE0"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -147,6 +147,9 @@
 						Filter="">
 						<File
 							RelativePath="..\..\source\system\win32\dialogs\about.c">
+						</File>
+						<File
+							RelativePath="..\..\source\system\win32\dialogs\cheatsearch.c">
 						</File>
 						<File
 							RelativePath="..\..\source\system\win32\dialogs\configuration.c">
@@ -273,156 +276,6 @@
 					</File>
 					<File
 						RelativePath="..\..\source\nes\cpu\helper.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\source\nes\cpu\opcodes.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\source\nes\cpu\opcodes_alu.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\source\nes\cpu\opcodes_branch.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\source\nes\cpu\opcodes_compare.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\source\nes\cpu\opcodes_flag.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\source\nes\cpu\opcodes_incdec.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\source\nes\cpu\opcodes_loadstore.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\source\nes\cpu\opcodes_stack.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\source\nes\cpu\opcodes_transfer.c">
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\source\nes\cpu\opcodes_undocumented.c">
 						<FileConfiguration
 							Name="Debug|Win32"
 							ExcludedFromBuild="TRUE">
@@ -1007,6 +860,9 @@
 								RelativePath="..\..\source\mappers\boards\other\bmc\36in1.c">
 							</File>
 							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\65in1.c">
+							</File>
+							<File
 								RelativePath="..\..\source\mappers\boards\other\bmc\70in1.c">
 							</File>
 							<File
@@ -1029,6 +885,9 @@
 							</File>
 							<File
 								RelativePath="..\..\source\mappers\boards\other\bmc\mario7in1.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\bmc\reset4in1.c">
 							</File>
 							<File
 								RelativePath="..\..\source\mappers\boards\other\bmc\super42in1.c">

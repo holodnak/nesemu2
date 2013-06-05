@@ -21,6 +21,7 @@
 #define IDD_BREAKPOINT                  137
 #define IDR_ACCELERATOR                 138
 #define IDD_CONFIG_GENERAL4             138
+#define IDD_CHEATSEARCH                 139
 #define IDC_EDIT1                       1000
 #define IDC_AEDIT                       1000
 #define IDC_DATAPATHEDIT                1000
@@ -90,6 +91,12 @@
 #define IDC_PORT1COMBO                  1054
 #define IDC_PORT2COMBO                  1055
 #define IDC_EXPANSIONCOMBO              1056
+#define IDC_SEARCHLIST                  1057
+#define IDC_BEGINBUTTON                 1058
+#define IDC_EQUALBUTTON                 1059
+#define IDC_NOTEQUALBUTTON              1060
+#define IDC_BUTTON4                     1061
+#define IDC_BUTTON5                     1062
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -117,6 +124,8 @@
 #define ID_VIEW_FULLSCREEN              32797
 #define ID_CONFIGURATION_VIDEO          32801
 #define ID_NES_PAUSE                    32803
+#define ID_VIEW_CHEATS                  32804
+#define ID_VIEW_SEARCH                  32805
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -124,9 +133,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        139
-#define _APS_NEXT_COMMAND_VALUE         32804
-#define _APS_NEXT_CONTROL_VALUE         1057
+#define _APS_NEXT_RESOURCE_VALUE        140
+#define _APS_NEXT_COMMAND_VALUE         32806
+#define _APS_NEXT_CONTROL_VALUE         1063
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

@@ -298,7 +298,7 @@ static int initwindowed()
 
 static int initfullscreen()
 {
-	if(hConsole)
+	if(GetWindowLong(hConsole,GWL_USERDATA) != 0)
 		ShowWindow(hConsole,SW_MINIMIZE);
 	if(hDebugger)
 		ShowWindow(hDebugger,SW_MINIMIZE);
@@ -452,8 +452,9 @@ void video_kill()
 		SetWindowLongPtr(hWnd,GWL_STYLE,WS_OVERLAPPEDWINDOW);
 		SetMenu(hWnd,hMenu);
 		ShowWindow(hWnd,SW_RESTORE);
-		if(hConsole)
+		if(GetWindowLong(hConsole,GWL_USERDATA) != 0) {
 			ShowWindow(hConsole,SW_RESTORE);
+		}
 		if(hDebugger)
 			ShowWindow(hDebugger,SW_RESTORE);
 	}

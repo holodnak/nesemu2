@@ -201,17 +201,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				DialogBox(hInst,(LPCTSTR)IDD_DEBUGGER,hWnd,(DLGPROC)DebuggerDlg);
 			}
 			break;
+		case ID_VIEW_SEARCH:
+			if(nes->cart) {
+				DialogBox(hInst,(LPCTSTR)IDD_CHEATSEARCH,hWnd,(DLGPROC)CheatSearchDlg);
+			}
+			break;
 		case ID_VIEW_CONSOLE:
-			if(hConsole == 0) {
-				hConsole = CreateDialog(hInst,MAKEINTRESOURCE(IDD_CONSOLE),hWnd,ConsoleProc);
+			hMenu = GetMenu(hWnd);
+			if(GetWindowLong(hConsole,GWL_USERDATA) == 0) {
+				CheckMenuItem(hMenu,ID_VIEW_CONSOLE,MF_CHECKED);
 				ShowWindow(hConsole,SW_SHOW);
+				SetWindowLong(hConsole,GWL_USERDATA,1);
 			}
 			else {
-				DestroyWindow(hConsole);
-				hConsole = 0;
+				CheckMenuItem(hMenu,ID_VIEW_CONSOLE,MF_UNCHECKED);
+				ShowWindow(hConsole,SW_HIDE);
+				SetWindowLong(hConsole,GWL_USERDATA,0);
 			}
-			hMenu = GetMenu(hWnd);
-			CheckMenuItem(hMenu,ID_VIEW_CONSOLE,(hConsole != 0) ? MF_CHECKED : MF_UNCHECKED);
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst,(LPCTSTR)IDD_ABOUT,hWnd,(DLGPROC)AboutDlg);
@@ -307,5 +313,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 	hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDR_ACCELERATOR));
+	hConsole = CreateDialog(hInst,MAKEINTRESOURCE(IDD_CONSOLE),hWnd,ConsoleProc);
+
+	//set to not showing
+	SetWindowLong(hConsole,GWL_USERDATA,0);
 	return((hWnd == 0) ? FALSE : TRUE);
 }

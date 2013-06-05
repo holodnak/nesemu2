@@ -31,14 +31,18 @@ typedef struct filter_s {
 	char	*name;
 
 	//minimum required output width/height for filter
-	int	width,height;
+	int	minwidth,minheight;
+
+	//minimum scale factor
+	int	minscale;
 
 	struct mode_s {
-		//number of times bigger than original
+		//scale factor
 		int	scale;
 
 		//function to draw from source to dest
-		void	(*draw)(void*,u32,void*,u32,u32,u32);
+//		void	(*draw16)(void*,u32,void*,u32,u32,u32);
+		void	(*draw32)(void*,u32,void*,u32,u32,u32);
 	} modes[8];
 
 } filter_t;

@@ -20,6 +20,21 @@
 
 #include "draw.h"
 
+void draw1x_16(u16 *dest,u32 destp,u16 *src,u32 srcp,u32 w,u32 h)
+{
+	u32 x,y;
+
+	destp /= 4;
+	srcp /= 4;
+	for(y=0;y<h;y++) {
+		for(x=0;x<w;x++) {
+			dest[x] = src[x];
+		}
+		src += srcp;
+		dest += destp;
+	}
+}
+
 void draw1x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h)
 {
 	u32 x,y;

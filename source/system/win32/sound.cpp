@@ -211,7 +211,7 @@ void sound_update(void *buffer,int length)
 	} while ((rpos <= next_pos) && (next_pos <= wpos));
 	if(isEnabled) {
 		Try(Buffer->Lock(next_pos * LockSize,LockSize,&bufPtr,&bufBytes,NULL,0,0),"Error locking sound buffer");
-		memcpy(bufPtr, buffer, bufBytes);
+		memcpy(bufPtr,buffer,bufBytes);
 		Try(Buffer->Unlock(bufPtr,bufBytes,NULL,0),"Error unlocking sound buffer");
 		next_pos = (next_pos + 1) % FRAMEBUF;
 	}

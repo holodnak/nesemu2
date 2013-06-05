@@ -23,30 +23,30 @@
 #include "system/common/filters/interpolate/interpolate.h"
 #include "system/common/filters/scale2x/scalebit.h"
 
-#define FILTER_START(name,width,height)	filter_t filter_ ## name = { #name,width,height, {
+#define FILTER_START(name,minw,minh,mins)	filter_t filter_ ## name = { #name,minw,minh,mins, {
 #define FILTER_MODE(scale,func)				{scale,func},
 #define FILTER_END()								{0,0}}};
 
-FILTER_START(draw,256,240)
+FILTER_START(draw,256,240,1)
 	FILTER_MODE(1,draw1x)
 	FILTER_MODE(2,draw2x)
 	FILTER_MODE(3,draw3x)
 	FILTER_MODE(4,draw4x)
 FILTER_END()
 
-FILTER_START(interpolate,256,240)
+FILTER_START(interpolate,512,480,2)
 	FILTER_MODE(2,interpolate2x)
 	FILTER_MODE(3,interpolate3x)
 	FILTER_MODE(4,interpolate4x)
 FILTER_END()
 
-FILTER_START(scale,256,240)
+FILTER_START(scale,512,480,2)
 	FILTER_MODE(2,scale2x)
 	FILTER_MODE(3,scale3x)
 	FILTER_MODE(4,scale4x)
 FILTER_END()
 
-//FILTER_START(ntsc,301,240)
+//FILTER_START(ntsc,602,480,2)
 //	FILTER_MODE(2,ntsc2x)
 //	FILTER_MODE(3,ntsc3x)
 //	FILTER_MODE(4,ntsc4x)

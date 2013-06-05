@@ -79,7 +79,10 @@ static int find_drawfunc()
 
 	for(i=0;filter->modes[i].scale;i++) {
 		if(filter->modes[i].scale == screenscale) {
-			drawfunc = filter->modes[i].draw;
+//			if(screenbpp == 32)
+				drawfunc = filter->modes[i].draw32;
+//			else
+//				drawfunc = filter->modes[i].draw16;
 			return(0);
 		}
 	}
@@ -101,6 +104,7 @@ int video_init()
 	flags &= ~SDL_FULLSCREEN;
 	flags |= config_get_bool("video.fullscreen") ? SDL_FULLSCREEN : 0;
 	screenscale = config_get_int("video.scale");
+	screenbpp = 32;
 
 	i = get_filter_int(config_get_string("video.filter"));
 	filter = get_filter((screenscale == 1) ? F_NONE : i);
@@ -108,12 +112,11 @@ int video_init()
 	if(find_drawfunc() != 0) {
 		log_printf("video_init:  error finding appropriate draw func, using draw1x\n");
 		filter = &filter_draw;
-		drawfunc = filter->modes[0].draw;
+		drawfunc = filter->modes[0].draw32;
 	}
 
-	screenw = filter->width * screenscale;
-	screenh = filter->height * screenscale;
-	screenbpp = 32;
+	screenw = filter->minwidth / filter->minscale * screenscale;
+	screenh = filter->minheight / filter->minscale * screenscale;
 
 	//initialize surface/window
 	surface = SDL_SetVideoMode(screenw,screenh,screenbpp,flags);

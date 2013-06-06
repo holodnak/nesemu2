@@ -46,7 +46,6 @@ mappers
  . finish the namcot 108 based mappers
  . unl-h2288 (earthworm jim) broken
  . mmc5 needs finishing (just breed fails)
- . get roms to test the homebrew 'tepples' mapper and finish it
  . finish mapper 205 (should be working?)
  . mapper 82 (taito x1-017) working except for "Kyuukyoku Harikiri Stadium 3"
  . mapper 47 (nes-qj) needs $A001 register write disable
@@ -60,10 +59,11 @@ mappers
  . mapper 45 needs tested
  . mapper 19 needs a lot of work
  . mapper 51 is incomplete
- . mapper 218 (magicfloor) works but isnt implemented properly
  . sl1632 (mapper 116) needs more work
  . mapper 227 (1200in1) needs chrram protection.
  . finish the 65-in-1 mapper.  need docs.
+ . mapper 112 doesnt work correctly.  need more info.
+ . mapper 114 doesnt work.  need more info.
 
 submappers
  . which needs?
@@ -101,6 +101,7 @@ broken games
  . famicom wars intro/title screen is broken
  . ms. pac-man (tengen)
  . mmc3:  Family Circuit (1988-01-06)(Namco)(JP) (mirroring?)
+ . twin eagle.  needs better timing?!  todo:  dig thru rom code
 
 misc
  . go thru and fix the hard/soft reset code, not everything checks for hard

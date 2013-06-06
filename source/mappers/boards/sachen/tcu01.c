@@ -62,4 +62,4 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_SACHEN_TCU01,reset,0,0,0);
+MAPPER(B_SACHEN_TCU01,reset,0,0,state);

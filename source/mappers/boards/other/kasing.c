@@ -21,18 +21,38 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/mmc3.h"
 
+static u8 reg[2];
+
+static void sync()
+{
+	mmc3_syncprg(0xFF,0x00);
+	if(reg[0] & 0x80) {
+		mem_setprg16(8,reg[0] & 0xF);
+	}
+	mmc3_syncchr(0xFF,(reg[1] & 1) << 8);
+	mmc3_syncmirror();
+}
+
 static void write(u32 addr,u8 data)
 {
-	mmc3_write((addr & 0xE000) | (addr >> 10 & 1),addr & 0xFF);
+	log_printf("other/kasing.c:  write $%04X = $%02X\n");
+	reg[addr & 1] = data;
+	sync();
 }
 
 static void reset(int hard)
 {
-	int i;
-
-	mmc3_reset(C_MMC3B,mmc3_sync,hard);
-	for(i=8;i<16;i++)
-		mem_setwritefunc(i,write);
+	if(hard)
+		reg[0] = reg[1] = 0;
+	mmc3_reset(C_MMC3B,sync,hard);
+	mem_setwritefunc(6,write);
+	mem_setwritefunc(7,write);
 }
 
-MAPPER(B_NITRA,reset,mmc3_ppucycle,0,mmc3_state);
+static void state(int mode,u8 *data)
+{
+	STATE_ARRAY_U8(reg,2);
+	mmc3_state(mode,data);
+}
+
+MAPPER(B_KASING,reset,mmc3_ppucycle,0,state);

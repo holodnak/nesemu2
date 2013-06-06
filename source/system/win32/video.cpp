@@ -484,6 +484,7 @@ void video_endframe()
 //	if(config_get_bool("video.fullscreen")) {
 //		IDirectDraw7_WaitForVerticalBlank(lpDD,DDWAITVB_BLOCKBEGIN,0);
 //	}
+//	lpPrimaryDDS->Blt(&rect,lpSecondaryDDS,NULL,DDBLT_ASYNC,NULL);
 	lpPrimaryDDS->Blt(&rect,lpSecondaryDDS,NULL,DDBLT_WAIT,NULL);
 	if(config_get_bool("video.framelimit")) {
 		do {

@@ -19,20 +19,43 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/mmc3.h"
+
+static writefunc_t write4;
+static u8 reg;
+
+static void sync()
+{
+	mem_setprg32(8,(reg >> 3) & 1);
+	mem_setchr8(0,reg & 7);
+}
 
 static void write(u32 addr,u8 data)
 {
-	mmc3_write((addr & 0xE000) | (addr >> 10 & 1),addr & 0xFF);
+	if(addr < 0x4020) {
+		write4(addr,data);
+		return;
+	}
+	if(addr & 0x100) {
+		reg = data;
+		sync();
+	}
 }
 
 static void reset(int hard)
 {
-	int i;
-
-	mmc3_reset(C_MMC3B,mmc3_sync,hard);
-	for(i=8;i<16;i++)
-		mem_setwritefunc(i,write);
+	write4 = mem_getwritefunc(4);
+	mem_setwritefunc(4,write);
+	mem_setwritefunc(5,write);
+	if(hard) {
+		reg = 0;
+	}
+	sync();
 }
 
-MAPPER(B_NITRA,reset,mmc3_ppucycle,0,mmc3_state);
+static void state(int mode,u8 *data)
+{
+	STATE_U8(reg);
+	sync();
+}
+
+MAPPER(B_SA_0161M,reset,0,0,state);

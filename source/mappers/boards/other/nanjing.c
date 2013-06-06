@@ -19,20 +19,104 @@
  ***************************************************************************/
 
 #include "mappers/mapperinc.h"
-#include "mappers/chips/mmc3.h"
+
+static u8 reg[2],prg,security,trigger,strobe,vram[2];
+
+static void sync()
+{
+	mem_setprg32(8,prg);
+	mem_setvram4(0,vram[0]);
+	mem_setvram4(4,vram[1]);
+	mem_setsram8(6,0);
+}
+
+static u8 read(u32 addr)
+{
+	switch(addr & 0x7700) {
+		case 0x5000:
+			return(4);
+		case 0x5100:
+			return(security);
+		case 0x5500:
+			return(security & trigger);
+	}
+	return((u8)(addr >> 8));
+}
 
 static void write(u32 addr,u8 data)
 {
-	mmc3_write((addr & 0xE000) | (addr >> 10 & 1),addr & 0xFF);
+	if(addr == 0x5101) {
+		u8 tmp = strobe;
+
+		strobe = data;
+		if(tmp && strobe == 0)
+			trigger ^= 0xFF;
+		return;
+	}
+	switch(addr & 0x7300) {
+		case 0x5000:
+			reg[0] = data;
+			prg = (reg[0] & 0xF) | ((reg[1] & 0xF) << 4);
+			if((reg[0] & 0x80) == 0) {
+				vram[0] = 0;
+				vram[1] = 1;
+			}
+			sync();
+			break;
+		case 0x5100:
+			if(data == 6)
+				prg = 3;
+			sync();
+			break;
+		case 0x5200:
+			reg[1] = data;
+			prg = (reg[0] & 0xF) | ((reg[1] & 0xF) << 4);
+			sync();
+			break;
+		case 0x5300:
+			security = data;
+			break;
+	}
 }
 
 static void reset(int hard)
 {
-	int i;
-
-	mmc3_reset(C_MMC3B,mmc3_sync,hard);
-	for(i=8;i<16;i++)
-		mem_setwritefunc(i,write);
+	mem_setreadfunc(5,read);
+	mem_setwritefunc(5,write);
+	mem_setvramsize(8);
+	mem_setsramsize(2);
+	reg[0] = 0xFF;
+	reg[1] = 0x00;
+	strobe = 0xFF;
+	trigger = 0;
+	security = 0;
+	vram[0] = 0;
+	vram[1] = 1;
+	sync();
 }
 
-MAPPER(B_NITRA,reset,mmc3_ppucycle,0,mmc3_state);
+static void ppucycle()
+{
+	if((reg[0] & 0x80) == 0)
+		return;
+	if(SCANLINE == 128) {
+		vram[0] = vram[1] = 1;
+		sync();
+	}
+	else if(SCANLINE == 240) {
+		vram[0] = vram[1] = 0;
+		sync();
+	}
+}
+
+static void state(int mode,u8 *data)
+{
+	STATE_ARRAY_U8(reg,2);
+	STATE_U8(security);
+	STATE_U8(trigger);
+	STATE_U8(strobe);
+	STATE_ARRAY_U8(vram,2);
+	sync();
+}
+
+MAPPER(B_NANJING,reset,ppucycle,0,state);

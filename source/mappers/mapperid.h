@@ -136,6 +136,8 @@ enum boardid_e {
 	//unlicensed
 	B_UNL_H2288,
 	B_UNL_RACERMATE,
+	B_UNL_UY,
+	B_UNL_SUPERLIONKING,
 
 	//others
 	B_MAGICSERIES,
@@ -145,6 +147,9 @@ enum boardid_e {
 	B_ACTIVE,
 	B_OPENCORP,
 	B_NITRA,
+	B_KASING,
+	B_NANJING,
+	B_HOSENKAN,
 
 	//c&e
 	B_CNE_FSB,
@@ -179,6 +184,7 @@ enum boardid_e {
 	B_SA_0037,
 	B_SA_72007,
 	B_SA_72008,
+	B_SA_0161M,
 
 	//camerica
 	B_CAMERICA_BF9093,
@@ -210,6 +216,7 @@ enum boardid_e {
 	//ntdec
 	B_NTDEC_TC112,
 	B_NTDEC_CALTRON6IN1,
+	B_NTDEC_ASDER,
 
 	//rexsoft
 	B_REXSOFT_DBZ5,

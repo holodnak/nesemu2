@@ -23,7 +23,31 @@
 
 static void write(u32 addr,u8 data)
 {
-	mmc3_write((addr & 0xE000) | (addr >> 10 & 1),addr & 0xFF);
+	u8 scramble[8] = {0,3,1,5,6,7,2,4};
+
+	switch(addr & 0xE001) {
+		case 0x8000:
+			break;
+		case 0x8001:
+			mmc3_write(0xA000,data);
+			break;
+		case 0xA000:
+			mmc3_write(0x8000,scramble[data & 7] | (data & 0xC0));
+			break;
+		case 0xA001:
+			break;
+		case 0xC000:
+			mmc3_write(0x8001,data);
+			break;
+		case 0xC001:
+			mmc3_write(0xC000,data);
+			mmc3_write(0xC001,data);
+			break;
+		case 0xE000:
+		case 0xE001:
+			mmc3_write(addr,data);
+			break;
+	}
 }
 
 static void reset(int hard)
@@ -35,4 +59,4 @@ static void reset(int hard)
 		mem_setwritefunc(i,write);
 }
 
-MAPPER(B_NITRA,reset,mmc3_ppucycle,0,mmc3_state);
+MAPPER(B_HOSENKAN,reset,mmc3_ppucycle,0,mmc3_state);

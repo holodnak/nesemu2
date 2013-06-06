@@ -133,6 +133,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_SA_72008);
 	MAPPER(B_SA_0036);
 	MAPPER(B_SA_0037);
+	MAPPER(B_SA_0161M);
 
 	//ave
 	MAPPER(B_AVE_NINA_001);
@@ -158,6 +159,7 @@ static mapper_t *get_mapper(int mapperid)
 	//ntdec
 	MAPPER(B_NTDEC_TC112);
 	MAPPER(B_NTDEC_CALTRON6IN1);
+	MAPPER(B_NTDEC_ASDER);
 
 	//rexsoft
 	MAPPER(B_REXSOFT_DBZ5);
@@ -198,6 +200,8 @@ static mapper_t *get_mapper(int mapperid)
 
 	//other (unlicensed)
 	MAPPER(B_UNL_RACERMATE);
+	MAPPER(B_UNL_UY);
+	MAPPER(B_UNL_SUPERLIONKING);
 
 	//others
 	MAPPER(B_MAGICSERIES);
@@ -207,6 +211,9 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_ACTIVE);
 	MAPPER(B_OPENCORP);
 	MAPPER(B_NITRA);
+	MAPPER(B_KASING);
+	MAPPER(B_NANJING);
+	MAPPER(B_HOSENKAN);
 
 	//homebrew
 	MAPPER(B_TEPPLES);

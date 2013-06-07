@@ -940,6 +940,9 @@
 							RelativePath="..\..\source\mappers\boards\sachen\sa-003x.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\sachen\sa-0161m.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\sachen\sa-7200x.c">
 						</File>
 						<File
@@ -984,7 +987,16 @@
 							RelativePath="..\..\source\mappers\boards\other\hes.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\other\hosenkan.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\kasing.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\other\magicseries.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\other\nanjing.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\other\nitra.c">
@@ -1095,6 +1107,12 @@
 							</File>
 							<File
 								RelativePath="..\..\source\mappers\boards\other\unl\racermate.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\unl\superlionking.c">
+							</File>
+							<File
+								RelativePath="..\..\source\mappers\boards\other\unl\uy.c">
 							</File>
 						</Filter>
 					</Filter>
@@ -1221,6 +1239,9 @@
 					<Filter
 						Name="ntdec"
 						Filter="">
+						<File
+							RelativePath="..\..\source\mappers\boards\ntdec\asder.c">
+						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\ntdec\caltron6in1.c">
 						</File>

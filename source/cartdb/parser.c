@@ -101,7 +101,6 @@ static node_t *create_node(const char *name)
 {
 	node_t *ret = 0;
 
-//	printf("creating node '%s'\n",name);
 	ret = (node_t*)mem_malloc_node(sizeof(node_t));
 	memset(ret,0,sizeof(node_t));
 	ret->name = copystr(name);
@@ -265,4 +264,50 @@ void parser_free(xml_t *xml)
 {
 	free_nodes(xml->root);
 	mem_free(xml);
+}
+
+void parser_merge(xml_t *dest,xml_t **src)
+{
+	node_t *node;
+
+	//ensure we are working with the same types
+	if(strcmp(dest->root->name,(*src)->root->name) != 0) {
+		log_printf("parser_merge:  different root element names, cannot merge\n");
+		return;
+	}
+
+	//find the last node
+	node = dest->root->child;
+	while(node->next) {
+		node = node->next;
+	}
+
+	//move nodes to the dest xml struct
+	node->next = (*src)->root->child;
+	(*src)->root->child = 0;
+
+	//free the rest of the src xml struct
+	parser_free(*src);
+	*src = 0;
+}
+
+#define IS_OK(cc)	((cc) ? "OK" : "Bad!")
+
+void parser_verifymemory()
+{
+	int result;
+
+	result = num_malloc_str - num_free_str;
+	result += num_malloc_node - num_free_node;
+	result += num_malloc_attr - num_free_attr;
+	result += num_malloc - num_free;
+	if(result) {
+		log_printf("xml memory verification:\n");
+		log_printf("------------------------\n");
+		log_printf("  str mallocs:  %d, frees %d (%s)\n",num_malloc_str,num_free_str,IS_OK(num_malloc_str == num_free_str));
+		log_printf("  node mallocs:  %d, frees %d (%s)\n",num_malloc_node,num_free_node,IS_OK(num_malloc_node == num_free_node));
+		log_printf("  attr mallocs:  %d, frees %d (%s)\n",num_malloc_attr,num_free_attr,IS_OK(num_malloc_attr == num_free_attr));
+		log_printf("  total mallocs:  %d, frees %d (%s)\n",num_malloc,num_free,IS_OK(num_malloc == num_free));
+	}
+	log_printf("total bytes used by xml:  %.3fmb\n",(double)num_bytes / 1024.0f / 1024.0f);
 }

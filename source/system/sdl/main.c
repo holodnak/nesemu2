@@ -207,6 +207,8 @@ int main(int argc,char *argv[])
 	//destroy emulator
 	emu_kill();
 
+	parser_verifymemory();
+
 	//return to os
 	return(ret);
 }

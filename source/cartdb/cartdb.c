@@ -30,20 +30,64 @@
 
 static xml_t *cartxml = 0;
 
+/**** these two are also used in vars.c  ...
+	make them un-static so they can be re-used when necessary! ****/
+
+//check if a char is whitespace
+static int iswhitespace(char ch)
+{
+	if(ch == ' ' || ch == '\t' || ch == '\n')
+		return(1);
+	return(0);
+}
+
+//eat whitespace from beginning and end of the string
+static char *eatwhitespace(char *str)
+{
+	char *p,*ret = str;
+
+	while(iswhitespace(*ret))
+		ret++;
+	p = ret + strlen(ret) - 1;
+	while(iswhitespace(*p))
+		*p-- = 0;
+	return(ret);
+}
+
 int cartdb_init()
 {
-	char *filename = config_get_eval_string("cartdb.filename");
+	char filename[1024];
+	char *str,*str2,*p;
+	xml_t *xml;
 
+	config_get_eval_string(filename,"cartdb.filename");
 	if(cartxml) {
 		return(0);
 	}
-	if((cartxml = parser_load(filename)) == 0) {
-		log_printf("cartdb_init:  error loading xml cart database '%s'\n",filename);
-		log_printf("cartdb_init:  continuing without using it\n");
-		return(0);
 
+	str = strtok(filename,";");
+	while(str != 0) {
+		str2 = mem_strdup(str);
+		p = eatwhitespace(str2);
+		if((xml = parser_load(p)) == 0) {
+			log_printf("cartdb_init:  error loading xml cart database '%s'\n",p);
+		}
+		else {
+			log_printf("cartdb_init:  loaded xml cart database '%s'\n",p);
+			if(cartxml == 0)
+				cartxml = xml;
+			else
+				parser_merge(cartxml,&xml);
+		}
+		mem_free(str2);
+		str = strtok(0,";");
 	}
-	log_printf("cartdb_init:  loaded xml cart database '%s'\n",filename);
+
+	if(cartxml == 0) {
+		log_printf("cartdb_init:  no xml databases loaded, continuing without using cartdb\n");
+		return(0);
+	}
+		
 	return(0);
 }
 

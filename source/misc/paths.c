@@ -111,7 +111,7 @@ void paths_makestatefilename(char *romfilename,char *dest,int len)
 	memset(dest,0,len);
 
 	//parse the state path
-	strcpy(dest,config_get_eval_string("path.state"));
+	config_get_eval_string(dest,"path.state");
 
 	//append the path seperator
 	dest[strlen(dest)] = PATH_SEPERATOR;

@@ -7,6 +7,8 @@ input
 misc
  . implement reading of the xml rom databases
  . add support for loading multiple cartdb xml files
+ . when using the config_get_string/config_get_eval_string it should
+   eat whitespace from the beginning and end of the string
 
 win32
  . finish the (crappy) input code.  translatekey() misses some keys

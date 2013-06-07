@@ -29,7 +29,7 @@ void config_load();
 void config_save();
 
 //gets config string variable with variables expanded
-char *config_get_eval_string(char *name);
+char *config_get_eval_string(char *dest,char *name);
 
 //get config var (wraps the vars_get_*() functions)
 char *config_get_string(char *name);

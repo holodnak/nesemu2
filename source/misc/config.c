@@ -201,7 +201,7 @@ static vars_t *config_get_defaults()
 	vars_set_int   (ret,F_CONFIG,"nes.log_unhandled_io",		0);
 	vars_set_int   (ret,F_CONFIG,"nes.pause_on_load",			0);
 
-	vars_set_string(ret,F_CONFIG,"cartdb.filename",				"%path.data%/NesCarts.xml");
+	vars_set_string(ret,F_CONFIG,"cartdb.filename",				"%path.data%/NesCarts.xml;%path.data%/NesCarts2.xml");
 
 	vars_set_string(ret,0,"version",VERSION);
 	return(ret);
@@ -211,6 +211,7 @@ int config_init()
 {
 	vars_t *v;
 	char *str;
+	char tmp[1024];
 
 	//find configuration file
 	if(findconfig(configfilename) == 0)
@@ -236,10 +237,10 @@ int config_init()
 		var_set_string("home",str);
 
 	//make the directories
-	makepath(config_get_eval_string("path.data"));
-	makepath(config_get_eval_string("path.save"));
-	makepath(config_get_eval_string("path.state"));
-	makepath(config_get_eval_string("path.cheat"));
+	makepath(config_get_eval_string(tmp,"path.data"));
+	makepath(config_get_eval_string(tmp,"path.save"));
+	makepath(config_get_eval_string(tmp,"path.state"));
+	makepath(config_get_eval_string(tmp,"path.cheat"));
 
 	return(0);
 }
@@ -257,9 +258,8 @@ void config_kill()
 }
 
 //gets config string variable with variables expanded
-char *config_get_eval_string(char *name)
+char *config_get_eval_string(char *dest,char *name)
 {
-	static char dest[1024];
 	char *tmp,*p,*p2;
 	char varname[64];
 	int pos;
@@ -301,8 +301,9 @@ char *config_get_eval_string(char *name)
 					log_printf("config_get_eval_string:  variable cannot reference itself (var '%s')\n",varname);
 				}
 				else {
-					p2 = var_get_eval_string(varname);
+					char *tmp = (char*)mem_alloc(1024);
 
+					p2 = var_get_eval_string(tmp,varname);
 					if(p2 == 0) {
 						log_printf("config_get_eval_string:  variable '%s' referenced non-existant variable '%s', using '.'\n",name,varname);
 						dest[pos++] = '.';
@@ -312,6 +313,7 @@ char *config_get_eval_string(char *name)
 							dest[pos++] = *p2++;
 						}
 					}
+					mem_free(tmp);
 				}
 			}
 		}

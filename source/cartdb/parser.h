@@ -42,5 +42,7 @@ typedef struct xml_s {
 
 xml_t *parser_load(char *filename);
 void parser_free(xml_t *xml);
+void parser_merge(xml_t *dest,xml_t **src);
+void parser_verifymemory();
 
 #endif

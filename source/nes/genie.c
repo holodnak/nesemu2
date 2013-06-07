@@ -203,7 +203,7 @@ int genie_load()
 		memset(biosfile,0,1024);
 
 		//parse the bios path
-		strcpy(biosfile,config_get_eval_string("path.bios"));
+		config_get_eval_string(biosfile,"path.bios");
 
 		//append the path seperator
 		biosfile[strlen(biosfile)] = PATH_SEPERATOR;

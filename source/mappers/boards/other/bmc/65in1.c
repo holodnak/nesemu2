@@ -21,28 +21,29 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/latch.h"
 
-/*
-bmc/65in1.c:  write $8100 = $A2
-bmc/65in1.c:  write $8001 = $00
+static readfunc_t oldread;
+static u8 mode,dip;
 
-bmc/65in1.c:  write $F044 = $00 -- 1111-0000 0100-0100
-
-bmc/65in1.c:  write $F06E = $00 -- 1111-0000 0110-1110
-
-bmc/65in1.c:  write $F282 = $00 -- 1111-0010 1000-0010
-
-bmc/65in1.c:  write $F2AB = $00 -- 1111-0010 1010-1011
-*/
 static void sync()
 {
-	u8 prg = 0;
-	u8 chr = 0;
+	u8 prglo,prghi,chr;
 
-	prg = (latch_addr >> 5) & 0xF;
-	prg |= (latch_addr >> 1) & 0x10;
-	chr = latch_addr & 7;
-	mem_setprg32(8,prg);
+	mode = (latch_addr >> 8) & 1;
+	prglo = ((latch_addr >> 4) & 0xE) & ~(~latch_addr >> 7 & 1);
+	prghi = ((latch_addr >> 4) & 0xE) | (~latch_addr >> 7 & 1);
+	chr = latch_addr & 0xF;
+	mem_setprg16(0x8,prglo);
+	mem_setprg16(0xC,prghi);
 	mem_setchr8(0,chr);
+	mem_setmirroring(((latch_addr >> 3) & 1) ^ 1);
+}
+
+static u8 read(u32 addr)
+{
+	if(mode && addr >= 0x8000) {
+		return(dip);
+	}
+	return(oldread(addr));
 }
 
 static void write(u32 addr,u8 data)
@@ -55,9 +56,18 @@ static void reset(int hard)
 {
 	int i;
 
+	dip = 0;
 	latch_reset(sync,hard);
+	oldread = cpu_getreadfunc();
+	cpu_setreadfunc(read);
 	for(i=8;i<16;i++)
 		mem_setwritefunc(i,write);
 }
 
-MAPPER(B_BMC_65IN1,reset,0,0,latch_state);
+static void state(int mode,u8 *data)
+{
+	STATE_U8(mode);
+	latch_state(mode,data);
+}
+
+MAPPER(B_BMC_65IN1,reset,0,0,state);

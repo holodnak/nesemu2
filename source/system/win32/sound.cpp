@@ -200,7 +200,7 @@ void sound_update(void *buffer,int length)
 	unsigned long rpos, wpos;
 
 	do {
-		Sleep(1);
+//		Sleep(1);
 		if(isEnabled == 0)
 			return;
 		Try(Buffer->GetCurrentPosition(&rpos, &wpos),"Error getting audio position");

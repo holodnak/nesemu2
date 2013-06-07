@@ -40,6 +40,7 @@ static void sync()
 	//kludge
 	if(written) {
 		mem_setwritefunc(6,0);
+		mem_setwritefunc(7,0);
 		mmc3_syncsram();
 	}
 	mmc3_syncmirror();
@@ -47,8 +48,9 @@ static void sync()
 
 static void write(u32 addr,u8 data)
 {
-	if(written == 0)
-		reg = data;
+	if(written)
+		return;
+	reg = data;
 	written = 1;
 	sync();
 }
@@ -58,6 +60,7 @@ static void reset(int hard)
 	if(hard) {
 		mem_unsetcpu8(6);
 		mem_setwritefunc(6,write);
+		mem_setwritefunc(7,write);
 		written = 0;
 		reg = 0;
 	}
@@ -67,6 +70,7 @@ static void reset(int hard)
 static void state(int mode,u8 *data)
 {
 	STATE_U8(reg);
+	STATE_U8(written);
 	mmc3_state(mode,data);
 }
 

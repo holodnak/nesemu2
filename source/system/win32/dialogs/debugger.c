@@ -21,9 +21,12 @@
 #include <windows.h>
 #include <windowsx.h>
 #include "system/win32/resource.h"
+#include "system/win32/mainwnd.h"
 #include "nes/nes.h"
 
 typedef struct breakpoint_s {
+	struct breakpoint_s *next;
+	char name[64];
 	u8 enabled;
 	u8 type;
 	u8	opcode;
@@ -31,6 +34,7 @@ typedef struct breakpoint_s {
 } breakpoint_t;
 
 static int pc;
+static breakpoint_t *breakpoints = 0;
 
 static void update_disasm(HWND hwnd)
 {
@@ -57,7 +61,7 @@ static void update_disasm(HWND hwnd)
 		ListBox_SetSel(hctrl,TRUE,highlight);
 	si.cbSize = sizeof(SCROLLINFO);
 	si.fMask = SIF_POS;
-	si.nPos = pc;
+	si.nPos = nes->cpu.pc;
 	SetScrollInfo(GetDlgItem(hwnd,IDC_DISASMSCROLL),SB_CTL,&si,TRUE);
 }
 
@@ -77,7 +81,7 @@ static void update_timing(HWND hwnd)
 	char str[32];
 
 	sprintf(str,"%d",nes->ppu.linecycles);	SetWindowText(GetDlgItem(hwnd,IDC_PIXELSTATIC),str);
-	sprintf(str,"%d",nes->ppu.scanline);		SetWindowText(GetDlgItem(hwnd,IDC_LINESTATIC),str);
+	sprintf(str,"%d",nes->ppu.scanline);	SetWindowText(GetDlgItem(hwnd,IDC_LINESTATIC),str);
 	sprintf(str,"%d",nes->ppu.frames);		SetWindowText(GetDlgItem(hwnd,IDC_FRAMESTATIC),str);
 }
 
@@ -88,10 +92,29 @@ static void update(HWND hwnd)
 	update_timing(hwnd);
 }
 
+LRESULT CALLBACK BreakpointDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch(message) {
+
+		case WM_INITDIALOG:
+			return(TRUE);
+
+		case WM_COMMAND:
+			switch(LOWORD(wParam)) {
+				case IDOK:
+				case IDCANCEL:
+					EndDialog(hDlg,LOWORD(wParam));
+					return(TRUE);
+			}
+			break;
+	}
+	return(FALSE);
+}
 
 LRESULT CALLBACK DebuggerDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	SCROLLINFO si;
+	breakpoint_t *bp;
 
 	switch(message) {
 
@@ -112,6 +135,15 @@ LRESULT CALLBACK DebuggerDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 					cpu_execute(1);
 					pc = -1;
 					update(hDlg);
+					return(TRUE);
+				case IDC_SOFTRESETBUTTON:
+					nes_reset(0);
+					return(TRUE);
+				case IDC_HARDRESETBUTTON:
+					nes_reset(1);
+					return(TRUE);
+				case IDC_ADDBPBUTTON:
+					bp = DialogBoxParam(hInst,(LPCTSTR)IDD_BREAKPOINT,hWnd,BreakpointDlg,(LPARAM)0);
 					return(TRUE);
 				case IDOK:
 				case IDCANCEL:

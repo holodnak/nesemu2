@@ -130,8 +130,10 @@ int nes_load(char *filename)
 	else
 		log_printf("nes_load:  loaded file '%s'\n",filename);
 
+	//see if we need to change the mapper (kludges!), then
 	//check cartdb for rom (will update the cart_t struct)
-	cartdb_find(c);
+	if(cartdb_hacks(c) == 0)
+		cartdb_find(c);
 
 	//see if the nes accepts it (mapper is supported)
 	if(nes_load_cart(c) != 0) {

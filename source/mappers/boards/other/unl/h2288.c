@@ -21,40 +21,39 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/mmc3.h"
 
-static u8 security[] = {0,3,1,5,6,7,2,4};
+static u8 security[8] = {0,3,1,5,6,7,2,4};
 static u8 reg[2];
 
 static void sync()
 {
-	mmc3_syncprg(0xFF,0);
-	mmc3_syncchr(0xFF,0);
-	mmc3_syncsram();
-	mmc3_syncmirror();
-	if(reg[0] & 0x40) {
-		u8 bank = (reg[0] & 5) | ((reg[0] >> 2) & 2) | ((reg[0] >> 2) & 8);
+	u8 bank;
 
+	if(reg[0] & 0x40) {
+		bank = (reg[0] & 5) | ((reg[0] >> 2) & 2) | ((reg[0] >> 2) & 8);
 		if(reg[0] & 2)
-			mem_setprg32(8,bank >> 1);
+			mem_setprg32(0x8,bank >> 1);
 		else {
 			mem_setprg16(0x8,bank);
 			mem_setprg16(0xC,bank);
 		}
 	}
+	else
+		mmc3_syncprg(0xFF,0);
+	mmc3_syncchr(0xFF,0);
+	mmc3_syncsram();
+	mmc3_syncmirror();
 }
 
 static u8 read5(u32 addr)
 {
-//	log_message("h2288 protection read: $%04X\n",addr);
-	if(addr < 0x5800)
-		return(0xFF);
 	return(((addr >> 8) & 0xFE) | (((~addr >> 8) | addr) & 1));
 }
 
 static void write5(u32 addr,u8 data)
 {
-	if(addr < 0x5800)
+	if(addr < 0x5800) {
 		return;
-//	log_message("h2288 write: $%04X = $%02X\n",addr,data);
+	}
 	reg[addr & 1] = data;
 	sync();
 }
@@ -69,10 +68,13 @@ static void write_security(u32 addr,u8 data)
 
 static void reset(int hard)
 {
+	if(hard)
+		reg[0] = reg[1] = 0;
 	mem_setreadfunc(5,read5);
 	mem_setwritefunc(5,write5);
-	mmc3_reset(C_MMC3B,mmc3_sync,hard);
+	mmc3_reset(C_MMC3B,sync,hard);
 	mem_setwritefunc(8,write_security);
+	mem_setwritefunc(9,write_security);
 }
 
 static void state(int mode,u8 *data)

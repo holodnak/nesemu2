@@ -199,6 +199,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_BTL_PIKACHUY2K);
 
 	//other (unlicensed)
+	MAPPER(B_UNL_H2288);
 	MAPPER(B_UNL_RACERMATE);
 	MAPPER(B_UNL_UY);
 	MAPPER(B_UNL_SUPERLIONKING);

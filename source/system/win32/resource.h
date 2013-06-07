@@ -68,8 +68,11 @@
 #define IDC_CHECK5                      1030
 #define IDC_CHECK6                      1031
 #define IDC_BUTTON1                     1032
+#define IDC_ADDBPBUTTON                 1032
 #define IDC_BUTTON2                     1033
+#define IDC_EDITBPBUTTON                1033
 #define IDC_BUTTON3                     1034
+#define IDC_DELETEBPBUTTON              1034
 #define IDC_PIXELSTATIC                 1035
 #define IDC_LINESTATIC                  1036
 #define IDC_FRAMESTATIC                 1037
@@ -97,6 +100,9 @@
 #define IDC_NOTEQUALBUTTON              1060
 #define IDC_BUTTON4                     1061
 #define IDC_BUTTON5                     1062
+#define IDC_SOFTRESETBUTTON             1063
+#define IDC_HARDBUTTON                  1064
+#define IDC_HARDRESETBUTTON             1064
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -135,7 +141,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32806
-#define _APS_NEXT_CONTROL_VALUE         1063
+#define _APS_NEXT_CONTROL_VALUE         1065
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

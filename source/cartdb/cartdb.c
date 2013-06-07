@@ -231,3 +231,13 @@ int cartdb_find(cart_t *cart)
 	log_printf("cartdb_find:  cart not found in database.\n");
 	return(1);
 }
+
+//modify mapperid for hack reasons, returns 0 if unchanged
+int cartdb_hacks(cart_t *cart)
+{
+	//need this because of nescartdb changing Fantasy Zone to sunsoft-1, the game uses it
+	//but it is wired to the prg instead of chr.
+	if(cart->mapperid == B_SUNSOFT_2)
+		return(1);
+	return(0);
+}

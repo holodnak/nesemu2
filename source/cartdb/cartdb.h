@@ -27,5 +27,6 @@
 int cartdb_init();
 void cartdb_kill();
 int cartdb_find(cart_t *cart);
+int cartdb_hacks(cart_t *cart);
 
 #endif

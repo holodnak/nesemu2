@@ -66,6 +66,7 @@ mappers
  . finish the 65-in-1 mapper.  need docs.
  . mapper 112 doesnt work correctly.  need more info.
  . mapper 114 doesnt work.  need more info.
+ ! fantasy zone uses sunsoft-1 chip but nescartdb doesnt specify the special wiring
 
 submappers
  . which needs?

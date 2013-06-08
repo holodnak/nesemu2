@@ -8,6 +8,10 @@ SOURCE_MISC = source/misc/config.c source/misc/log.c
 SOURCE_MISC += source/misc/crc32.c source/misc/memutil.c
 SOURCE_MISC += source/misc/vars.c source/misc/paths.c
 
+# cartdb source files
+SOURCE_CARTDB = source/cartdb/cartdb.c source/cartdb/parser.c
+SOURCE_CARTDB += $(foreach dir,$(PATH_SOURCE)/cartdb/expat,$(wildcard $(dir)/*.c))
+
 # emu source files
 SOURCE_EMU = source/emu/emu.c source/emu/commands.c 
 SOURCE_EMU += source/emu/commands/general.c source/emu/commands/nes.c
@@ -37,9 +41,6 @@ SOURCE_SYSTEM_SDL = source/system/sdl/video.c source/system/sdl/input.c source/s
 SOURCE_SYSTEM_SDL += source/system/sdl/main.c source/system/sdl/system.c
 SOURCE_SYSTEM_SDL += source/system/sdl/console/console.c source/system/sdl/console/font.c
 SOURCE_SYSTEM_SDL += source/system/sdl/console/fontdata.c source/system/sdl/console/linebuffer.c
-SOURCE_SYSTEM_SDL += source/system/common/filters/draw/draw.c source/system/common/filters/interpolate/interpolate.c
-SOURCE_SYSTEM_SDL += source/system/common/filters/scale2x/scalebit.c source/system/common/filters/scale2x/scale2x.c
-SOURCE_SYSTEM_SDL += source/system/common/filters/scale2x/scale3x.c
 
 # win32 system files
 SOURCE_SYSTEM_WIN32 = source/system/win32/video.c source/system/win32/input.c source/system/win32/sound.c
@@ -56,8 +57,15 @@ SOURCE_SYSTEM_SDL_LINUX = source/system/linux/stricmp.c
 # sdl/osx system files
 SOURCE_SYSTEM_SDL_OSX = source/system/sdl/osx/SDLmain.o
 
+# common system files
+SOURCE_SYSTEM_COMMON = source/system/common/filters.c
+SOURCE_SYSTEM_COMMON += source/system/common/filters/draw/draw.c source/system/common/filters/interpolate/interpolate.c
+SOURCE_SYSTEM_COMMON += source/system/common/filters/scale2x/scalebit.c source/system/common/filters/scale2x/scale2x.c
+SOURCE_SYSTEM_COMMON += source/system/common/filters/scale2x/scale3x.c
+
 # build list of source files
 SOURCES = $(SOURCE_MISC) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE)
+SOURCES += $(SOURCE_CARTDB)
 
 # extra files to remove
 TRASHFILES = nesemu2.log stdout.txt stderr.txt
@@ -73,24 +81,24 @@ TRASHDIRS += projects/vc2012/Debug projects/vc2012/Release projects/vc2012/Profi
 # system stuff
 ifeq ($(OSTARGET),WIN32)
 	ifeq ($(USESDL),1)
-		SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_WIN32)
+		SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_WIN32) $(SOURCE_SYSTEM_COMMON)
 		LIBS += -lSDL
 		TARGET = $(OUTPUT)-sdl.exe
 	else
 		SOURCES += $(SOURCE_SYSTEM_WIN32)
-		LIBS += -lcomctl32 -lgdi32 -lcomdlg32 -lddraw -ldxguid
+		LIBS += -lcomctl32 -lgdi32 -lcomdlg32 -lddraw -ldsound -ldxguid
 		TARGET = $(OUTPUT)-win32.exe
 	endif
 endif
 
 ifeq ($(OSTARGET),LINUX)
-	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_LINUX)
+	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_LINUX) $(SOURCE_SYSTEM_COMMON)
 	LIBS += -lSDL
 	TARGET = $(OUTPUT)
 endif
 
 ifeq ($(OSTARGET),OSX)
-	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_OSX)
+	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_OSX) $(SOURCE_SYSTEM_COMMON)
 	LIBS += -lSDL
 	TARGET = $(OUTPUT)
 endif

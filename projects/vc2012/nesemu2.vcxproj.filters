@@ -229,6 +229,12 @@
     <Filter Include="Source Files\mappers\boards\rexsoft">
       <UniqueIdentifier>{d0e86730-2a51-43dd-a431-1f93a7f7897c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\cartdb">
+      <UniqueIdentifier>{d706c4d9-c9ae-4721-a3e6-462fc53b0e9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cartdb\expat">
+      <UniqueIdentifier>{f49975b9-0769-49d2-8aed-0e5e25e4dfbc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -424,9 +430,6 @@
       <Filter>Source Files\mappers\boards\sachen</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\sachen\sa-7200x.c">
-      <Filter>Source Files\mappers\boards\sachen</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-74ls374n.c">
       <Filter>Source Files\mappers\boards\sachen</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\konami\vrc1.c">
@@ -765,12 +768,6 @@
     <ClCompile Include="..\..\source\mappers\boards\waixing\sh2.c">
       <Filter>Source Files\mappers\boards\waixing</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-tca01.c">
-      <Filter>Source Files\mappers\boards\sachen</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\mappers\boards\sachen\sachen-8259x.c">
-      <Filter>Source Files\mappers\boards\sachen</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\jaleco\jf11.c">
       <Filter>Source Files\mappers\boards\jaleco</Filter>
     </ClCompile>
@@ -839,6 +836,117 @@
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\chips\namcot-163.c">
       <Filter>Source Files\mappers\chips</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\ave\d-1012.c">
+      <Filter>Source Files\mappers\boards\ave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\camerica\goldenfive.c">
+      <Filter>Source Files\mappers\boards\camerica</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\homebrew\magicfloor.c">
+      <Filter>Source Files\mappers\boards\homebrew</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\ntdec\asder.c">
+      <Filter>Source Files\mappers\boards\ntdec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\22in1.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\31in1.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\65in1.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\1200in1.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\goldengame260in1.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\super42in1.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\20in1.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\btl\pikachuy2k.c">
+      <Filter>Source Files\mappers\boards\other\btl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\unl\superlionking.c">
+      <Filter>Source Files\mappers\boards\other\unl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\unl\uy.c">
+      <Filter>Source Files\mappers\boards\other\unl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\rexsoft\sl1632.c">
+      <Filter>Source Files\mappers\boards\rexsoft</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sachen\tca01.c">
+      <Filter>Source Files\mappers\boards\sachen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sachen\tcu01.c">
+      <Filter>Source Files\mappers\boards\sachen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sachen\74ls374n.c">
+      <Filter>Source Files\mappers\boards\sachen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sachen\8259x.c">
+      <Filter>Source Files\mappers\boards\sachen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\sachen\sa-0161m.c">
+      <Filter>Source Files\mappers\boards\sachen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\waixing\type-d.c">
+      <Filter>Source Files\mappers\boards\waixing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\waixing\type-h.c">
+      <Filter>Source Files\mappers\boards\waixing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\waixing\zs.c">
+      <Filter>Source Files\mappers\boards\waixing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\common\filters.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cartdb\cartdb.c">
+      <Filter>Source Files\cartdb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cartdb\parser.c">
+      <Filter>Source Files\cartdb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cartdb\expat\xmlparse.c">
+      <Filter>Source Files\cartdb\expat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cartdb\expat\xmlrole.c">
+      <Filter>Source Files\cartdb\expat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cartdb\expat\xmltok.c">
+      <Filter>Source Files\cartdb\expat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cartdb\expat\xmltok_impl.c">
+      <Filter>Source Files\cartdb\expat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cartdb\expat\xmltok_ns.c">
+      <Filter>Source Files\cartdb\expat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\hosenkan.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\kasing.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\nanjing.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\nitra.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\opencorp.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\reset4in1.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

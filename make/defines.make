@@ -52,6 +52,7 @@ LIBS =
 
 # compiler/linker flags
 CFLAGS = $(CFLAGS_$(BUILD)) $(DEFINES) -I$(PATH_SOURCE) -D$(OSTARGET) -D$(BUILD)
+CPPFLAGS = $(CFLAGS)
 LDFLAGS = $(LDFLAGS_$(BUILD))
 
 # resource compiler (win32 only)

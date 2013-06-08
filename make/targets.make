@@ -16,7 +16,7 @@ source/system/win32/nesemu2-res.o: source/system/win32/nesemu2.rc
 	$(RC) $(RCFLAGS) $^ $@
 
 # osx objective c
-source/system/osx/%.o: source/system/osx/%.m
+source/system/sdl/osx/%.o: source/system/sdl/osx/%.m
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # output executable

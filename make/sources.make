@@ -54,7 +54,7 @@ SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c source/system
 SOURCE_SYSTEM_SDL_LINUX = source/system/linux/stricmp.c
 
 # sdl/osx system files
-SOURCE_SYSTEM_SDL_OSX = source/system/osx/SDLmain.o
+SOURCE_SYSTEM_SDL_OSX = source/system/sdl/osx/SDLmain.o
 
 # build list of source files
 SOURCES = $(SOURCE_MISC) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE)

@@ -102,6 +102,8 @@ static char *find_attrib(node_t *node,char *name)
 {
 	attribute_t *attrib;
 
+	if(node == 0)
+		return(0);
 	attrib = node->attributes;
 	while(attrib) {
 		if(strcmp(attrib->name,name) == 0) {
@@ -168,11 +170,83 @@ static node_t *get_boardnode(node_t *cartnode)
 	return(node);
 }
 
+static node_t *get_chipnode(node_t *boardnode)
+{	
+	node_t *node;
+
+	for(node = boardnode->child; node; node = node->next) {
+		if(strcmp(node->name,"chip") == 0)
+			break;
+	}
+	return(node);
+}
+
+//finds the correct mapper id using the information given
+static int determine_mapperid(cart_t *cart,char *type,char *mapper,char *chip)
+{
+	int n,ret = B_UNSUPPORTED;
+
+	//turn mapper string into mapper integer
+	n = mapper ? atoi(mapper) : -1;
+
+	//see if this board is supported by the unif mappers
+	if((ret = mapper_get_mapperid_unif(type ? type : "")) == B_UNSUPPORTED) {
+
+		//check if this ines mapper is supported
+		if((ret = mapper_get_mapperid_ines(n)) == B_UNSUPPORTED) {
+
+			//not supported, use mapperid from the rom loader maybe it is different
+			ret = cart->mapperid;
+		}
+		else {
+			log_printf("determine_mapperid:  ines mapper %d supported.  (board '%s')\n",n,type ? type : "");
+
+			//save ines -> unif conversions to add to the unif section
+		{{{{{{{
+			FILE *fp = fopen("c:\\mingw\\home\\ines2unf.txt","at");
+
+			if(fp) {
+				fprintf(fp,"%d = %s\n",n,type ? type : "<UNKNOWN>");
+				fclose(fp);
+			}
+		}}}}}}}
+
+		}
+	}
+	else
+		log_printf("determine_mapperid:  unif board '%s' supported.\n",type);
+
+	//process the board further using chiptype
+
+	//SxROM boards, process mmc1 type
+	if(ret == B_NINTENDO_SxROM) {
+		if(chip == 0)
+			log_printf("determine_mapperid:  using default mmc1 chip (MMC1B)\n");
+		else {
+			if(strncmp(chip,"MMC1A",5) == 0)
+				ret = B_NINTENDO_SxROM_MMC1A;
+			else if(strncmp(chip,"MMC1B",5) == 0)
+				ret = B_NINTENDO_SxROM_MMC1B;
+			else if(strncmp(chip,"MMC1C",5) == 0)
+				ret = B_NINTENDO_SxROM_MMC1C;
+			log_printf("determine_mapperid:  mmc1 chip type:  %s\n",chip);
+		}
+	}
+
+	//leave these alone!
+	if(n == 93) {
+		ret = B_SUNSOFT_2;
+		log_printf("determine_mapperid:  sunsoft-3R board.  using sunsoft-2 mapper.\n");
+	}
+
+	return(ret);
+}
+
 int cartdb_find(cart_t *cart)
 {
-	node_t *cartnode,*boardnode;
-	u32 crc32,n,id;
-	char *str,*str2;
+	node_t *cartnode,*boardnode,*chipnode;
+	u32 crc32;
+	char *str,*str2,*chiptype;
 
 	if(cartxml == 0)
 		return(1);
@@ -195,49 +269,17 @@ int cartdb_find(cart_t *cart)
 			//get unif board name and ines mapper number
 			str = find_attrib(boardnode,"type");
 			str2 = find_attrib(boardnode,"mapper");
-			n = str2 ? atoi(str2) : -1;
 
-			//see if this board is supported by the unif mappers
-			if((id = mapper_get_mapperid_unif(str ? str : "")) == B_UNSUPPORTED) {
+			//find the chip used
+			chipnode = get_chipnode(boardnode);
+			chiptype = find_attrib(chipnode,"type");
 
-				//check if this ines mapper is supported
-				if((id = mapper_get_mapperid_ines(n)) == B_UNSUPPORTED) {
-
-					//not supported, use mapperid from the rom loader maybe it is different
-					id = cart->mapperid;
-				}
-				else {
-					log_printf("cartdb_find:  cart found.  ines mapper %d supported.  (board '%s')\n",n,str ? str : "");
-
-					//save ines -> unif conversions to add to the unif section
-				{{{{{{{
-					FILE *fp = fopen("c:\\mingw\\home\\ines2unf.txt","at");
-
-					if(fp) {
-						fprintf(fp,"%d = %s\n",n,str ? str : "<UNKNOWN>");
-						fclose(fp);
-					}
-				}}}}}}}
-				}
-			}
-			else
-				log_printf("cartdb_find:  cart found.  unif board '%s' supported.\n",str);
-
-			cart->mapperid = id;
+			//set mapperid
+			cart->mapperid = determine_mapperid(cart,str,str2,chiptype);
 			return(0);
 		}
 	}
 
 	log_printf("cartdb_find:  cart not found in database.\n");
 	return(1);
-}
-
-//modify mapperid for hack reasons, returns 0 if unchanged
-int cartdb_hacks(cart_t *cart)
-{
-	//need this because of nescartdb changing Fantasy Zone to sunsoft-1, the game uses it
-	//but it is wired to the prg instead of chr.
-	if(cart->mapperid == B_SUNSOFT_2)
-		return(1);
-	return(0);
 }

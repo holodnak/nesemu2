@@ -253,6 +253,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		video_resize();
 		break;
+	case WM_DROPFILES:
+		DragQueryFile((HDROP)wParam,0,dest,1024);
+		DragFinish((HDROP)wParam);
+		loadrom(dest);
+		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -314,6 +319,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 	hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDR_ACCELERATOR));
 	hConsole = CreateDialog(hInst,MAKEINTRESOURCE(IDD_CONSOLE),hWnd,ConsoleProc);
+	DragAcceptFiles(hWnd,TRUE);
 
 	//set to not showing
 	SetWindowLong(hConsole,GWL_USERDATA,0);

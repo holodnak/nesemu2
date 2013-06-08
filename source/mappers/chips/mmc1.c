@@ -25,6 +25,7 @@ static void (*sync)() = 0;
 static u8 regs[4];
 static u8 latch,latchpos;
 static u8 lastreg;
+static int type;
 
 void mmc1_sync()
 {
@@ -82,18 +83,23 @@ int mmc1_gethighchr()
 		return((regs[1] & 0x1E) | 1);
 }
 
-void mmc1_init(void (*s)())
+void mmc1_reset(int t,void (*s)(),int hard)
 {
 	int i;
 
+	type = t;
 	for(i=8;i<0x10;i++)
 		mem_setwritefunc(i,mmc1_write);
 	sync = s;
-	regs[0] = 0x0C;
-	regs[1] = regs[2] = regs[3] = 0x00;
-	latch = 0;
-	latchpos = 0;
-	lastreg = 0;
+	if(hard) {
+		regs[0] = 0x0C;
+		regs[1] = regs[2] = regs[3] = 0x00;
+		if(type == C_MMC1C)
+			regs[3] = 0x10;
+		latch = 0;
+		latchpos = 0;
+		lastreg = 0;
+	}
 	sync();
 }
 
@@ -156,8 +162,13 @@ void mmc1_syncvram(int aand,int oor)
 
 void mmc1_syncsram()
 {
-	if(regs[3] & 0x10)
-		mem_unsetcpu8(6);
-	else
+	if(type == C_MMC1A) {
 		mem_setsram8(6,0);
+	}
+	else {
+		if(regs[3] & 0x10)
+			mem_unsetcpu8(6);
+		else
+			mem_setsram8(6,0);
+	}
 }

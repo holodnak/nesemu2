@@ -48,7 +48,7 @@ static char opcodes[256][4] = {
 };
 static u8 addrtable[256] = {
 /* x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF         */
-   no,ix,er,ix,zp,zp,zp,zp,no,im,ac,im,ab,ab,ab,ab, /*00-0f*/
+   im,ix,er,ix,zp,zp,zp,zp,no,im,ac,im,ab,ab,ab,ab, /*00-0f*/
    re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*10-1f*/
    ab,ix,er,ix,zp,zp,zp,zp,no,im,ac,im,ab,ab,ab,ab, /*20-2f*/
    re,iy,er,iy,zx,zx,zx,zx,no,ay,im,ay,ax,ax,ax,ax, /*30-3f*/
@@ -86,7 +86,7 @@ static char opcodes[256][4] = {
 };
 static u8 addrtable[256] = {
 /* x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF         */
-   no,ix,er,er,er,zp,zp,er,no,im,ac,er,er,ab,ab,er, /*00-0f*/
+   im,ix,er,er,er,zp,zp,er,no,im,ac,er,er,ab,ab,er, /*00-0f*/
    re,iy,er,er,er,zx,zx,er,no,ay,er,er,er,ax,ax,er, /*10-1f*/
    ab,ix,er,er,zp,zp,zp,er,no,im,ac,er,ab,ab,ab,er, /*20-2f*/
    re,iy,er,er,er,zx,zx,er,no,ay,er,er,er,ax,ax,er, /*30-3f*/
@@ -115,23 +115,23 @@ u16 cpu_disassemble(char *buffer,u16 opcodepos)
 	strcpy(buffer,"");
 	opcode = cpu_read(opcodepos);
 	switch(addrtable[opcode]) {
-		case er:size = 1;sprintf(buffer,"%02X       .u8 $%02x",opcode,opcode);break;
+		case er:size = 1;sprintf(buffer,"%02X       .db $%02x",opcode,opcode);break;
 		case no:size = 1;sprintf(buffer,"%02X       %s",opcode,opcodes[opcode]);break;
 		case ac:size = 1;sprintf(buffer,"%02X       %s a",opcode,opcodes[opcode]);break;
 		case ab:
 			size = 3;
 			addr = cpu_read(opcodepos+1) | (cpu_read(opcodepos+2) << 8);
-			sprintf(buffer,"%02X %02X %02X %s $%04x",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
+			sprintf(buffer,"%02X %02X %02X %s $%04X",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
 			break;
 		case ax:
 			size = 3;
 			addr = cpu_read(opcodepos+1) | (cpu_read(opcodepos+2) << 8);
-			sprintf(buffer,"%02X %02X %02X %s $%04x,x",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
+			sprintf(buffer,"%02X %02X %02X %s $%04X,x",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
 			break;
 		case ay:
 			size = 3;
 			addr = cpu_read(opcodepos+1) | (cpu_read(opcodepos+2) << 8);
-			sprintf(buffer,"%02X %02X %02X %s $%04x,y",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
+			sprintf(buffer,"%02X %02X %02X %s $%04X,y",opcode,addr & 0xFF,(addr >> 8) & 0xFF,opcodes[opcode],addr);
 			break;
 		case in:size = 3;sprintf(buffer,"%02X %02X %02X %s ($%04X)",opcode,cpu_read(opcodepos+1),cpu_read(opcodepos+2),opcodes[opcode],cpu_read(opcodepos+1) | (cpu_read(opcodepos+2) << 8));break;
 		case im:size = 2;sprintf(buffer,"%02X %02X    %s #$%02X",opcode,cpu_read(opcodepos+1),opcodes[opcode],cpu_read(opcodepos+1));break;

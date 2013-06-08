@@ -21,6 +21,9 @@
 #ifndef __mapperinc_h__
 #define __mapperinc_h__
 
+#define C_MMCNUM		0xF0
+#define C_MMCREV		0x0F
+
 #define MAPPER(boardid,reset,ppucycle,cpucycle,state) \
 	mapper_t mapper##boardid = {boardid,reset,ppucycle,cpucycle,state}
 

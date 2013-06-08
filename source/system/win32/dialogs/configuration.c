@@ -23,6 +23,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <prsht.h>
+#include <commctrl.h>
 #include "system/win32/resource.h"
 #include "system/win32/mainwnd.h"
 #include "misc/config.h"
@@ -149,7 +150,7 @@ static int checkassociation(char *extension)
 
 static void modifyassociations(DWORD mask)
 {
-	char *extensions[4] = {".nes",".unf",".unif",".fds"};
+	char *extensions[5] = {".nes",".unf",".unif",".fds",".nsf"};
 	int i,a;
 
 	//if we need the progid, register ir
@@ -157,7 +158,7 @@ static void modifyassociations(DWORD mask)
 		registerprogid();
 
 	//find out what we are associating with
-	for(i=0;i<4;i++) {
+	for(i=0;i<5;i++) {
 
 		//see if we are already associated with this extension
 		a = checkassociation(extensions[i]);
@@ -184,23 +185,46 @@ LRESULT CALLBACK GeneralProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 {
 	LPNMHDR nmhdr;
 	DWORD mask;
+	HWND hwnd;
+	LVCOLUMN lvc;
+	LVITEM lvi;
 
 	switch(message) {
 		case WM_INITDIALOG:
 			CheckDlgButton(hDlg,IDC_NESCHECK,checkassociation(".nes") ? BST_UNCHECKED : BST_CHECKED);
 			CheckDlgButton(hDlg,IDC_UNFCHECK,checkassociation(".unf") ? BST_UNCHECKED : BST_CHECKED);
 			CheckDlgButton(hDlg,IDC_FDSCHECK,checkassociation(".fds") ? BST_UNCHECKED : BST_CHECKED);
+			CheckDlgButton(hDlg,IDC_NSFCHECK,checkassociation(".nsf") ? BST_UNCHECKED : BST_CHECKED);
+			CheckDlgButton(hDlg,IDC_CARTDBENABLECHECK,config_get_bool("cartdb.enabled") ? BST_CHECKED : BST_UNCHECKED);
+			hwnd = GetDlgItem(hDlg,IDC_LIST2);
+
+			memset(&lvc,0,sizeof(LVCOLUMN));
+			lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+			lvc.cx = 200;
+			lvc.pszText = "filename";
+			lvc.cchTextMax = strlen(lvc.pszText);
+
+			SendMessage(hwnd,LVM_INSERTCOLUMN,0,(LPARAM)&lvc);
+
+			memset(&lvi,0,sizeof(LVITEM));
+			lvi.mask = LVIF_TEXT;
+			lvi.pszText = "test...";
+			lvi.cchTextMax = strlen(lvi.pszText);
+			SendMessage(hwnd,LVM_INSERTITEM,0,(LPARAM)&lvi);
+
 			return TRUE;
 
 		case WM_NOTIFY:
 			nmhdr = (LPNMHDR)lParam;
 			switch(nmhdr->code) {
 				case PSN_APPLY:
-					mask =  IsDlgButtonChecked(hDlg,IDC_NESCHECK) ? 1 : 0;
-					mask |= IsDlgButtonChecked(hDlg,IDC_UNFCHECK) ? 2 : 0;
-					mask |= IsDlgButtonChecked(hDlg,IDC_UNFCHECK) ? 4 : 0;
-					mask |= IsDlgButtonChecked(hDlg,IDC_FDSCHECK) ? 8 : 0;
+					mask =  IsDlgButtonChecked(hDlg,IDC_NESCHECK) ? 1  : 0;
+					mask |= IsDlgButtonChecked(hDlg,IDC_UNFCHECK) ? 2  : 0;
+					mask |= IsDlgButtonChecked(hDlg,IDC_UNFCHECK) ? 4  : 0;
+					mask |= IsDlgButtonChecked(hDlg,IDC_FDSCHECK) ? 8  : 0;
+					mask |= IsDlgButtonChecked(hDlg,IDC_NSFCHECK) ? 16 : 0;
 					modifyassociations(mask);
+					config_set_bool("cartdb.enabled",IsDlgButtonChecked(hDlg,IDC_CARTDBENABLECHECK) ? 1 : 0);
 					return(TRUE);
 			}
 			break;

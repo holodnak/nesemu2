@@ -42,26 +42,27 @@ static void update_disasm(HWND hwnd)
 	int i,highlight = -1;
 	char str[128];
 	HWND hctrl = GetDlgItem(hwnd,IDC_DISASMLIST);
+	u32 p = pc;
 
 	//clear listbox
 	ListBox_ResetContent(hctrl);
 
-	if(pc == -1)
-		pc = nes->cpu.pc;
-
 	//draw lines
 	for(i=0;i<29;i++) {
-		sprintf(str,"%04X:  ",pc);
-		if(nes->cpu.pc == pc)
+		memset(str,0,128);
+		sprintf(str,"%04X:\t",p);
+		if(nes->cpu.pc == p)
 			highlight = i;
-		pc = cpu_disassemble(&str[6],pc);
+		p = cpu_disassemble(&str[6],p);
+		str[14] = '\t';
+		str[18] = '\t';
 		ListBox_AddString(hctrl,str);
 	}
 	if(highlight >= 0)
-		ListBox_SetSel(hctrl,TRUE,highlight);
+		ListBox_SetCurSel(hctrl,highlight);
 	si.cbSize = sizeof(SCROLLINFO);
 	si.fMask = SIF_POS;
-	si.nPos = nes->cpu.pc;
+	si.nPos = pc;
 	SetScrollInfo(GetDlgItem(hwnd,IDC_DISASMSCROLL),SB_CTL,&si,TRUE);
 }
 
@@ -119,22 +120,26 @@ LRESULT CALLBACK DebuggerDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 	switch(message) {
 
 		case WM_INITDIALOG:
-			pc = -1;
+			pc = nes->cpu.pc;
 			si.cbSize = sizeof(SCROLLINFO);
 			si.fMask = SIF_PAGE | SIF_RANGE;
 			si.nMin = 0;
 			si.nMax = 0xFFFF;
-			si.nPage = 0x1000;
+			si.nPage = 0x400;
 			SetScrollInfo(GetDlgItem(hDlg,IDC_DISASMSCROLL),SB_CTL,&si,TRUE);
 			update(hDlg);
 			return(TRUE);
 
 		case WM_COMMAND:
 			switch(LOWORD(wParam)) {
+
+				//control
 				case IDC_STEPBUTTON:
 					cpu_execute(1);
-					pc = -1;
+					pc = nes->cpu.pc;
 					update(hDlg);
+					return(TRUE);
+				case IDC_RUNBUTTON:
 					return(TRUE);
 				case IDC_SOFTRESETBUTTON:
 					nes_reset(0);
@@ -142,6 +147,17 @@ LRESULT CALLBACK DebuggerDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 				case IDC_HARDRESETBUTTON:
 					nes_reset(1);
 					return(TRUE);
+
+				//seeking
+				case IDC_SEEKCURRENTPCBUTTON:
+					pc = nes->cpu.pc;
+					update(hDlg);
+					return(TRUE);
+				case IDC_SEEKADDRESSBUTTON:
+					update(hDlg);
+					return(TRUE);
+
+				//breakpoint handling
 				case IDC_ADDBPBUTTON:
 					bp = DialogBoxParam(hInst,(LPCTSTR)IDD_BREAKPOINT,hWnd,BreakpointDlg,(LPARAM)0);
 					return(TRUE);
@@ -158,32 +174,17 @@ LRESULT CALLBACK DebuggerDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 				si.cbSize = sizeof(SCROLLINFO);
 				si.fMask = SIF_PAGE | SIF_POS | SIF_RANGE;
 				GetScrollInfo((HWND)lParam,SB_CTL,&si);
-				if(pc == (u32)-1)
-					pc = nes->cpu.pc;
 				switch(LOWORD(wParam)) {
-					case SB_LINEUP:
-						pc--;
-						break;
-					case SB_LINEDOWN:
-						pc++;
-						break;
-					case SB_PAGEUP:
-						pc -= si.nPage;
-						break;
-					case SB_PAGEDOWN:
-						pc += si.nPage;
-						break;
-					case SB_THUMBPOSITION:
-						pc = HIWORD(wParam);
-						break;
+					case SB_LINEUP:			pc--;						break;
+					case SB_LINEDOWN:			pc++;						break;
+					case SB_PAGEUP:			pc -= si.nPage;		break;
+					case SB_PAGEDOWN:			pc += si.nPage;		break;
+					case SB_THUMBPOSITION:	pc = HIWORD(wParam);	break;
 				}
 				if(pc < si.nMin)
 					pc = si.nMin;
 				if(pc > si.nMax)
 					pc = si.nMax;
-//				_stprintf(tpc, _T("%04X"),TraceOffset);
-//				SetDlgItemText(hwndDlg, IDC_DEBUG_CONT_SEEKADDR, tpc);
-//				CheckRadioButton(hwndDlg, IDC_DEBUG_CONT_SEEKPC, IDC_DEBUG_CONT_SEEKTO, IDC_DEBUG_CONT_SEEKTO);
 				update_disasm(hDlg);
 			}
 			break;

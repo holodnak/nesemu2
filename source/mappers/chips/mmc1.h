@@ -23,8 +23,14 @@
 
 #include "types.h"
 
+#define C_MMC1			0x10
+
+#define C_MMC1A		(0 | C_MMC1)
+#define C_MMC1B		(1 | C_MMC1)
+#define C_MMC1C		(2 | C_MMC1)
+
 void mmc1_sync();
-void mmc1_init(void (*ssync)());
+void mmc1_reset(int type,void (*s)(),int hard);
 void mmc1_state(int mode,u8 *spot);
 void mmc1_write(u32 addr,u8 value);
 void mmc1_syncmirror();

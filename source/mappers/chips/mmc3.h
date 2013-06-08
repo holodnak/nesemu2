@@ -23,9 +23,6 @@
 
 #include "types.h"
 
-#define C_MMCNUM		0xF0
-#define C_MMCREV		0x0F
-
 #define C_MMC3			0x30
 #define C_MMC6			0x60
 

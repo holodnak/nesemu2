@@ -106,7 +106,6 @@ char *history_getprev()
 LRESULT CALLBACK NewEditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	WNDPROC pfnOrigProc = (WNDPROC)GetProp(hwnd,PROP_ORIGINAL_PROC);
-	char tmp[123];
 
 	switch (message) {
 		case WM_DESTROY:
@@ -151,9 +150,8 @@ BOOL ConvertEditToNewEdit(HWND hwndCtl)
 
 LRESULT CALLBACK ConsoleProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	char str2[123];
 	char *str;
-	int len,tmp;
+	int len;
 	HWND hEdit;
 
 	switch(message) {

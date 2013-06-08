@@ -21,12 +21,18 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/mmc1.h"
 
-static void reset(int hard)
+static void reset(int type,int hard)
 {
 	if(nes->cart->chr.size == 0)
 		mem_setvramsize(8);
 	mem_setsramsize(2);
-	mmc1_init(mmc1_sync);
+	mmc1_reset(type,mmc1_sync,hard);
 }
 
-MAPPER(B_NINTENDO_SxROM,reset,0,0,mmc1_state);
+static void reset_a(int hard)	{	reset(C_MMC1A,hard);	}
+static void reset_b(int hard)	{	reset(C_MMC1B,hard);	}
+static void reset_c(int hard)	{	reset(C_MMC1C,hard);	}
+
+MAPPER(B_NINTENDO_SxROM_MMC1A,reset_a,0,0,mmc1_state);
+MAPPER(B_NINTENDO_SxROM_MMC1B,reset_b,0,0,mmc1_state);
+MAPPER(B_NINTENDO_SxROM_MMC1C,reset_c,0,0,mmc1_state);

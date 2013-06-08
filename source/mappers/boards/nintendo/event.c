@@ -62,7 +62,7 @@ static void reset(int hard)
 	irqenabled = 0;
 	dip = 4;
 	irqmax = 0x20000000 | (dip << 25);
-	mmc1_init(sync);
+	mmc1_reset(C_MMC1B,sync,hard);
 }
 
 static void cpucycle()

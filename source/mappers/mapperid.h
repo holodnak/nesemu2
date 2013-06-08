@@ -40,7 +40,9 @@ enum boardid_e {
 	B_NINTENDO_GxROM_MxROM,
 	B_NINTENDO_HxROM,
 	B_NINTENDO_PxROM,
-	B_NINTENDO_SxROM,
+	B_NINTENDO_SxROM_MMC1A,
+	B_NINTENDO_SxROM_MMC1B,
+	B_NINTENDO_SxROM_MMC1C,
 	B_NINTENDO_TxROM,
 	B_NINTENDO_UxROM,
 	B_NINTENDO_TQROM,
@@ -229,6 +231,9 @@ enum boardid_e {
 
 	//for getting a count of supported boards
 	B_BOARDEND,
+
+	//mapping for default chips used
+	B_NINTENDO_SxROM = B_NINTENDO_SxROM_MMC1B,
 
 	//extra support
 	B_NSF =		0x10000000,

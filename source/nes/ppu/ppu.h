@@ -103,6 +103,7 @@ void ppu_write(u32 addr,u8 data);
 u8 ppu_pal_read(u32 addr);
 void ppu_pal_write(u32 addr,u8 data);
 void ppu_step();
+void ppu_sync();
 void ppu_state(int mode,u8 *data);
 readfunc_t ppu_getreadfunc();
 writefunc_t ppu_getwritefunc();

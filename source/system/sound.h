@@ -25,7 +25,6 @@ int sound_init();
 void sound_kill();
 void sound_pause();
 void sound_play();
-void sound_setcallback(void (*cb)(void *buffer, int length));
 void sound_update(void *buffer,int length);
 
 #endif

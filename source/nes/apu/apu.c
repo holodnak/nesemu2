@@ -60,36 +60,14 @@ static u8 regs[0x20];
 static int cycles = 0;
 static const int soundbufsize = 1024 * 3;
 static u16 soundbuflen = 0;
-static u16 soundbufpos = 0;
 static s16 *soundbuf = 0;
-
-static void apu_callback(void *data,int length)
-{
-	s16 *dest = (s16*)data;
-	int i,pos,len;
-
-//	log_printf("apu_callback:  need %d bytes, have %d ready (pixel %d, line %d, frame %d)\n",length,soundbuflen,LINECYCLES,SCANLINE,FRAMES);
-	if(soundbuflen < length)
-		return;
-	len = ((length > soundbuflen) ? soundbuflen : length);
-	pos = soundbufpos;
-	for(i=0;i<length;i++) {
-		*dest++ = soundbuf[pos];
-		soundbuf[pos] = 0;
-		pos = (pos + 1) % soundbufsize;
-	}
-	soundbuflen -= len;
-	soundbufpos = (soundbufpos + len) % soundbufsize;
-	cycles = 0;
-}
 
 int apu_init()
 {
 	int i;
 
 	state_register(B_APU,apu_state);
-	sound_setcallback(apu_callback);
-	soundbuf = (s16*)mem_alloc(sizeof(s16) * soundbufsize * 4);
+	soundbuf = (s16*)mem_alloc(sizeof(s16) * soundbufsize);
 	for(i=0;i<soundbufsize;i++)
 		soundbuf[i] = 0;
 	return(0);
@@ -103,7 +81,6 @@ void apu_kill()
 		mem_free(soundbuf);
 		soundbuf = 0;
 	}
-	sound_setcallback(0);
 }
 
 void apu_reset(int hard)
@@ -121,6 +98,7 @@ void apu_reset(int hard)
 	if(nes->apu.external)
 		nes->apu.external->reset();
 	cycles = 0;
+	soundbuflen = 0;
 }
 
 u8 apu_read(u32 addr)
@@ -134,8 +112,8 @@ u8 apu_read(u32 addr)
 			if(nes->apu.square[1].LengthCtr)	ret |= 0x02;
 			if(nes->apu.triangle.LengthCtr)	ret |= 0x04;
 			if(nes->apu.noise.LengthCtr)		ret |= 0x08;
-			if(nes->apu.dpcm.LengthCtr)			ret |= 0x10;
-			if(nes->cpu.irqstate & IRQ_FRAME)	ret |= 0x40;
+			if(nes->apu.dpcm.LengthCtr)		ret |= 0x10;
+			if(nes->cpu.irqstate & IRQ_FRAME)ret |= 0x40;
 			if(nes->cpu.irqstate & IRQ_DPCM)	ret |= 0x80;
 			cpu_clear_irq(IRQ_FRAME);
 //			log_printf("apu_read:  $4015:  ret = %02X (cycle %d, line %d, frame %d)\n",ret,LINECYCLES,SCANLINE,FRAMES);
@@ -200,12 +178,8 @@ static int oldpos = -1;
 
 static INLINE void updatebuffer()
 {
-	int sample,n;
+	int sample;
 
-	if(soundbuflen >= soundbufsize) {
-//			log_printf("soundbuffer overflow!  %d! (cycles = %d)\n",soundbuflen,cycles);
-		return;
-	}
 	sample = nes->apu.square[0].Pos + nes->apu.square[1].Pos + nes->apu.triangle.Pos + nes->apu.noise.Pos + nes->apu.dpcm.Pos;
 	sample *= 64;
 	if(nes->apu.external)
@@ -214,13 +188,11 @@ static INLINE void updatebuffer()
 		sample = -0x8000;
 	if(sample > 0x7FFF)
 		sample = 0x7FFF;
-	n = (soundbuflen++ + soundbufpos) % soundbufsize;
-	soundbuf[n] = (s16)sample;
+	soundbuf[soundbuflen++] = (s16)sample;
 
 	//see if we are done with a frame, and if so send it away to the sound system
 	if(soundbuflen == 735) {
 		sound_update((void*)soundbuf,735);
-		soundbufpos = 0;
 		soundbuflen = 0;
 	}
 }

@@ -93,12 +93,26 @@ int mainloop()
 			nes_loadstate(statefilename);
 			keydown &= ~8;
 		}
-		if(joykeys[SDLK_F4] && (keydown & 0x80) == 0) {
+		if(joykeys[SDLK_F1] && (keydown & 0x80) == 0) {
 			keydown |= 0x80;
 			running ^= 1;
 		}
-		else if(joykeys[SDLK_F4] == 0) {
+		else if(joykeys[SDLK_F1] == 0) {
 			keydown &= ~0x80;
+		}
+
+		if(joykeys[SDLK_F4] && (keydown & 0x4000) == 0) {
+			keydown |= 0x4000;
+			video_kill();
+			config_set_bool("video.fullscreen",config_get_bool("video.fullscreen") ^ 1);
+			if(video_init() != 0) {
+				log_printf("mainloop:  video_init() error!\n");
+				quit++;
+			}
+			ppu_sync();
+		}
+		else if(joykeys[SDLK_F4] == 0) {
+			keydown &= ~0x4000;
 		}
 
 		if(joykeys[SDLK_F11] && (keydown & 0x8000) == 0) {

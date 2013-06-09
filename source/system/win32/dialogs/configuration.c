@@ -180,14 +180,17 @@ static void modifyassociations(DWORD mask)
 	}
 }
 
+#define GetDlgItemText_SetConfig(hwnd,ctrlid,cfgvar)	\
+	GetDlgItemText(hwnd,ctrlid,tmpstr,1024);				\
+	config_set_string(cfgvar,tmpstr);
+
 //PSN_KILLACTIVE validated the changes
 LRESULT CALLBACK GeneralProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	char tmpstr[1024];
 	LPNMHDR nmhdr;
 	DWORD mask;
 	HWND hwnd;
-	LVCOLUMN lvc;
-	LVITEM lvi;
 
 	switch(message) {
 		case WM_INITDIALOG:
@@ -196,22 +199,7 @@ LRESULT CALLBACK GeneralProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 			CheckDlgButton(hDlg,IDC_FDSCHECK,checkassociation(".fds") ? BST_UNCHECKED : BST_CHECKED);
 			CheckDlgButton(hDlg,IDC_NSFCHECK,checkassociation(".nsf") ? BST_UNCHECKED : BST_CHECKED);
 			CheckDlgButton(hDlg,IDC_CARTDBENABLECHECK,config_get_bool("cartdb.enabled") ? BST_CHECKED : BST_UNCHECKED);
-			hwnd = GetDlgItem(hDlg,IDC_LIST2);
-
-			memset(&lvc,0,sizeof(LVCOLUMN));
-			lvc.mask = LVCF_TEXT | LVCF_WIDTH;
-			lvc.cx = 200;
-			lvc.pszText = "filename";
-			lvc.cchTextMax = strlen(lvc.pszText);
-
-			SendMessage(hwnd,LVM_INSERTCOLUMN,0,(LPARAM)&lvc);
-
-			memset(&lvi,0,sizeof(LVITEM));
-			lvi.mask = LVIF_TEXT;
-			lvi.pszText = "test...";
-			lvi.cchTextMax = strlen(lvi.pszText);
-			SendMessage(hwnd,LVM_INSERTITEM,0,(LPARAM)&lvi);
-
+			SetDlgItemText(hDlg,IDC_CARTDBEDIT,config_get_string("cartdb.filename"));
 			return TRUE;
 
 		case WM_NOTIFY:
@@ -225,6 +213,7 @@ LRESULT CALLBACK GeneralProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 					mask |= IsDlgButtonChecked(hDlg,IDC_NSFCHECK) ? 16 : 0;
 					modifyassociations(mask);
 					config_set_bool("cartdb.enabled",IsDlgButtonChecked(hDlg,IDC_CARTDBENABLECHECK) ? 1 : 0);
+					GetDlgItemText_SetConfig(hDlg,IDC_CARTDBEDIT,"cartdb.filename");
 					return(TRUE);
 			}
 			break;
@@ -232,13 +221,10 @@ LRESULT CALLBACK GeneralProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 	return(FALSE);
 }
 
-#define GetDlgItemText_SetConfig(hwnd,ctrlid,cfgvar)	\
-	GetDlgItemText(hwnd,ctrlid,tmpstr,1024);				\
-	config_set_string(cfgvar,tmpstr);
 LRESULT CALLBACK PathsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LPNMHDR nmhdr;
-	static char tmpstr[1024];
+	char tmpstr[1024];
 
 	switch(message) {
 		case WM_INITDIALOG:

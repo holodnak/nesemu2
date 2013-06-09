@@ -106,6 +106,9 @@ int video_init()
 	screenscale = config_get_int("video.scale");
 	screenbpp = 32;
 
+	if(flags & SDL_FULLSCREEN)
+		screenscale = (screenscale < 2) ? 2 : screenscale;
+
 	i = get_filter_int(config_get_string("video.filter"));
 	filter = get_filter((screenscale == 1) ? F_NONE : i);
 
@@ -124,10 +127,10 @@ int video_init()
 	SDL_ShowCursor(0);
 
 	//allocate memory for temp screen buffer
-	screen = mem_realloc(screen,256 * (240 + 16) * (screenbpp / 8) * 4);
+	screen = (u32*)mem_realloc(screen,256 * (240 + 16) * (screenbpp / 8) * 4);
 
 	//print information
-	log_printf("video initialized:  %dx%dx%d %s\n",screenw,screenh,screenbpp,(flags & SDL_FULLSCREEN) ? "fullscreen" : "windowed");
+	log_printf("video initialized:  %dx%dx%d %s\n",surface->w,surface->h,surface->format->BitsPerPixel,(flags & SDL_FULLSCREEN) ? "fullscreen" : "windowed");
 
 	return(0);
 }

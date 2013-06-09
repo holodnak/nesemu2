@@ -70,6 +70,7 @@
 #define IDC_CHECK6                      1031
 #define IDC_BUTTON1                     1032
 #define IDC_ADDBPBUTTON                 1032
+#define IDC_CARTDBEDITBUTTON            1032
 #define IDC_BUTTON2                     1033
 #define IDC_EDITBPBUTTON                1033
 #define IDC_BUTTON3                     1034
@@ -109,6 +110,7 @@
 #define IDC_LIST1                       1068
 #define IDC_LIST2                       1069
 #define IDC_CARTDBENABLECHECK           1070
+#define IDC_CARTDBEDIT                  1071
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -147,7 +149,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32806
-#define _APS_NEXT_CONTROL_VALUE         1071
+#define _APS_NEXT_CONTROL_VALUE         1072
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

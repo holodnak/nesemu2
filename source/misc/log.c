@@ -76,9 +76,10 @@ int log_init()
 		line = line->next;
 	}
 	while(line) {
-		log_print(line->str);
+		fputs(line->str,logfd);
 		line = line->prev;
 	}
+	fflush(logfd);
 	history_clear(&history);
 
 	log_printf("log_init:  log initialized.  nesemu2 v"VERSION"\n");

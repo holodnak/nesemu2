@@ -1391,6 +1391,9 @@
 				<File
 					RelativePath="..\..\source\emu\emu.c">
 				</File>
+				<File
+					RelativePath="..\..\source\emu\events.c">
+				</File>
 				<Filter
 					Name="commands"
 					Filter="">
@@ -1637,6 +1640,19 @@
 				</File>
 				<File
 					RelativePath="..\..\source\inputdev\null.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="emu"
+				Filter="">
+				<File
+					RelativePath="..\..\source\emu\commands.h">
+				</File>
+				<File
+					RelativePath="..\..\source\emu\emu.h">
+				</File>
+				<File
+					RelativePath="..\..\source\emu\events.h">
 				</File>
 			</Filter>
 		</Filter>

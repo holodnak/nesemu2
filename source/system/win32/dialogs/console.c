@@ -26,81 +26,6 @@
 #include "system/win32/mainwnd.h"
 #include "system/win32/resource.h"
 
-/*typedef struct line_s {
-	struct line_s *prev,*next;
-	char *str;
-} line_t;
-
-typedef struct history_s {
-	line_t *lines;
-	line_t *cur;
-} history_t;
-
-static history_t history = {0,0};
-
-void history_init()
-{
-	history.lines = 0;
-	history.cur = 0;
-}
-
-void history_kill()
-{
-	line_t *p,*line = history.lines;
-
-	while(line) {
-		p = line;
-		line = line->next;
-		free(p->str);
-		free(p);
-	}
-}
-
-void history_add(char *str)
-{
-	line_t *p = (line_t*)malloc(sizeof(line_t));
-
-	p->prev = 0;
-	p->next = history.lines;
-	p->str = strdup(str);
-	if(history.lines == 0)
-		history.lines = p;
-	else
-		history.lines->prev = p;
-	history.lines = p;
-	history.cur = 0;
-}
-
-char *history_getcur()
-{
-	return(history.cur ? history.cur->str : 0);
-}
-
-char *history_getnext()
-{
-	char *ret = 0;
-
-	if(history.cur == 0)
-		history.cur = history.lines;
-	else {
-		if(history.cur->next)
-			history.cur = history.cur->next;
-	}
-	return(history_getcur());
-}
-
-char *history_getprev()
-{
-	char *ret = 0;
-
-	if(history.cur) {
-		if(history.cur->prev)
-			history.cur = history.cur->prev;
-		ret = history.cur->str;
-	}
-	return(ret);
-}*/
-
 #define PROP_ORIGINAL_PROC		TEXT("_NewEdit_Original_Proc_")
 #define PROP_STATIC_NEWEDIT	TEXT("_NewEdit_")
 #define PROP_HISTORY				TEXT("_Command_History_")
@@ -150,8 +75,6 @@ BOOL ConvertEditToNewEdit(HWND hwndCtl)
 	return(TRUE);
 }
 
-//TODO: create history and put it in GWL_USERDATA
-
 LRESULT CALLBACK ConsoleProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	history_t *history = (history_t*)GetProp(hwnd,PROP_HISTORY);
@@ -165,12 +88,8 @@ LRESULT CALLBACK ConsoleProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 			ConvertEditToNewEdit(hEdit);
 			SetFocus(hEdit);
 			history = history_create();
-			lParam = (LPARAM)history;
-			log_printf("history in lparam = $%08X\n",lParam);
 			SetProp(hwnd,PROP_HISTORY,(HANDLE)history);
 			SetProp(hEdit,PROP_HISTORY,(HANDLE)history);
-//			SetWindowLongPtr(hwnd,GWLP_USERDATA,(LONG)(LONG_PTR)history);
-//			SetWindowLongPtr(hEdit,GWLP_USERDATA,(LONG)(LONG_PTR)history);
 			return(TRUE);
 
 		case WM_SYSCOMMAND:

@@ -1539,6 +1539,9 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\source\misc\history.c">
+				</File>
+				<File
 					RelativePath="..\..\source\misc\log.c">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1570,6 +1573,9 @@
 				</File>
 				<File
 					RelativePath="..\..\source\misc\paths.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\strutil.c">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\vars.c">
@@ -1612,6 +1618,9 @@
 				</File>
 				<File
 					RelativePath="..\..\source\emu\emu.c">
+				</File>
+				<File
+					RelativePath="..\..\source\emu\events.c">
 				</File>
 				<Filter
 					Name="commands"

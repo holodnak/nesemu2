@@ -23,6 +23,8 @@
 #define IDD_CONFIG_GENERAL4             138
 #define IDD_CHEATSEARCH                 139
 #define IDD_CARTDBFILES                 140
+#define IDR_FILELISTMENU                141
+#define IDD_FILEEDIT                    142
 #define IDC_EDIT1                       1000
 #define IDC_AEDIT                       1000
 #define IDC_DATAPATHEDIT                1000
@@ -73,6 +75,7 @@
 #define IDC_ADDBPBUTTON                 1032
 #define IDC_CARTDBEDITBUTTON            1032
 #define IDC_ADDBUTTON                   1032
+#define IDC_BROWSEBUTTON                1032
 #define IDC_BUTTON2                     1033
 #define IDC_EDITBPBUTTON                1033
 #define IDC_DELETEBUTTON                1033
@@ -115,6 +118,7 @@
 #define IDC_FILELIST                    1069
 #define IDC_CARTDBENABLECHECK           1070
 #define IDC_CARTDBEDIT                  1071
+#define IDC_FILEEDIT                    1072
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -144,6 +148,8 @@
 #define ID_NES_PAUSE                    32803
 #define ID_VIEW_CHEATS                  32804
 #define ID_VIEW_SEARCH                  32805
+#define ID_FILE_UNLOAD                  32807
+#define ID_FILE_LOADPATCH               32808
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -151,9 +157,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        141
-#define _APS_NEXT_COMMAND_VALUE         32806
-#define _APS_NEXT_CONTROL_VALUE         1072
+#define _APS_NEXT_RESOURCE_VALUE        143
+#define _APS_NEXT_COMMAND_VALUE         32809
+#define _APS_NEXT_CONTROL_VALUE         1073
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

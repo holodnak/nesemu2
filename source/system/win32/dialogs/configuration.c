@@ -28,6 +28,7 @@
 #include "system/win32/mainwnd.h"
 #include "misc/config.h"
 #include "misc/strutil.h"
+#include "misc/memutil.h"
 
 static const char progid[] = "nesemu2.image.1";
 
@@ -181,52 +182,113 @@ static void modifyassociations(DWORD mask)
 	}
 }
 
-LRESULT CALLBACK CartDBFilesDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK FileEditDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	char *p,*tmp,*str = (char*)(LONG_PTR)GetWindowLongPtr(hwnd,GWLP_USERDATA);
-	LVCOLUMN lvc;
-	LVITEM lvi;
+	char *str = (char*)(LONG_PTR)GetWindowLongPtr(hwnd,GWLP_USERDATA);
+	int n;
 
 	switch(message) {
 		case WM_INITDIALOG:
-			//prepare the column struct and add a column
-			memset(&lvc,0,sizeof(LVCOLUMN));
-			lvc.mask = LVCF_TEXT | LVCF_WIDTH;
-			lvc.cx = 200;
-			lvc.pszText = "Filename";
-			ListView_InsertColumn(GetDlgItem(hwnd,IDC_FILELIST),0,&lvc); 
+			SetWindowLongPtr(hwnd,GWLP_USERDATA,(LONG)(LONG_PTR)lParam);
+			str = (char*)(LONG_PTR)lParam;
+			SetWindowText(GetDlgItem(hwnd,IDC_FILEEDIT),str);
+			return(TRUE);
 
-			//prepare the item struct
-			memset(&lvi,0,sizeof(LVITEM));
-			lvi.mask = LVIF_TEXT;
+		case WM_COMMAND:
+		    switch(LOWORD(wParam)) {
+				case IDOK:
+					n = GetWindowTextLength(GetDlgItem(hwnd,IDC_FILEEDIT));
+					if(n) {
+						mem_free(str);
+						str = (char*)mem_alloc(n + 1);
+						GetWindowText(GetDlgItem(hwnd,IDC_FILEEDIT),str,n);
+						EndDialog(hwnd,(INT_PTR)str);
+						return(TRUE);
+					}
+				case IDCANCEL:
+					mem_free(str);
+					EndDialog(hwnd,(INT_PTR)NULL);
+					return(TRUE);
+			 }
+			break;
 
+		case WM_DESTROY:
+			break;
+	}
+	return(FALSE);
+}
+
+LRESULT CALLBACK CartDBFilesDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	char *p,*tmp,*str = (char*)(LONG_PTR)GetWindowLongPtr(hwnd,GWLP_USERDATA);
+	int n,i;
+
+	switch(message) {
+		case WM_INITDIALOG:
 			SetWindowLongPtr(hwnd,GWLP_USERDATA,(LONG)(LONG_PTR)lParam);
 			str = strdup((char*)lParam);
 			p = strtok(str,";");
 			while(p) {
 				tmp = strdup(p);
-				p = str_eatwhitespace(tmp);
-				lvi.cchTextMax = (int)strlen(p);
-				lvi.pszText = p;
-				ListView_InsertItem(GetDlgItem(hwnd,IDC_FILELIST),&lvi); 
+				ListBox_AddString(GetDlgItem(hwnd,IDC_FILELIST),str_eatwhitespace(tmp));
 				free(tmp);
 				p = strtok(0,";");
 			}
 			free(str);
+			EnableWindow(GetDlgItem(hwnd,IDC_DELETEBUTTON),FALSE);
 			return(TRUE);
 
 		case WM_COMMAND:
 		    switch(LOWORD(wParam)) {
+				case IDC_FILELIST:
+					switch(HIWORD(wParam)) {
+						case LBN_DBLCLK:
+							tmp = (char*)mem_alloc(1024);
+							n = ListBox_GetCurSel(GetDlgItem(hwnd,IDC_FILELIST));
+							ListBox_GetText(GetDlgItem(hwnd,IDC_FILELIST),n,tmp);
+							tmp = (char*)DialogBoxParam(hInst,(LPCTSTR)IDD_FILEEDIT,hwnd,(DLGPROC)FileEditDlg,(LPARAM)(char*)tmp);
+							if(tmp) {
+								ListBox_DeleteString(GetDlgItem(hwnd,IDC_FILELIST),n);
+								ListBox_InsertString(GetDlgItem(hwnd,IDC_FILELIST),n,tmp);
+								mem_free(tmp);
+							}
+							return(TRUE);
+						case LBN_SELCHANGE:
+							EnableWindow(GetDlgItem(hwnd,IDC_DELETEBUTTON),TRUE);
+							return(TRUE);
+						case LBN_SELCANCEL:
+							EnableWindow(GetDlgItem(hwnd,IDC_DELETEBUTTON),FALSE);
+							return(TRUE);
+					}
+					break;
 				case IDC_ADDBUTTON:
+					tmp = (char*)DialogBoxParam(hInst,(LPCTSTR)IDD_FILEEDIT,hwnd,(DLGPROC)FileEditDlg,0);
+					if(tmp) {
+						ListBox_AddString(GetDlgItem(hwnd,IDC_FILELIST),tmp);
+						mem_free(tmp);
+					}
 					return(TRUE);
 				case IDC_DELETEBUTTON:
+					n = ListBox_GetCurSel(GetDlgItem(hwnd,IDC_FILELIST));
+					if(n != LB_ERR)
+						ListBox_DeleteString(GetDlgItem(hwnd,IDC_FILELIST),n);
 					return(TRUE);
 				case IDOK:
-					 MessageBox(0,"ok","",MB_OK);
-					 EndDialog(hwnd,(INT_PTR)str);
+					n = ListBox_GetCount(GetDlgItem(hwnd,IDC_FILELIST));
+					strcpy(str,"");
+					tmp = (char*)mem_alloc(1024);
+					for(i=0;i<n;i++) {
+						if(i)
+							strcat(str," ; ");
+						ListBox_GetText(GetDlgItem(hwnd,IDC_FILELIST),i,tmp);
+						strcat(str,tmp);
+					}
+					mem_free(tmp);
+					EndDialog(hwnd,(INT_PTR)str);
+					return(TRUE);
 				case IDCANCEL:
-					 EndDialog(hwnd,(INT_PTR)NULL);
-					 return(TRUE);
+					EndDialog(hwnd,(INT_PTR)NULL);
+					return(TRUE);
 			 }
 			break;
 
@@ -262,7 +324,7 @@ LRESULT CALLBACK GeneralProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 			switch(LOWORD(wParam)) {
 				case IDC_CARTDBEDITBUTTON:
 					GetWindowText(GetDlgItem(hDlg,IDC_CARTDBEDIT),tmpstr,1024);
-					DialogBoxParam(hInst,(LPCTSTR)IDD_CARTDBFILES,hWnd,(DLGPROC)CartDBFilesDlg,(LPARAM)(char*)tmpstr);
+					DialogBoxParam(hInst,(LPCTSTR)IDD_CARTDBFILES,hDlg,(DLGPROC)CartDBFilesDlg,(LPARAM)(char*)tmpstr);
 					SetWindowText(GetDlgItem(hDlg,IDC_CARTDBEDIT),tmpstr);
 					return(TRUE);
 			}
@@ -412,7 +474,6 @@ LRESULT CALLBACK SystemProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 				if(stricmp(inputdevices[i],ptr) == 0)
 					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_PORT2COMBO),i);
 			}
-
 
 			//expansion port devices
 			ptr = config_get_string("input.expansion");

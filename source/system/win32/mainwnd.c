@@ -21,9 +21,8 @@
 #include <windows.h>
 #include "misc/log.h"
 #include "misc/config.h"
-#include "misc/paths.h"
+#include "emu/events.h"
 #include "nes/nes.h"
-#include "nes/state/state.h"
 #include "system/win32/dialogs.h"
 #include "system/win32/resource.h"
 #include "system/video.h"
@@ -92,13 +91,11 @@ static int filedialog(HWND parent,int type,char *buffer,char *title,char *filter
 	return(1);
 }
 
+//little helper to give status of teh rom load
 void loadrom(char *filename)
 {
-	switch(nes_load(filename)) {
+	switch(emu_event(E_LOADROM,(void*)filename)) {
 		case 0:
-			log_printf("WndProc:  resetting nes...\n");
-			nes_reset(1);
-			running = config_get_bool("video.pause_on_load") ? 0 : 1;
 			break;
 		default:
 		case 1:
@@ -157,41 +154,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case ID_FILE_OPEN:
 			file_open(hWnd);
 			break;
+		case ID_FILE_UNLOAD:
+			emu_event(E_UNLOAD,0);
+			break;
 		case ID_NES_PAUSE:
-			running ^= 1;
+			emu_event(E_TOGGLERUNNING,0);
 			break;
 		case ID_NES_SOFTRESET:
-			if(nes->cart)
-				nes_reset(0);
+			emu_event(E_SOFTRESET,0);
 			break;
 		case ID_NES_HARDRESET:
-			if(nes->cart)
-				nes_reset(1);
+			emu_event(E_HARDRESET,0);
 			break;
 		case ID_NES_LOADSTATE:
-			if(nes->cart) {
-				paths_makestatefilename(nes->romfilename,dest,1024);
-				nes_loadstate(dest);
-			}
+			emu_event(E_LOADSTATE,0);
 			break;
 		case ID_NES_SAVESTATE:
-			if(nes->cart) {
-				paths_makestatefilename(nes->romfilename,dest,1024);
-				nes_savestate(dest);
-			}
+			emu_event(E_SAVESTATE,0);
 			break;
 		case ID_FDS_FLIPDISK:
-			if(nes->cart) {
-				u8 data[4] = {0,0,0,0};
-
-				nes->mapper->state(CFG_SAVE,data);
-				if(data[0] == 0xFF)
-					data[0] = 0;
-				else
-					data[0] ^= 1;
-				nes->mapper->state(CFG_LOAD,data);
-				log_printf("disk inserted!  side = %d\n",data[0]);
-			}
+			emu_event(E_FLIPDISK,0);
 			break;
 		case ID_VIEW_CONFIGURATION:
 			ConfigurationPropertySheet(hWnd);
@@ -229,11 +211,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DestroyWindow(hWnd);
 			break;
 		case ID_VIEW_FULLSCREEN:
-			video_kill();
-			sound_pause();
-			config_set_bool("video.fullscreen",config_get_bool("video.fullscreen") ^ 1);
-			sound_play();
-			video_init();
+			emu_event(E_TOGGLEFULLSCREEN,0);
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);

@@ -83,12 +83,12 @@ int nes_init()
 void nes_kill()
 {
 	if(nes) {
+		nes_unload();
+		genie_unload();
 		state_kill();
 		cpu_kill();
 		ppu_kill();
 		apu_kill();
-		cart_unload(nes->cart);
-		genie_unload();
 		mem_free(nes);
 		nes = 0;
 	}
@@ -148,6 +148,7 @@ int nes_load(char *filename)
 
 void nes_unload()
 {
+	//need to save sram/diskdata/whatever here
 	if(nes->cart)
 		cart_unload(nes->cart);
 	nes->cart = 0;
@@ -166,6 +167,11 @@ void nes_set_inputdev(int n,int id)
 void nes_reset(int hard)
 {
 	int i;
+
+	if(nes->cart == 0) {
+		log_printf("nes_reset:  no cart loaded, cannot reset\n");
+		return;
+	}
 
 	//zero out all read/write pages/functions
 	for(i=0;i<64;i++) {
@@ -237,6 +243,10 @@ void nes_savestate(char *filename)
 {
 	FILE *fp;
 
+	if(nes->cart == 0) {
+		log_printf("nes_savestate:  no cart loaded, cannot save state\n");
+		return;
+	}
 	if((fp = fopen(filename,"wb")) == 0) {
 		log_printf("nes_savestate:  error opening file '%s'\n",filename);
 		return;
@@ -250,6 +260,10 @@ void nes_loadstate(char *filename)
 {
 	FILE *fp;
 
+	if(nes->cart == 0) {
+		log_printf("nes_loadstate:  no cart loaded, cannot load state\n");
+		return;
+	}
 	if((fp = fopen(filename,"rb")) == 0) {
 		log_printf("nes_loadstate:  error opening file '%s'\n",filename);
 		return;

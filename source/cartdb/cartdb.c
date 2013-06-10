@@ -70,8 +70,10 @@ int cartdb_init()
 
 void cartdb_kill()
 {
-	if(cartxml)
+	if(cartxml) {
 		parser_free(cartxml);
+		parser_verifymemory();
+	}
 	cartxml = 0;
 }
 

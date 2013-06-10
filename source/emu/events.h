@@ -18,72 +18,41 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "misc/history.h"
-#include "misc/memutil.h"
-#include "misc/log.h"
+#ifndef __events_h__
+#define __events_h__
 
-history_t *history_create()
-{
-	history_t *ret = (history_t*)mem_alloc(sizeof(history_t));
+#include "types.h"
 
-	memset(ret,0,sizeof(history_t));
-	return(ret);
-}
+//event id's
+enum events_e {
+	E_UNKNOWN = 0,
+	E_QUIT,
+	E_LOADROM,
+	E_UNLOAD,
+	E_SOFTRESET,
+	E_HARDRESET,
+	E_SAVESTATE,
+	E_LOADSTATE,
+	E_FLIPDISK,
+	E_DUMPDISK,
 
-void history_destroy(history_t *h)
-{
-	history_clear(h);
-	mem_free(h);
-}
+	//change running state
+	E_TOGGLERUNNING,
+	E_PAUSE,
+	E_UNPAUSE,
 
-void history_add(history_t *h,char *str)
-{
-	historyline_t *p = (historyline_t*)mem_alloc(sizeof(historyline_t));
+	//change from fullscreen/windowed
+	E_TOGGLEFULLSCREEN,
+	E_FULLSCREEN,
+	E_WINDOWED,
 
-	p->prev = 0;
-	p->next = h->lines;
-	p->str = mem_strdup(str);
-	if(h->lines == 0)
-		h->lines = p;
-	else
-		h->lines->prev = p;
-	h->lines = p;
-	h->cur = 0;
-}
+	//last valid event id
+	E_LASTEVENT,
 
-void history_clear(history_t *h)
-{
-	historyline_t *p,*line = h->lines;
+	//clones!
+	E_RESET = E_SOFTRESET,
+};
 
-	while(line) {
-		p = line;
-		line = line->next;
-		mem_free(p->str);
-		mem_free(p);
-	}
-}
+int emu_event(int id,void *data);
 
-char *history_getcur(history_t *h)
-{
-	return(h->cur ? h->cur->str : 0);
-}
-
-char *history_getnext(history_t *h)
-{
-	if(h->cur == 0)
-		h->cur = h->lines;
-	else {
-		if(h->cur->next)
-			h->cur = h->cur->next;
-	}
-	return(history_getcur(h));
-}
-
-char *history_getprev(history_t *h)
-{
-	if(h->cur) {
-		if(h->cur->prev)
-			h->cur = h->cur->prev;
-	}
-	return(history_getcur(h));
-}
+#endif

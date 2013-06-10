@@ -9,7 +9,7 @@ misc
  . add support for loading multiple cartdb xml files
  . when using the config_get_string/config_get_eval_string it should
    eat whitespace from the beginning and end of the string
- . make eatwhitespace global function, it keeps popping up everywhere!
+ . memutil could be dangerous when used after it was killed.  add checks for that.
 
 win32
  . finish the (crappy) input code.  translatekey() misses some keys

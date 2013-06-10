@@ -38,28 +38,12 @@
 static palette_t *pal = 0;
 
 // Global Variables:
-int quit = 0;
-int running = 0;
 char configfilename[1024] = CONFIG_FILENAME;
 char exepath[1024] = "";
 
 void video_resize();
 
 void checkmessages();
-
-int mainloop()
-{
-	while(quit == 0) {
-		system_checkevents();
-		video_startframe();
-		if(running && nes->cart) {
-			nes_frame();
-		}
-		video_endframe();
-		input_poll();
-	}
-	return(0);
-}
 
 static void console_addline(char *str)
 {
@@ -128,7 +112,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		return(FALSE);
 
 	resizeclient(hWnd,config_get_int("video.scale") * 256,config_get_int("video.scale") * 240);
-   ShowWindow(hWnd, nCmdShow);
+   ShowWindow(hWnd,nCmdShow);
    UpdateWindow(hWnd);
 
 	//this is temporary
@@ -148,11 +132,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 	mem_free(cmdline);
 
-	log_printf("starting main loop...\n");
-
-	ret = (mainloop() == 0) ? TRUE : FALSE;
+	ret = (emu_mainloop() == 0) ? TRUE : FALSE;
 
 	emu_kill();
 
-	return(ret);
+	return(emu_exit(ret));
 }

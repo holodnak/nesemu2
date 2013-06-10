@@ -792,6 +792,9 @@
 							RelativePath="..\..\source\mappers\boards\irem\h3001.c">
 						</File>
 						<File
+							RelativePath="..\..\source\mappers\boards\irem\holydiver.c">
+						</File>
+						<File
 							RelativePath="..\..\source\mappers\boards\irem\tam-s1.c">
 						</File>
 					</Filter>
@@ -800,6 +803,9 @@
 						Filter="">
 						<File
 							RelativePath="..\..\source\mappers\boards\jaleco\jf11.c">
+						</File>
+						<File
+							RelativePath="..\..\source\mappers\boards\jaleco\jf16.c">
 						</File>
 						<File
 							RelativePath="..\..\source\mappers\boards\jaleco\ss88006.c">

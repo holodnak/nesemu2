@@ -82,10 +82,12 @@ static mapper_t *get_mapper(int mapperid)
 	//irem
 	MAPPER(B_IREM_H3001);
 	MAPPER(B_IREM_TAM_S1);
+	MAPPER(B_IREM_HOLYDIVER);
 
 	//jaleco
 	MAPPER(B_JALECO_SS88006);
 	MAPPER(B_JALECO_JF11);
+	MAPPER(B_JALECO_JF16);
 
 	//namcot
 	MAPPER(B_NAMCOT_34x3);

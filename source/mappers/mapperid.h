@@ -70,6 +70,7 @@ enum boardid_e {
 	//jaleco
 	B_JALECO_SS88006,
 	B_JALECO_JF11,
+	B_JALECO_JF16,
 
 	//namcot
 	B_NAMCOT_3425,
@@ -87,6 +88,7 @@ enum boardid_e {
 	//irem
 	B_IREM_H3001,
 	B_IREM_TAM_S1,
+	B_IREM_HOLYDIVER,
 
 	//taito
 	B_TAITO_X1_017,

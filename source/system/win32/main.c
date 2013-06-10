@@ -154,6 +154,5 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 	emu_kill();
 
-	log_printf("done!\n");
 	return(ret);
 }

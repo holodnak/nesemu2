@@ -31,8 +31,10 @@
 #include "nes/nes.h"
 
 #define SUBSYSTEM_START	static subsystem_t subsystems[] = {
-#define SUBSYSTEM(n)		{"" #n "", n ## _init, n ## _kill},
-#define SUBSYSTEM_END	{0,0}};
+#define SUBSYSTEM(n)				{"" #n "", n ## _init, n ## _kill},
+#define SUBSYSTEM_NOINIT(n)	{"" #n "",          0, n ## _kill},
+#define SUBSYSTEM_NOKILL(n)	{"" #n "", n ## _init,          0},
+#define SUBSYSTEM_END	{0,0,0}};
 
 typedef int (*initfunc_t)();
 typedef void (*killfunc_t)();
@@ -46,7 +48,7 @@ typedef struct subsystem_s {
 SUBSYSTEM_START
 	SUBSYSTEM(memutil)
 	SUBSYSTEM(config)
-	SUBSYSTEM(log)
+	SUBSYSTEM_NOKILL(log)
 	SUBSYSTEM(cartdb)
 	SUBSYSTEM(system)
 	SUBSYSTEM(video)
@@ -78,13 +80,18 @@ void emu_kill()
 	int i;
 
 	//find the end of the pointer list ('i' will equal last one + 1)
-	for(i=0;subsystems[i].kill;i++);
+	for(i=0;subsystems[i].name;i++);
 
 	//loop thru the subsystem function pointers backwards and kill
 	for(i--;i>=0;i--) {
-//		log_printf("killing '%s'\n",subsystems[i].name);
-		subsystems[i].kill();
+		if(subsystems[i].kill != 0) {
+			log_printf("killing '%s'\n",subsystems[i].name);
+			subsystems[i].kill();
+		}
 	}
+
+	//this needs to be done last!  maybe need some kind of atexit() style thing for it
+	log_kill();
 }
 
 int emu_main()

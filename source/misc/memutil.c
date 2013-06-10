@@ -27,6 +27,7 @@
 
 typedef struct memchunk_s {
 	void *ptr;
+	size_t size;
 	char file[128];
 	int line;
 	int flags;
@@ -34,9 +35,12 @@ typedef struct memchunk_s {
 
 static memchunk_t chunks[MAX_CHUNKS];
 
+static int inited = 0;
 static int num_alloc;
 static int num_realloc;
 static int num_free;
+static int max_chunks;
+static size_t max_bytes;
 static size_t num_bytes;
 
 static char *bytestr(size_t sz)
@@ -52,8 +56,33 @@ static char *bytestr(size_t sz)
 	return(str);
 }
 
+//check if inited already, if not do it
+static void checkinited()
+{
+	if(inited == 0)
+		memutil_init();
+}
+
+//count number of used chunks
+static void memutil_count()
+{
+	int i,chunknum = 0;
+	size_t bytes = 0;
+
+	for(i=0;i<MAX_CHUNKS;i++) {
+		if(chunks[i].flags) {
+			chunknum++;
+			bytes += chunks[i].size;
+		}
+	}
+	max_chunks = (chunknum > max_chunks) ? chunknum : max_chunks;
+	max_bytes = (bytes > max_bytes) ? bytes : max_bytes;
+}
+
 int memutil_init()
 {
+	if(inited)
+		return(0);
 //	if(chunks == 0) {
 //		chunks = (memchunk_t*)malloc(sizeof(memchunk_t) * MAX_CHUNKS);
 		memset(chunks,0,sizeof(memchunk_t)*MAX_CHUNKS);
@@ -62,6 +91,9 @@ int memutil_init()
 	num_realloc = 0;
 	num_free = 0;
 	num_bytes = 0;
+	max_chunks = 0;
+	max_bytes = 0;
+	inited = 1;
 	return(0);
 }
 
@@ -69,15 +101,18 @@ void memutil_kill()
 {
 	int i;
 
+	checkinited();
 	for(i=0;i<MAX_CHUNKS;i++) {
 		if(chunks[i].flags & 1) {
 			log_printf("mem_kill:  memory not free'd in file %s @ line %d\n",chunks[i].file,chunks[i].line);
+			free(chunks[i].ptr);
 		}
 		memset(&chunks[i],0,sizeof(memchunk_t));
 	}
 //	free(chunks);
 //	chunks = 0;
 	log_printf("mem_kill:  num alloc, realloc, free = %d, %d, %d (%s was allocated)\n",num_alloc,num_realloc,num_free,bytestr(num_bytes));
+	log_printf("mem_kill:  max_chunks, max_bytes = %d, %s\n",max_chunks,bytestr(max_bytes));
 }
 
 char *memutil_strdup(char *str,char *file,int line)
@@ -95,6 +130,7 @@ void *memutil_alloc(size_t size,char *file,int line)
 	void *ret;
 	int i;
 
+	checkinited();
 	ret = malloc(size);
 	num_alloc++;
 	num_bytes += size;
@@ -104,9 +140,11 @@ void *memutil_alloc(size_t size,char *file,int line)
 			strcpy(chunks[i].file,file);
 			chunks[i].line = line;
 			chunks[i].ptr = ret;
+			chunks[i].size = size;
 			break;
 		}
 	}
+	memutil_count();
 	return(ret);
 }
 
@@ -115,6 +153,7 @@ void *memutil_realloc(void *ptr,size_t size,char *file,int line)
 	void *ret;
 	int i;
 
+	checkinited();
 	if(ptr == 0)
 		return(memutil_alloc(size,file,line));
 	ret = realloc(ptr,size);
@@ -126,12 +165,14 @@ void *memutil_realloc(void *ptr,size_t size,char *file,int line)
 			strcpy(chunks[i].file,file);
 			chunks[i].line = line;
 			chunks[i].ptr = ret;
+			chunks[i].size = size;
 			break;
 		}
 	}
 	if(i == MAX_CHUNKS) {
 		log_printf("memutil_realloc:  trying to realloc memory not found in list in file %s @ line %d\n",file,line);
 	}
+	memutil_count();
 	return(ret);
 }
 
@@ -139,6 +180,7 @@ void memutil_free(void *ptr,char *file,int line)
 {
 	int i;
 
+	checkinited();
 	free(ptr);
 	num_free++;
 	for(i=0;i<MAX_CHUNKS;i++) {
@@ -150,4 +192,5 @@ void memutil_free(void *ptr,char *file,int line)
 	if(i == MAX_CHUNKS) {
 		log_printf("memutil_free:  trying to free memory not in list in file %s @ line %d\n",file,line);
 	}
+	memutil_count();
 }

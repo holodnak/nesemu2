@@ -1332,6 +1332,9 @@
 					RelativePath="..\..\source\misc\crc32.c">
 				</File>
 				<File
+					RelativePath="..\..\source\misc\history.c">
+				</File>
+				<File
 					RelativePath="..\..\source\misc\log.c">
 				</File>
 				<File
@@ -1339,6 +1342,9 @@
 				</File>
 				<File
 					RelativePath="..\..\source\misc\paths.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\strutil.c">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\vars.c">
@@ -1595,10 +1601,16 @@
 					RelativePath="..\..\source\misc\emu.h">
 				</File>
 				<File
+					RelativePath="..\..\source\misc\history.h">
+				</File>
+				<File
 					RelativePath="..\..\source\misc\log.h">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\memutil.h">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\strutil.h">
 				</File>
 			</Filter>
 			<Filter

@@ -27,6 +27,7 @@
 #include "system/win32/resource.h"
 #include "system/win32/mainwnd.h"
 #include "misc/config.h"
+#include "misc/strutil.h"
 
 static const char progid[] = "nesemu2.image.1";
 
@@ -180,30 +181,9 @@ static void modifyassociations(DWORD mask)
 	}
 }
 
-//check if a char is whitespace
-static int iswhitespace(char ch)
-{
-	if(ch == ' ' || ch == '\t' || ch == '\n')
-		return(1);
-	return(0);
-}
-
-//eat whitespace from beginning and end of the string
-static char *eatwhitespace(char *str)
-{
-	char *p,*ret = str;
-
-	while(iswhitespace(*ret))
-		ret++;
-	p = ret + strlen(ret) - 1;
-	while(iswhitespace(*p))
-		*p-- = 0;
-	return(ret);
-}
-
 LRESULT CALLBACK CartDBFilesDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	char *p,*tmp,*str = (char*)GetWindowLongPtr(hwnd,GWLP_USERDATA);
+	char *p,*tmp,*str = (char*)(LONG_PTR)GetWindowLongPtr(hwnd,GWLP_USERDATA);
 	LVCOLUMN lvc;
 	LVITEM lvi;
 
@@ -220,13 +200,13 @@ LRESULT CALLBACK CartDBFilesDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 			memset(&lvi,0,sizeof(LVITEM));
 			lvi.mask = LVIF_TEXT;
 
-			SetWindowLongPtr(hwnd,GWLP_USERDATA,lParam);
+			SetWindowLongPtr(hwnd,GWLP_USERDATA,(LONG)(LONG_PTR)lParam);
 			str = strdup((char*)lParam);
 			p = strtok(str,";");
 			while(p) {
 				tmp = strdup(p);
-				p = eatwhitespace(tmp);
-				lvi.cchTextMax = strlen(p);
+				p = str_eatwhitespace(tmp);
+				lvi.cchTextMax = (int)strlen(p);
 				lvi.pszText = p;
 				ListView_InsertItem(GetDlgItem(hwnd,IDC_FILELIST),&lvi); 
 				free(tmp);
@@ -264,10 +244,9 @@ LRESULT CALLBACK CartDBFilesDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 //PSN_KILLACTIVE validated the changes
 LRESULT CALLBACK GeneralProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	char tmpstr[1024],*str;
+	char tmpstr[1024];
 	LPNMHDR nmhdr;
 	DWORD mask;
-	HWND hwnd;
 
 	switch(message) {
 		case WM_INITDIALOG:

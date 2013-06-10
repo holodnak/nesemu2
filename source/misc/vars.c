@@ -28,29 +28,9 @@ vars_add_var is able to add another var with the same name
 #include <stdlib.h>
 #include <string.h>
 #include "misc/memutil.h"
+#include "misc/strutil.h"
 #include "misc/vars.h"
 #include "misc/log.h"
-
-//check if a char is whitespace
-static int iswhitespace(char ch)
-{
-	if(ch == ' ' || ch == '\t' || ch == '\n')
-		return(1);
-	return(0);
-}
-
-//eat whitespace from beginning and end of the string
-static char *eatwhitespace(char *str)
-{
-	char *p,*ret = str;
-
-	while(iswhitespace(*ret))
-		ret++;
-	p = ret + strlen(ret) - 1;
-	while(iswhitespace(*p))
-		*p-- = 0;
-	return(ret);
-}
 
 vars_t *vars_create()
 {
@@ -86,7 +66,7 @@ vars_t *vars_load(char *filename)
 			break;
 
 		//skip past any whitespace
-		p = eatwhitespace(line);
+		p = str_eatwhitespace(line);
 
 		//comment or empty string, do nothing
 		if(*p == '#' || *p == 0)
@@ -100,8 +80,8 @@ vars_t *vars_load(char *filename)
 
 		//parse out the name/data pair
 		*oldp++ = 0;
-		p = eatwhitespace(p);
-		oldp = eatwhitespace(oldp);
+		p = str_eatwhitespace(p);
+		oldp = str_eatwhitespace(oldp);
 
 		//add the var to the list
 		vars_add_var(ret,F_CONFIG,p,oldp);

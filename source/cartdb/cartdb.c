@@ -22,6 +22,7 @@
 #include "cartdb/cartdb.h"
 #include "cartdb/parser.h"
 #include "misc/memutil.h"
+#include "misc/strutil.h"
 #include "misc/config.h"
 #include "misc/log.h"
 #include "misc/crc32.h"
@@ -29,30 +30,6 @@
 #include "mappers/mapperid.h"
 
 static xml_t *cartxml = 0;
-
-/**** these two are also used in vars.c  ...
-	make them un-static so they can be re-used when necessary! ****/
-
-//check if a char is whitespace
-static int iswhitespace(char ch)
-{
-	if(ch == ' ' || ch == '\t' || ch == '\n')
-		return(1);
-	return(0);
-}
-
-//eat whitespace from beginning and end of the string
-static char *eatwhitespace(char *str)
-{
-	char *p,*ret = str;
-
-	while(iswhitespace(*ret))
-		ret++;
-	p = ret + strlen(ret) - 1;
-	while(iswhitespace(*p))
-		*p-- = 0;
-	return(ret);
-}
 
 int cartdb_init()
 {
@@ -68,7 +45,7 @@ int cartdb_init()
 	str = strtok(filename,";");
 	while(str != 0) {
 		str2 = mem_strdup(str);
-		p = eatwhitespace(str2);
+		p = str_eatwhitespace(str2);
 		if((xml = parser_load(p)) == 0) {
 			log_printf("cartdb_init:  error loading xml cart database '%s'\n",p);
 		}

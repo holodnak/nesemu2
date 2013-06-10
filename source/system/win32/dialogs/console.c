@@ -21,11 +21,12 @@
 #include <windows.h>
 #include "misc/memutil.h"
 #include "misc/log.h"
+#include "misc/history.h"
 #include "emu/commands.h"
 #include "system/win32/mainwnd.h"
 #include "system/win32/resource.h"
 
-typedef struct line_s {
+/*typedef struct line_s {
 	struct line_s *prev,*next;
 	char *str;
 } line_t;
@@ -98,27 +99,30 @@ char *history_getprev()
 		ret = history.cur->str;
 	}
 	return(ret);
-}
+}*/
 
 #define PROP_ORIGINAL_PROC		TEXT("_NewEdit_Original_Proc_")
 #define PROP_STATIC_NEWEDIT	TEXT("_NewEdit_")
+#define PROP_HISTORY				TEXT("_Command_History_")
 
 LRESULT CALLBACK NewEditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	WNDPROC pfnOrigProc = (WNDPROC)GetProp(hwnd,PROP_ORIGINAL_PROC);
+	history_t *history = (history_t*)GetProp(hwnd,PROP_HISTORY);
 
 	switch (message) {
 		case WM_DESTROY:
-			SetWindowLongPtr(hwnd, GWL_WNDPROC, (LONG)(LONG_PTR) pfnOrigProc);
-			RemoveProp(hwnd, PROP_ORIGINAL_PROC);
+			SetWindowLongPtr(hwnd,GWL_WNDPROC,(LONG)(LONG_PTR) pfnOrigProc);
+			RemoveProp(hwnd,PROP_ORIGINAL_PROC);
+			RemoveProp(hwnd,PROP_HISTORY);
 			break;
 		case WM_KEYDOWN:
 			if(wParam == VK_UP) {
-				SetWindowText(hwnd,history_getnext());
+				SetWindowText(hwnd,history_getnext(history));
 				return(TRUE);
 			}
 			if(wParam == VK_DOWN) {
-				SetWindowText(hwnd,history_getprev());
+				SetWindowText(hwnd,history_getprev(history));
 				return(TRUE);
 			}
 			break;
@@ -150,6 +154,7 @@ BOOL ConvertEditToNewEdit(HWND hwndCtl)
 
 LRESULT CALLBACK ConsoleProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	history_t *history = (history_t*)GetProp(hwnd,PROP_HISTORY);
 	char *str;
 	int len;
 	HWND hEdit;
@@ -159,7 +164,13 @@ LRESULT CALLBACK ConsoleProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 			hEdit = GetDlgItem(hwnd,IDC_COMMANDEDIT);
 			ConvertEditToNewEdit(hEdit);
 			SetFocus(hEdit);
-			history_init();
+			history = history_create();
+			lParam = (LPARAM)history;
+			log_printf("history in lparam = $%08X\n",lParam);
+			SetProp(hwnd,PROP_HISTORY,(HANDLE)history);
+			SetProp(hEdit,PROP_HISTORY,(HANDLE)history);
+//			SetWindowLongPtr(hwnd,GWLP_USERDATA,(LONG)(LONG_PTR)history);
+//			SetWindowLongPtr(hEdit,GWLP_USERDATA,(LONG)(LONG_PTR)history);
 			return(TRUE);
 
 		case WM_SYSCOMMAND:
@@ -174,12 +185,12 @@ LRESULT CALLBACK ConsoleProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 		    switch(LOWORD(wParam)) {
 				case IDC_EXECUTEBUTTON:
 					hEdit = GetDlgItem(hwnd,IDC_COMMANDEDIT);
-					if((len = SendMessage(hEdit, WM_GETTEXTLENGTH, 0, 0))) {
+					if((len = (int)SendMessage(hEdit,WM_GETTEXTLENGTH,0,0))) {
 						str = (char*)mem_alloc(len + 1);
 						memset(str,0,len + 1);
 						SendMessage(hEdit,WM_GETTEXT,len + 1,(LPARAM)str);
 						log_printf("> %s\n",str);
-						history_add(str);
+						history_add(history,str);
 						SetWindowText(hEdit,"");
 						command_execute(str);
 						mem_free(str);
@@ -192,7 +203,8 @@ LRESULT CALLBACK ConsoleProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 			break;
 
 		case WM_DESTROY:
-			history_kill();
+			history_destroy(history);
+			RemoveProp(hwnd,PROP_HISTORY);
 			break;
 
 	}

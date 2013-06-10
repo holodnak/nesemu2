@@ -180,6 +180,83 @@ static void modifyassociations(DWORD mask)
 	}
 }
 
+//check if a char is whitespace
+static int iswhitespace(char ch)
+{
+	if(ch == ' ' || ch == '\t' || ch == '\n')
+		return(1);
+	return(0);
+}
+
+//eat whitespace from beginning and end of the string
+static char *eatwhitespace(char *str)
+{
+	char *p,*ret = str;
+
+	while(iswhitespace(*ret))
+		ret++;
+	p = ret + strlen(ret) - 1;
+	while(iswhitespace(*p))
+		*p-- = 0;
+	return(ret);
+}
+
+LRESULT CALLBACK CartDBFilesDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	char *p,*tmp,*str = (char*)GetWindowLongPtr(hwnd,GWLP_USERDATA);
+	LVCOLUMN lvc;
+	LVITEM lvi;
+
+	switch(message) {
+		case WM_INITDIALOG:
+			//prepare the column struct and add a column
+			memset(&lvc,0,sizeof(LVCOLUMN));
+			lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+			lvc.cx = 200;
+			lvc.pszText = "Filename";
+			ListView_InsertColumn(GetDlgItem(hwnd,IDC_FILELIST),0,&lvc); 
+
+			//prepare the item struct
+			memset(&lvi,0,sizeof(LVITEM));
+			lvi.mask = LVIF_TEXT;
+
+			SetWindowLongPtr(hwnd,GWLP_USERDATA,lParam);
+			str = strdup((char*)lParam);
+			p = strtok(str,";");
+			while(p) {
+				tmp = strdup(p);
+				p = eatwhitespace(tmp);
+				lvi.cchTextMax = strlen(p);
+				lvi.pszText = p;
+				ListView_InsertItem(GetDlgItem(hwnd,IDC_FILELIST),&lvi); 
+				free(tmp);
+				p = strtok(0,";");
+			}
+			free(str);
+			return(TRUE);
+
+		case WM_COMMAND:
+		    switch(LOWORD(wParam)) {
+				case IDC_ADDBUTTON:
+					return(TRUE);
+				case IDC_DELETEBUTTON:
+					return(TRUE);
+				case IDOK:
+					 MessageBox(0,"ok","",MB_OK);
+					 EndDialog(hwnd,(INT_PTR)str);
+				case IDCANCEL:
+					 EndDialog(hwnd,(INT_PTR)NULL);
+					 return(TRUE);
+			 }
+			break;
+
+		case WM_DESTROY:
+			break;
+
+	}
+	return(FALSE);
+}
+
 #define GetDlgItemText_SetConfig(hwnd,ctrlid,cfgvar)	\
 	GetDlgItemText(hwnd,ctrlid,tmpstr,1024);				\
 	config_set_string(cfgvar,tmpstr);
@@ -187,7 +264,7 @@ static void modifyassociations(DWORD mask)
 //PSN_KILLACTIVE validated the changes
 LRESULT CALLBACK GeneralProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	char tmpstr[1024];
+	char tmpstr[1024],*str;
 	LPNMHDR nmhdr;
 	DWORD mask;
 	HWND hwnd;
@@ -201,6 +278,16 @@ LRESULT CALLBACK GeneralProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 			CheckDlgButton(hDlg,IDC_CARTDBENABLECHECK,config_get_bool("cartdb.enabled") ? BST_CHECKED : BST_UNCHECKED);
 			SetDlgItemText(hDlg,IDC_CARTDBEDIT,config_get_string("cartdb.filename"));
 			return TRUE;
+
+		case WM_COMMAND:
+			switch(LOWORD(wParam)) {
+				case IDC_CARTDBEDITBUTTON:
+					GetWindowText(GetDlgItem(hDlg,IDC_CARTDBEDIT),tmpstr,1024);
+					DialogBoxParam(hInst,(LPCTSTR)IDD_CARTDBFILES,hWnd,(DLGPROC)CartDBFilesDlg,(LPARAM)(char*)tmpstr);
+					SetWindowText(GetDlgItem(hDlg,IDC_CARTDBEDIT),tmpstr);
+					return(TRUE);
+			}
+			break;
 
 		case WM_NOTIFY:
 			nmhdr = (LPNMHDR)lParam;

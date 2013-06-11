@@ -23,6 +23,7 @@
 #include <string.h>
 #include "misc/memutil.h"
 #include "misc/log.h"
+#include "misc/paths.h"
 #include "misc/crc32.h"
 #include "misc/memfile.h"
 #include "nes/cart/cart.h"
@@ -126,7 +127,6 @@ cart_t *cart_load_patched(const char *filename,const char *patchfilename)
 	cart_t *ret = 0;
 	int format,n;
 	memfile_t *file;
-	patch_t *patch;
 
 	//try to open file
 	if((file = memfile_open((char*)filename,"rb")) == 0) {
@@ -155,9 +155,8 @@ cart_t *cart_load_patched(const char *filename,const char *patchfilename)
 
 	//if patch filename was passed, load the patch and patch the file in memory
 	if(patchfilename) {
-		if((patch = patch_load(patchfilename))) {
-			patch_file(patch,file);
-			patch_unload(patch);
+		if((ret->patch = patch_load(patchfilename))) {
+			patch_apply(ret->patch,file);
 			memfile_seek(file,0,SEEK_SET);
 		}
 	}
@@ -216,7 +215,19 @@ cart_t *cart_load_patched(const char *filename,const char *patchfilename)
 	generate_mask_and_crc32(ret->pc10rom);
 
 	//store the filename
-	ret->filename = mem_strdup((char*)filename);
+	if(ret->patch) {
+		char *p = strrchr(ret->patch->filename,PATH_SEPERATOR);
+
+		if(p == 0)
+			p = ret->patch->filename;
+		else
+			p++;
+		ret->filename = (char*)mem_alloc(strlen(filename) + strlen(p) + 2);
+		sprintf(ret->filename,"%s+%s",filename,p);
+	}
+	else
+		ret->filename = mem_strdup((char*)filename);
+	log_printf("cart_load:  rom filename is '%s'\n",ret->filename);
 
 	//close file
 	memfile_close(file);
@@ -245,6 +256,7 @@ void cart_unload(cart_t *r)
 		FREE(r->svcache);
 		FREE(r->svcache_hflip);
 		FREE(r->filename);
+		patch_unload(r->patch);
 		FREE(r);
 	}
 }

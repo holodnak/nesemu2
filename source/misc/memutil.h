@@ -22,6 +22,7 @@
 #define __memutil_h__
 
 #define mem_strdup(str)		memutil_strdup(str,__FILE__,__LINE__)
+#define mem_dup(ptr,sz)		memutil_dup(ptr,sz,__FILE__,__LINE__)
 #define mem_alloc(sz)		memutil_alloc(sz,__FILE__,__LINE__)
 #define mem_realloc(p,sz)	memutil_realloc(p,sz,__FILE__,__LINE__)
 #define mem_free(p)			memutil_free(p,__FILE__,__LINE__)
@@ -31,6 +32,7 @@
 int memutil_init();
 void memutil_kill();
 char *memutil_strdup(char *str,char *file,int line);
+void *memutil_dup(void *data,size_t size,char *file,int line);
 void *memutil_alloc(size_t size,char *file,int line);
 void *memutil_realloc(void *ptr,size_t size,char *file,int line);
 void memutil_free(void *ptr,char *file,int line);

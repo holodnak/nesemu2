@@ -126,8 +126,25 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 
 	if(strcmp(p,"") != 0) {
-		log_printf("trying lpcmdline as filename (%s)...\n",p);
-		loadrom(p);
+		char *filename;
+
+		//it is a relative path, make full path name
+		if(p[1] != ':') {
+			char *cwd = system_getcwd();
+			int len = strlen(p) + strlen(cwd) + 2;
+
+			filename = (char*)mem_alloc(len);
+			sprintf(filename,"%s\\%s",cwd,p);
+		}
+
+		//already full path name
+		else {
+			filename = mem_strdup(p);
+		}
+
+		log_printf("trying lpcmdline as filename (%s)...\n",filename);
+		loadrom(filename);
+		mem_free(filename);
 	}
 
 	mem_free(cmdline);

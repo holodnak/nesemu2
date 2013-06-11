@@ -23,6 +23,6 @@
 
 #include "nes/cart/patch/patch.h"
 
-int patch_load_ips(patch_t *ret,const char *filename);
+int patch_apply_ips(patch_t *p,memfile_t *file);
 
 #endif

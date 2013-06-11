@@ -125,6 +125,15 @@ char *memutil_strdup(char *str,char *file,int line)
 	return(ret);
 }
 
+void *memutil_dup(void *data,size_t size,char *file,int line)
+{
+	void *ret = memutil_alloc(size,file,line);
+
+	if(ret)
+		memcpy(ret,data,size);
+	return(ret);
+}
+
 void *memutil_alloc(size_t size,char *file,int line)
 {
 	void *ret;
@@ -132,6 +141,7 @@ void *memutil_alloc(size_t size,char *file,int line)
 
 	checkinited();
 	ret = malloc(size);
+	memset(ret,0,size);
 	num_alloc++;
 	num_bytes += size;
 	for(i=0;i<MAX_CHUNKS;i++) {
@@ -143,6 +153,10 @@ void *memutil_alloc(size_t size,char *file,int line)
 			chunks[i].size = size;
 			break;
 		}
+	}
+	if(i == MAX_CHUNKS) {
+		log_printf("memutil_alloc:  max number of chunks reached.  increase and recompile.\n");
+		return(0);
 	}
 	memutil_count();
 	return(ret);

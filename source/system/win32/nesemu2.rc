@@ -540,9 +540,10 @@ IDI_MAIN                ICON                    "mainicon.ico"
 IDR_ACCELERATOR ACCELERATORS 
 BEGIN
     VK_F9,          ID_FDS_FLIPDISK,        VIRTKEY, NOINVERT
-    VK_F5,          ID_NES_SAVESTATE,       VIRTKEY, NOINVERT
     VK_F8,          ID_NES_LOADSTATE,       VIRTKEY, NOINVERT
+    VK_F5,          ID_NES_SAVESTATE,       VIRTKEY, NOINVERT
     VK_RETURN,      ID_VIEW_FULLSCREEN,     VIRTKEY, ALT, NOINVERT
+    VK_ESCAPE,      IDM_EXIT,               VIRTKEY, NOINVERT
 END
 
 

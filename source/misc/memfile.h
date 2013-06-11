@@ -44,7 +44,9 @@ typedef struct memfile_s {
 
 } memfile_t;
 
+memfile_t *memfile_create();
 memfile_t *memfile_open(char *filename,char *mode);
+memfile_t *memfile_open_memory(u8 *data,u32 size);
 void memfile_close(memfile_t *mf);
 u32 memfile_size(memfile_t *mf);
 u32 memfile_tell(memfile_t *mf);
@@ -53,6 +55,8 @@ void memfile_rewind(memfile_t *mf);
 int memfile_eof(memfile_t *mf);
 u32 memfile_read(void *data,int chunksize,int chunks,memfile_t *mf);
 u32 memfile_write(void *data,int chunksize,int chunks,memfile_t *mf);
+u32 memfile_copy(memfile_t *dest,memfile_t *src,u32 size);
+u32 memfile_fill(memfile_t *dest,u8 ch,u32 size);
 int memfile_getc(memfile_t *mf);
 int memfile_putc(u8 ch,memfile_t *mf);
 

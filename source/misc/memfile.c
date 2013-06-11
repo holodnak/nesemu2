@@ -24,6 +24,18 @@
 #include "misc/memutil.h"
 #include "misc/log.h"
 
+memfile_t *memfile_create()
+{
+	memfile_t *ret = 0;
+
+	//allocate struct data
+	ret = (memfile_t*)mem_alloc(sizeof(memfile_t));
+	memset(ret,0,sizeof(memfile_t));
+
+	//return
+	return(ret);
+}
+
 memfile_t *memfile_open(char *filename,char *mode)
 {
 	FILE *fp;
@@ -35,9 +47,8 @@ memfile_t *memfile_open(char *filename,char *mode)
 		return(0);
 	}
 
-	//allocate struct data
-	ret = (memfile_t*)mem_alloc(sizeof(memfile_t));
-	memset(ret,0,sizeof(memfile_t));
+	//create new file
+	ret = memfile_create();
 
 	//copy filename and mode
 	ret->filename = mem_strdup(filename);
@@ -70,19 +81,33 @@ memfile_t *memfile_open(char *filename,char *mode)
 	return(ret);
 }
 
+memfile_t *memfile_open_memory(u8 *data,u32 size)
+{
+	memfile_t *ret;
+
+	ret = memfile_create();
+	ret->size = size;
+	ret->data = (u8*)mem_dup(data,size);
+	return(ret);
+}
+
 void memfile_close(memfile_t *mf)
 {
 	FILE *fp = (FILE*)mf->handle;
 
-	if(strchr(mf->mode,'w')) {
-		log_printf("memfile_close:  writing changes to '%s'\n",mf->filename);
-		fseek(fp,0,SEEK_SET);
-		fwrite(mf->data,1,mf->size,fp);
+	//is there is a filename associated with this file, it should already be open
+	if(mf->filename) {
+		if(strchr(mf->mode,'w')) {
+			log_printf("memfile_close:  writing changes to '%s'\n",mf->filename);
+			fseek(fp,0,SEEK_SET);
+			fwrite(mf->data,1,mf->size,fp);
+		}
+		fclose(fp);
+		mem_free(mf->filename);
+		mem_free(mf->mode);
 	}
-	fclose(fp);
-	mem_free(mf->filename);
-	mem_free(mf->mode);
-	mem_free(mf->data);
+	if(mf->data)
+		mem_free(mf->data);
 	mem_free(mf);
 }
 
@@ -157,6 +182,24 @@ u32 memfile_write(void *data,int chunksize,int chunks,memfile_t *mf)
 	return(chunks);
 }
 
+u32 memfile_copy(memfile_t *dest,memfile_t *src,u32 size)
+{
+	while(size) {
+		memfile_putc(memfile_getc(src),dest);
+		size--;
+	}
+	return(size);
+}
+
+u32 memfile_fill(memfile_t *dest,u8 ch,u32 size)
+{
+	while(size) {
+		memfile_putc(ch,dest);
+		size--;
+	}
+	return(size);
+}
+
 int memfile_getc(memfile_t *mf)
 {
 	int ret;
@@ -172,11 +215,14 @@ int memfile_getc(memfile_t *mf)
 
 int memfile_putc(u8 ch,memfile_t *mf)
 {
-	if(memfile_eof(mf) != 0) {
-		log_printf("memfile_getc:  cannot read past eof\n");
-		return(-1);
+	u32 newsize = mf->curpos + 1;
+
+	if(newsize > mf->size) {
+		mf->data = mem_realloc(mf->data,newsize);
+		mf->size = newsize;
 	}
 	mf->data[mf->curpos] = ch;
 	mf->curpos++;
+	mf->changed++;
 	return(0);
 }

@@ -127,6 +127,29 @@ static void file_open(HWND hWnd)
 	loadrom(buffer);
 }
 
+static void file_open_patch(HWND hWnd)
+{
+	char buffer[1024];
+	static char filter[] =
+		"All Patches (*.ips, *.ups)\0*.ips;*.ups\0"
+		"IPS Patches (*.ips)\0*.ips\0"
+		"UPS Patches (*.ups)\0*.ups\0"
+		"All Files (*.*)\0*.*\0";
+
+	memset(buffer,0,1024);
+	if(filedialog(hWnd,0,buffer,"Open Patch...",filter,0) != 0)
+		return;
+	log_printf("WndProc:  loading patch '%s'\n",buffer);
+	emu_event(E_LOADPATCH,buffer);
+}
+
+static int nesids[] = {
+	ID_FILE_LOADPATCH,	ID_FILE_UNLOAD,
+	ID_NES_PAUSE,			ID_NES_SOFTRESET,		ID_NES_HARDRESET,		ID_NES_LOADSTATE,		ID_NES_SAVESTATE,		ID_FDS_FLIPDISK,
+	ID_VIEW_MEMORY,		ID_VIEW_DEBUGGER,		ID_VIEW_CHEATS,		ID_VIEW_SEARCH,	//	ID_VIEW_FULLSCREEN,
+	-1
+};
+
 //
 //  FUNCTION: WndProc(HWND, unsigned, WORD, LONG)
 //
@@ -140,7 +163,7 @@ static void file_open(HWND hWnd)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static char dest[1024];
-	int wmId, wmEvent;
+	int i,wmId,wmEvent;
 	PAINTSTRUCT ps;
 	HDC hdc;
 	HMENU hMenu;
@@ -155,6 +178,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case ID_FILE_OPEN:
 			file_open(hWnd);
+			break;
+		case ID_FILE_LOADPATCH:
+			file_open_patch(hWnd);
 			break;
 		case ID_FILE_UNLOAD:
 			emu_event(E_UNLOAD,0);
@@ -221,6 +247,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_ENTERMENULOOP:
 		sound_pause();
+		for(i=0;nesids[i] != -1;i++) {
+			EnableMenuItem(GetMenu(hWnd),nesids[i],nes->cart ? MF_ENABLED : MF_GRAYED);
+		}
 		break;
 	case WM_EXITMENULOOP:
 		sound_play();

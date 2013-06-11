@@ -30,6 +30,7 @@
 #include "nes/memory.h"
 #include "nes/genie.h"
 #include "nes/state/state.h"
+#include "nes/cart/patch/patch.h"
 
 nes_t *nes = 0;
 

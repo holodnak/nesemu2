@@ -102,6 +102,9 @@ typedef struct cart_s {
 	//loaded file's name
 	char		*filename;
 
+	//loaded patch file
+	patch_t	*patch;
+
 } cart_t;
 
 cart_t *cart_load(const char *filename);

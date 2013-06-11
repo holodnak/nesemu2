@@ -20,7 +20,8 @@
 
 #include "nes/cart/patch/patch.h"
 
-int patch_load_ups(patch_t *ret,const char *filename)
+int patch_apply_ups(patch_t *ret,memfile_t *file)
 {
-	return(0);
+	log_printf("patch_apply_ups:  ups patches not supported.\n");
+	return(1);
 }

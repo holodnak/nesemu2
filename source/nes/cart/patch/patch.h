@@ -23,23 +23,11 @@
 
 #include "misc/memfile.h"
 
-#define BLOCK_DATA	0x10000
-#define BLOCK_FILL	0x20000
-
-typedef struct patchblock_s {
-	struct patchblock_s *next;
-	int type;
-	int offset;
-	int size;
-	u8 *data;
-} patchblock_t;
-
-typedef struct patch_s {
-	patchblock_t *blocks;
-} patch_t;
+typedef memfile_t patch_t;
 
 patch_t *patch_load(const char *filename);
+patch_t *patch_load_memory(u8 *data,u32 size);
 void patch_unload(patch_t *p);
-int patch_file(patch_t *p,memfile_t *file);
+int patch_apply(patch_t *p,memfile_t *file);
 
 #endif

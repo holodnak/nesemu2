@@ -38,28 +38,16 @@ enum patchformat_e {
 	FORMAT_UPS,
 };
 
-static int determineformat(const char *filename)
+static int determineformat(memfile_t *file)
 {
 	u8 ident_ips[] = "PATCH\x0";
 	u8 ident_ups[] = "UPS1";
 	u8 header[6];
-	FILE *fp;
 
-	//see if file exists and we can read
-	if(access(filename,04) != 0) {
-		log_printf("patch.c/determineformat:  file '%s' doesnt exist or isnt readable\n",filename);
-		return(FORMAT_ERROR);
-	}
-
-	//open filename given
-	if((fp = fopen(filename,"rb")) == 0) {
-		log_printf("patch.c/determineformat:  error opening '%s'\n",filename);
-		return(FORMAT_ERROR);
-	}
-
-	//read first 6 bytes and close the file
-	fread(header,1,6,fp);
-	fclose(fp);
+	//read first 6 bytes and seek to beginning
+	memfile_rewind(file);
+	memfile_read(header,1,6,file);
+	memfile_rewind(file);
 
 	//check if ips format
 	if(memcmp(header,ident_ips,5) == 0) {
@@ -76,74 +64,35 @@ static int determineformat(const char *filename)
 //load patch and return its data
 patch_t *patch_load(const char *filename)
 {
-	patch_t *ret = 0;
-	int format,n;
+	return(memfile_open((char*)filename,"rb"));
+}
 
-	//find out what format the file is
-	format = determineformat(filename);
-
-	//print errors for unknown format or error loading
-	if(format == FORMAT_UNKNOWN) {
-		log_printf("patch_load:  unknown file format in '%s'\n",filename);
-		return(0);
-	}
-	if(format == FORMAT_ERROR) {
-		log_printf("patch_load:  error reading '%s'\n",filename);
-		return(0);
-	}
-
-	//allocate data
-	ret = (patch_t*)mem_alloc(sizeof(patch_t));
-	memset(ret,0,sizeof(patch_t));
-
-	//load the file
-	switch(format) {
-		case FORMAT_IPS:	n = patch_load_ips(ret,filename);	break;
-		case FORMAT_UPS:	n = patch_load_ups(ret,filename);	break;
-	}
-
-	//if error, free data and print error
-	if(n != 0) {
-		mem_free(ret);
-		log_printf("patch_load:  error loading '%s'\n",filename);
-		return(0);
-	}
-
-	return(ret);
+patch_t *patch_load_memory(u8 *data,u32 size)
+{
+	return(memfile_open_memory(data,size));
 }
 
 void patch_unload(patch_t *p)
 {
-	patchblock_t *b;
-
-	if(p == 0)
-		return;
-	while(p->blocks) {
-		b = p->blocks;
-		p->blocks = p->blocks->next;
-		mem_free(b->data);
-		mem_free(b);
-	}
-	mem_free(p);
+	if(p)
+		memfile_close(p);
 }
 
-int patch_file(patch_t *p,memfile_t *file)
+int patch_apply(patch_t *p,memfile_t *file)
 {
-	patchblock_t *b = p->blocks;
-	int n;
+	int format,n;
 
-	while(b) {
-		log_printf("patching at %d, %d bytes\n",b->offset,b->size);
-		if(memfile_seek(file,b->offset,SEEK_SET) != 0) {
-			return(1);
-		}
-		for(n=0;n<b->size;n++) {
-			if(b->type == BLOCK_FILL)
-				memfile_putc(b->data[0],file);
-			else if(b->type == BLOCK_DATA)
-				memfile_putc(b->data[n],file);
-		}
-		b = b->next;
+	log_printf("patch_apply:  applying patch...\n");
+
+	//find out what format the file is
+	switch(determineformat(p)) {
+		case FORMAT_IPS:	n = patch_apply_ips(p,file);	break;
+		case FORMAT_UPS:	n = patch_apply_ups(p,file);	break;
+		default:
+			log_printf("patch_apply:  bad patch format.\n");
+			n = 1;
+			break;
 	}
-	return(0);
+
+	return(n);
 }

@@ -22,81 +22,42 @@
 #include "nes/cart/patch/patch.h"
 #include "misc/memutil.h"
 
-static patchblock_t *createblock()
-{
-	patchblock_t *ret = 0;
-
-	ret = (patchblock_t*)mem_alloc(sizeof(patchblock_t));
-	memset(ret,0,sizeof(patchblock_t));
-	return(ret);
-}
-
-int patch_load_ips(patch_t *ret,const char *filename)
+int patch_apply_ips(patch_t *p,memfile_t *file)
 {
 	u8 data[4];
-	FILE *fp;
-	u32 size;
+	u32 size,offset,n;
 	char eof[4] = "EOF";
-	patchblock_t *block,*cur;
 
-	//open rom file
-	if((fp = fopen(filename,"rb")) == 0) {
-		log_printf("patch_load_ips:  error opening '%s'\n",filename);
-		return(1);
-	}
+	//skip over the header, it has been verified (hopefully)
+	memfile_seek(p,5,SEEK_SET);
 
-	//get length of file
-	fseek(fp,0,SEEK_END);
-	size = ftell(fp);
-	fseek(fp,0,SEEK_SET);
-
-	//skip the header, determineformat already verified it
-	fseek(fp,5,SEEK_SET);
-
-	while(feof(fp) == 0) {
-		fread(data,1,3,fp);
+	while(memfile_eof(p) == 0) {
+		memfile_read(data,1,3,p);
 
 		//check for eof marker
 		if(memcmp(data,eof,3) == 0)
 			break;
 
-		//create new patch block
-		block = createblock();
+		//get offset and seek there
+		offset = (data[0] << 16) | (data[1] << 8) | data[2];
+		memfile_seek(file,offset,SEEK_SET);
 
-		//offset
-		block->offset = (data[0] << 16) | (data[1] << 8) | data[2];
+		//get size of chunk
+		memfile_read(data,1,2,p);
+		size = (data[0] << 8) | data[1];
 
-		//size
-		fread(data,1,2,fp);
-		block->size = (data[0] << 8) | data[1];
-
-		log_printf("patch address = $%X, size = %d\n",block->offset,block->size);
-		//read block data
-		if(block->size) {
-			block->type = BLOCK_DATA;
-			block->data = (u8*)mem_alloc(block->size);
-			fread(block->data,1,block->size,fp);
+		//read chunk data
+		if(size) {
+			memfile_copy(file,p,size);
 		}
+
+		//read block fill
 		else {
-			block->type = BLOCK_FILL;
-			fread(data,1,2,fp);
-			block->size = (data[0] << 8) | data[1];
-			block->data = (u8*)mem_alloc(1);
-			fread(block->data,1,1,fp);
+			memfile_read(data,1,2,p);
+			size = (data[0] << 8) | data[1];
+			memfile_fill(file,memfile_getc(p),size);
 		}
-
-		//store block
-		if(ret->blocks == 0) {
-			ret->blocks = block;
-		}
-		else {
-			cur->next = block;
-		}
-		cur = block;
 	}
-
-	//close file and return
-	fclose(fp);
-	log_printf("patch_load_ips:  loaded '%s'\n",filename);
+	log_printf("patch_apply_ips:  patched ok.\n");
 	return(0);
 }

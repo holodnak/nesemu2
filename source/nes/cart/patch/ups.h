@@ -23,6 +23,6 @@
 
 #include "nes/cart/patch/patch.h"
 
-int patch_load_ups(patch_t *ret,const char *filename);
+int patch_apply_ups(patch_t *ret,memfile_t *file);
 
 #endif

@@ -141,6 +141,7 @@ enum blocktype_e {
 	B_SRAM		= MAKEID('S', 'R', 'A', 'M' ),
 	B_DISK		= MAKEID('D', 'I', 'S', 'K' ),
 	B_GG			= MAKEID('G', 'G', '\0','\0'),
+	B_PATCH		= MAKEID('P', 'A', 'T', '\0'),
 };
 
 //state header as stored on disk

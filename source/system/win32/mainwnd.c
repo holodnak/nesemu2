@@ -70,7 +70,7 @@ static int filedialog(HWND parent,int type,char *buffer,char *title,char *filter
 	dlgdata.nMaxFileTitle = 0;
 	dlgdata.lpstrInitialDir = curdir;
 	dlgdata.lpstrTitle = title;
-	dlgdata.Flags = OFN_FILEMUSTEXIST|OFN_PATHMUSTEXIST|OFN_HIDEREADONLY;
+	dlgdata.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
 	dlgdata.nFileOffset = 0;
 	dlgdata.nFileExtension = 0;
 	dlgdata.lpstrDefExt = 0;
@@ -80,6 +80,8 @@ static int filedialog(HWND parent,int type,char *buffer,char *title,char *filter
 	switch(type) {
 		default:
 		case 0: //open
+//			dlgdata.Flags |= OFN_ENABLETEMPLATE | OFN_EXPLORER;
+//			dlgdata.lpTemplateName = (LPSTR)IDD_OPENEXT;
 			if(GetOpenFileName(&dlgdata) != 0)
 				return(0);
 			break;

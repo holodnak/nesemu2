@@ -372,8 +372,8 @@ void sound_kill()
 {
 	if(initialized_audio) {
 		log_printf("sound_kill: closing audio\n");
-		sdl_cleanup_audio();
 		SDL_CloseAudio();
+		sdl_cleanup_audio();
 	}
 }
 

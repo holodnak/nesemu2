@@ -25,6 +25,8 @@
 #define IDD_CARTDBFILES                 140
 #define IDR_FILELISTMENU                141
 #define IDD_FILEEDIT                    142
+#define IDD_DIALOG2                     143
+#define IDD_OPENEXT                     143
 #define IDC_EDIT1                       1000
 #define IDC_AEDIT                       1000
 #define IDC_DATAPATHEDIT                1000
@@ -119,6 +121,8 @@
 #define IDC_CARTDBENABLECHECK           1070
 #define IDC_CARTDBEDIT                  1071
 #define IDC_FILEEDIT                    1072
+#define IDC_TITLESTATIC                 1073
+#define IDC_URLSTATIC                   1074
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -157,9 +161,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        143
+#define _APS_NEXT_RESOURCE_VALUE        144
 #define _APS_NEXT_COMMAND_VALUE         32809
-#define _APS_NEXT_CONTROL_VALUE         1073
+#define _APS_NEXT_CONTROL_VALUE         1075
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

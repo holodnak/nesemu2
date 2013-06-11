@@ -18,26 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __blocks_h__
-#define __blocks_h__
+#include "nes/cart/patch/patch.h"
 
-#include "misc/memfile.h"
-
-#define MAKEID(c1,c2,c3,c4)	(((c1) << 0) | ((c2) << 8) | ((c3) << 16) | ((c4) << 24))
-
-//if state data is gzipped
-#define STATE_FLAG_GZIP		0x8000
-
-//block stored in memory
-typedef struct block_s {
-	u32	type;		//block type
-	u32	size;		//block size
-	u8		*data;	//block data
-} block_t;
-
-block_t *block_create(u32 type,u32 size);
-void block_destroy(block_t *b);
-block_t *block_load(memfile_t *file);
-int block_save(memfile_t *file,block_t *b);
-
-#endif
+int patch_load_ups(patch_t *ret,const char *filename)
+{
+	return(0);
+}

@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include "emu/emu.h"
 #include "emu/commands.h"
+#include "emu/events.h"
 #include "misc/log.h"
 #include "misc/config.h"
 #include "misc/paths.h"
@@ -44,9 +45,11 @@ int main(int argc,char *argv[])
 	int i,ret;
 	char *p;
 	char tmp[1024];
+	char tmp2[1024];
 
-	//clear the tmp string and configfile string
+	//clear the tmp/tmp2 strings and configfile string
 	memset(tmp,0,1024);
+	memset(tmp2,0,1024);
 	memset(configfilename,0,1024);
 
 	//make the exe path variable
@@ -64,6 +67,9 @@ int main(int argc,char *argv[])
 		else if(strcmp("--config",argv[i]) == 0) {
 			strcpy(configfilename,argv[++i]);
 		}
+		else if(strcmp("--patch",argv[i]) == 0) {
+			strcpy(tmp2,argv[++i]);
+		}
 		else
 			strcpy(tmp,argv[i]);
 	}
@@ -77,14 +83,16 @@ int main(int argc,char *argv[])
         return(2);
 	}
 
+	//kludges!
+	nes_set_inputdev(0,I_JOYPAD0);
+	nes_set_inputdev(1,I_JOYPAD1);
+
 	if(strcmp(tmp,"") != 0) {
-		//load file into the nes
-		if(nes_load(tmp) == 0) {
-			nes_set_inputdev(0,I_JOYPAD0);
-			nes_set_inputdev(1,I_JOYPAD1);
-			nes_reset(1);
-			running = 1;
-		}
+		emu_event(E_LOADROM,(void*)tmp);
+	}
+
+	if(strcmp(tmp2,"") != 0) {
+		emu_event(E_LOADPATCH,(void*)tmp2);
 	}
 
 	//begin the main loop

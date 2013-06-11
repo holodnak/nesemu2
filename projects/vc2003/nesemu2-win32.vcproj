@@ -594,6 +594,19 @@
 								ObjectFile="$(IntDir)/nes/cart/"/>
 						</FileConfiguration>
 					</File>
+					<Filter
+						Name="patch"
+						Filter="">
+						<File
+							RelativePath="..\..\source\nes\cart\patch\ips.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\cart\patch\patch.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\cart\patch\ups.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="state"
@@ -1336,6 +1349,9 @@
 				</File>
 				<File
 					RelativePath="..\..\source\misc\log.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\memfile.c">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\memutil.c">

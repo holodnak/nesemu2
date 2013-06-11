@@ -159,7 +159,7 @@ void state_kill();
 void state_register(u32 type,statefunc_t func);
 void state_unregister(u32 type);
 statefunc_t state_getfunc(u32 type);
-int state_load(FILE *fp);
-int state_save(FILE *fp);
+int state_load(memfile_t *file);
+int state_save(memfile_t *file);
 
 #endif

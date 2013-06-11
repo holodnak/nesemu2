@@ -28,6 +28,7 @@ enum events_e {
 	E_UNKNOWN = 0,
 	E_QUIT,
 	E_LOADROM,
+	E_LOADPATCH,
 	E_UNLOAD,
 	E_SOFTRESET,
 	E_HARDRESET,

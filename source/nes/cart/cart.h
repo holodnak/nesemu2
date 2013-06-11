@@ -22,7 +22,9 @@
 #define __nes__cart_h__
 
 #include "types.h"
+#include "misc/memfile.h"
 #include "nes/ppu/tilecache.h"
+#include "nes/cart/patch/patch.h"
 
 //max length for cart titles
 #define CART_TITLE_LEN	512
@@ -96,10 +98,14 @@ typedef struct cart_s {
 	cache_t	*cache,*cache_hflip;			//chr cache
 	cache_t	*vcache,*vcache_hflip;		//vram cache
 	cache_t	*svcache,*svcache_hflip;	//svram cache
+	
+	//loaded file's name
+	char		*filename;
 
 } cart_t;
 
 cart_t *cart_load(const char *filename);
+cart_t *cart_load_patched(const char *filename,const char *patchfilename);
 void cart_unload(cart_t *r);
 void cart_setsramsize(cart_t *r,int banks);
 void cart_setwramsize(cart_t *r,int banks);

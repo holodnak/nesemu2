@@ -44,6 +44,7 @@ int emu_event(int id,void *data)
 {
 	int ret = 0;
 	char dest[1024];
+	char *str;
 
 	switch(id) {
 
@@ -56,6 +57,16 @@ int emu_event(int id,void *data)
 				nes_reset(1);
 				running = config_get_bool("video.pause_on_load") ? 0 : 1;
 			}
+			break;
+
+		case E_LOADPATCH:
+			if(nes->cart == 0)
+				break;
+			str = strdup(nes->cart->filename);
+			if((ret = nes_load_patched(str,(char*)data)) == 0) {
+				nes_reset(1);
+			}
+			free(str);
 			break;
 
 		case E_UNLOAD:
@@ -71,12 +82,16 @@ int emu_event(int id,void *data)
 			break;
 
 		case E_LOADSTATE:
-			paths_makestatefilename(nes->romfilename,dest,1024);
+			if(nes->cart == 0)
+				break;
+			paths_makestatefilename(nes->cart->filename,dest,1024);
 			nes_loadstate(dest);
 			break;
 
 		case E_SAVESTATE:
-			paths_makestatefilename(nes->romfilename,dest,1024);
+			if(nes->cart == 0)
+				log_printf("emu_event:  cannot load state, no rom loaded\n");
+			paths_makestatefilename(nes->cart->filename,dest,1024);
 			nes_savestate(dest);
 			break;
 
@@ -99,7 +114,9 @@ int emu_event(int id,void *data)
 			break;
 
 		case E_DUMPDISK:
-			if(nes->cart && (nes->cart->mapperid & B_TYPEMASK) == B_FDS) {
+			if(nes->cart == 0)
+				break;
+			if((nes->cart->mapperid & B_TYPEMASK) == B_FDS) {
 				FILE *fp;
 
 				log_printf("dumping disk as dump.fds\n");

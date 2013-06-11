@@ -98,21 +98,31 @@ int nes_load_cart(cart_t *c)
 {
 	mapper_t *m;
 
+	//check mapper id
 	if(c->mapperid < 0) {
 		log_printf("nes_load_cart:  cart with unsupported mapperid loaded (id = %d)\n",c->mapperid);
 		return(1);
 	}
+
+	//try to load the mapper functions
 	if((m = mapper_init(c->mapperid)) == 0) {
 		log_printf("nes_load_cart:  error calling mapper_init\n");
 		return(1);
 	}
-	log_printf("nes_load_cart:  success\n");
+
+	//it is ready for execution...set pointers and return
 	nes->cart = c;
 	nes->mapper = m;
+	log_printf("nes_load_cart:  success\n");
 	return(0);
 }
 
 int nes_load(char *filename)
+{
+	return(nes_load_patched(filename,0));
+}
+
+int nes_load_patched(char *filename,char *patchfilename)
 {
 	cart_t *c;
 
@@ -120,11 +130,12 @@ int nes_load(char *filename)
 	nes_unload();
 
 	//try to load the file into a cart_t struct
-	if((c = cart_load(filename)) == 0) {
+	if((c = cart_load_patched(filename,patchfilename)) == 0) {
 		log_printf("nes_load:  error loading '%s'\n",filename);
 		return(1);
 	}
 
+	//output some information
 	if(strlen(c->title))
 		log_printf("nes_load:  loaded file '%s' (title = '%s')\n",filename,c->title);
 	else
@@ -139,10 +150,6 @@ int nes_load(char *filename)
 		return(2);
 	}
 
-	//nes accepted it, save away the filename
-	else
-		strncpy(nes->romfilename,filename,1024);
-
 	return(0);
 }
 
@@ -153,7 +160,6 @@ void nes_unload()
 		cart_unload(nes->cart);
 	nes->cart = 0;
 	nes->mapper = 0;
-	memset(nes->romfilename,0,1024);
 }
 
 void nes_set_inputdev(int n,int id)
@@ -241,34 +247,34 @@ void nes_state(int mode,u8 *data)
 
 void nes_savestate(char *filename)
 {
-	FILE *fp;
+	memfile_t *file;
 
 	if(nes->cart == 0) {
 		log_printf("nes_savestate:  no cart loaded, cannot save state\n");
 		return;
 	}
-	if((fp = fopen(filename,"wb")) == 0) {
+	if((file = memfile_open(filename,"wb")) == 0) {
 		log_printf("nes_savestate:  error opening file '%s'\n",filename);
 		return;
 	}
 	log_printf("nes_savestate:  saving state to '%s'\n",filename);
-	state_save(fp);
-	fclose(fp);
+	state_save(file);
+	memfile_close(file);
 }
 
 void nes_loadstate(char *filename)
 {
-	FILE *fp;
+	memfile_t *file;
 
 	if(nes->cart == 0) {
 		log_printf("nes_loadstate:  no cart loaded, cannot load state\n");
 		return;
 	}
-	if((fp = fopen(filename,"rb")) == 0) {
+	if((file = memfile_open(filename,"rb")) == 0) {
 		log_printf("nes_loadstate:  error opening file '%s'\n",filename);
 		return;
 	}
 	log_printf("nes_loadstate:  loading state from '%s'\n",filename);
-	state_load(fp);
-	fclose(fp);
+	state_load(file);
+	memfile_close(file);
 }

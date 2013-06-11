@@ -18,26 +18,42 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __blocks_h__
-#define __blocks_h__
+#ifndef __memfile_h__
+#define __memfile_h__
 
-#include "misc/memfile.h"
+#include "types.h"
 
-#define MAKEID(c1,c2,c3,c4)	(((c1) << 0) | ((c2) << 8) | ((c3) << 16) | ((c4) << 24))
+typedef struct memfile_s {
 
-//if state data is gzipped
-#define STATE_FLAG_GZIP		0x8000
+	//file data
+	u8		*data;
+	u32	size;
 
-//block stored in memory
-typedef struct block_s {
-	u32	type;		//block type
-	u32	size;		//block size
-	u8		*data;	//block data
-} block_t;
+	//current position in the data
+	u32	curpos;
 
-block_t *block_create(u32 type,u32 size);
-void block_destroy(block_t *b);
-block_t *block_load(memfile_t *file);
-int block_save(memfile_t *file,block_t *b);
+	//has the data been modified
+	u32	changed;
+
+	//filename and mode
+	char	*filename;
+	char	*mode;
+
+	//handle
+	void	*handle;
+
+} memfile_t;
+
+memfile_t *memfile_open(char *filename,char *mode);
+void memfile_close(memfile_t *mf);
+u32 memfile_size(memfile_t *mf);
+u32 memfile_tell(memfile_t *mf);
+int memfile_seek(memfile_t *mf,int pos,int mode);
+void memfile_rewind(memfile_t *mf);
+int memfile_eof(memfile_t *mf);
+u32 memfile_read(void *data,int chunksize,int chunks,memfile_t *mf);
+u32 memfile_write(void *data,int chunksize,int chunks,memfile_t *mf);
+int memfile_getc(memfile_t *mf);
+int memfile_putc(u8 ch,memfile_t *mf);
 
 #endif

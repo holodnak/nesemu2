@@ -68,50 +68,39 @@ static int parse_ines20_header(cart_t *ret,u8 *header)
 	return(0);
 }
 
-static int load_chunk(data_t *data,FILE *fp)
+static int load_chunk(data_t *data,memfile_t *file)
 {
 	int len = 0;
 
 	//if this chunk has a size, it exists (parse_ines_header determines this)
 	if(data->size) {
 		data->data = (u8*)mem_alloc(data->size);
-		len = (int)fread(data->data,1,data->size,fp);
+		len = (int)memfile_read(data->data,1,data->size,file);
 	}
 	return(len);
 }
 
-int cart_load_ines20(cart_t *ret,const char *filename)
+int cart_load_ines20(cart_t *ret,memfile_t *file)
 {
 	u8 header[16];
-	FILE *fp;
 	u32 size;
 
-	//open rom file
-	if((fp = fopen(filename,"rb")) == 0) {
-		log_printf("cart_load_ines20:  error opening '%s'\n",filename);
-		return(1);
-	}
-
 	//get length of file
-	fseek(fp,0,SEEK_END);
-	size = ftell(fp);
-	fseek(fp,0,SEEK_SET);
+	size = memfile_size(file);
 
 	//read 16 byte header and parse its data
-	fread(header,1,16,fp);
+	memfile_read(header,1,16,file);
 	parse_ines20_header(ret,header);
 
 	//load each chunk from the file
-	load_chunk(&ret->trainer,fp);
-	load_chunk(&ret->prg,fp);
-	load_chunk(&ret->chr,fp);
-	load_chunk(&ret->pc10rom,fp);
+	load_chunk(&ret->trainer,file);
+	load_chunk(&ret->prg,file);
+	load_chunk(&ret->chr,file);
+	load_chunk(&ret->pc10rom,file);
 
 	//check for title
-	if((size - ftell(fp)) == 128)
-		fread(ret->title,1,128,fp);
+	if((size - memfile_tell(file)) == 128)
+		memfile_read(ret->title,1,128,file);
 
-	//close file and return
-	fclose(fp);
 	return(0);
 }

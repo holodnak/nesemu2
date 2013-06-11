@@ -77,8 +77,6 @@ typedef struct nes_s {
 	u8				strobe;
 	inputdev_t	*inputdev[2],*expdev;
 
-	//currently loaded file's name
-	char			romfilename[1024];
 } nes_t;
 
 extern nes_t *nes;
@@ -87,6 +85,7 @@ int nes_init();
 void nes_kill();
 int nes_load_cart(cart_t *c);
 int nes_load(char *filename);
+int nes_load_patched(char *filename,char *patchfilename);
 void nes_unload();
 void nes_set_inputdev(int n,int id);
 void nes_reset(int hard);

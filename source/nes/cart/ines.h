@@ -23,6 +23,6 @@
 
 #include "nes/cart/cart.h"
 
-int cart_load_ines(cart_t *ret,const char *filename);
+int cart_load_ines(cart_t *ret,memfile_t *file);
 
 #endif

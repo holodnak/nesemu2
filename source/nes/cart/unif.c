@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "misc/memutil.h"
@@ -106,9 +105,9 @@ BLOCKFUNCSTART()
 	BLOCKFUNC(ID_CCKC)	BLOCKFUNC(ID_CCKD)	BLOCKFUNC(ID_CCKE)	BLOCKFUNC(ID_CCKF)
 BLOCKFUNCEND()
 
-static int load_unif_block(cart_t *ret,FILE *fp)
+static int load_unif_block(cart_t *ret,memfile_t *file)
 {
-	block_t *block = block_load(fp);
+	block_t *block = block_load(file);
 	int i;
 
 	if(block == 0) {
@@ -145,25 +144,16 @@ static void glue_data(data_t *rom,romdata_t *roms)
 	}
 }
 
-int cart_load_unif(cart_t *ret,const char *filename)
+int cart_load_unif(cart_t *ret,memfile_t *file)
 {
 	u8 header[32];
-	FILE *fp;
 	u32 pos,size,tmp;
 
-	//open rom file
-	if((fp = fopen(filename,"rb")) == 0) {
-		log_printf("cart_load_unif:  error opening '%s'\n",filename);
-		return(1);
-	}
-
 	//get file size
-	fseek(fp,0,SEEK_END);
-	size = ftell(fp);
-	fseek(fp,0,SEEK_SET);
+	size = memfile_size(file);
 
 	//read 32 byte header
-	fread(header,1,32,fp);
+	memfile_read(header,1,32,file);
 	pos = 32;
 
 	//clear the prg/chr rom data
@@ -175,7 +165,7 @@ int cart_load_unif(cart_t *ret,const char *filename)
 
 	//load the unif blocks
 	while(pos < size) {
-		if((tmp = load_unif_block(ret,fp)) == -1)
+		if((tmp = load_unif_block(ret,file)) == -1)
 			break;
 		pos += tmp;
 	}
@@ -207,7 +197,5 @@ int cart_load_unif(cart_t *ret,const char *filename)
 		log_printf("cart_load_unif:  crc32 stored does not match the data\n");
 	}
 
-	//close file and return
-	fclose(fp);
 	return(0);
 }	

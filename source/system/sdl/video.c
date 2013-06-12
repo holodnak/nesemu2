@@ -29,9 +29,6 @@
 #include "misc/memutil.h"
 #include "misc/config.h"
 #include "system/common/filters.h"
-//#include "system/common/filters/draw/draw.h"
-//#include "system/common/filters/interpolate/interpolate.h"
-//#include "system/common/filters/scale2x/scalebit.h"
 
 static SDL_Surface *surface = 0;
 static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;// | SDL_NOFRAME;

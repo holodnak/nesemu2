@@ -8,7 +8,6 @@ Some options are:
 
    CPU_UNDOC        - Enable the undocumented opcodes.
    QUICK_SPRITES    - Use the fast sprite code.
-   ACCURATE_SPRITE0 - Enable perfect sprite0 emulation, use with QUICK_SPRITES
 
       * All of these are currently enabled by default.
 

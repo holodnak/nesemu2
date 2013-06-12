@@ -29,9 +29,6 @@ ifeq ($(USE_CPU_UNDOC),1)
 	DEFINES += -DCPU_UNDOC
 endif
 ifeq ($(USE_QUICK_SPRITES),1)
-	ifeq ($(USE_ACCURATE_SPRITE0),1)
-		DEFINES += -DACCURATE_SPRITE0
-	endif
 	DEFINES += -DQUICK_SPRITES
 endif
 ifeq ($(USESDL),1)

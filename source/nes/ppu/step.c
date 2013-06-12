@@ -31,7 +31,9 @@ typedef struct {
 	u8 sprline;				//line of sprite bitmap to draw
 } sprtemp_t;				//sprite temp entry
 
+//todo: this needs to be moved to the ppu struct
 static sprtemp_t sprtemp[8];
+static sprtemp_t *spr0 = 0;
 
 #include "step/calc.c"
 #include "step/fetch.c"
@@ -444,7 +446,7 @@ static INLINE void scanline_visible()
 			fetch_pt1byte();
 			drawpixel();
 			inc_hscroll();
-			update_line();
+			video_updateline(SCANLINE,nes->ppu.linebuffer);
 			inc_vscroll();
 			break;
 
@@ -493,6 +495,9 @@ static INLINE void scanline_visible()
 		case 320:
 			fetch_spt1byte();
 			nes->ppu.oamaddr = 0;
+#ifdef QUICK_SPRITES
+			quick_draw_sprite_line();
+#endif
 			break;
 
 		//nametable byte for next scanline

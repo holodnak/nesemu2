@@ -264,7 +264,10 @@ void cart_unload(cart_t *r)
 static void allocdata(data_t *data,u32 len)
 {
 	//if size hasnt changed, return
-	if(data->size >= len) {
+	if(data->size == len) {
+		return;
+	}
+	if(data->size > len) {
 		log_printf("allocdata:  cannot reduce size of memory region (old = %d, new = %d)\n",data->size,len);
 		return;
 	}

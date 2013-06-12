@@ -325,11 +325,16 @@ int cartdb_find(cart_t *cart)
 			}
 
 			//debug messages
-			log_printf("cartdb_find:  wram size is %d bytes\n",wramsize);
-			log_printf("cartdb_find:  vram size is %d bytes\n",vramsize);
-			cart_setwramsize(cart,wramsize / 1024);
-			cart_setvramsize(cart,vramsize / 1024);
-			cart->battery = battery;
+			if(wramsize) {
+				cart_setwramsize(cart,wramsize / 1024);
+				if(battery & 1)
+					cart->battery |= 1;
+			}
+			if(vramsize) {
+				cart_setvramsize(cart,vramsize / 1024);
+				if(battery & 2)
+					cart->battery |= 2;
+			}
 			return(0);
 		}
 	}

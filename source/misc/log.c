@@ -105,8 +105,9 @@ void log_print(char *str)
 	printf(str);
 
 	//output message to hook function
-	if(loghook)
+	if(loghook) {
 		loghook(str);
+	}
 
 	//if log file isnt open, maybe logging is disabled or file isnt opened yet
 	if(logfd == 0) {

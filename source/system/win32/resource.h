@@ -25,7 +25,6 @@
 #define IDD_CARTDBFILES                 140
 #define IDR_FILELISTMENU                141
 #define IDD_FILEEDIT                    142
-#define IDD_DIALOG2                     143
 #define IDD_OPENEXT                     143
 #define IDC_EDIT1                       1000
 #define IDC_AEDIT                       1000
@@ -154,6 +153,7 @@
 #define ID_VIEW_SEARCH                  32805
 #define ID_FILE_UNLOAD                  32807
 #define ID_FILE_LOADPATCH               32808
+#define ID_VIEW_ROMINFORMATION          32811
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -161,8 +161,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        144
-#define _APS_NEXT_COMMAND_VALUE         32809
+#define _APS_NEXT_RESOURCE_VALUE        145
+#define _APS_NEXT_COMMAND_VALUE         32812
 #define _APS_NEXT_CONTROL_VALUE         1075
 #define _APS_NEXT_SYMED_VALUE           110
 #endif

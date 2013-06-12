@@ -27,80 +27,15 @@
 #include "emu/emu.h"
 #include "system/main.h"
 
-char *paths_parse(char *src,char *dest,int len)
+char *paths_normalize(char *str)
 {
-	char *tmp,*p,*p2;
-	char varname[64],varname2[70];
-	int pos;
+	char *p;
 
-	//make a copy of the string
-	tmp = mem_strdup(src);
-
-	//clear the destination string
-	memset(dest,0,len);
-
-	for(pos=0,p=tmp;*p;p++) {
-
-		//see if we find a '%'
-		if(*p == '%') {
-
-			//clear area to hold var name
-			memset(varname,0,64);
-
-			//see if it is missing the '%'
-			if((p2 = strchr(p + 1,'%')) == 0) {
-				log_printf("paths_parse:  missing ending '%', just copying\n");
-			}
-
-			//not missing, replace with variable data
-			else {
-				//skip over the '%'
-				p++;
-
-				//terminate the substring
-				*p2 = 0;
-
-				//copy substring to varname array
-				strcpy(varname,p);
-
-				//set new position in the string we parsing
-				p = p2 + 1;
-
-				p2 = var_get_string(varname2);
-
-				//see if it has a % in it
-				if(strrchr(p2,'%') != 0) {
-					char *tmp2 = (char*)mem_alloc(1024);
-
-					p2 = paths_parse(p2,tmp2,1024);
-					while(p2 && *p2) {
-						dest[pos++] = *p2++;
-					}
-					mem_free(tmp2);
-				}
-
-				else {
-					//copy variable data to the dest string
-					while(p2 && *p2) {
-						dest[pos++] = *p2++;
-					}
-				}
-			}
-		}
-
-		//copy the char
-		dest[pos++] = *p;
-	}
-
-	//normalize the path
-	for(p=dest;*p;p++) {
+	for(p=str;*p;p++) {
 		if(*p == '/' || *p == '\\')
 			*p = PATH_SEPERATOR;
 	}
-
-	//free tmp string and return
-	mem_free(tmp);
-	return(dest);
+	return(str);
 }
 
 void paths_makestatefilename(char *romfilename,char *dest,int len)
@@ -117,25 +52,13 @@ void paths_makestatefilename(char *romfilename,char *dest,int len)
 	dest[strlen(dest)] = PATH_SEPERATOR;
 
 	//normalize the path seperators
-	for(p=tmp;*p;p++) {
-		if(*p == '/' || *p == '\\')
-			*p = PATH_SEPERATOR;
-	}
+	paths_normalize(tmp);
 
 	//find the last path seperator
 	p = strrchr(tmp,PATH_SEPERATOR);
 
 	//if not found then it is plain filename
 	p = (p == 0) ? tmp : p + 1;
-
-/*	//this code removed because if you have smb.fds and smb.nes they use the same state filename
-	//find the extension
-	p2 = strrchr(tmp,'.');
-
-	//if found, end the string here
-	if(p2) {
-		*p2 = 0;
-	}*/
 
 	//append the rom filename
 	strcat(dest,p);

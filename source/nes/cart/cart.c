@@ -216,8 +216,10 @@ cart_t *cart_load_patched(const char *filename,const char *patchfilename)
 
 	//store the filename
 	if(ret->patch) {
-		char *p = strrchr(ret->patch->filename,PATH_SEPERATOR);
+		char *p;
 
+		paths_normalize(ret->patch->filename);
+		p = strrchr(ret->patch->filename,PATH_SEPERATOR);
 		if(p == 0)
 			p = ret->patch->filename;
 		else

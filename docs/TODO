@@ -10,6 +10,8 @@ misc
  . when using the config_get_string/config_get_eval_string it should
    eat whitespace from the beginning and end of the string
  . memutil could be dangerous when used after it was killed.  add checks for that.
+ . config_get_eval_string needs to allocate its own memory and return that string.
+   with many vars we might trash some memory.
 
 win32
  . finish the (crappy) input code.  translatekey() misses some keys

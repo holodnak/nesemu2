@@ -207,14 +207,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ConfigurationPropertySheet(hWnd);
 			break;
 		case ID_VIEW_DEBUGGER:
-			if(nes->cart) {
-				DialogBox(hInst,(LPCTSTR)IDD_DEBUGGER,hWnd,(DLGPROC)DebuggerDlg);
-			}
+			DialogBox(hInst,(LPCTSTR)IDD_DEBUGGER,hWnd,(DLGPROC)DebuggerDlg);
 			break;
 		case ID_VIEW_SEARCH:
-			if(nes->cart) {
-				DialogBox(hInst,(LPCTSTR)IDD_CHEATSEARCH,hWnd,(DLGPROC)CheatSearchDlg);
-			}
+			DialogBox(hInst,(LPCTSTR)IDD_CHEATSEARCH,hWnd,(DLGPROC)CheatSearchDlg);
 			break;
 		case ID_VIEW_CONSOLE:
 			hMenu = GetMenu(hWnd);

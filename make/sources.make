@@ -4,16 +4,16 @@
 PATH_SOURCE=source
 
 # misc source files
-SOURCE_MISC = source/misc/config.c source/misc/log.c 
-SOURCE_MISC += source/misc/crc32.c source/misc/memutil.c
-SOURCE_MISC += source/misc/vars.c source/misc/paths.c
+SOURCE_MISC = source/misc/config.c source/misc/log.c source/misc/crc32.c
+SOURCE_MISC += source/misc/memutil.c source/misc/vars.c source/misc/paths.c
+SOURCE_MISC += source/misc/memfile.c source/misc/strutil.c source/misc/history.c
 
 # cartdb source files
 SOURCE_CARTDB = source/cartdb/cartdb.c source/cartdb/parser.c
 SOURCE_CARTDB += $(foreach dir,$(PATH_SOURCE)/cartdb/expat,$(wildcard $(dir)/*.c))
 
 # emu source files
-SOURCE_EMU = source/emu/emu.c source/emu/commands.c 
+SOURCE_EMU = source/emu/emu.c source/emu/commands.c source/emu/events.c
 SOURCE_EMU += source/emu/commands/general.c source/emu/commands/nes.c
 
 # search mapper directory for source files
@@ -27,6 +27,7 @@ SOURCE_INPUTDEV = $(foreach dir,$(PATH_SOURCE)/inputdev,$(wildcard $(dir)/*.c))
 SOURCE_NES = source/nes/memory.c source/nes/nes.c source/nes/io.c source/nes/genie.c
 SOURCE_NES += source/nes/cart/cart.c source/nes/cart/ines.c source/nes/cart/ines20.c
 SOURCE_NES += source/nes/cart/unif.c source/nes/cart/fds.c source/nes/cart/nsf.c
+SOURCE_NES += source/nes/cart/patch/patch.c source/nes/cart/patch/ips.c source/nes/cart/patch/ups.c
 SOURCE_NES += source/nes/state/state.c source/nes/state/block.c
 SOURCE_NES += source/nes/cpu/cpu.c source/nes/cpu/disassemble.c
 SOURCE_NES += source/nes/ppu/io.c source/nes/ppu/ppu.c source/nes/ppu/step.c

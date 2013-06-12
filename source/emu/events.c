@@ -22,10 +22,11 @@
 #include "emu/emu.h"
 #include "misc/log.h"
 #include "misc/config.h"
+#include "misc/paths.h"
+#include "misc/memutil.h"
 #include "system/video.h"
 #include "system/sound.h"
 #include "nes/nes.h"
-#include "misc/paths.h"
 #include "nes/nes.h"
 #include "nes/state/state.h"
 #include "mappers/mapperid.h"
@@ -62,11 +63,11 @@ int emu_event(int id,void *data)
 		case E_LOADPATCH:
 			if(nes->cart == 0)
 				break;
-			str = strdup(nes->cart->filename);
+			str = mem_strdup(nes->cart->filename);
 			if((ret = nes_load_patched(str,(char*)data)) == 0) {
 				nes_reset(1);
 			}
-			free(str);
+			mem_free(str);
 			break;
 
 		case E_UNLOAD:

@@ -248,7 +248,7 @@ static void reset(int hard)
 	write4 = mem_getwritefunc(4);
 	mem_setreadfunc(4,read);
 	mem_setwritefunc(4,write);
-	mem_setwramsize(8);
+	mem_setwramsize(32);
 	mem_setvramsize(8);
 	mem_setwram32(6,0);
 	mem_setprg8(0xE,0);

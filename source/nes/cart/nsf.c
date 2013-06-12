@@ -62,14 +62,13 @@ static int loadbios(cart_t *ret,char *filename)
 	//seek back to the beginning
 	fseek(fp,0,SEEK_SET);
 
-	//load bios into sram
-	ret->sram.size = (u32)size;
-	ret->sram.mask = ret->sram.size - 1;
-	ret->sram.data = (u8*)mem_alloc(ret->sram.size);
+	//load bios into upper wram
+	cart_setwramsize(ret,8 + (size / 1024));
 
 	//read bios
-	if(fread(ret->sram.data,1,ret->sram.size,fp) != ret->sram.size) {
+	if(fread(ret->wram.data + 8192,1,size,fp) != size) {
 		log_printf("loadbios:  error reading nsf bios file '%s'\n",filename);
+		mem_free(ret->wram.data);
 		fclose(fp);
 		return(1);
 	}

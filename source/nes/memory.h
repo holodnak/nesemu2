@@ -53,19 +53,15 @@ void mem_unsetppu(int banksize,int page);
 //map to cpu memory
 void mem_setprg(int banksize,int page,int rombank);
 void mem_setwram(int banksize,int page,int rombank);
-void mem_setsram(int banksize,int page,int rombank);
 
 //map to ppu memory
 void mem_setnt(int banksize,int page,int rombank);
 void mem_setchr(int banksize,int page,int rombank);
 void mem_setvram(int banksize,int page,int rombank);
-void mem_setsvram(int banksize,int page,int rombank);
 
 //setup wram/sram/vram/svram
 void mem_setwramsize(int banks);
-void mem_setsramsize(int banks);
 void mem_setvramsize(int banks);
-void mem_setsvramsize(int banks);
 
 //mirroring
 void mem_setmirroring(int t);
@@ -90,12 +86,6 @@ void mem_setmirroring2(int n0,int n1,int n2,int n3);
 #define mem_setwram8(p,b)		mem_setwram(8,p,b)
 #define mem_setwram16(p,b)		mem_setwram(16,p,b)
 #define mem_setwram32(p,b)		mem_setwram(32,p,b)
-#define mem_setsram1(p,b)		mem_setsram(1,p,b)
-#define mem_setsram2(p,b)		mem_setsram(2,p,b)
-#define mem_setsram4(p,b)		mem_setsram(4,p,b)
-#define mem_setsram8(p,b)		mem_setsram(8,p,b)
-#define mem_setsram16(p,b)		mem_setsram(16,p,b)
-#define mem_setsram32(p,b)		mem_setsram(32,p,b)
 
 //macros for ppu memory
 #define mem_unsetppu1(p)		mem_unsetppu(1,p)
@@ -112,9 +102,5 @@ void mem_setmirroring2(int n0,int n1,int n2,int n3);
 #define mem_setvram2(p,b)		mem_setvram(2,p,b)
 #define mem_setvram4(p,b)		mem_setvram(4,p,b)
 #define mem_setvram8(p,b)		mem_setvram(8,p,b)
-#define mem_setsvram1(p,b)		mem_setsvram(1,p,b)
-#define mem_setsvram2(p,b)		mem_setsvram(2,p,b)
-#define mem_setsvram4(p,b)		mem_setsvram(4,p,b)
-#define mem_setsvram8(p,b)		mem_setsvram(8,p,b)
 
 #endif

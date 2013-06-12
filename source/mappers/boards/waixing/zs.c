@@ -32,7 +32,7 @@ static void sync()
 static void reset(int hard)
 {
 	mem_setvramsize(8);
-	mem_setwramsize(2);
+	mem_setwramsize(8);
 	latch_reset(sync,hard);
 }
 

@@ -73,7 +73,6 @@ typedef struct cart_s {
 	//rom information
 	data_t	prg,chr;					//prg/chr data
 	data_t	vram,wram;				//vram/wram data
-	data_t	sram,svram;				//battery backed ram/vram
 	data_t	trainer;					//trainer data
 	data_t	pc10rom;					//pc10 rom data
 	data_t	disk;						//fds disk data
@@ -97,7 +96,6 @@ typedef struct cart_s {
 	//cached tile data
 	cache_t	*cache,*cache_hflip;			//chr cache
 	cache_t	*vcache,*vcache_hflip;		//vram cache
-	cache_t	*svcache,*svcache_hflip;	//svram cache
 	
 	//loaded file's name
 	char		*filename;
@@ -110,9 +108,7 @@ typedef struct cart_s {
 cart_t *cart_load(const char *filename);
 cart_t *cart_load_patched(const char *filename,const char *patchfilename);
 void cart_unload(cart_t *r);
-void cart_setsramsize(cart_t *r,int banks);
 void cart_setwramsize(cart_t *r,int banks);
 void cart_setvramsize(cart_t *r,int banks);
-void cart_setsvramsize(cart_t *r,int banks);
 
 #endif

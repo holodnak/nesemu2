@@ -73,10 +73,10 @@ void mmc5_setprg(int size,int bank,int page)
 	else {
 //		log_printf("mmc5:  mapping %dkb prg ram sram to %04X\n",size,bank*0x1000);
 		if(size == 16) {
-			mem_setsram16(bank,page);
+			mem_setwram16(bank,page);
 		}
 		else if(size == 8) {
-			mem_setsram8(bank,page);
+			mem_setwram8(bank,page);
 		}
 		else
 			log_printf("mmc5:  mapping %dkb prg ram?  no!\n",size);
@@ -116,7 +116,7 @@ void mmc5_setmirror(int bank,int data)
 
 void mmc5_syncprg()
 {
-	mem_setsram8(6,prgram);
+	mem_setwram8(6,prgram);
 	switch(prgmode) {
 		case 0:
 			mmc5_setprg(32,0x8,prg[3] | 0x80);
@@ -405,14 +405,11 @@ void mmc5_reset(int hard)
 	mem_setreadfunc(5,mmc5_read);
 	mem_setwritefunc(5,mmc5_write);
 
-	//setup sram/wram (for exram)
-	mem_setsramsize(8);
-	mem_setwramsize(1);		//for exram
+	//setup maximum amount of wram + extra for exram
+	mem_setwramsize(64 + 4);
 
 	//map in wram and get pointer to data (for exram)
-	mem_setwram8(8,0);
-	exram = mem_getreadptr(8);
-	mem_unsetcpu8(8);
+	exram = nes->cart->wram.data + 0x10000;
 
 	//hijack the ppu memory read function
 	ppuread = ppu_getreadfunc();

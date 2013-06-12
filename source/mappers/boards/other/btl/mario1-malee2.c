@@ -32,11 +32,11 @@ static void write7(u32 addr,u8 data)	{	sram7[addr & 0x7FF] = data;	}
 
 static void reset(int hard)
 {
-	mem_setsramsize(2);
+	mem_setwramsize(8);
 
 	//initialize all bank pointers
 	mem_setprg4(6,8);
-	mem_setsram4(7,0);
+	mem_setwram4(7,0);
 	mem_setprg32(8,0);
 	mem_setchr8(0,0);
 

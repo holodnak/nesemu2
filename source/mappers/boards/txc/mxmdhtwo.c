@@ -53,8 +53,8 @@ static void reset(int hard)
 		mem_setwritefunc(i,write);
 	mem_setreadfunc(5,read);
 	mem_setvramsize(8);
-	mem_setsramsize(2);
-	mem_setsram8(6,0);
+	mem_setwramsize(8);
+	mem_setwram8(6,0);
 	reg = 0;
 	sync();
 }

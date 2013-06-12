@@ -245,8 +245,6 @@ void cart_unload(cart_t *r)
 		FREE_DATA(r->chr);
 		FREE_DATA(r->vram);
 		FREE_DATA(r->wram);
-		FREE_DATA(r->sram);
-		FREE_DATA(r->svram);
 		FREE_DATA(r->trainer);
 		FREE_DATA(r->pc10rom);
 		FREE_DATA(r->disk);
@@ -255,8 +253,6 @@ void cart_unload(cart_t *r)
 		FREE(r->cache_hflip);
 		FREE(r->vcache);
 		FREE(r->vcache_hflip);
-		FREE(r->svcache);
-		FREE(r->svcache_hflip);
 		FREE(r->filename);
 		patch_unload(r->patch);
 		FREE(r);
@@ -265,11 +261,13 @@ void cart_unload(cart_t *r)
 
 #define ram_alloc(size,ptr)	(u8*)(ptr ? mem_realloc(ptr,size) : mem_alloc(size))
 
-static void allocdata(data_t *data,int len)
+static void allocdata(data_t *data,u32 len)
 {
 	//if size hasnt changed, return
-	if(data->size == len)
+	if(data->size >= len) {
+		log_printf("allocdata:  cannot reduce size of memory region (old = %d, new = %d)\n",data->size,len);
 		return;
+	}
 
 	//set size and create mask
 	data->size = len;
@@ -285,16 +283,10 @@ static void allocdata(data_t *data,int len)
 	memset(data->data,0,len);
 }
 
-void cart_setsramsize(cart_t *r,int banks)
-{
-	allocdata(&r->sram,banks * 0x1000);
-	log_printf("cart_setsramsize:  sram size set to %dkb\n",banks * 0x1000 / 1024);
-}
-
 void cart_setwramsize(cart_t *r,int banks)
 {
-	allocdata(&r->wram,banks * 0x1000);
-	log_printf("cart_setwramsize:  wram size set to %dkb\n",banks * 0x1000 / 1024);
+	allocdata(&r->wram,banks * 1024);
+	log_printf("cart_setwramsize:  wram size set to %dkb\n",banks);
 }
 
 void cart_setvramsize(cart_t *r,int banks)
@@ -305,14 +297,4 @@ void cart_setvramsize(cart_t *r,int banks)
 	//tile cache data
 	r->vcache = (cache_t*)ram_alloc(r->vram.size,r->vcache);
 	r->vcache_hflip = (cache_t*)ram_alloc(r->vram.size,r->vcache_hflip);
-}
-
-void cart_setsvramsize(cart_t *r,int banks)
-{
-	allocdata(&r->svram,banks * 1024);
-	log_printf("cart_setsvramsize:  svram size set to %dkb\n",banks);
-
-	//tile cache data
-	r->svcache = (cache_t*)ram_alloc(r->svram.size,r->svcache);
-	r->svcache_hflip = (cache_t*)ram_alloc(r->svram.size,r->svcache_hflip);
 }

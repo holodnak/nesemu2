@@ -72,7 +72,7 @@ static void sync()
 		ppu_setreadfunc(0);
 	}
 	if(control & 8)
-		mem_setsram8(6,0);
+		mem_setwram8(6,0);
 	else
 		mem_unsetcpu8(6);
 }
@@ -152,12 +152,9 @@ static void reset(int hard)
 {
 	int i;
 
-	mem_setsramsize(2);
-	mem_setwramsize(1);
-	mem_setwram8(8,0);
-	exram[0] = mem_getreadptr(8);
+	mem_setwramsize(8 + 2);
+	exram[0] = nes->cart->wram.data + 8192;
 	exram[1] = exram[0] + 0x400;
-	mem_unsetcpu8(8);
 	read4 = mem_getreadfunc(4);
 	mem_setreadfunc(4,read_4000);
 	mem_setreadfunc(5,read_5000);

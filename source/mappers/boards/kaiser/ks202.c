@@ -92,7 +92,7 @@ static void reset(int hard)
 {
 	int i;
 
-	mem_setwramsize(2);
+	mem_setwramsize(8);
 	for(i=8;i<16;i++)
 		mem_setwritefunc(i,write);
 	if(hard) {

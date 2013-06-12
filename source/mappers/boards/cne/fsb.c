@@ -56,8 +56,8 @@ static void reset(int hard)
 {
 	int i;
 
-	mem_setsramsize(2);
-	mem_setsram8(6,0);
+	mem_setwramsize(8);
+	mem_setwram8(6,0);
 	sram6 = mem_getwriteptr(6);
 	mem_unsetcpu8(6);
 	mem_setreadfunc(6,read6);

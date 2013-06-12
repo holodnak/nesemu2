@@ -225,7 +225,7 @@ static void reset(int hard)
 	int i;
 
 	//save pointer to bios
-	bios = nes->cart->sram.data;
+	bios = nes->cart->wram.data + 8192;
 
 	//init sound chips
 	sound_init();
@@ -256,7 +256,7 @@ static void reset(int hard)
 	mem_setvram8(0,0);
 
 	//setup wram
-	mem_setwramsize(2);
+	mem_setwramsize(8);
 
 	//set mirroring
 	mem_setmirroring(MIRROR_H);

@@ -36,8 +36,8 @@ static void reset_nrom(int hard)
 static void reset_nrom_sram(int hard)
 {
 	reset_nrom(hard);
-	mem_setsramsize(2);
-	mem_setsram8(6,0);
+	mem_setwramsize(8);
+	mem_setwram8(6,0);
 }
 
 MAPPER(B_NINTENDO_NROM,reset_nrom,0,0,0);

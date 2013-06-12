@@ -27,7 +27,7 @@ static void sync()
 {
 	mem_setprg16(0x8,prg);
 	mem_setprg16(0xC,0xFF);
-	mem_setsvram4(0,0);
+	mem_setvram4(0,0);
 	mem_setvram4(4,chr);
 }
 
@@ -57,7 +57,6 @@ static void reset(int hard)
 	for(i=8;i<16;i++)
 		mem_setwritefunc(i,write);
 	mem_setvramsize(64);
-	mem_setsvramsize(4);
 	prg = 0;
 	chr = 0;
 	irqcounter = 0;

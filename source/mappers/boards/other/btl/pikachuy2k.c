@@ -62,7 +62,7 @@ static void reset(int hard)
 {
 	mmc3_reset(C_MMC3,sync,hard);
 	reg = 0xFF;
-	mem_setwramsize(2);
+	mem_setwramsize(8);
 	wram = nes->cart->wram.data;
 	mem_unsetcpu8(6);
 	mem_setreadfunc(6,read_wram);

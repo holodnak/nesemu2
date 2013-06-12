@@ -46,7 +46,7 @@ static void sync()
 			mem_setprg16(0xC,0x1F | ((reg[1] & 1) << 5));
 			break;
 	}
-	mem_setsram8(6,0);
+	mem_setwram8(6,0);
 	mem_setvram8(0,0);
 }
 
@@ -77,7 +77,7 @@ static void write(u32 addr,u8 data)
 
 static void reset(int hard)
 {
-	mem_setsramsize(2);
+	mem_setwramsize(8);
 	mem_setvramsize(8);
 	mem_setwritefunc(0x5,write);
 	mem_setwritefunc(0xD,write);

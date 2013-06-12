@@ -22,6 +22,7 @@
 
 static u8 vrc2a_map[] = {0,1,2,3,1};
 static u8 vrc2b_map[] = {0,2,1,3,0};
+static u8 vrc2c_map[] = {0,1,2,3,0};
 static u8 *map;
 static u8 prg[2],chr[8],mirror,latch;
 
@@ -29,6 +30,8 @@ static void sync()
 {
 	int i;
 
+	if(nes->cart->wram.size)
+		mem_setwram4(7,0);
 	mem_setprg8(0x8,prg[0]);
 	mem_setprg8(0xA,prg[1]);
 	mem_setprg16(0xC,0xFF);
@@ -109,6 +112,7 @@ static void reset(int revision)
 		default:
 		case B_KONAMI_VRC2A: map = vrc2a_map; break;
 		case B_KONAMI_VRC2B: map = vrc2b_map; break;
+		case B_KONAMI_VRC2C: map = vrc2c_map; break;
 	}
 	mem_setreadfunc(6,read_latch);
 	mem_setwritefunc(6,write_latch);
@@ -133,6 +137,8 @@ static void state(int mode,u8 *data)
 
 static void reset_vrc2a(int hard)	{	reset(B_KONAMI_VRC2A);	}
 static void reset_vrc2b(int hard)	{	reset(B_KONAMI_VRC2B);	}
+static void reset_vrc2c(int hard)	{	reset(B_KONAMI_VRC2C);	}
 
 MAPPER(B_KONAMI_VRC2A,reset_vrc2a,0,0,state);
 MAPPER(B_KONAMI_VRC2B,reset_vrc2b,0,0,state);
+MAPPER(B_KONAMI_VRC2C,reset_vrc2c,0,0,state);

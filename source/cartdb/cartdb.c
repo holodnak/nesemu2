@@ -160,10 +160,154 @@ static node_t *get_sibling(char *name,node_t *brothernode)
 	return(node);
 }
 
+enum pins_e {
+	P_ERROR	= 0,
+	P_NC,
+
+	P_PRG_A0,	P_PRG_A1,	P_PRG_A2,	P_PRG_A3,	P_PRG_A4,	P_PRG_A5,	P_PRG_A6,	P_PRG_A7,
+	P_PRG_A8,	P_PRG_A9,	P_PRG_A10,	P_PRG_A11,	P_PRG_A12,	P_PRG_A13,	P_PRG_A14,	P_PRG_A15,
+	P_PRG_A16,	P_PRG_A17,	P_PRG_A18,	P_PRG_A19,	P_PRG_A20,
+
+	P_CHR_A0,	P_CHR_A1,	P_CHR_A2,	P_CHR_A3,	P_CHR_A4,	P_CHR_A5,	P_CHR_A6,	P_CHR_A7,
+	P_CHR_A8,	P_CHR_A9,	P_CHR_A10,	P_CHR_A11,	P_CHR_A12,	P_CHR_A13,	P_CHR_A14,	P_CHR_A15,
+	P_CHR_A16,	P_CHR_A17,	P_CHR_A18,	P_CHR_A19,	P_CHR_A20,
+
+};
+
+static u8 get_pin_func(char *str)
+{
+	char *p,*tmp = strdup(str);
+	u8 ret = P_ERROR;
+
+	//make lowercase
+	for(p = tmp;*p;p++)
+		*p = tolower(*p);
+	p = str_eatwhitespace(tmp);
+
+	//not connected
+	if(strncmp(p,"nc",2) == 0)
+		ret = P_NC;
+
+	//prg pin
+	else if(strncmp(p,"prg",3) == 0) {
+		p += 3;
+		p = str_eatwhitespace(p);
+		if(*p == 'a') {
+			p++;
+			ret = P_PRG_A0 + atoi(p);
+		}
+	}
+
+	//chr pin
+	else if(strncmp(p,"chr",3) == 0) {
+		p += 3;
+		p = str_eatwhitespace(p);
+		if(*p == 'a') {
+			p++;
+			ret = P_CHR_A0 + atoi(p);
+		}
+	}
+
+	//unknown function
+	if(ret == P_ERROR) {
+		log_printf("get_pin_func:  unknown pin function '%s'\n",str);
+	}
+
+	free(tmp);
+	return(ret);
+}
+
+//get pin map from the xml nodes
+static int get_pin_map(node_t *node,u8 *pins,int maxpins)
+{
+	node_t *pin;
+	char *num,*func;
+	u8 pinnum,pinfunc;
+
+	//clear pins array
+	memset(pins,P_ERROR,maxpins);
+
+	//get first pin node
+	pin = get_child("pin",node);
+	while(pin) {
+
+		//get pin number and function attributes
+		num = find_attrib(pin,"number");
+		func = find_attrib(pin,"function");
+
+		//get and verify the pin number
+		pinnum = (u8)atoi(num);
+		if(pinnum >= maxpins) {
+			log_printf("get_pin_map:  pinnum exceeds maxpins\n");
+			continue;
+		}
+
+		//get and verify the pin function
+		pinfunc = get_pin_func(func);
+		if(pinfunc != P_ERROR)
+			pins[pinnum] = pinfunc;
+
+		//get node sibling for continued processing
+		pin = get_sibling("pin",pin);
+	}
+	return(0);
+}
+
+//process chip nodes
+static int process_chip(int mapperid,char *board,int mapper,node_t *node)
+{
+	char *chip;
+	u8 pins[64];
+
+	if((chip = find_attrib(node,"type")) == 0)
+		return(mapperid);
+
+	//SxROM boards, process mmc1 type
+	if(mapperid == B_NINTENDO_SxROM) {
+		if(strncmp(chip,"MMC1A",5) == 0)			mapperid = B_NINTENDO_SxROM_MMC1A;
+		else if(strncmp(chip,"MMC1B",5) == 0)	mapperid = B_NINTENDO_SxROM_MMC1B;
+		else if(strncmp(chip,"MMC1C",5) == 0)	mapperid = B_NINTENDO_SxROM_MMC1C;
+		log_printf("process_chip:  mmc1 chip type:  %s\n",chip);
+	}
+
+	//vrc2 boards, find wiring configuration
+	if(mapperid == B_KONAMI_VRC2) {
+		if(strncmp(chip,"VRC2",4) == 0 && get_pin_map(node,pins,64) == 0) {
+			if(pins[3] == P_PRG_A0 && pins[4] == P_PRG_A1) {
+				if(pins[21] == P_NC) {
+					mapperid = B_KONAMI_VRC2A;
+					log_printf("process_chip:  vrc2a detected.\n");
+				}
+				else {
+					mapperid = B_KONAMI_VRC4B;
+					log_printf("process_chip:  vrc2c detected, using vrc4b.\n");
+				}
+			}
+			else if(pins[3] == P_PRG_A1 && pins[4] == P_PRG_A0) {
+				mapperid = B_KONAMI_VRC2B;
+				log_printf("process_chip:  vrc2b detected.\n");
+			}
+			else
+				log_printf("process_chip:  unknown vrc2 pin configuration (pin3 = %d, pin4 = %d)\n",pins[3],pins[4]);
+
+		}
+	}
+
+	//leave these alone!
+	if(mapper == 93) {
+		mapperid = B_SUNSOFT_2;
+		log_printf("process_chip:  sunsoft-3R board.  using sunsoft-2 mapper.\n");
+	}
+
+	//return new mapperid
+	return(mapperid);
+}
+
 //finds the correct mapper id using the information given
-static int determine_mapperid(cart_t *cart,char *type,char *mapper,char *chip)
+static int determine_mapperid(cart_t *cart,char *type,char *mapper,node_t *boardnode)
 {
 	int n,ret = B_UNSUPPORTED;
+	node_t *node;
 
 	//turn mapper string into mapper integer
 	n = mapper ? atoi(mapper) : -1;
@@ -195,27 +339,11 @@ static int determine_mapperid(cart_t *cart,char *type,char *mapper,char *chip)
 	else
 		log_printf("determine_mapperid:  unif board '%s' supported.\n",type);
 
-	//process the board further using chiptype
-
-	//SxROM boards, process mmc1 type
-	if(ret == B_NINTENDO_SxROM) {
-		if(chip == 0)
-			log_printf("determine_mapperid:  using default mmc1 chip (MMC1B)\n");
-		else {
-			if(strncmp(chip,"MMC1A",5) == 0)
-				ret = B_NINTENDO_SxROM_MMC1A;
-			else if(strncmp(chip,"MMC1B",5) == 0)
-				ret = B_NINTENDO_SxROM_MMC1B;
-			else if(strncmp(chip,"MMC1C",5) == 0)
-				ret = B_NINTENDO_SxROM_MMC1C;
-			log_printf("determine_mapperid:  mmc1 chip type:  %s\n",chip);
-		}
-	}
-
-	//leave these alone!
-	if(n == 93) {
-		ret = B_SUNSOFT_2;
-		log_printf("determine_mapperid:  sunsoft-3R board.  using sunsoft-2 mapper.\n");
+	//find the chips used and process them
+	node = get_child("chip",boardnode);
+	while(node) {
+		ret = process_chip(ret,type,n,node);
+		node = get_sibling("chip",node);
 	}
 
 	return(ret);
@@ -295,12 +423,8 @@ int cartdb_find(cart_t *cart)
 			str = find_attrib(boardnode,"type");
 			str2 = find_attrib(boardnode,"mapper");
 
-			//find the chip used
-			node = get_child("chip",boardnode);
-			tmp = find_attrib(node,"type");
-
 			//set mapperid with information discovered
-			cart->mapperid = determine_mapperid(cart,str,str2,tmp);
+			cart->mapperid = determine_mapperid(cart,str,str2,boardnode);
 
 			//find the vram size
 			node = get_child("vram",boardnode);

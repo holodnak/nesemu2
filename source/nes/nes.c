@@ -131,7 +131,14 @@ int nes_load_patched(char *filename,char *patchfilename)
 		log_printf("nes_load:  loaded file '%s'\n",filename);
 
 	//check cartdb for rom (will update the cart_t struct)
-	cartdb_find(c);
+	if(config_get_bool("cartdb.enabled"))
+		cartdb_find(c);
+
+	//see if we should pre-init some wram for the cart
+	if((c->battery & 1) && c->wram.size == 0) {
+		cart_setwramsize(c,8);
+		log_printf("nes_load:  cart has battery, pre-allocating wram\n");
+	}
 
 	//see if the nes accepts it (mapper is supported)
 	if(nes_load_cart(c) != 0) {

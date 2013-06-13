@@ -28,13 +28,13 @@
 
 #define readvar(var,sz)	\
 	if(memfile_read(&var,1,sz,file) != sz) {	\
-		log_printf("state_load:  error reading ##var##\n");	\
+		log_printf("state_load:  error reading " #var "\n");	\
 		return(1);	\
 	}
 
 #define writevar(var,sz)	\
 	if(memfile_write(&var,1,sz,file) != sz) {	\
-		log_printf("state_save:  error writing ##var##\n");	\
+		log_printf("state_save:  error writing " #var "\n");	\
 		return(1);	\
 	}
 
@@ -106,6 +106,7 @@ int state_load(memfile_t *file)
 	u32 size = 0;
 	int i;
 
+	memfile_seek(file,0,SEEK_SET);
 	readvar(header.ident,4);
 	readvar(header.version,2);
 	readvar(header.flags,2);

@@ -18,54 +18,26 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __inputdev_h__
-#define __inputdev_h__
+#ifndef __nes__movie_h__
+#define __nes__movie_h__
 
-#include "nes/state/state.h"
+#include "types.h"
 
-//nes input keys for joypads
-#define INPUT_A		0x01
-#define INPUT_B		0x02
-#define INPUT_SELECT	0x04
-#define INPUT_START	0x08
-#define INPUT_UP		0x10
-#define INPUT_DOWN	0x20
-#define INPUT_LEFT	0x40
-#define INPUT_RIGHT	0x80
+typedef struct movie_s {
+	u8		*data;
+	u32	len,pos;
+	int	mode;
 
-#define INPUTDEV(id,read,write,update,movie,state) \
-	inputdev_t inputdev##id = {id,read,write,update,movie,state}
+	u64	startframe,endframe;
+} movie_t;
 
-typedef struct inputdev_s {
-	//device id
-	int id;
-
-	//read port
-	u8 (*read)();
-
-	//write port
-	void (*write)(u8);
-
-	//update controller info
-	void (*update)();
-
-	//update controller info for movie support
-	int (*movie)(int mode);
-
-	//saving/loading controller state
-	void (*state)(int mode,u8 *data);
-} inputdev_t;
-
-enum inputdevid_e {
-	I_NULL,
-	I_JOYPAD0,
-	I_JOYPAD1,
-	I_ZAPPER,
-	I_POWERPAD,
-};
-
-inputdev_t *inputdev_get(int id);
-
-#include "nes/nes.h"
+int nes_movie_init();
+void nes_movie_kill();
+void nes_movie_frame();
+int nes_movie_record();
+int nes_movie_play();
+int nes_movie_stop();
+u8 nes_movie_read_u8();
+void nes_movie_write_u8(u8 data);
 
 #endif

@@ -118,15 +118,18 @@ void system_checkevents()
 	console_update();
 
 	//check for system key presses
-	checkkey(SDLK_ESCAPE,	0,	E_QUIT);
-	checkkey(SDLK_p,			1,	E_SOFTRESET);
-	checkkey(SDLK_o,			2,	E_HARDRESET);
-	checkkey(SDLK_F5,			3,	E_SAVESTATE);
-	checkkey(SDLK_F8,			4,	E_LOADSTATE);
-	checkkey(SDLK_F1,			5,	E_TOGGLERUNNING);
-	checkkey(SDLK_F4,			6,	E_TOGGLEFULLSCREEN);
-	checkkey(SDLK_F9,			7,	E_FLIPDISK);
-	checkkey(SDLK_F10,		8,	E_DUMPDISK);
+	checkkey(SDLK_ESCAPE,	0,		E_QUIT);
+	checkkey(SDLK_p,			1,		E_SOFTRESET);
+	checkkey(SDLK_o,			2,		E_HARDRESET);
+	checkkey(SDLK_F1,			3,		E_TOGGLERUNNING);
+	checkkey(SDLK_F3,			4,		E_PLAYMOVIE);
+	checkkey(SDLK_F4,			5,		E_TOGGLEFULLSCREEN);
+	checkkey(SDLK_F5,			6,		E_SAVESTATE);
+	checkkey(SDLK_F6,			7,		E_RECORDMOVIE);
+	checkkey(SDLK_F7,			8,		E_STOPMOVIE);
+	checkkey(SDLK_F8,			9,		E_LOADSTATE);
+	checkkey(SDLK_F9,			10,	E_FLIPDISK);
+	checkkey(SDLK_F10,		11,	E_DUMPDISK);
 }
 
 char *system_getcwd()

@@ -44,10 +44,11 @@ static inputdev_t *get_inputdev(int inputdevid)
 	return(0);
 }
 
-static u8 null_read()				{return(0);}
-static void null_write(u8 data)	{}
-static void null_strobe()			{}
-static void null_update()			{}
+static u8 null_read()							{return(0);}
+static void null_write(u8 data)				{}
+static void null_update()						{}
+static int null_movie(int mode,u8 *data)	{return(0);}
+static void null_state(int mode,u8 *data)	{}
 
 inputdev_t *inputdev_get(int inputdevid)
 {
@@ -58,7 +59,8 @@ inputdev_t *inputdev_get(int inputdevid)
 	}
 	ret->read = (ret->read == 0) ? null_read : ret->read;
 	ret->write = (ret->write == 0) ? null_write : ret->write;
-	ret->strobe = (ret->strobe == 0) ? null_strobe : ret->strobe;
 	ret->update = (ret->update == 0) ? null_update : ret->update;
+	ret->movie = (ret->movie == 0) ? null_movie : ret->movie;
+	ret->state = (ret->state == 0) ? null_state : ret->state;
 	return(ret);
 }

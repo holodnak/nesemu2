@@ -77,7 +77,8 @@ void console_kill()
 {
 	log_sethook(0);
 	linebuffer_kill();
-	mem_free(screen);
+	if(screen)
+		mem_free(screen);
 }
 
 void console_draw(u32 *dest,int w,int h)

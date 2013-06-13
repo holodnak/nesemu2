@@ -22,12 +22,17 @@
 #define __nes_h__
 
 #include "types.h"
+#include "nes/movie.h"
 #include "nes/cpu/cpu.h"
 #include "nes/ppu/ppu.h"
 #include "nes/apu/apu.h"
 #include "nes/cart/cart.h"
 #include "mappers/mappers.h"
 #include "inputdev/inputdev.h"
+
+//movie modes
+#define MOVIE_PLAY	0x01
+#define MOVIE_RECORD	0x02
 
 //irq masks
 #define IRQ_TIMER		0x01		//fds
@@ -76,6 +81,9 @@ typedef struct nes_s {
 	//input strobe and connected devices
 	u8				strobe;
 	inputdev_t	*inputdev[2],*expdev;
+
+	//movie support
+	movie_t		movie;
 
 } nes_t;
 

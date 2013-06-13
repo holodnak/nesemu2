@@ -21,16 +21,34 @@
 #include "inputdev.h"
 #include "system/input.h"
 
-static u8 data;
+static u8 portdata;
+static u8 counter,buttons,strobe;
 
 static u8 read()
 {
-	return(data | 0x40);
+	return(portdata | 0x40);
 }
 
-static void strobe()
+static void write(u8 data)
 {
-	data = 0;
+	if(((data & 1) == 0) && (strobe & 1)) {
+		portdata = buttons;
+		counter = 0;
+	}
+	strobe = data;
 }
 
-INPUTDEV(I_ZAPPER,read,0,strobe,0);
+static void update()
+{
+	buttons = 0;
+}
+
+static void state(int mode,u8 *data)
+{
+	STATE_U8(portdata);
+	STATE_U8(counter);
+	STATE_U8(strobe);
+	STATE_U8(buttons);
+}
+
+INPUTDEV(I_ZAPPER,read,write,update,0,state);

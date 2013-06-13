@@ -22,17 +22,28 @@
 #define __nes__movie_h__
 
 #include "types.h"
+#include "misc/memfile.h"
+
+//movie modes
+#define MOVIE_PLAY	0x01
+#define MOVIE_RECORD	0x02
+#define MOVIE_TEST	0x10
 
 typedef struct movie_s {
-	u8		*data;
-	u32	len,pos;
-	int	mode;
-
-	u64	startframe,endframe;
+	memfile_t	*state;
+	u8				*data;
+	u32			len,pos;
+	int			mode;
+	u32			startframe,endframe;
+	int			port0,port1,exp;
+	u32			crc32;
 } movie_t;
 
 int nes_movie_init();
 void nes_movie_kill();
+int nes_movie_load(char *filename);
+int nes_movie_save(char *filename);
+void nes_movie_unload();
 void nes_movie_frame();
 int nes_movie_record();
 int nes_movie_play();

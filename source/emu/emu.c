@@ -128,18 +128,23 @@ int emu_mainloop()
 {
 	u8 *line = (u8*)mem_alloc(512);
 	int i;
+	u64 t,total,frames;
 
 	//initialize the palette in case the rom isnt loaded first
 	for(i=0;i<512;i++) {
-		if(i < 32)
+		if(i < 32 && running == 0)
 			video_updatepalette(i,i);
 		line[i] = i;
 	}
 
 	//begin the main loop
 	log_printf("emu_mainloop:  starting main loop...\n");
+	total = 0;
+	frames = 0;
 	while(quit == 0) {
+		t = system_gettick();
 		system_checkevents();
+		input_poll();
 		video_startframe();
 		if(running && nes->cart) {
 			nes_frame();
@@ -150,8 +155,10 @@ int emu_mainloop()
 			}
 		}
 		video_endframe();
-		input_poll();
+		total += system_gettick() - t;
+		frames++;
 	}
+	log_printf("fps:  %f (%d frames)\n",(double)frames / (double)total * system_getfrequency(),frames);
 	mem_free(line);
 	return(0);
 }

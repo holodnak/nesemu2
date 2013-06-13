@@ -143,6 +143,32 @@ static void file_open_patch(HWND hWnd)
 	emu_event(E_LOADPATCH,buffer);
 }
 
+static char moviefilter[] =
+	"nesemu2 Movie Files (*.n2movie)\0*.n2movie\0"
+	"All Files (*.*)\0*.*\0";
+
+static void load_movie(HWND hWnd)
+{
+	char buffer[1024];
+
+	memset(buffer,0,1024);
+	if(filedialog(hWnd,0,buffer,"Load Movie...",moviefilter,0) != 0)
+		return;
+	log_printf("WndProc:  loading movie '%s'\n",buffer);
+	emu_event(E_LOADMOVIE,buffer);
+}
+
+static void save_movie(HWND hWnd)
+{
+	char buffer[1024];
+
+	memset(buffer,0,1024);
+	if(filedialog(hWnd,1,buffer,"Save Movie...",moviefilter,0) != 0)
+		return;
+	log_printf("WndProc:  saving movie '%s'\n",buffer);
+	emu_event(E_SAVEMOVIE,buffer);
+}
+
 static int nesids[] = {
 	ID_FILE_LOADPATCH,	ID_FILE_UNLOAD,
 	ID_NES_PAUSE,			ID_NES_SOFTRESET,		ID_NES_HARDRESET,		ID_NES_LOADSTATE,		ID_NES_SAVESTATE,		ID_FDS_FLIPDISK,
@@ -176,33 +202,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// Parse the menu selections:
 		switch (wmId)
 		{
-		case ID_FILE_OPEN:
-			file_open(hWnd);
-			break;
-		case ID_FILE_LOADPATCH:
-			file_open_patch(hWnd);
-			break;
-		case ID_FILE_UNLOAD:
-			emu_event(E_UNLOAD,0);
-			break;
-		case ID_NES_PAUSE:
-			emu_event(E_TOGGLERUNNING,0);
-			break;
-		case ID_NES_SOFTRESET:
-			emu_event(E_SOFTRESET,0);
-			break;
-		case ID_NES_HARDRESET:
-			emu_event(E_HARDRESET,0);
-			break;
-		case ID_NES_LOADSTATE:
-			emu_event(E_LOADSTATE,0);
-			break;
-		case ID_NES_SAVESTATE:
-			emu_event(E_SAVESTATE,0);
-			break;
-		case ID_FDS_FLIPDISK:
-			emu_event(E_FLIPDISK,0);
-			break;
+		case ID_FILE_OPEN:			file_open(hWnd);								break;
+		case ID_FILE_LOADPATCH:		file_open_patch(hWnd);						break;
+		case ID_FILE_UNLOAD:			emu_event(E_UNLOAD,0);						break;
+		case ID_NES_PAUSE:			emu_event(E_TOGGLERUNNING,0);				break;
+		case ID_NES_SOFTRESET:		emu_event(E_SOFTRESET,0);					break;
+		case ID_NES_HARDRESET:		emu_event(E_HARDRESET,0);					break;
+		case ID_NES_LOADSTATE:		emu_event(E_LOADSTATE,0);					break;
+		case ID_NES_SAVESTATE:		emu_event(E_SAVESTATE,0);					break;
+		case ID_MOVIE_LOAD:			load_movie(hWnd);								break;
+		case ID_MOVIE_SAVE:			save_movie(hWnd);								break;
+		case ID_MOVIE_PLAY:			emu_event(E_PLAYMOVIE,0);					break;
+		case ID_MOVIE_RECORD:		emu_event(E_RECORDMOVIE,0);				break;
+		case ID_MOVIE_STOP:			emu_event(E_STOPMOVIE,0);					break;
+		case ID_FDS_FLIPDISK:		emu_event(E_FLIPDISK,0);					break;
 		case ID_VIEW_CONFIGURATION:
 			ConfigurationPropertySheet(hWnd);
 			break;

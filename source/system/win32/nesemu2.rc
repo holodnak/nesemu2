@@ -48,6 +48,15 @@ BEGIN
         MENUITEM "&Load State",                 ID_NES_LOADSTATE
         MENUITEM "&Save State",                 ID_NES_SAVESTATE
         MENUITEM SEPARATOR
+        POPUP "&Movie"
+        BEGIN
+            MENUITEM "&Play",                       ID_MOVIE_PLAY
+            MENUITEM "&Record",                     ID_MOVIE_RECORD
+            MENUITEM "&Stop",                       ID_MOVIE_STOP
+            MENUITEM SEPARATOR
+            MENUITEM "&Load...",                    ID_MOVIE_LOAD
+            MENUITEM "&Save...",                    ID_MOVIE_SAVE
+        END
         POPUP "&FDS"
         BEGIN
             MENUITEM "&Flip Disk",                  ID_FDS_FLIPDISK
@@ -544,6 +553,9 @@ BEGIN
     VK_F5,          ID_NES_SAVESTATE,       VIRTKEY, NOINVERT
     VK_RETURN,      ID_VIEW_FULLSCREEN,     VIRTKEY, ALT, NOINVERT
     VK_ESCAPE,      IDM_EXIT,               VIRTKEY, NOINVERT
+    VK_F6,          ID_MOVIE_RECORD,        VIRTKEY, NOINVERT
+    VK_F7,          ID_MOVIE_STOP,          VIRTKEY, NOINVERT
+    VK_F3,          ID_MOVIE_PLAY,          VIRTKEY, NOINVERT
 END
 
 

@@ -28,7 +28,7 @@
 typedef struct memchunk_s {
 	void *ptr;
 	size_t size;
-	char file[128];
+	char file[256];
 	int line;
 	int flags;
 } memchunk_t;
@@ -172,13 +172,14 @@ void *memutil_realloc(void *ptr,size_t size,char *file,int line)
 		return(memutil_alloc(size,file,line));
 	ret = realloc(ptr,size);
 	num_realloc++;
-	num_bytes += size;
 	for(i=0;i<MAX_CHUNKS;i++) {
 		if(chunks[i].ptr == ptr) {
 			chunks[i].flags |= 1;
 			strcpy(chunks[i].file,file);
 			chunks[i].line = line;
 			chunks[i].ptr = ret;
+			if(size > chunks[i].size)
+				num_bytes += size - chunks[i].size;
 			chunks[i].size = size;
 			break;
 		}

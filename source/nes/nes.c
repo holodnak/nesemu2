@@ -245,7 +245,6 @@ void nes_frame()
 
 void nes_state(int mode,u8 *data)
 {
-	STATE_U8(nes->strobe);
 }
 
 void nes_savestate(char *filename)

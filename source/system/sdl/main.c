@@ -44,12 +44,14 @@ int main(int argc,char *argv[])
 {
 	int i,ret;
 	char *p;
-	char tmp[1024];
-	char tmp2[1024];
+	char romfilename[1024];
+	char patchfilename[1024];
+	char moviefilename[1024];
 
-	//clear the tmp/tmp2 strings and configfile string
-	memset(tmp,0,1024);
-	memset(tmp2,0,1024);
+	//clear the tmp strings and configfile string
+	memset(romfilename,0,1024);
+	memset(patchfilename,0,1024);
+	memset(moviefilename,0,1024);
 	memset(configfilename,0,1024);
 
 	//make the exe path variable
@@ -68,10 +70,13 @@ int main(int argc,char *argv[])
 			strcpy(configfilename,argv[++i]);
 		}
 		else if(strcmp("--patch",argv[i]) == 0) {
-			strcpy(tmp2,argv[++i]);
+			strcpy(patchfilename,argv[++i]);
+		}
+		else if(strcmp("--movie",argv[i]) == 0) {
+			strcpy(moviefilename,argv[++i]);
 		}
 		else
-			strcpy(tmp,argv[i]);
+			strcpy(romfilename,argv[i]);
 	}
 
 	//add extra subsystems
@@ -87,12 +92,17 @@ int main(int argc,char *argv[])
 	nes_set_inputdev(0,I_JOYPAD0);
 	nes_set_inputdev(1,I_JOYPAD1);
 
-	if(strcmp(tmp,"") != 0) {
-		emu_event(E_LOADROM,(void*)tmp);
+	if(strcmp(romfilename,"") != 0) {
+		emu_event(E_LOADROM,(void*)romfilename);
 	}
 
-	if(strcmp(tmp2,"") != 0) {
-		emu_event(E_LOADPATCH,(void*)tmp2);
+	if(strcmp(patchfilename,"") != 0) {
+		emu_event(E_LOADPATCH,(void*)patchfilename);
+	}
+
+	if(strcmp(moviefilename,"") != 0) {
+		emu_event(E_LOADMOVIE,(void*)moviefilename);
+		emu_event(E_PLAYMOVIE,0);
 	}
 
 	//begin the main loop

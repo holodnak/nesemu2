@@ -154,6 +154,13 @@
 #define ID_FILE_UNLOAD                  32807
 #define ID_FILE_LOADPATCH               32808
 #define ID_VIEW_ROMINFORMATION          32811
+#define ID_NES_MOVIE                    32812
+#define ID_MOVIE_PLAY                   32813
+#define ID_MOVIE_RECORD                 32814
+#define ID_MOVIE_STOP                   32815
+#define ID_RECORD_START                 32816
+#define ID_MOVIE_LOAD                   32817
+#define ID_MOVIE_SAVE                   32818
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -162,7 +169,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        145
-#define _APS_NEXT_COMMAND_VALUE         32812
+#define _APS_NEXT_COMMAND_VALUE         32819
 #define _APS_NEXT_CONTROL_VALUE         1075
 #define _APS_NEXT_SYMED_VALUE           110
 #endif

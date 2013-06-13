@@ -219,6 +219,9 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\source\nes\movie.c">
+				</File>
+				<File
 					RelativePath="..\..\source\nes\nes.c">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1501,10 +1504,16 @@
 				Name="nes"
 				Filter="">
 				<File
+					RelativePath="..\..\source\nes\genie.h">
+				</File>
+				<File
 					RelativePath="..\..\source\nes\io.h">
 				</File>
 				<File
 					RelativePath="..\..\source\nes\memory.h">
+				</File>
+				<File
+					RelativePath="..\..\source\nes\movie.h">
 				</File>
 				<File
 					RelativePath="..\..\source\nes\nes.h">

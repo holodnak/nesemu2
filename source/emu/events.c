@@ -111,6 +111,14 @@ int emu_event(int id,void *data)
 			log_printf("emu_event:  stopping movie at frame %d\n",nes->ppu.frames);
 			break;
 
+		case E_LOADMOVIE:
+			nes_movie_load((char*)data);
+			break;
+
+		case E_SAVEMOVIE:
+			nes_movie_save((char*)data);
+			break;
+
 		case E_FLIPDISK:
 			if(nes->cart == 0)
 				break;

@@ -30,10 +30,6 @@
 #include "mappers/mappers.h"
 #include "inputdev/inputdev.h"
 
-//movie modes
-#define MOVIE_PLAY	0x01
-#define MOVIE_RECORD	0x02
-
 //irq masks
 #define IRQ_TIMER		0x01		//fds
 #define IRQ_DISK		0x02		//fds
@@ -78,8 +74,7 @@ typedef struct nes_s {
 	//mapper functions
 	mapper_t		*mapper;
 
-	//input strobe and connected devices
-	u8				strobe;
+	//connected input devices
 	inputdev_t	*inputdev[2],*expdev;
 
 	//movie support

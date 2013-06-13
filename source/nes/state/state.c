@@ -106,7 +106,6 @@ int state_load(memfile_t *file)
 	u32 size = 0;
 	int i;
 
-	memfile_seek(file,0,SEEK_SET);
 	readvar(header.ident,4);
 	readvar(header.version,2);
 	readvar(header.flags,2);

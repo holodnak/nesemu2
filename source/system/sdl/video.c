@@ -40,6 +40,7 @@ static double interval = 0;
 static u64 lasttime = 0;
 static palette_t *palette = 0;
 static u32 *screen = 0;
+static u8 *nesscreen = 0;
 static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
 static filter_t *filter;
 
@@ -90,6 +91,9 @@ int video_init()
 {
 	int i;
 
+	if(nesscreen == 0)
+		nesscreen = (u8*)mem_alloc(256 * (240 + 16));
+
 	//setup timer to limit frames
 	interval = (double)system_getfrequency() / 60.0f;
 	lasttime = system_gettick();
@@ -137,7 +141,10 @@ void video_kill()
 	SDL_ShowCursor(1);
 	if(screen)
 		mem_free(screen);
+	if(nesscreen)
+		mem_free(nesscreen);
 	screen = 0;
+	nesscreen = 0;
 }
 
 void video_startframe()
@@ -173,6 +180,7 @@ void video_updateline(int line,u8 *s)
 	u32 *dest = screen + (line * 256);
 	int i;
 
+	memcpy(nesscreen + (line * 256),s,256);
 	if(line >= 8 && line < 232) {
 		for(i=0;i<256;i++) {
 			*dest++ = palettecache[*s++];
@@ -227,7 +235,7 @@ int video_getbpp()
 	return(screenbpp);
 }
 
-void *video_getscreen()
+u8 *video_getscreen()
 {
-	return(screen);
+	return(nesscreen);
 }

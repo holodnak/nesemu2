@@ -47,7 +47,7 @@ static inputdev_t *get_inputdev(int inputdevid)
 static u8 null_read()							{return(0);}
 static void null_write(u8 data)				{}
 static void null_update()						{}
-static int null_movie(int mode,u8 *data)	{return(0);}
+static int null_movie(int mode)				{return(0);}
 static void null_state(int mode,u8 *data)	{}
 
 inputdev_t *inputdev_get(int inputdevid)

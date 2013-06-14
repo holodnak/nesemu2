@@ -235,6 +235,15 @@
     <Filter Include="Source Files\cartdb\expat">
       <UniqueIdentifier>{f49975b9-0769-49d2-8aed-0e5e25e4dfbc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\system\win32">
+      <UniqueIdentifier>{40cd047f-951f-4f1e-8ea1-b32cb8bf3075}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\system\win32\dialogs">
+      <UniqueIdentifier>{12674fb8-fbc6-4d71-b8b0-9ccf5b4a31bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\nes\cart\patch">
+      <UniqueIdentifier>{34164005-3c6a-4dc0-a8fd-1ec7d550425c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -947,6 +956,72 @@
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\reset4in1.c">
       <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\input.c">
+      <Filter>Source Files\system\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\main.c">
+      <Filter>Source Files\system\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\mainwnd.c">
+      <Filter>Source Files\system\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\system.c">
+      <Filter>Source Files\system\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\sound.cpp">
+      <Filter>Source Files\system\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\video.cpp">
+      <Filter>Source Files\system\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\dialogs\about.c">
+      <Filter>Source Files\system\win32\dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\dialogs\cheatsearch.c">
+      <Filter>Source Files\system\win32\dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\dialogs\configuration.c">
+      <Filter>Source Files\system\win32\dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\dialogs\console.c">
+      <Filter>Source Files\system\win32\dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\dialogs\debugger.c">
+      <Filter>Source Files\system\win32\dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\win32\dialogs\mappers.c">
+      <Filter>Source Files\system\win32\dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\misc\history.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\misc\memfile.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\misc\strutil.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\movie.c">
+      <Filter>Source Files\nes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\patch\ips.c">
+      <Filter>Source Files\nes\cart\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\patch\patch.c">
+      <Filter>Source Files\nes\cart\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\patch\ups.c">
+      <Filter>Source Files\nes\cart\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\emu\events.c">
+      <Filter>Source Files\emu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\jaleco\jf16.c">
+      <Filter>Source Files\mappers\boards\jaleco</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\irem\holydiver.c">
+      <Filter>Source Files\mappers\boards\irem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

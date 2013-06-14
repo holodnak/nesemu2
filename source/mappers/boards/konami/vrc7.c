@@ -187,8 +187,8 @@ static void reset(int revision,int hard)
 		mem_setvramsize(8);
 		mem_setvram8(0,0);
 	}
-	mem_setsramsize(2);
-	mem_setsram8(6,0);
+	mem_setwramsize(8);
+	mem_setwram8(6,0);
 	prg[0] = 0;
 	prg[1] = -2;
 	prg[2] = -2;

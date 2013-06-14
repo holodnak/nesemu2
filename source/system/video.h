@@ -33,6 +33,6 @@ void video_setpalette(palette_t *p);
 int video_getwidth();
 int video_getheight();
 int video_getbpp();
-void *video_getscreen();
+u8 *video_getscreen();
 
 #endif

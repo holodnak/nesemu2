@@ -25,6 +25,7 @@
 #include "misc/log.h"
 #include "misc/config.h"
 #include "misc/paths.h"
+#include "misc/history.h"
 #include "system/system.h"
 #include "version.h"
 
@@ -37,9 +38,12 @@
 static FILE *logfd = 0;
 static char logfilename[MAX_PATH] = LOGFILENAME;
 static void (*loghook)(char*) = 0;
+static history_t history = {0,0};
 
 int log_init()
 {
+	historyline_t *line;
+
 	if(logfd) {
 		printf("log_init:  already initialized\n");
 		return(0);
@@ -66,6 +70,18 @@ int log_init()
 		}
 	}
 
+	//catch up the log file with lines that weren't added
+	line = history.lines;
+	while(line->next) {
+		line = line->next;
+	}
+	while(line) {
+		fputs(line->str,logfd);
+		line = line->prev;
+	}
+	fflush(logfd);
+	history_clear(&history);
+
 	log_printf("log_init:  log initialized.  nesemu2 v"VERSION"\n");
 	log_printf("log_init:  log filename is '%s'.\n",logfilename);
 	return(0);
@@ -89,12 +105,15 @@ void log_print(char *str)
 	printf(str);
 
 	//output message to hook function
-	if(loghook)
+	if(loghook) {
 		loghook(str);
+	}
 
 	//if log file isnt open, maybe logging is disabled or file isnt opened yet
-	if(logfd == 0)
+	if(logfd == 0) {
+		history_add(&history,str);
 		return;
+	}
 
 	//write to log file
 	fputs(str,logfd);

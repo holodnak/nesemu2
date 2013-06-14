@@ -22,6 +22,10 @@
 #define IDR_ACCELERATOR                 138
 #define IDD_CONFIG_GENERAL4             138
 #define IDD_CHEATSEARCH                 139
+#define IDD_CARTDBFILES                 140
+#define IDR_FILELISTMENU                141
+#define IDD_FILEEDIT                    142
+#define IDD_OPENEXT                     143
 #define IDC_EDIT1                       1000
 #define IDC_AEDIT                       1000
 #define IDC_DATAPATHEDIT                1000
@@ -70,8 +74,12 @@
 #define IDC_CHECK6                      1031
 #define IDC_BUTTON1                     1032
 #define IDC_ADDBPBUTTON                 1032
+#define IDC_CARTDBEDITBUTTON            1032
+#define IDC_ADDBUTTON                   1032
+#define IDC_BROWSEBUTTON                1032
 #define IDC_BUTTON2                     1033
 #define IDC_EDITBPBUTTON                1033
+#define IDC_DELETEBUTTON                1033
 #define IDC_BUTTON3                     1034
 #define IDC_DELETEBPBUTTON              1034
 #define IDC_PIXELSTATIC                 1035
@@ -108,7 +116,12 @@
 #define IDC_SEEKADDRESSEDIT             1067
 #define IDC_LIST1                       1068
 #define IDC_LIST2                       1069
+#define IDC_FILELIST                    1069
 #define IDC_CARTDBENABLECHECK           1070
+#define IDC_CARTDBEDIT                  1071
+#define IDC_FILEEDIT                    1072
+#define IDC_TITLESTATIC                 1073
+#define IDC_URLSTATIC                   1074
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -138,6 +151,16 @@
 #define ID_NES_PAUSE                    32803
 #define ID_VIEW_CHEATS                  32804
 #define ID_VIEW_SEARCH                  32805
+#define ID_FILE_UNLOAD                  32807
+#define ID_FILE_LOADPATCH               32808
+#define ID_VIEW_ROMINFORMATION          32811
+#define ID_NES_MOVIE                    32812
+#define ID_MOVIE_PLAY                   32813
+#define ID_MOVIE_RECORD                 32814
+#define ID_MOVIE_STOP                   32815
+#define ID_RECORD_START                 32816
+#define ID_MOVIE_LOAD                   32817
+#define ID_MOVIE_SAVE                   32818
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -145,9 +168,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        140
-#define _APS_NEXT_COMMAND_VALUE         32806
-#define _APS_NEXT_CONTROL_VALUE         1071
+#define _APS_NEXT_RESOURCE_VALUE        145
+#define _APS_NEXT_COMMAND_VALUE         32819
+#define _APS_NEXT_CONTROL_VALUE         1075
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

@@ -21,20 +21,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef WIN32
-	#include <io.h>
-#else
-	#include <unistd.h>
-#endif
 #include "misc/memutil.h"
 #include "misc/log.h"
+#include "misc/paths.h"
 #include "misc/crc32.h"
+#include "misc/memfile.h"
 #include "nes/cart/cart.h"
 #include "nes/cart/ines.h"
 #include "nes/cart/ines20.h"
 #include "nes/cart/unif.h"
 #include "nes/cart/fds.h"
 #include "nes/cart/nsf.h"
+#include "nes/cart/patch/patch.h"
 
 #define FREE(p) {	\
 	if(p) {			\
@@ -80,7 +78,7 @@ static u32 createmask(u32 size)
 	return(0xFFFFFFFF);
 }
 
-int determineformat(const char *filename)
+static int determineformat(memfile_t *file)
 {
 	u8 ident_ines[] = "NES\x1a";
 	u8 ident_unif[] = "UNIF";
@@ -88,23 +86,10 @@ int determineformat(const char *filename)
 	u8 ident_rawfds[] = "\x01*NINTENDO-HVC*";
 	u8 ident_nsf[] = "NESM\x1a";
 	u8 header[16];
-	FILE *fp;
 
-	//see if file exists and we can read
-	if(access(filename,04) != 0) {
-		log_printf("determineformat:  file '%s' doesnt exist or isnt readable\n",filename);
-		return(FORMAT_ERROR);
-	}
-
-	//open filename given
-	if((fp = fopen(filename,"rb")) == 0) {
-		log_printf("determineformat:  error opening '%s'\n",filename);
-		return(FORMAT_ERROR);
-	}
-
-	//read first 16 bytes and close the file
-	fread(header,1,16,fp);
-	fclose(fp);
+	//read first 16 bytes and reset curpos
+	memfile_read(header,1,16,file);
+	memfile_rewind(file);
 
 	//check if ines format
 	if(memcmp(header,ident_ines,4) == 0) {
@@ -134,19 +119,33 @@ int determineformat(const char *filename)
 
 cart_t *cart_load(const char *filename)
 {
+	return(cart_load_patched(filename,0));
+}
+
+cart_t *cart_load_patched(const char *filename,const char *patchfilename)
+{
 	cart_t *ret = 0;
 	int format,n;
+	memfile_t *file;
+
+	//try to open file
+	if((file = memfile_open((char*)filename,"rb")) == 0) {
+		log_printf("cart_load:  error opening '%s'\n",filename);
+		return(0);
+	}
 
 	//find out what format the file is
-	format = determineformat(filename);
+	format = determineformat(file);
 
 	//print errors for unknown format or error loading
 	if(format == FORMAT_UNKNOWN) {
 		log_printf("cart_load:  unknown file format in '%s'\n",filename);
+		memfile_close(file);
 		return(0);
 	}
 	if(format == FORMAT_ERROR) {
 		log_printf("cart_load:  error reading '%s'\n",filename);
+		memfile_close(file);
 		return(0);
 	}
 
@@ -154,20 +153,29 @@ cart_t *cart_load(const char *filename)
 	ret = (cart_t*)mem_alloc(sizeof(cart_t));
 	memset(ret,0,sizeof(cart_t));
 
+	//if patch filename was passed, load the patch and patch the file in memory
+	if(patchfilename) {
+		if((ret->patch = patch_load(patchfilename))) {
+			patch_apply(ret->patch,file);
+			memfile_seek(file,0,SEEK_SET);
+		}
+	}
+
 	//load the file
 	switch(format) {
-		case FORMAT_INES:		n = cart_load_ines(ret,filename);	break;
-		case FORMAT_INES20:	n = cart_load_ines20(ret,filename);	break;
-		case FORMAT_UNIF:		n = cart_load_unif(ret,filename);	break;
+		case FORMAT_INES:		n = cart_load_ines(ret,file);		break;
+		case FORMAT_INES20:	n = cart_load_ines20(ret,file);	break;
+		case FORMAT_UNIF:		n = cart_load_unif(ret,file);		break;
 		case FORMAT_FDS:
-		case FORMAT_RAWFDS:	n = cart_load_fds(ret,filename);		break;
-		case FORMAT_NSF:		n = cart_load_nsf(ret,filename);		break;
-//		case FORMAT_SPLIT:	n = cart_load_split(ret,filename);	break;
+		case FORMAT_RAWFDS:	n = cart_load_fds(ret,file);		break;
+		case FORMAT_NSF:		n = cart_load_nsf(ret,file);		break;
+//		case FORMAT_SPLIT:	n = cart_load_split(ret,file);	break;
 	}
 
 	//if error, free data and print error
 	if(n != 0) {
 		mem_free(ret);
+		memfile_close(file);
 		log_printf("cart_load:  error loading '%s'\n",filename);
 		return(0);
 	}
@@ -206,6 +214,26 @@ cart_t *cart_load(const char *filename)
 	generate_mask_and_crc32(ret->trainer);
 	generate_mask_and_crc32(ret->pc10rom);
 
+	//store the filename
+	if(ret->patch) {
+		char *p;
+
+		paths_normalize(ret->patch->filename);
+		p = strrchr(ret->patch->filename,PATH_SEPERATOR);
+		if(p == 0)
+			p = ret->patch->filename;
+		else
+			p++;
+		ret->filename = (char*)mem_alloc(strlen(filename) + strlen(p) + 2);
+		sprintf(ret->filename,"%s+%s",filename,p);
+	}
+	else
+		ret->filename = mem_strdup((char*)filename);
+	log_printf("cart_load:  rom filename is '%s'\n",ret->filename);
+
+	//close file
+	memfile_close(file);
+
 	//finished
 	return(ret);
 }
@@ -217,8 +245,6 @@ void cart_unload(cart_t *r)
 		FREE_DATA(r->chr);
 		FREE_DATA(r->vram);
 		FREE_DATA(r->wram);
-		FREE_DATA(r->sram);
-		FREE_DATA(r->svram);
 		FREE_DATA(r->trainer);
 		FREE_DATA(r->pc10rom);
 		FREE_DATA(r->disk);
@@ -227,19 +253,24 @@ void cart_unload(cart_t *r)
 		FREE(r->cache_hflip);
 		FREE(r->vcache);
 		FREE(r->vcache_hflip);
-		FREE(r->svcache);
-		FREE(r->svcache_hflip);
+		FREE(r->filename);
+		patch_unload(r->patch);
 		FREE(r);
 	}
 }
 
 #define ram_alloc(size,ptr)	(u8*)(ptr ? mem_realloc(ptr,size) : mem_alloc(size))
 
-static void allocdata(data_t *data,int len)
+static void allocdata(data_t *data,u32 len)
 {
 	//if size hasnt changed, return
-	if(data->size == len)
+	if(data->size == len) {
 		return;
+	}
+	if(data->size > len) {
+		log_printf("allocdata:  cannot reduce size of memory region (old = %d, new = %d)\n",data->size,len);
+		return;
+	}
 
 	//set size and create mask
 	data->size = len;
@@ -255,16 +286,10 @@ static void allocdata(data_t *data,int len)
 	memset(data->data,0,len);
 }
 
-void cart_setsramsize(cart_t *r,int banks)
-{
-	allocdata(&r->sram,banks * 0x1000);
-	log_printf("cart_setsramsize:  sram size set to %dkb\n",banks * 0x1000 / 1024);
-}
-
 void cart_setwramsize(cart_t *r,int banks)
 {
-	allocdata(&r->wram,banks * 0x1000);
-	log_printf("cart_setwramsize:  wram size set to %dkb\n",banks * 0x1000 / 1024);
+	allocdata(&r->wram,banks * 1024);
+	log_printf("cart_setwramsize:  wram size set to %dkb\n",banks);
 }
 
 void cart_setvramsize(cart_t *r,int banks)
@@ -275,14 +300,4 @@ void cart_setvramsize(cart_t *r,int banks)
 	//tile cache data
 	r->vcache = (cache_t*)ram_alloc(r->vram.size,r->vcache);
 	r->vcache_hflip = (cache_t*)ram_alloc(r->vram.size,r->vcache_hflip);
-}
-
-void cart_setsvramsize(cart_t *r,int banks)
-{
-	allocdata(&r->svram,banks * 1024);
-	log_printf("cart_setsvramsize:  svram size set to %dkb\n",banks);
-
-	//tile cache data
-	r->svcache = (cache_t*)ram_alloc(r->svram.size,r->svcache);
-	r->svcache_hflip = (cache_t*)ram_alloc(r->svram.size,r->svcache_hflip);
 }

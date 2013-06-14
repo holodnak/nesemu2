@@ -148,7 +148,7 @@ void namcot163_reset(void (*syncfunc)(),int hard)
 	int i;
 
 	mem_setvramsize(8);
-	mem_setwramsize(2);
+	mem_setwramsize(8);
 	read4 = mem_getreadfunc(4);
 	write4 = mem_getwritefunc(4);
 	mem_setreadfunc(4,namcot163_readsound);

@@ -73,6 +73,9 @@ typedef struct ppu_s {
 	//tile buffer (34 tiles) hold tiles/attributes read
 	u8		tilebuffer[256 + 16];
 
+	//sprite buffer holds pre-drawn sprite pixels
+	u8		spritebuffer[256 + 16];
+
 	//read/write pointers
 	u8		*readpages[16];
 	u8		*writepages[16];
@@ -103,6 +106,7 @@ void ppu_write(u32 addr,u8 data);
 u8 ppu_pal_read(u32 addr);
 void ppu_pal_write(u32 addr,u8 data);
 void ppu_step();
+void ppu_sync();
 void ppu_state(int mode,u8 *data);
 readfunc_t ppu_getreadfunc();
 writefunc_t ppu_getwritefunc();

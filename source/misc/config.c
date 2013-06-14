@@ -45,10 +45,8 @@ static void mkdirr(char *path)
 	int num = 0;
 
 	//normalize the path string
-	for(p=tmp;*p;p++) {
-		if(*p == '/' || *p == '\\')
-			*p = PATH_SEPERATOR;
-	}
+	paths_normalize(tmp);
+
 	log_printf("mkdirr:  creating directory '%s'\n",path);
 
 	//make all the directories between the root and the desired directory
@@ -72,14 +70,9 @@ static void mkdirr(char *path)
 
 static void makepath(char *str)
 {
-	char tmp[1024];
-
-	//parse the string for our variables
-	paths_parse(str,tmp,1024);
-
 	//test if the path exists already, if not create it
-	if(access(tmp,0) != 0)
-		mkdirr(tmp);
+	if(access(str,0) != 0)
+		mkdirr(str);
 }
 
 //this function looks around for a configuration file.  it checks:
@@ -268,8 +261,7 @@ char *config_get_eval_string(char *dest,char *name)
 	//make a copy of the string
 	tmp = mem_strdup(config_get_string(name));
 
-	//clear the destination string
-	memset(dest,0,1024);
+	strcpy(dest,tmp);
 
 	for(pos=0,p=tmp;*p;p++) {
 
@@ -308,10 +300,12 @@ char *config_get_eval_string(char *dest,char *name)
 					if(p2 == 0) {
 						log_printf("config_get_eval_string:  variable '%s' referenced non-existant variable '%s', using '.'\n",name,varname);
 						dest[pos++] = '.';
+						dest[pos] = 0;
 					}
 					else {
 						while(*p2) {
 							dest[pos++] = *p2++;
+							dest[pos] = 0;
 						}
 					}
 					mem_free(tmp);
@@ -321,13 +315,11 @@ char *config_get_eval_string(char *dest,char *name)
 
 		//copy the char
 		dest[pos++] = *p;
+		dest[pos] = 0;
 	}
 
 	//normalize the path
-	for(p=dest;*p;p++) {
-		if(*p == '/' || *p == '\\')
-			*p = PATH_SEPERATOR;
-	}
+	paths_normalize(dest);
 
 	//free tmp string and return
 	mem_free(tmp);

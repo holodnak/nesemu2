@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <stdio.h>
 #include <string.h>
 #include "nes/cart/cart.h"
 #include "nes/cart/nsf.h"
@@ -63,14 +62,13 @@ static int loadbios(cart_t *ret,char *filename)
 	//seek back to the beginning
 	fseek(fp,0,SEEK_SET);
 
-	//load bios into sram
-	ret->sram.size = (u32)size;
-	ret->sram.mask = ret->sram.size - 1;
-	ret->sram.data = (u8*)mem_alloc(ret->sram.size);
+	//load bios into upper wram
+	cart_setwramsize(ret,8 + (size / 1024));
 
 	//read bios
-	if(fread(ret->sram.data,1,ret->sram.size,fp) != ret->sram.size) {
+	if(fread(ret->wram.data + 8192,1,size,fp) != size) {
 		log_printf("loadbios:  error reading nsf bios file '%s'\n",filename);
+		mem_free(ret->wram.data);
 		fclose(fp);
 		return(1);
 	}
@@ -94,12 +92,11 @@ static u32 padsize(u32 size)
 	return(ret);
 }
 
-int cart_load_nsf(cart_t *ret,const char *filename)
+int cart_load_nsf(cart_t *ret,memfile_t *file)
 {
 	int n = 0;
 	char biosfile[1024];
-	FILE *fp;
-	size_t size;
+	u32 size;
 	u32 loadaddr;
 	u8 nobankswitch[8 + 8] = {0,0,0,0,0,0,0,0,  0,1,2,3,4,5,6,7};
 
@@ -124,22 +121,14 @@ int cart_load_nsf(cart_t *ret,const char *filename)
 		}
 	}
 
-	//try to open the nsf
-	if((fp = fopen(filename,"rb")) == 0) {
-		log_printf("cart_load_nsf:  error opening '%s'\n",filename);
-		return(1);
-	}
-
 	//get length of file
-	fseek(fp,0,SEEK_END);
-	size = ftell(fp);
-	fseek(fp,0,SEEK_SET);
+	size = memfile_size(file);
 
 	//discount for the header
 	size -= 0x80;
 
-	if(fread(ret->data,1,0x80,fp) != 0x80) {
-		log_printf("cart_load_nsf:  error reading header from '%s'\n",filename);
+	if(memfile_read(ret->data,1,0x80,file) != 0x80) {
+		log_printf("cart_load_nsf:  error reading header from '%s'\n",file->filename);
 		n = 1;
 	}
 	else {
@@ -151,7 +140,7 @@ int cart_load_nsf(cart_t *ret,const char *filename)
 			ret->prg.size = (u32)size + (loadaddr & 0x7FFF);
 			ret->prg.data = (u8*)mem_alloc(ret->prg.size);
 			memset(ret->prg.data,0,ret->prg.size);
-			fread(ret->prg.data + (loadaddr & 0x7FFF),1,size,fp);
+			memfile_read(ret->prg.data + (loadaddr & 0x7FFF),1,size,file);
 		}
 
 		//else the nsf is bankswitched
@@ -159,7 +148,7 @@ int cart_load_nsf(cart_t *ret,const char *filename)
 			ret->prg.size = (u32)size + (loadaddr & 0xFFF);
 			ret->prg.data = (u8*)mem_alloc(ret->prg.size);
 			memset(ret->prg.data,0,ret->prg.size);
-			fread(ret->prg.data + (loadaddr & 0xFFF),1,size,fp);
+			memfile_read(ret->prg.data + (loadaddr & 0xFFF),1,size,file);
 		}
 
 		//setup mapper
@@ -168,7 +157,5 @@ int cart_load_nsf(cart_t *ret,const char *filename)
 		log_printf("init $%04X, play $%04X\n",ret->data[0xA] | (ret->data[0xB] << 8),ret->data[0xC] | (ret->data[0xD] << 8));
 	}
 
-	//close file and return
-	fclose(fp);
 	return(n);
 }

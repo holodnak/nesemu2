@@ -21,7 +21,7 @@
 #ifndef __inputdev_h__
 #define __inputdev_h__
 
-#include "types.h"
+#include "nes/state/state.h"
 
 //nes input keys for joypads
 #define INPUT_A		0x01
@@ -33,8 +33,8 @@
 #define INPUT_LEFT	0x40
 #define INPUT_RIGHT	0x80
 
-#define INPUTDEV(id,read,write,strobe,update) \
-	inputdev_t inputdev##id = {id,read,write,strobe,update}
+#define INPUTDEV(id,read,write,update,movie,state) \
+	inputdev_t inputdev##id = {id,read,write,update,movie,state}
 
 typedef struct inputdev_s {
 	//device id
@@ -46,11 +46,14 @@ typedef struct inputdev_s {
 	//write port
 	void (*write)(u8);
 
-	//strobe
-	void (*strobe)();
-
 	//update controller info
 	void (*update)();
+
+	//update controller info for movie support
+	int (*movie)(int mode);
+
+	//saving/loading controller state
+	void (*state)(int mode,u8 *data);
 } inputdev_t;
 
 enum inputdevid_e {
@@ -62,5 +65,7 @@ enum inputdevid_e {
 };
 
 inputdev_t *inputdev_get(int id);
+
+#include "nes/nes.h"
 
 #endif

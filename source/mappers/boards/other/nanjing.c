@@ -27,7 +27,7 @@ static void sync()
 	mem_setprg32(8,prg);
 	mem_setvram4(0,vram[0]);
 	mem_setvram4(4,vram[1]);
-	mem_setsram8(6,0);
+	mem_setwram8(6,0);
 }
 
 static u8 read(u32 addr)
@@ -84,7 +84,7 @@ static void reset(int hard)
 	mem_setreadfunc(5,read);
 	mem_setwritefunc(5,write);
 	mem_setvramsize(8);
-	mem_setsramsize(2);
+	mem_setwramsize(8);
 	reg[0] = 0xFF;
 	reg[1] = 0x00;
 	strobe = 0xFF;

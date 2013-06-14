@@ -20,4 +20,4 @@
 
 #include "inputdev.h"
 
-INPUTDEV(I_NULL,0,0,0,0);
+INPUTDEV(I_NULL,0,0,0,0,0);

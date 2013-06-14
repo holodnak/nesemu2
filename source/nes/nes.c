@@ -30,6 +30,7 @@
 #include "nes/memory.h"
 #include "nes/genie.h"
 #include "nes/state/state.h"
+#include "nes/cart/patch/patch.h"
 
 nes_t *nes = 0;
 
@@ -38,22 +39,12 @@ static void mapper_state(int mode,u8 *data)	{	nes->mapper->state(mode,data);		}
 
 //non-kludges
 static void wram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes->cart->wram.data,nes->cart->wram.size);		}
-static void sram_state(int mode,u8 *data)		{	STATE_ARRAY_U8(nes->cart->sram.data,nes->cart->sram.size);		}
 static void vram_state(int mode,u8 *data)
 {
 	STATE_ARRAY_U8(nes->cart->vram.data,nes->cart->vram.size);
 	if(mode == STATE_LOAD) {
 		cache_tiles(nes->cart->vram.data,nes->cart->vcache,nes->cart->vram.size / 16,0);
 		cache_tiles(nes->cart->vram.data,nes->cart->vcache_hflip,nes->cart->vram.size / 16,1);
-	}
-}
-
-static void svram_state(int mode,u8 *data)
-{
-	STATE_ARRAY_U8(nes->cart->svram.data,nes->cart->svram.size);
-	if(mode == STATE_LOAD) {
-		cache_tiles(nes->cart->svram.data,nes->cart->svcache,nes->cart->svram.size / 16,0);
-		cache_tiles(nes->cart->svram.data,nes->cart->svcache_hflip,nes->cart->svram.size / 16,1);
 	}
 }
 
@@ -70,25 +61,25 @@ int nes_init()
 		state_register(B_NES,nes_state);
 		state_register(B_MAPR,mapper_state);
 		state_register(B_WRAM,wram_state);
-		state_register(B_SRAM,sram_state);
 		state_register(B_VRAM,vram_state);
-		state_register(B_SVRAM,svram_state);
 	}
 	ret += cpu_init();
 	ret += ppu_init();
 	ret += apu_init();
+	ret += nes_movie_init();
 	return(ret);
 }
 
 void nes_kill()
 {
 	if(nes) {
+		nes_movie_kill();
+		nes_unload();
+		genie_unload();
 		state_kill();
 		cpu_kill();
 		ppu_kill();
 		apu_kill();
-		cart_unload(nes->cart);
-		genie_unload();
 		mem_free(nes);
 		nes = 0;
 	}
@@ -98,21 +89,31 @@ int nes_load_cart(cart_t *c)
 {
 	mapper_t *m;
 
+	//check mapper id
 	if(c->mapperid < 0) {
 		log_printf("nes_load_cart:  cart with unsupported mapperid loaded (id = %d)\n",c->mapperid);
 		return(1);
 	}
+
+	//try to load the mapper functions
 	if((m = mapper_init(c->mapperid)) == 0) {
 		log_printf("nes_load_cart:  error calling mapper_init\n");
 		return(1);
 	}
-	log_printf("nes_load_cart:  success\n");
+
+	//it is ready for execution...set pointers and return
 	nes->cart = c;
 	nes->mapper = m;
+	log_printf("nes_load_cart:  success\n");
 	return(0);
 }
 
 int nes_load(char *filename)
+{
+	return(nes_load_patched(filename,0));
+}
+
+int nes_load_patched(char *filename,char *patchfilename)
 {
 	cart_t *c;
 
@@ -120,18 +121,26 @@ int nes_load(char *filename)
 	nes_unload();
 
 	//try to load the file into a cart_t struct
-	if((c = cart_load(filename)) == 0) {
+	if((c = cart_load_patched(filename,patchfilename)) == 0) {
 		log_printf("nes_load:  error loading '%s'\n",filename);
 		return(1);
 	}
 
+	//output some information
 	if(strlen(c->title))
 		log_printf("nes_load:  loaded file '%s' (title = '%s')\n",filename,c->title);
 	else
 		log_printf("nes_load:  loaded file '%s'\n",filename);
 
 	//check cartdb for rom (will update the cart_t struct)
-	cartdb_find(c);
+	if(config_get_bool("cartdb.enabled"))
+		cartdb_find(c);
+
+	//see if we should pre-init some wram for the cart
+	if((c->battery & 1) && c->wram.size == 0) {
+		cart_setwramsize(c,8);
+		log_printf("nes_load:  cart has battery, pre-allocating wram\n");
+	}
 
 	//see if the nes accepts it (mapper is supported)
 	if(nes_load_cart(c) != 0) {
@@ -139,20 +148,16 @@ int nes_load(char *filename)
 		return(2);
 	}
 
-	//nes accepted it, save away the filename
-	else
-		strncpy(nes->romfilename,filename,1024);
-
 	return(0);
 }
 
 void nes_unload()
 {
+	//need to save sram/diskdata/whatever here
 	if(nes->cart)
 		cart_unload(nes->cart);
 	nes->cart = 0;
 	nes->mapper = 0;
-	memset(nes->romfilename,0,1024);
 }
 
 void nes_set_inputdev(int n,int id)
@@ -166,6 +171,11 @@ void nes_set_inputdev(int n,int id)
 void nes_reset(int hard)
 {
 	int i;
+
+	if(nes->cart == 0) {
+		log_printf("nes_reset:  no cart loaded, cannot reset\n");
+		return;
+	}
 
 	//zero out all read/write pages/functions
 	for(i=0;i<64;i++) {
@@ -225,36 +235,48 @@ void nes_reset(int hard)
 
 void nes_frame()
 {
+	nes->inputdev[0]->update();
+	nes->inputdev[1]->update();
+	nes->expdev->update();
+	if(nes->movie.mode)
+		nes_movie_frame();
 	cpu_execute_frame();
 }
 
 void nes_state(int mode,u8 *data)
 {
-	STATE_U8(nes->strobe);
 }
 
 void nes_savestate(char *filename)
 {
-	FILE *fp;
+	memfile_t *file;
 
-	if((fp = fopen(filename,"wb")) == 0) {
+	if(nes->cart == 0) {
+		log_printf("nes_savestate:  no cart loaded, cannot save state\n");
+		return;
+	}
+	if((file = memfile_open(filename,"wb")) == 0) {
 		log_printf("nes_savestate:  error opening file '%s'\n",filename);
 		return;
 	}
 	log_printf("nes_savestate:  saving state to '%s'\n",filename);
-	state_save(fp);
-	fclose(fp);
+	state_save(file);
+	memfile_close(file);
 }
 
 void nes_loadstate(char *filename)
 {
-	FILE *fp;
+	memfile_t *file;
 
-	if((fp = fopen(filename,"rb")) == 0) {
+	if(nes->cart == 0) {
+		log_printf("nes_loadstate:  no cart loaded, cannot load state\n");
+		return;
+	}
+	if((file = memfile_open(filename,"rb")) == 0) {
 		log_printf("nes_loadstate:  error opening file '%s'\n",filename);
 		return;
 	}
 	log_printf("nes_loadstate:  loading state from '%s'\n",filename);
-	state_load(fp);
-	fclose(fp);
+	state_load(file);
+	memfile_close(file);
 }

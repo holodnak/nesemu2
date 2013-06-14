@@ -85,7 +85,7 @@ void mem_free_attr(void *ptr)
 	mem_free(ptr);
 }
 
-char *copystr(const char *str)
+static char *copystr(const char *str)
 {
 	char *ret;
 	size_t sz;

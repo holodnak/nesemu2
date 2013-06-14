@@ -27,7 +27,7 @@
 #define CONSOLE_LINEBUF_SIZE	128
 
 //line buffer (circular)
-static char **linebuf;
+static char **linebuf = 0;
 
 //max width of strings in the buffer (for chopping them)
 static size_t maxlen;
@@ -65,8 +65,10 @@ int linebuffer_init(int len)
 
 void linebuffer_kill()
 {
-	linebuffer_clear();
-	mem_free(linebuf);
+	if(linebuf) {
+		linebuffer_clear();
+		mem_free(linebuf);
+	}
 }
 
 static void addline(char *str)

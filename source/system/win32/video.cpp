@@ -51,6 +51,7 @@ HINSTANCE ddrawdll;
 LPDIRECTDRAWCREATEEX DirectDrawCreateEx;
 #endif
 
+static u8 *screen = 0;
 static int screenw,screenh,screenbpp;
 static int screenscale;
 static u16 palette15[8][256];
@@ -364,6 +365,8 @@ static int video_reinit()
 {
 	int i,ret;
 
+	if(screen == 0)
+		screen = (u8*)mem_alloc(256 * (240 + 16));
 	filter = getfilterint(config_get_string("video.filter"));
 	screenscale = config_get_int("video.scale");
 	screenw = 256 * screenscale;
@@ -443,6 +446,10 @@ int video_init()
 
 void video_kill()
 {
+	if(screen) {
+		mem_free(screen);
+		screen = 0;
+	}
 	SAFE_RELEASE(lpDirectDrawClipper);
 	SAFE_RELEASE(lpSecondaryDDS);
 	SAFE_RELEASE(lpPrimaryDDS);
@@ -497,6 +504,7 @@ void video_endframe()
 //this handles lines coming directly from the nes engine
 void video_updateline(int line,u8 *s)
 {
+	memcpy(screen + (line * 256),s,256);
 	if(line >= 8 && line < 232)
 		drawline(line,s);
 	else
@@ -529,4 +537,9 @@ void video_setpalette(palette_t *p)
 extern "C" void video_resize()
 {
 //	GetClientRect(hWnd,&rect);
+}
+
+u8 *video_getscreen()
+{
+	return(screen);
 }

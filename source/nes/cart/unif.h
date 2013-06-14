@@ -95,6 +95,6 @@
 #define ID_CCKE	MAKEID('C','C','K','E')
 #define ID_CCKF	MAKEID('C','C','K','F')
 
-int cart_load_unif(cart_t *ret,const char *filename);
+int cart_load_unif(cart_t *ret,memfile_t *file);
 
 #endif

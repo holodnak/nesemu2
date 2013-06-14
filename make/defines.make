@@ -29,10 +29,10 @@ ifeq ($(USE_CPU_UNDOC),1)
 	DEFINES += -DCPU_UNDOC
 endif
 ifeq ($(USE_QUICK_SPRITES),1)
-	ifeq ($(USE_ACCURATE_SPRITE0),1)
-		DEFINES += -DACCURATE_SPRITE0
-	endif
 	DEFINES += -DQUICK_SPRITES
+endif
+ifeq ($(USESDL),1)
+	DEFINES += -DSDL
 endif
 
 # compiler/linker programs
@@ -51,8 +51,7 @@ LDFLAGS_RELEASE = -s
 LIBS =
 
 # compiler/linker flags
-CFLAGS = $(CFLAGS_$(BUILD)) $(DEFINES) -I$(PATH_SOURCE) -D$(OSTARGET) -D$(BUILD)
-CPPFLAGS = $(CFLAGS)
+CPPFLAGS = $(CFLAGS_$(BUILD)) $(DEFINES) -I$(PATH_SOURCE) -D$(OSTARGET) -D$(BUILD)
 LDFLAGS = $(LDFLAGS_$(BUILD))
 
 # resource compiler (win32 only)

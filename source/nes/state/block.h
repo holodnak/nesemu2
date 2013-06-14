@@ -21,8 +21,7 @@
 #ifndef __blocks_h__
 #define __blocks_h__
 
-#include <stdio.h>
-#include "types.h"
+#include "misc/memfile.h"
 
 #define MAKEID(c1,c2,c3,c4)	(((c1) << 0) | ((c2) << 8) | ((c3) << 16) | ((c4) << 24))
 
@@ -38,7 +37,7 @@ typedef struct block_s {
 
 block_t *block_create(u32 type,u32 size);
 void block_destroy(block_t *b);
-block_t *block_load(FILE *fp);
-int block_save(FILE *fp,block_t *b);
+block_t *block_load(memfile_t *file);
+int block_save(memfile_t *file,block_t *b);
 
 #endif

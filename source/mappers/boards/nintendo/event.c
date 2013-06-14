@@ -55,7 +55,7 @@ static void sync()
 
 static void reset(int hard)
 {
-	mem_setsramsize(2);
+	mem_setwramsize(8);
 	mem_setvramsize(8);
 	prglock = 1;
 	irqcounter = 0;

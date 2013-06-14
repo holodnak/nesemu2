@@ -26,10 +26,17 @@
 #else
 	#include <unistd.h>
 #endif
-#include "types.h"
+#include "emu/events.h"
 #include "system/main.h"
+#include "system/video.h"
 #include "system/input.h"
+#include "system/sound.h"
+#include "system/sdl/console/console.h"
+#include "nes/nes.h"
+#include "nes/state/state.h"
 #include "misc/paths.h"
+#include "misc/log.h"
+#include "misc/config.h"
 
 #ifndef _MAX_PATH
 	#define _MAX_PATH 4096
@@ -54,14 +61,25 @@ void system_kill()
 {
 	if(joystick)
 		SDL_JoystickClose(joystick);
-//	SDL_QuitSubSystem(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 	SDL_Quit();
 }
 
+#define bit(n)	(1 << (n))
+#define checkkey(key,n,evt)								\
+	if(joykeys[key] && (keydown & bit(n)) == 0) {	\
+		keydown |= bit(n);									\
+		emu_event(evt,0);										\
+	}																\
+	else if(joykeys[key] == 0) {							\
+		keydown &= ~bit(n);									\
+	}
+
 void system_checkevents()
 {
+	static int keydown = 0;
 	SDL_Event event; /* Event structure */
 
+	//check out sdl events
 	while(SDL_PollEvent(&event)) {
 		switch(event.type) {
 			case SDL_QUIT:
@@ -95,6 +113,23 @@ void system_checkevents()
 				break;
 		}
 	}
+
+	//update the console
+	console_update();
+
+	//check for system key presses
+	checkkey(SDLK_ESCAPE,	0,		E_QUIT);
+	checkkey(SDLK_p,			1,		E_SOFTRESET);
+	checkkey(SDLK_o,			2,		E_HARDRESET);
+	checkkey(SDLK_F1,			3,		E_TOGGLERUNNING);
+	checkkey(SDLK_F3,			4,		E_PLAYMOVIE);
+	checkkey(SDLK_F4,			5,		E_TOGGLEFULLSCREEN);
+	checkkey(SDLK_F5,			6,		E_SAVESTATE);
+	checkkey(SDLK_F6,			7,		E_RECORDMOVIE);
+	checkkey(SDLK_F7,			8,		E_STOPMOVIE);
+	checkkey(SDLK_F8,			9,		E_LOADSTATE);
+	checkkey(SDLK_F9,			10,	E_FLIPDISK);
+	checkkey(SDLK_F10,		11,	E_DUMPDISK);
 }
 
 char *system_getcwd()

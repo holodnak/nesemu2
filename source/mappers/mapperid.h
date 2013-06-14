@@ -56,6 +56,7 @@ enum boardid_e {
 	B_KONAMI_VRC1,
 	B_KONAMI_VRC2A,
 	B_KONAMI_VRC2B,
+	B_KONAMI_VRC2C,
 	B_KONAMI_VRC3,
 	B_KONAMI_VRC4A,
 	B_KONAMI_VRC4B,
@@ -235,7 +236,8 @@ enum boardid_e {
 	B_BOARDEND,
 
 	//mapping for default chips used
-	B_NINTENDO_SxROM = B_NINTENDO_SxROM_MMC1B,
+	B_NINTENDO_SxROM	= B_NINTENDO_SxROM_MMC1B,
+	B_KONAMI_VRC2		= B_KONAMI_VRC2B,
 
 	//extra support
 	B_NSF =		0x10000000,

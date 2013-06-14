@@ -29,9 +29,6 @@
 #include "misc/memutil.h"
 #include "misc/config.h"
 #include "system/common/filters.h"
-//#include "system/common/filters/draw/draw.h"
-//#include "system/common/filters/interpolate/interpolate.h"
-//#include "system/common/filters/scale2x/scalebit.h"
 
 static SDL_Surface *surface = 0;
 static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;// | SDL_NOFRAME;
@@ -43,6 +40,7 @@ static double interval = 0;
 static u64 lasttime = 0;
 static palette_t *palette = 0;
 static u32 *screen = 0;
+static u8 *nesscreen = 0;
 static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
 static filter_t *filter;
 
@@ -93,6 +91,9 @@ int video_init()
 {
 	int i;
 
+	if(nesscreen == 0)
+		nesscreen = (u8*)mem_alloc(256 * (240 + 16));
+
 	//setup timer to limit frames
 	interval = (double)system_getfrequency() / 60.0f;
 	lasttime = system_gettick();
@@ -105,6 +106,9 @@ int video_init()
 	flags |= config_get_bool("video.fullscreen") ? SDL_FULLSCREEN : 0;
 	screenscale = config_get_int("video.scale");
 	screenbpp = 32;
+
+	if(flags & SDL_FULLSCREEN)
+		screenscale = (screenscale < 2) ? 2 : screenscale;
 
 	i = get_filter_int(config_get_string("video.filter"));
 	filter = get_filter((screenscale == 1) ? F_NONE : i);
@@ -124,10 +128,10 @@ int video_init()
 	SDL_ShowCursor(0);
 
 	//allocate memory for temp screen buffer
-	screen = mem_realloc(screen,256 * (240 + 16) * (screenbpp / 8) * 4);
+	screen = (u32*)mem_realloc(screen,256 * (240 + 16) * (screenbpp / 8) * 4);
 
 	//print information
-	log_printf("video initialized:  %dx%dx%d %s\n",screenw,screenh,screenbpp,(flags & SDL_FULLSCREEN) ? "fullscreen" : "windowed");
+	log_printf("video initialized:  %dx%dx%d %s\n",surface->w,surface->h,surface->format->BitsPerPixel,(flags & SDL_FULLSCREEN) ? "fullscreen" : "windowed");
 
 	return(0);
 }
@@ -137,7 +141,10 @@ void video_kill()
 	SDL_ShowCursor(1);
 	if(screen)
 		mem_free(screen);
+	if(nesscreen)
+		mem_free(nesscreen);
 	screen = 0;
+	nesscreen = 0;
 }
 
 void video_startframe()
@@ -173,6 +180,7 @@ void video_updateline(int line,u8 *s)
 	u32 *dest = screen + (line * 256);
 	int i;
 
+	memcpy(nesscreen + (line * 256),s,256);
 	if(line >= 8 && line < 232) {
 		for(i=0;i<256;i++) {
 			*dest++ = palettecache[*s++];
@@ -227,7 +235,7 @@ int video_getbpp()
 	return(screenbpp);
 }
 
-void *video_getscreen()
+u8 *video_getscreen()
 {
-	return(screen);
+	return(nesscreen);
 }

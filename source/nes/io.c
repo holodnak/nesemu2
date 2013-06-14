@@ -88,12 +88,6 @@ void nes_write_4000(u32 addr,u8 data)
 			nes->inputdev[0]->write(data);
 			nes->inputdev[1]->write(data);
 			nes->expdev->write(data);
-			if(((data & 1) == 0) && (nes->strobe & 1)) {
-				nes->inputdev[0]->strobe();
-				nes->inputdev[1]->strobe();
-				nes->expdev->strobe();
-			}
-			nes->strobe = data;
 			break;
 
 		default:

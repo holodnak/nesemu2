@@ -22,6 +22,7 @@
 #define __nes_h__
 
 #include "types.h"
+#include "nes/movie.h"
 #include "nes/cpu/cpu.h"
 #include "nes/ppu/ppu.h"
 #include "nes/apu/apu.h"
@@ -73,12 +74,12 @@ typedef struct nes_s {
 	//mapper functions
 	mapper_t		*mapper;
 
-	//input strobe and connected devices
-	u8				strobe;
+	//connected input devices
 	inputdev_t	*inputdev[2],*expdev;
 
-	//currently loaded file's name
-	char			romfilename[1024];
+	//movie support
+	movie_t		movie;
+
 } nes_t;
 
 extern nes_t *nes;
@@ -87,6 +88,7 @@ int nes_init();
 void nes_kill();
 int nes_load_cart(cart_t *c);
 int nes_load(char *filename);
+int nes_load_patched(char *filename,char *patchfilename);
 void nes_unload();
 void nes_set_inputdev(int n,int id);
 void nes_reset(int hard);

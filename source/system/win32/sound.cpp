@@ -51,8 +51,8 @@ const	unsigned int	LOCK_SIZE = FREQ * (BITS / 8);
 #define Try(action,errormsg) \
 	do {\
 		if(FAILED(action)) {\
-			Stop();\
-			Start();\
+			stopsound();\
+			startsound();\
 			if(FAILED(action)) {\
 				sound_pause();\
 				MessageBox(hWnd,errormsg,"nesemu2",MB_OK | MB_ICONERROR);\
@@ -61,9 +61,21 @@ const	unsigned int	LOCK_SIZE = FREQ * (BITS / 8);
 		}\
 	} while (false)
 
-void Stop();
+static void	stopsound()
+{
+	if(Buffer) {
+		sound_pause();
+		Buffer->Release();
+		Buffer = 0;
+	}
+	if(PrimaryBuffer) {
+		PrimaryBuffer->Stop();
+		PrimaryBuffer->Release();
+		PrimaryBuffer = 0;
+	}
+}
 
-void	Start()
+static void startsound()
 {
 	WAVEFORMATEX WFX;
 	DSBUFFERDESC DSBD;
@@ -77,7 +89,7 @@ void	Start()
 	DSBD.dwBufferBytes = 0;
 	DSBD.lpwfxFormat = NULL;
 	if(FAILED(DirectSound->CreateSoundBuffer(&DSBD, &PrimaryBuffer, NULL))) {
-		Stop();
+		stopsound();
 		MessageBox(hWnd,"Failed to create primary buffer!","nesemu2",MB_OK);
 		return;
 	}
@@ -89,12 +101,12 @@ void	Start()
 	WFX.nBlockAlign = WFX.wBitsPerSample / 8 * WFX.nChannels;
 	WFX.nAvgBytesPerSec = WFX.nSamplesPerSec * WFX.nBlockAlign;
 	if(FAILED(PrimaryBuffer->SetFormat(&WFX))) {
-		Stop();
+		stopsound();
 		MessageBox(hWnd,"Failed to set output format!","nesemu2", MB_OK);
 		return;
 	}
 	if(FAILED(PrimaryBuffer->Play(0, 0, DSBPLAY_LOOPING))) {
-		Stop();
+		stopsound();
 		MessageBox(hWnd,"Failed to start playing primary buffer!","nesemu2", MB_OK);
 		return;
 	}
@@ -102,25 +114,11 @@ void	Start()
 	DSBD.dwBufferBytes = LockSize * FRAMEBUF;
 	DSBD.lpwfxFormat = &WFX;
 	if(FAILED(DirectSound->CreateSoundBuffer(&DSBD, &Buffer, NULL))) {
-		Stop();
+		stopsound();
 		MessageBox(hWnd,"Failed to create secondary buffer!","nesemu2",MB_OK);
 		return;
 	}
-	log_printf("dsound init ok, %ihz, %i bits",WFX.nSamplesPerSec,WFX.wBitsPerSample);
-}
-
-void	Stop (void)
-{
-	if(Buffer) {
-		sound_pause();
-		Buffer->Release();
-		Buffer = 0;
-	}
-	if(PrimaryBuffer) {
-		PrimaryBuffer->Stop();
-		PrimaryBuffer->Release();
-		PrimaryBuffer = 0;
-	}
+	log_printf("dsound init ok, %ihz, %i bits\n",WFX.nSamplesPerSec,WFX.wBitsPerSample);
 }
 
 int sound_init()
@@ -152,7 +150,7 @@ int sound_init()
 
 void sound_kill()
 {
-	Stop();
+	stopsound();
 	if(DirectSound) {
 		DirectSound->Release();
 		DirectSound = 0;
@@ -167,7 +165,7 @@ void sound_play()
 	if(isEnabled)
 		return;
 	if(Buffer == 0) {
-		Start();
+		startsound();
 		if(Buffer == 0)
 			return;
 	}

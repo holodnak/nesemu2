@@ -99,12 +99,12 @@ void mmc3_syncsram()
 {
 /*	if((type & C_MMCNUM) == C_MMC3) {
 		if((sramenabled & 0xC0) == 0x80)
-			mem_setsram8(6,0);
+			mem_setwram8(6,0);
 		else
 			mem_unsetcpu8(6);
 	}*/
 	if((type & C_MMCNUM) == C_MMC3)
-		mem_setsram8(6,0);
+		mem_setwram8(6,0);
 }
 
 void mmc3_syncmirror()
@@ -142,13 +142,13 @@ void mmc3_reset(int t,void (*s)(),int hard)
 	int i;
 
 	type = t;
-	mem_setsramsize(2);
+	mem_setwramsize(8);
 	if(nes->cart->chr.size == 0)
 		mem_setvramsize(8);
 	for(i=8;i<0x10;i++)
 		mem_setwritefunc(i,mmc3_write);
 	if((type & C_MMCNUM) == C_MMC6) {
-		mem_setsram4(7,0);
+		mem_setwram4(7,0);
 		sram7 = mem_getwriteptr(7);
 		mem_unsetcpu4(7);
 		mem_setreadfunc(6,mmc6_readsram);
@@ -158,7 +158,7 @@ void mmc3_reset(int t,void (*s)(),int hard)
 		sramenabled = 0;
 	}
 	else {
-//		mem_setsram8(6,0);
+//		mem_setwram8(6,0);
 		//keep enabled for now
 		sramenabled = 0x80;
 	}

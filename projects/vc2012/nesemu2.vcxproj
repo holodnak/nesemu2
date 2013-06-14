@@ -516,7 +516,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\source\nes\ppu\ppu.c" />
+    <ClCompile Include="..\..\source\nes\ppu\ppu.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">$(IntDir)/nes/ppu/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/ppu/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)/nes/ppu/</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\source\nes\ppu\step.c" />
     <ClCompile Include="..\..\source\nes\cart\cart.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)/nes/cart/</ObjectFileName>

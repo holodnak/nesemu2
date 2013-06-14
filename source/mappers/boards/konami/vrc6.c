@@ -148,8 +148,8 @@ static void reset(int revision,int hard)
 		mem_setwritefunc(i,write);
 	if(revision == B_KONAMI_VRC6B) {
 		map = vrc6b_map;
-		mem_setsramsize(2);
-		mem_setsram8(0x6,0);
+		mem_setwramsize(8);
+		mem_setwram8(0x6,0);
 	}
 	else
 		map = vrc6a_map;

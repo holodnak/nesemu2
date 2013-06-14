@@ -37,7 +37,7 @@ required variables:
 
 //these global variables provide information for the device input code
 int joyx,joyy;			//x and y coords for paddle/mouse
-u8 joyzap;				//zapper trigger
+u8 joytrigger;
 u8 joykeys[370];		//keyboard state
 int joyconfig[4][8];	//joypad button configuration
 
@@ -66,21 +66,20 @@ void input_poll()
 	Uint8 *keystate = SDL_GetKeyState(NULL);
 	int i,x,y;
 
-//	joyx = joyy = 0;
-
 	//need to update mousex/mousey/mousebuttons here
+	joytrigger = (u8)(SDL_GetMouseState(&x,&y) & 1) << 4;
+	joyx = x;
+	joyy = y;
 
 	//now update key/mouse state, the input device logic will
 	//decode the key/mouse data into the correct input for the nes
 	for(i=0;i<300;i++)
 		joykeys[i] = keystate[i];
-	joyzap = (SDL_GetMouseState(&x,&y) & 1) << 4;
-	
-	for (i=0; i < 20; i++)
-	{
+
+	//put joypad buttons in the struct
+	for(i=0;i<20;i++) {
 		joykeys[FIRSTJOYSTATEKEY + i] = joystate[i];
 	}
-	
 }
 
 void input_update_config()

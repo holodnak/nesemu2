@@ -21,24 +21,40 @@
 #include "inputdev.h"
 #include "system/input.h"
 
-static u32 data;
-static u8 counter;
+static u32 portdata;
+static u16 buttons;
+static u8 counter,strobe;
 
 static u8 read()
 {
 	u8 ret = 0;
 
-	ret |= ((data >> (counter + 0)) & 1) << 3;
-	ret |= ((data >> (counter + 8)) & 1) << 4;
+	ret |= ((portdata >> (counter + 0)) & 1) << 3;
+	ret |= ((portdata >> (counter + 8)) & 1) << 4;
 	counter++;
 	return(ret | 0x40);
 }
 
-static void strobe()
+static void write(u8 data)
 {
-	data = 0xFFFFF000;
-	counter = 0;
-	//acquire input here
+	if(((data & 1) == 0) && (strobe & 1)) {
+		portdata = 0xFFFF0000 | buttons;
+		counter = 0;
+	}
+	strobe = data;
 }
 
-INPUTDEV(I_POWERPAD,read,0,strobe,0);
+static void update()
+{
+	buttons = 0;
+}
+
+static void state(int mode,u8 *data)
+{
+	STATE_U32(portdata);
+	STATE_U16(buttons);
+	STATE_U8(counter);
+	STATE_U8(strobe);
+}
+
+INPUTDEV(I_POWERPAD,read,write,update,0,state);

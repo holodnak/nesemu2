@@ -20,6 +20,7 @@
 
 #include <windows.h>
 #include <windowsx.h>
+#include <stdio.h>
 #include "system/win32/resource.h"
 #include "system/win32/mainwnd.h"
 #include "nes/nes.h"

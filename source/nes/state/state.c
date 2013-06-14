@@ -27,14 +27,14 @@
 #include "nes/state/block.h"
 
 #define readvar(var,sz)	\
-	if(fread(&var,1,sz,fp) != sz) {	\
-		log_printf("state_load:  error reading ##var##\n");	\
+	if(memfile_read(&var,1,sz,file) != sz) {	\
+		log_printf("state_load:  error reading " #var "\n");	\
 		return(1);	\
 	}
 
 #define writevar(var,sz)	\
-	if(fwrite(&var,1,sz,fp) != sz) {	\
-		log_printf("state_save:  error writing ##var##\n");	\
+	if(memfile_write(&var,1,sz,file) != sz) {	\
+		log_printf("state_save:  error writing " #var "\n");	\
 		return(1);	\
 	}
 
@@ -99,7 +99,7 @@ statefunc_t state_getfunc(u32 type)
 	return(0);
 }
 
-int state_load(FILE *fp)
+int state_load(memfile_t *file)
 {
 	stateheader_t header;
 	block_t *block;
@@ -114,8 +114,8 @@ int state_load(FILE *fp)
 	readvar(header.crc32,4);
 	log_printf("state_load:  state header loaded.  version %04X\n",header.version);
 
-	while(feof(fp) == 0 && size < header.usize) {
-		if((block = block_load(fp)) == 0)
+	while(memfile_eof(file) == 0 && size < header.usize) {
+		if((block = block_load(file)) == 0)
 			break;
 		size += 8 + block->size;
 		log_printf("state_load:  loaded block '%4s' (%08X) (%d bytes)\n",&block->type,block->type,block->size);
@@ -134,7 +134,7 @@ int state_load(FILE *fp)
 	return(0);
 }
 
-int state_save(FILE *fp)
+int state_save(memfile_t *file)
 {
 	stateheader_t header;
 	block_t *block;
@@ -171,7 +171,7 @@ int state_save(FILE *fp)
 		printf("saving block '%4s' (%d bytes)\n",&blockinfo[i].type,blockinfo[i].size);
 		block = block_create(blockinfo[i].type,blockinfo[i].size);
 		blockinfo[i].func(STATE_SAVE,block->data);
-		block_save(fp,block);
+		block_save(file,block);
 		block_destroy(block);
 	}
 

@@ -9,6 +9,9 @@ misc
  . add support for loading multiple cartdb xml files
  . when using the config_get_string/config_get_eval_string it should
    eat whitespace from the beginning and end of the string
+ . memutil could be dangerous when used after it was killed.  add checks for that.
+ . config_get_eval_string needs to allocate its own memory and return that string.
+   with many vars we might trash some memory.
 
 win32
  . finish the (crappy) input code.  translatekey() misses some keys
@@ -106,6 +109,7 @@ broken games
  . mmc3:  Family Circuit (1988-01-06)(Namco)(JP) (mirroring?)
  . twin eagle.  needs better timing?!  todo:  dig thru rom code
  . bill & ted:  the INC $FFFF writes twice.  need to insert delay for writes (or something)  see wiki
+ . Fuzzical Fighter (1991-05-17)(Sigma Shougi)(JP) doesnt boot
 
 misc
  . go thru and fix the hard/soft reset code, not everything checks for hard

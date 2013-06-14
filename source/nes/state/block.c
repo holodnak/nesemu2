@@ -42,22 +42,22 @@ void block_destroy(block_t *b)
 	mem_free(b);
 }
 
-block_t *block_load(FILE *fp)
+block_t *block_load(memfile_t *file)
 {
 	block_t *ret = 0;
 	u32 type;
 	u32 size;
 
-	if(fread(&type,1,4,fp) != 4) {
+	if(memfile_read(&type,1,4,file) != 4) {
 		log_printf("block_load:  error reading block type\n");
 		return(0);
 	}
-	if(fread(&size,1,4,fp) != 4) {
+	if(memfile_read(&size,1,4,file) != 4) {
 		log_printf("block_load:  error reading block size\n");
 		return(0);
 	}
 	ret = block_create(type,size);
-	if(fread(ret->data,1,size,fp) != size) {
+	if(memfile_read(ret->data,1,size,file) != size) {
 		log_printf("block_load:  error reading block data\n");
 		block_destroy(ret);
 		return(0);
@@ -65,17 +65,17 @@ block_t *block_load(FILE *fp)
 	return(ret);
 }
 
-int block_save(FILE *fp,block_t *b)
+int block_save(memfile_t *file,block_t *b)
 {
-	if(fwrite(&b->type,1,4,fp) != 4) {
+	if(memfile_write(&b->type,1,4,file) != 4) {
 		log_printf("block_save:  error writing block type\n");
 		return(-1);
 	}
-	if(fwrite(&b->size,1,4,fp) != 4) {
+	if(memfile_write(&b->size,1,4,file) != 4) {
 		log_printf("block_save:  error writing block size\n");
 		return(-1);
 	}
-	if(fwrite(b->data,1,b->size,fp) != b->size) {
+	if(memfile_write(b->data,1,b->size,file) != b->size) {
 		log_printf("block_save:  error writing block data\n");
 		return(-1);
 	}

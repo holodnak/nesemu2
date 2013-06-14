@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "misc/memutil.h"
@@ -33,10 +32,11 @@ static u8 fdsident2[] = "\x01*NINTENDO-HVC*";
 
 static int loadbios(cart_t *ret,char *filename)
 {
-	FILE *fp;
+	memfile_t *file;
+	int n = 0;
 
 	//open bios file
-	if((fp = fopen(filename,"rb")) == 0) {
+	if((file = memfile_open(filename,"rb")) == 0) {
 		log_printf("loadbios:  error opening fds bios '%s'\n",filename);
 		return(1);
 	}
@@ -47,24 +47,23 @@ static int loadbios(cart_t *ret,char *filename)
 	ret->prg.data = (u8*)mem_alloc(0x2000);
 
 	//read bios
-	if(fread(ret->prg.data,1,0x2000,fp) != 0x2000) {
+	if(memfile_read(ret->prg.data,1,0x2000,file) != 0x2000) {
 		log_printf("loadbios:  error reading bios file '%s'\n",filename);
-		fclose(fp);
-		return(1);
+		n = 1;
 	}
+	else
+		log_printf("loadbios:  loaded bios file '%s'\n",filename);
 
 	//close bios file handle
-	fclose(fp);
-	log_printf("loadbios:  loaded bios file '%s'\n",filename);
+	memfile_close(file);
 
-	//success
-	return(0);
+	//return
+	return(n);
 }
 
-int cart_load_fds(cart_t *ret,const char *filename)
+int cart_load_fds(cart_t *ret,memfile_t *file)
 {
 	u8 header[16];
-	FILE *fp;
 	u32 size;
 	char biosfile[1024];
 
@@ -89,19 +88,11 @@ int cart_load_fds(cart_t *ret,const char *filename)
 		}
 	}
 
-	//open disk file
-	if((fp = fopen(filename,"rb")) == 0) {
-		log_printf("cart_load_fds:  error opening '%s'\n",filename);
-		return(1);
-	}
-
 	//get length of file
-	fseek(fp,0,SEEK_END);
-	size = ftell(fp);
-	fseek(fp,0,SEEK_SET);
+	size = memfile_size(file);
 
 	//read the header
-	fread(header,1,16,fp);
+	memfile_read(header,1,16,file);
 
 	//check if this is raw fds disk
 	if(memcmp(header,fdsident2,15) == 0) {
@@ -109,7 +100,6 @@ int cart_load_fds(cart_t *ret,const char *filename)
 		//check if the file is a valid size
 		if((size % 65500) != 0) {
 			log_printf("cart_load_fds:  fds disk image size not multiple of 65500, aborting\n");
-			fclose(fp);
 			return(1);
 		}
 
@@ -117,7 +107,7 @@ int cart_load_fds(cart_t *ret,const char *filename)
 //		ret->disksides = size / 65500;
 
 		//skip back to the beginning
-		fseek(fp,0,SEEK_SET);
+		memfile_rewind(file);
 	}
 
 	//check if this is 16-byte header fds disk
@@ -129,6 +119,7 @@ int cart_load_fds(cart_t *ret,const char *filename)
 
 	}
 
+	//set mapper id to fds mapper
 	ret->mapperid = B_FDS;
 
 	//setup the disk data pointers
@@ -138,7 +129,7 @@ int cart_load_fds(cart_t *ret,const char *filename)
 	ret->diskoriginal.data = (u8*)mem_alloc(size);
 
 	//read disk data into pointer
-	fread(ret->disk.data,1,size,fp);
+	memfile_read(ret->disk.data,1,size,file);
 
 	//copy to original disk data pointer
 	memcpy(ret->diskoriginal.data,ret->disk.data,size);

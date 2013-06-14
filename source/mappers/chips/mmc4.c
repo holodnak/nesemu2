@@ -51,7 +51,7 @@ static u8 readtile(u32 addr)
 
 void mmc4_sync()
 {
-	mem_setsram8(0x6,0);
+	mem_setwram8(0x6,0);
 	mem_setprg16(0x8,prg);
 	mem_setprg16(0xC,0xF);
 	mem_setchr4(0,latch[0][latchstate[0]]);
@@ -65,7 +65,7 @@ void mmc4_init(int hard)
 
 	for(i=8;i<0x10;i++)
 		mem_setwritefunc(i,mmc4_write);
-	mem_setsramsize(2);
+	mem_setwramsize(8);
 	latch[0][0] = latch[0][1] = 0;
 	latch[1][0] = latch[1][1] = 0;
 	latchstate[0] = latchstate[1] = 0;

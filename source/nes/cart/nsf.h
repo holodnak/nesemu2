@@ -40,6 +40,6 @@ typedef struct nsf_s {
 	u8		expansion[4];
 } nsf_t;
 
-int cart_load_nsf(cart_t *ret,const char *filename);
+int cart_load_nsf(cart_t *ret,memfile_t *file);
 
 #endif

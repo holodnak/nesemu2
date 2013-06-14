@@ -25,7 +25,7 @@ static void reset(int type,int hard)
 {
 	if(nes->cart->chr.size == 0)
 		mem_setvramsize(8);
-	mem_setsramsize(2);
+	mem_setwramsize(8);
 	mmc1_reset(type,mmc1_sync,hard);
 }
 

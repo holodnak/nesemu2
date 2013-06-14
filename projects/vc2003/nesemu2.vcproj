@@ -270,6 +270,9 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\source\nes\movie.c">
+				</File>
+				<File
 					RelativePath="..\..\source\nes\nes.c">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -733,6 +736,19 @@
 								GeneratePreprocessedFile="0"/>
 						</FileConfiguration>
 					</File>
+					<Filter
+						Name="patch"
+						Filter="">
+						<File
+							RelativePath="..\..\source\nes\cart\patch\ips.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\cart\patch\patch.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\cart\patch\ups.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="state"
@@ -1545,6 +1561,9 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\source\misc\history.c">
+				</File>
+				<File
 					RelativePath="..\..\source\misc\log.c">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1558,6 +1577,9 @@
 							Name="VCCLCompilerTool"
 							ObjectFile="$(IntDir)/misc/"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\source\misc\memfile.c">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\memutil.c">
@@ -1576,6 +1598,9 @@
 				</File>
 				<File
 					RelativePath="..\..\source\misc\paths.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\strutil.c">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\vars.c">
@@ -1618,6 +1643,9 @@
 				</File>
 				<File
 					RelativePath="..\..\source\emu\emu.c">
+				</File>
+				<File
+					RelativePath="..\..\source\emu\events.c">
 				</File>
 				<Filter
 					Name="commands"

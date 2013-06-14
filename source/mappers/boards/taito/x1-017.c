@@ -112,8 +112,8 @@ static void reset(int hard)
 		chr[i] = 0;
 	}
 	mirror = 0;
-	mem_setsramsize(2);
-	mem_setsram8(6,0);
+	mem_setwramsize(8);
+	mem_setwram8(6,0);
 	sram = mem_getreadptr(6);
 	mem_unsetcpu8(6);
 	sync();

@@ -167,6 +167,8 @@ static INLINE void quick_process_sprites()
 	//determine sprite height
 	h = 8 + ((CONTROL0 & 0x20) >> 2);
 
+	spr0 = 0;
+
 	//loop thru all 64 visible sprites, keeping note of the first eight visible
 	for(sprinrange=0,i=0;i<64;i++) {
 
@@ -192,8 +194,10 @@ static INLINE void quick_process_sprites()
 			sprtemp[sprinrange].tile = s[1];
 
 			//if sprite0 check is needed
-			if(i == 0 && (STATUS & 0x40) == 0)
+			if(i == 0 && (STATUS & 0x40) == 0) {
 				sprtemp[sprinrange].flags |= 2;
+				spr0 = &sprtemp[sprinrange];
+			}
 
 			//small kludge for 8x16 sprites
 			if(CONTROL0 & 0x20) {
@@ -217,36 +221,26 @@ static INLINE void quick_process_sprites()
 	}
 }
 
-#ifdef ACCURATE_SPRITE0
-
 static INLINE void sprite0_hit_check()
 {
-	int i;
-	sprtemp_t *spr = (sprtemp_t*)sprtemp + 7;
-	u8 *dest = nes->ppu.linebuffer;
-	u8 *line;
-	int xpos;
-	int x = LINECYCLES - 1;
+	if(spr0 != 0) {
+		u8 *dest = nes->ppu.linebuffer;
+		u8 *line;
+		int xpos;
+		int x = LINECYCLES - 1;
 
-	for(i=0;i<8;i++,spr--) {
-		if((spr->flags & 2) == 0)
-			continue;
-		xpos = x - spr->x;
-//		log_printf("sprite 0 'xpos' = %d (x = %d) (%d, %d)\n",xpos,spr->x,LINECYCLES,SCANLINE);
+		xpos = x - spr0->x;
 		if(xpos >= 0 && xpos < 8) {
-			if(((CONTROL1 & 4) == 0 && spr->x == 0) || spr->x == 255 || x == 255)
-				break;
+			if(((CONTROL1 & 4) == 0 && spr0->x == 0) || spr0->x == 255 || x == 255)
+				return;
 			dest += x;
-			line = (u8*)&spr->line;
+			line = (u8*)&spr0->line;
 			if(*dest && line[xpos]) {
 				STATUS |= 0x40;
-				spr->flags = 0;
-//				log_printf("found sprite 0 hit at pixel %d, scanline %d (frame %d)\n",LINECYCLES,SCANLINE,FRAMES);
+				spr0 = 0;
 			}
 		}
 	}
 }
-
-#endif
 
 #endif

@@ -219,6 +219,9 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\source\nes\movie.c">
+				</File>
+				<File
 					RelativePath="..\..\source\nes\nes.c">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -594,6 +597,19 @@
 								ObjectFile="$(IntDir)/nes/cart/"/>
 						</FileConfiguration>
 					</File>
+					<Filter
+						Name="patch"
+						Filter="">
+						<File
+							RelativePath="..\..\source\nes\cart\patch\ips.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\cart\patch\patch.c">
+						</File>
+						<File
+							RelativePath="..\..\source\nes\cart\patch\ups.c">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="state"
@@ -1338,13 +1354,22 @@
 					RelativePath="..\..\source\misc\crc32.c">
 				</File>
 				<File
+					RelativePath="..\..\source\misc\history.c">
+				</File>
+				<File
 					RelativePath="..\..\source\misc\log.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\memfile.c">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\memutil.c">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\paths.c">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\strutil.c">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\vars.c">
@@ -1390,6 +1415,9 @@
 				</File>
 				<File
 					RelativePath="..\..\source\emu\emu.c">
+				</File>
+				<File
+					RelativePath="..\..\source\emu\events.c">
 				</File>
 				<Filter
 					Name="commands"
@@ -1482,10 +1510,16 @@
 				Name="nes"
 				Filter="">
 				<File
+					RelativePath="..\..\source\nes\genie.h">
+				</File>
+				<File
 					RelativePath="..\..\source\nes\io.h">
 				</File>
 				<File
 					RelativePath="..\..\source\nes\memory.h">
+				</File>
+				<File
+					RelativePath="..\..\source\nes\movie.h">
 				</File>
 				<File
 					RelativePath="..\..\source\nes\nes.h">
@@ -1601,10 +1635,16 @@
 					RelativePath="..\..\source\misc\emu.h">
 				</File>
 				<File
+					RelativePath="..\..\source\misc\history.h">
+				</File>
+				<File
 					RelativePath="..\..\source\misc\log.h">
 				</File>
 				<File
 					RelativePath="..\..\source\misc\memutil.h">
+				</File>
+				<File
+					RelativePath="..\..\source\misc\strutil.h">
 				</File>
 			</Filter>
 			<Filter
@@ -1631,6 +1671,19 @@
 				</File>
 				<File
 					RelativePath="..\..\source\inputdev\null.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="emu"
+				Filter="">
+				<File
+					RelativePath="..\..\source\emu\commands.h">
+				</File>
+				<File
+					RelativePath="..\..\source\emu\emu.h">
+				</File>
+				<File
+					RelativePath="..\..\source\emu\events.h">
 				</File>
 			</Filter>
 		</Filter>

@@ -141,6 +141,7 @@ enum blocktype_e {
 	B_SRAM		= MAKEID('S', 'R', 'A', 'M' ),
 	B_DISK		= MAKEID('D', 'I', 'S', 'K' ),
 	B_GG			= MAKEID('G', 'G', '\0','\0'),
+	B_PATCH		= MAKEID('P', 'A', 'T', '\0'),
 };
 
 //state header as stored on disk
@@ -159,7 +160,7 @@ void state_kill();
 void state_register(u32 type,statefunc_t func);
 void state_unregister(u32 type);
 statefunc_t state_getfunc(u32 type);
-int state_load(FILE *fp);
-int state_save(FILE *fp);
+int state_load(memfile_t *file);
+int state_save(memfile_t *file);
 
 #endif

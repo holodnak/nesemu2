@@ -126,18 +126,6 @@ void mem_setprg(int banksize,int page,int bank)
 	}
 }
 
-void mem_setsram(int banksize,int page,int bank)
-{
-	int i;
-	u8 *ptr = nes->cart->sram.data + ((bank * banksize * 1024) & nes->cart->sram.mask);
-
-	page <<= 2;
-	for(i=0;i<(banksize);i++) {
-		nes->cpu.readpages[page + i] = 
-		nes->cpu.writepages[page + i] = ptr + i * 0x400;
-	}
-}
-
 void mem_setwram(int banksize,int page,int bank)
 {
 	int i;
@@ -187,23 +175,8 @@ void mem_setvram(int banksize,int page,int bank)
 	}
 }
 
-void mem_setsvram(int banksize,int page,int bank)
-{
-	int i,p,offset = (bank * banksize * 1024) & nes->cart->svram.mask;
-
-	for(i=0;i<banksize;i++) {
-		p = page + i;
-		nes->ppu.readpages[p] = 
-		nes->ppu.writepages[p] = nes->cart->svram.data + offset + (i * 1024);
-		nes->ppu.cachepages[p] = (cache_t*)((u8*)nes->cart->svcache + offset + (i * 0x400));
-		nes->ppu.cachepages_hflip[p] = (cache_t*)((u8*)nes->cart->svcache_hflip + offset + (i * 0x400));
-	}
-}
-
 void mem_setwramsize(int banks)	{	cart_setwramsize(nes->cart,banks);	}
-void mem_setsramsize(int banks)	{	cart_setsramsize(nes->cart,banks);	}
 void mem_setvramsize(int banks)	{	cart_setvramsize(nes->cart,banks);	}
-void mem_setsvramsize(int banks)	{	cart_setsvramsize(nes->cart,banks);	}
 
 void mem_setmirroring(int m)
 {

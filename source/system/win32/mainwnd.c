@@ -21,9 +21,8 @@
 #include <windows.h>
 #include "misc/log.h"
 #include "misc/config.h"
-#include "misc/paths.h"
+#include "emu/events.h"
 #include "nes/nes.h"
-#include "nes/state/state.h"
 #include "system/win32/dialogs.h"
 #include "system/win32/resource.h"
 #include "system/video.h"
@@ -71,7 +70,7 @@ static int filedialog(HWND parent,int type,char *buffer,char *title,char *filter
 	dlgdata.nMaxFileTitle = 0;
 	dlgdata.lpstrInitialDir = curdir;
 	dlgdata.lpstrTitle = title;
-	dlgdata.Flags = OFN_FILEMUSTEXIST|OFN_PATHMUSTEXIST|OFN_HIDEREADONLY;
+	dlgdata.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
 	dlgdata.nFileOffset = 0;
 	dlgdata.nFileExtension = 0;
 	dlgdata.lpstrDefExt = 0;
@@ -81,6 +80,8 @@ static int filedialog(HWND parent,int type,char *buffer,char *title,char *filter
 	switch(type) {
 		default:
 		case 0: //open
+//			dlgdata.Flags |= OFN_ENABLETEMPLATE | OFN_EXPLORER;
+//			dlgdata.lpTemplateName = (LPSTR)IDD_OPENEXT;
 			if(GetOpenFileName(&dlgdata) != 0)
 				return(0);
 			break;
@@ -92,13 +93,11 @@ static int filedialog(HWND parent,int type,char *buffer,char *title,char *filter
 	return(1);
 }
 
+//little helper to give status of teh rom load
 void loadrom(char *filename)
 {
-	switch(nes_load(filename)) {
+	switch(emu_event(E_LOADROM,(void*)filename)) {
 		case 0:
-			log_printf("WndProc:  resetting nes...\n");
-			nes_reset(1);
-			running = config_get_bool("video.pause_on_load") ? 0 : 1;
 			break;
 		default:
 		case 1:
@@ -128,6 +127,55 @@ static void file_open(HWND hWnd)
 	loadrom(buffer);
 }
 
+static void file_open_patch(HWND hWnd)
+{
+	char buffer[1024];
+	static char filter[] =
+		"All Patches (*.ips, *.ups)\0*.ips;*.ups\0"
+		"IPS Patches (*.ips)\0*.ips\0"
+		"UPS Patches (*.ups)\0*.ups\0"
+		"All Files (*.*)\0*.*\0";
+
+	memset(buffer,0,1024);
+	if(filedialog(hWnd,0,buffer,"Open Patch...",filter,0) != 0)
+		return;
+	log_printf("WndProc:  loading patch '%s'\n",buffer);
+	emu_event(E_LOADPATCH,buffer);
+}
+
+static char moviefilter[] =
+	"nesemu2 Movie Files (*.n2movie)\0*.n2movie\0"
+	"All Files (*.*)\0*.*\0";
+
+static void load_movie(HWND hWnd)
+{
+	char buffer[1024];
+
+	memset(buffer,0,1024);
+	if(filedialog(hWnd,0,buffer,"Load Movie...",moviefilter,0) != 0)
+		return;
+	log_printf("WndProc:  loading movie '%s'\n",buffer);
+	emu_event(E_LOADMOVIE,buffer);
+}
+
+static void save_movie(HWND hWnd)
+{
+	char buffer[1024];
+
+	memset(buffer,0,1024);
+	if(filedialog(hWnd,1,buffer,"Save Movie...",moviefilter,0) != 0)
+		return;
+	log_printf("WndProc:  saving movie '%s'\n",buffer);
+	emu_event(E_SAVEMOVIE,buffer);
+}
+
+static int nesids[] = {
+	ID_FILE_LOADPATCH,	ID_FILE_UNLOAD,
+	ID_NES_PAUSE,			ID_NES_SOFTRESET,		ID_NES_HARDRESET,		ID_NES_LOADSTATE,		ID_NES_SAVESTATE,		ID_FDS_FLIPDISK,
+	ID_VIEW_MEMORY,		ID_VIEW_DEBUGGER,		ID_VIEW_CHEATS,		ID_VIEW_SEARCH,	//	ID_VIEW_FULLSCREEN,
+	-1
+};
+
 //
 //  FUNCTION: WndProc(HWND, unsigned, WORD, LONG)
 //
@@ -141,7 +189,7 @@ static void file_open(HWND hWnd)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static char dest[1024];
-	int wmId, wmEvent;
+	int i,wmId,wmEvent;
 	PAINTSTRUCT ps;
 	HDC hdc;
 	HMENU hMenu;
@@ -154,57 +202,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// Parse the menu selections:
 		switch (wmId)
 		{
-		case ID_FILE_OPEN:
-			file_open(hWnd);
-			break;
-		case ID_NES_PAUSE:
-			running ^= 1;
-			break;
-		case ID_NES_SOFTRESET:
-			if(nes->cart)
-				nes_reset(0);
-			break;
-		case ID_NES_HARDRESET:
-			if(nes->cart)
-				nes_reset(1);
-			break;
-		case ID_NES_LOADSTATE:
-			if(nes->cart) {
-				paths_makestatefilename(nes->romfilename,dest,1024);
-				nes_loadstate(dest);
-			}
-			break;
-		case ID_NES_SAVESTATE:
-			if(nes->cart) {
-				paths_makestatefilename(nes->romfilename,dest,1024);
-				nes_savestate(dest);
-			}
-			break;
-		case ID_FDS_FLIPDISK:
-			if(nes->cart) {
-				u8 data[4] = {0,0,0,0};
-
-				nes->mapper->state(CFG_SAVE,data);
-				if(data[0] == 0xFF)
-					data[0] = 0;
-				else
-					data[0] ^= 1;
-				nes->mapper->state(CFG_LOAD,data);
-				log_printf("disk inserted!  side = %d\n",data[0]);
-			}
-			break;
+		case ID_FILE_OPEN:			file_open(hWnd);								break;
+		case ID_FILE_LOADPATCH:		file_open_patch(hWnd);						break;
+		case ID_FILE_UNLOAD:			emu_event(E_UNLOAD,0);						break;
+		case ID_NES_PAUSE:			emu_event(E_TOGGLERUNNING,0);				break;
+		case ID_NES_SOFTRESET:		emu_event(E_SOFTRESET,0);					break;
+		case ID_NES_HARDRESET:		emu_event(E_HARDRESET,0);					break;
+		case ID_NES_LOADSTATE:		emu_event(E_LOADSTATE,0);					break;
+		case ID_NES_SAVESTATE:		emu_event(E_SAVESTATE,0);					break;
+		case ID_MOVIE_LOAD:			load_movie(hWnd);								break;
+		case ID_MOVIE_SAVE:			save_movie(hWnd);								break;
+		case ID_MOVIE_PLAY:			emu_event(E_PLAYMOVIE,0);					break;
+		case ID_MOVIE_RECORD:		emu_event(E_RECORDMOVIE,0);				break;
+		case ID_MOVIE_STOP:			emu_event(E_STOPMOVIE,0);					break;
+		case ID_FDS_FLIPDISK:		emu_event(E_FLIPDISK,0);					break;
 		case ID_VIEW_CONFIGURATION:
 			ConfigurationPropertySheet(hWnd);
 			break;
 		case ID_VIEW_DEBUGGER:
-			if(nes->cart) {
-				DialogBox(hInst,(LPCTSTR)IDD_DEBUGGER,hWnd,(DLGPROC)DebuggerDlg);
-			}
+			DialogBox(hInst,(LPCTSTR)IDD_DEBUGGER,hWnd,(DLGPROC)DebuggerDlg);
 			break;
 		case ID_VIEW_SEARCH:
-			if(nes->cart) {
-				DialogBox(hInst,(LPCTSTR)IDD_CHEATSEARCH,hWnd,(DLGPROC)CheatSearchDlg);
-			}
+			DialogBox(hInst,(LPCTSTR)IDD_CHEATSEARCH,hWnd,(DLGPROC)CheatSearchDlg);
 			break;
 		case ID_VIEW_CONSOLE:
 			hMenu = GetMenu(hWnd);
@@ -229,15 +248,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DestroyWindow(hWnd);
 			break;
 		case ID_VIEW_FULLSCREEN:
-			video_kill();
-			sound_pause();
-			config_set_bool("video.fullscreen",config_get_bool("video.fullscreen") ^ 1);
-			sound_play();
-			video_init();
+			emu_event(E_TOGGLEFULLSCREEN,0);
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
+		break;
+	case WM_ENTERMENULOOP:
+		sound_pause();
+		for(i=0;nesids[i] != -1;i++) {
+			EnableMenuItem(GetMenu(hWnd),nesids[i],nes->cart ? MF_ENABLED : MF_GRAYED);
+		}
+		break;
+	case WM_EXITMENULOOP:
+		sound_play();
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);

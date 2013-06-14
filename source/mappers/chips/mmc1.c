@@ -163,12 +163,12 @@ void mmc1_syncvram(int aand,int oor)
 void mmc1_syncsram()
 {
 	if(type == C_MMC1A) {
-		mem_setsram8(6,0);
+		mem_setwram8(6,0);
 	}
 	else {
 		if(regs[3] & 0x10)
 			mem_unsetcpu8(6);
 		else
-			mem_setsram8(6,0);
+			mem_setwram8(6,0);
 	}
 }

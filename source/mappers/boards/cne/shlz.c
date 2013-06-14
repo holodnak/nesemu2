@@ -45,8 +45,8 @@ static void reset(int hard)
 	write4 = mem_getwritefunc(4);
 	mem_setwritefunc(4,write);
 	mem_setwritefunc(5,write);
-	mem_setsramsize(2);
-	mem_setsram8(6,0);
+	mem_setwramsize(8);
+	mem_setwram8(6,0);
 	prg = chr = 0;
 	sync();
 }

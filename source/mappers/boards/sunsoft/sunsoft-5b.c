@@ -48,7 +48,7 @@ static void sync()
 			mem_unsetcpu8(6);
 			break;
 		case 3:
-			mem_setsram8(6,0);
+			mem_setwram8(6,0);
 			break;
 	}
 	mem_setprg8(0x8,prg[1]);
@@ -113,7 +113,7 @@ static void reset(int hard)
 {
 	int i;
 
-	mem_setsramsize(2);
+	mem_setwramsize(8);
 	for(i=8;i<16;i++)
 		mem_setwritefunc(i,write);
 	if(hard) {

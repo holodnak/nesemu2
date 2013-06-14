@@ -28,7 +28,7 @@ static void sync()
 {
 	int i;
 
-	mem_setsram8(6,0);
+	mem_setwram8(6,0);
 	mem_setprg8(0x8,prg[0]);
 	mem_setprg8(0xA,prg[1]);
 	mem_setprg8(0xC,prg[2]);
@@ -96,7 +96,7 @@ static void reset(int hard)
 {
 	int i;
 
-	mem_setsramsize(2);
+	mem_setwramsize(8);
 	for(i=8;i<0x10;i++)
 		mem_setwritefunc(i,write_reg);
 	prg[0] = 0;

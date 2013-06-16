@@ -245,6 +245,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DialogBox(hInst,(LPCTSTR)IDD_MAPPERS,hWnd,(DLGPROC)MappersDlg);
 			break;
 		case IDM_EXIT:
+			emu_event(E_WINDOWED,0);
 			DestroyWindow(hWnd);
 			break;
 		case ID_VIEW_FULLSCREEN:

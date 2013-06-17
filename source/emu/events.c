@@ -58,6 +58,8 @@ int emu_event(int id,void *data)
 				nes_reset(1);
 				running = config_get_bool("video.pause_on_load") ? 0 : 1;
 			}
+			else
+				ret = 1;
 			break;
 
 		case E_LOADPATCH:
@@ -173,10 +175,6 @@ int emu_event(int id,void *data)
 
 		case E_WINDOWED:
 			setfullscreen(0);
-			break;
-
-		case E_AUTOTEST:
-			log_printf("emu_event:  automated testing from script '%s'\n",(char*)data);
 			break;
 
 		//unhandled event

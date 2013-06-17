@@ -40,6 +40,7 @@ memfile_t *memfile_open(char *filename,char *mode)
 {
 	FILE *fp;
 	memfile_t *ret = 0;
+	int n;
 
 	//try to open the file
 	if((fp = fopen(filename,mode)) == 0) {
@@ -54,6 +55,9 @@ memfile_t *memfile_open(char *filename,char *mode)
 	ret->filename = mem_strdup(filename);
 	ret->mode = mem_strdup(mode);
 
+	//save file handle
+	ret->handle = (void*)fp;
+
 	//get file size
 	fseek(fp,0,SEEK_END);
 	ret->size = (u32)ftell(fp);
@@ -61,7 +65,8 @@ memfile_t *memfile_open(char *filename,char *mode)
 
 	//allocate file data and read the file into it
 	ret->data = (u8*)mem_alloc(ret->size);
-	if(fread(ret->data,1,ret->size,fp) != ret->size) {
+	if((n = fread(ret->data,1,ret->size,fp)) != ret->size) {
+		log_printf("memfile_open:  error reading file, wanted %d bytes but read %d\n",ret->size,n);
 		memfile_close(ret);
 		return(0);
 	}
@@ -74,9 +79,6 @@ memfile_t *memfile_open(char *filename,char *mode)
 	//initialize the current position and changed var
 	ret->curpos = 0;
 	ret->changed = 0;
-
-	//save file handle
-	ret->handle = (void*)fp;
 
 	return(ret);
 }
@@ -225,4 +227,28 @@ int memfile_putc(u8 ch,memfile_t *mf)
 	mf->curpos++;
 	mf->changed++;
 	return(0);
+}
+
+char *memfile_gets(char *str,int n,memfile_t *mf)
+{
+	int ch;
+	char *p = str;
+
+	memset(str,0,n);
+	if(memfile_eof(mf) != 0) {
+		log_printf("memfile_gets:  cannot read past eof\n");
+		return(0);
+	}
+	for(;;) {
+		ch = memfile_getc(mf);
+		if(ch == -1) {
+			if(p == str)
+				return(0);
+			return(str);
+		}
+		*p++ = (char)ch;
+		if(--n == 0 || ch == '\n' || ch == 0)
+			break;
+	}
+	return(str);
 }

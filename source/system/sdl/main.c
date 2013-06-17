@@ -73,6 +73,9 @@ int main(int argc,char *argv[])
 		else if(strcmp("--record",argv[i]) == 0) {
 			recordmovie = 1;
 		}
+		else if(strcmp("--recordtest",argv[i]) == 0) {
+			recordmovie = 2;
+		}
 		else if(strcmp("--config",argv[i]) == 0) {
 			strcpy(configfilename,argv[++i]);
 		}
@@ -102,14 +105,17 @@ int main(int argc,char *argv[])
 	nes_set_inputdev(0,I_JOYPAD0);
 	nes_set_inputdev(1,I_JOYPAD1);
 
+	//load rom specified by arguments
 	if(strcmp(romfilename,"") != 0) {
 		emu_event(E_LOADROM,(void*)romfilename);
 	}
 
+	//load patch
 	if(strcmp(patchfilename,"") != 0) {
 		emu_event(E_LOADPATCH,(void*)patchfilename);
 	}
 
+	//see what we need to do with the movie
 	if(strcmp(moviefilename,"") != 0) {
 		if(recordmovie) {
 			if(nes->cart == 0)
@@ -117,7 +123,7 @@ int main(int argc,char *argv[])
 			else {
 				emu_event(E_SAVEMOVIE,(void*)moviefilename);
 				emu_event(E_RECORDMOVIE,0);
-				nes->movie.mode |= MOVIE_TEST;
+				nes->movie.mode |= (recordmovie > 1) ? MOVIE_TEST : 0;
 			}
 		}
 		else {
@@ -126,12 +132,13 @@ int main(int argc,char *argv[])
 		}
 	}
 
-	if(strcmp(testfilename,"") != 0) {
-		emu_event(E_AUTOTEST,(void*)testfilename);
-	}
+	//begin automated tests
+	if(strcmp(testfilename,"") != 0)
+		ret = emu_mainloop_test(testfilename);
 
-	//begin the main loop
-	ret = emu_mainloop();
+	//or begin the main loop
+	else
+		ret = emu_mainloop();
 
 	//destroy emulator
 	emu_kill();

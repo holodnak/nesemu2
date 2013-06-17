@@ -66,14 +66,14 @@ int nes_init()
 	ret += cpu_init();
 	ret += ppu_init();
 	ret += apu_init();
-	ret += nes_movie_init();
+	ret += movie_init();
 	return(ret);
 }
 
 void nes_kill()
 {
 	if(nes) {
-		nes_movie_kill();
+		movie_kill();
 		nes_unload();
 		genie_unload();
 		state_kill();
@@ -153,6 +153,7 @@ int nes_load_patched(char *filename,char *patchfilename)
 
 void nes_unload()
 {
+	movie_stop();
 	//need to save sram/diskdata/whatever here
 	if(nes->cart)
 		cart_unload(nes->cart);
@@ -239,7 +240,7 @@ void nes_frame()
 	nes->inputdev[1]->update();
 	nes->expdev->update();
 	if(nes->movie.mode)
-		nes_movie_frame();
+		movie_frame();
 	cpu_execute_frame();
 }
 

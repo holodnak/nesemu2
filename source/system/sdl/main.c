@@ -40,19 +40,23 @@
 char configfilename[1024] = CONFIG_FILENAME;
 char exepath[1024] = "";
 
+//todo:  this is getting ugly
 int main(int argc,char *argv[])
 {
 	int i,ret;
+	int recordmovie = 0;
 	char *p;
 	char romfilename[1024];
 	char patchfilename[1024];
 	char moviefilename[1024];
+	char testfilename[1024];
 
 	//clear the tmp strings and configfile string
 	memset(romfilename,0,1024);
 	memset(patchfilename,0,1024);
 	memset(moviefilename,0,1024);
 	memset(configfilename,0,1024);
+	memset(testfilename,0,1024);
 
 	//make the exe path variable
 	strcpy(exepath,argv[0]);
@@ -66,6 +70,9 @@ int main(int argc,char *argv[])
 			command_execute("mappers");
 			return(0);
 		}
+		else if(strcmp("--record",argv[i]) == 0) {
+			recordmovie = 1;
+		}
 		else if(strcmp("--config",argv[i]) == 0) {
 			strcpy(configfilename,argv[++i]);
 		}
@@ -74,6 +81,9 @@ int main(int argc,char *argv[])
 		}
 		else if(strcmp("--movie",argv[i]) == 0) {
 			strcpy(moviefilename,argv[++i]);
+		}
+		else if(strcmp("--test",argv[i]) == 0) {
+			strcpy(testfilename,argv[++i]);
 		}
 		else
 			strcpy(romfilename,argv[i]);
@@ -101,8 +111,23 @@ int main(int argc,char *argv[])
 	}
 
 	if(strcmp(moviefilename,"") != 0) {
-		emu_event(E_LOADMOVIE,(void*)moviefilename);
-		emu_event(E_PLAYMOVIE,0);
+		if(recordmovie) {
+			if(nes->cart == 0)
+				log_printf("main:  cannot record movie without rom loaded.\n");
+			else {
+				emu_event(E_SAVEMOVIE,(void*)moviefilename);
+				emu_event(E_RECORDMOVIE,0);
+				nes->movie.mode |= MOVIE_TEST;
+			}
+		}
+		else {
+			emu_event(E_LOADMOVIE,(void*)moviefilename);
+			emu_event(E_PLAYMOVIE,0);
+		}
+	}
+
+	if(strcmp(testfilename,"") != 0) {
+		emu_event(E_AUTOTEST,(void*)testfilename);
 	}
 
 	//begin the main loop

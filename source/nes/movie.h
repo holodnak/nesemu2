@@ -25,9 +25,13 @@
 #include "misc/memfile.h"
 
 //movie modes
-#define MOVIE_PLAY	0x01
-#define MOVIE_RECORD	0x02
-#define MOVIE_TEST	0x10
+#define MOVIE_PLAY		0x01
+#define MOVIE_RECORD		0x02
+
+//flags
+#define MOVIE_TEST		0x10
+#define MOVIE_CRCPASS	0x40
+#define MOVIE_CRCFAIL	0x80
 
 typedef struct movie_s {
 	memfile_t	*state;
@@ -37,18 +41,19 @@ typedef struct movie_s {
 	u32			startframe,endframe;
 	int			port0,port1,exp;
 	u32			crc32;
+	char			*filename;
 } movie_t;
 
-int nes_movie_init();
-void nes_movie_kill();
-int nes_movie_load(char *filename);
-int nes_movie_save(char *filename);
-void nes_movie_unload();
-void nes_movie_frame();
-int nes_movie_record();
-int nes_movie_play();
-int nes_movie_stop();
-u8 nes_movie_read_u8();
-void nes_movie_write_u8(u8 data);
+int movie_init();
+void movie_kill();
+int movie_load(char *filename);
+int movie_save(char *filename);
+void movie_unload();
+void movie_frame();
+int movie_record();
+int movie_play();
+int movie_stop();
+u8 movie_read_u8();
+void movie_write_u8(u8 data);
 
 #endif

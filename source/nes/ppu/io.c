@@ -164,6 +164,8 @@ u8 ppu_read(u32 addr)
 			break;
 		case 4:
 			nes->ppu.buf = nes->ppu.oam[nes->ppu.oamaddr];
+			if((nes->ppu.oamaddr & 3) == 2)
+				nes->ppu.buf &= 0xE3;
 			break;
 		case 7:
 			//setup io for ppu

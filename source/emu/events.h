@@ -41,6 +41,7 @@ enum events_e {
 	E_SAVEMOVIE,
 	E_FLIPDISK,
 	E_DUMPDISK,
+	E_AUTOTEST,
 
 	//change running state
 	E_TOGGLERUNNING,

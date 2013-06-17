@@ -1157,6 +1157,9 @@
     <ClInclude Include="..\..\source\nes\genie.h">
       <Filter>Header Files\nes</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\nes\movie.h">
+      <Filter>Header Files\nes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\docs\Todo" />

@@ -844,6 +844,7 @@
     <ClInclude Include="..\..\source\nes\apu\apu.h" />
     <ClInclude Include="..\..\source\nes\genie.h" />
     <ClInclude Include="..\..\source\nes\io.h" />
+    <ClInclude Include="..\..\source\nes\movie.h" />
     <ClInclude Include="..\..\source\nes\ppu\attribcache.h" />
     <ClInclude Include="..\..\source\nes\ppu\tilecache.h" />
     <ClInclude Include="..\..\source\system\common\filters\draw\draw.h" />

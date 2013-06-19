@@ -32,7 +32,8 @@ static void sync()
 
 static void write67(u32 addr,u8 data)
 {
-	reg = data;
+	if(mmc3_getsramenabled())
+		reg = data;
 	sync();
 }
 

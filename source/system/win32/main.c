@@ -115,9 +115,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
    ShowWindow(hWnd,nCmdShow);
    UpdateWindow(hWnd);
 
-	//this is temporary
-	nes_set_inputdev(0,I_JOYPAD0);
-
 	p = cmdline = mem_strdup(lpCmdLine);
 	if(*p == '\"') {
 		p++;

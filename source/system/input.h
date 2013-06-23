@@ -52,6 +52,7 @@ extern int joyconfig[4][8];	//joypad keys
 int input_init();
 void input_kill();
 void input_poll();
+int input_poll_mouse(int *x,int *y);
 void input_update_config();
 
 #endif

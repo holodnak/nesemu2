@@ -82,6 +82,30 @@ void input_poll()
 	}
 }
 
+extern int video_getxoffset();
+extern int video_getyoffset();
+extern int video_getscale();
+	
+int input_poll_mouse(int *x,int *y)
+{
+	u8 buttons = SDL_GetMouseState(x,y);
+	int scale;
+
+	scale = video_getscale();
+	SDL_ShowCursor(1);		//  <--- kludge!
+	if(config_get_bool("video.fullscreen") != 0) {
+		*x -= video_getxoffset();
+		*y -= video_getyoffset();
+		*x /= scale;
+		*y /= scale;
+	}
+	else {
+		*x /= scale;
+		*y /= scale;
+	}
+	return(buttons & SDL_BUTTON(1));
+}
+
 void input_update_config()
 {
 	joyconfig[0][0] = config_get_int("input.joypad0.a");

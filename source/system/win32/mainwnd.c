@@ -247,7 +247,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_EXIT:
 			if(config_get_bool("video.fullscreen") != 0)
 				emu_event(E_WINDOWED,0);
-			DestroyWindow(hWnd);
+			else
+				DestroyWindow(hWnd);
 			break;
 		case ID_VIEW_FULLSCREEN:
 			emu_event(E_TOGGLEFULLSCREEN,0);

@@ -877,9 +877,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\docs\Todo" />
+    <None Include="..\..\README" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\source\system\win32\nesemu2.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\source\system\win32\mainicon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

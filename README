@@ -61,5 +61,6 @@ Thanks goes out to the following groups/individuals:
   . the #nesdev irc channel.
   . the nesdev wiki and message boards.
   . Martin Freij for Nestopia's great mapper reference.
-  . Quietust for Nintendulator, my sound code was based upon his.
+  . Quietust for Nintendulator, sound code was based upon his.
+  . Quietust for Nintendulator, zapper code based upon his.
   . SDLMAME project, sdl sound code is ripped directly from it.

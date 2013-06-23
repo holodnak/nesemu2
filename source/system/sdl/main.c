@@ -101,10 +101,6 @@ int main(int argc,char *argv[])
         return(2);
 	}
 
-	//kludges!
-	nes_set_inputdev(0,I_JOYPAD0);
-	nes_set_inputdev(1,I_JOYPAD1);
-
 	//load rom specified by arguments
 	if(strcmp(romfilename,"") != 0) {
 		emu_event(E_LOADROM,(void*)romfilename);

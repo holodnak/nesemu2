@@ -915,9 +915,6 @@
     <ClCompile Include="..\..\source\mappers\boards\waixing\zs.c">
       <Filter>Source Files\mappers\boards\waixing</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\system\common\filters.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\cartdb\cartdb.c">
       <Filter>Source Files\cartdb</Filter>
     </ClCompile>
@@ -1022,6 +1019,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\mappers\boards\irem\holydiver.c">
       <Filter>Source Files\mappers\boards\irem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\system\common\filters.c">
+      <Filter>Source Files\system\common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

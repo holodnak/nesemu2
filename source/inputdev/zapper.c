@@ -90,9 +90,13 @@ static int movie(int mode)
 {
 	if(mode & MOVIE_PLAY) {
 		buttons = movie_read_u8();
+		xpos = (int)movie_read_u8();
+		ypos = (int)movie_read_u8();
 	}
 	else if(mode & MOVIE_RECORD) {
 		movie_write_u8(buttons);
+		movie_write_u8((u8)xpos);
+		movie_write_u8((u8)ypos);
 	}
 	return(1);
 }

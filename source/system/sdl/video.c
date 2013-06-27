@@ -160,7 +160,7 @@ void video_endframe()
 
 	//draw everything
 	drawfunc(surface->pixels,surface->pitch,screen,256*4,256,240);
-	console_draw(surface->pixels,surface->pitch,screenh);
+	console_draw((u32*)surface->pixels,surface->pitch,screenh);
 
 	//flip buffers and unlock surface
 	SDL_Flip(surface);

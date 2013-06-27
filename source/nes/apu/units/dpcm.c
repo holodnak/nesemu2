@@ -107,13 +107,14 @@ static INLINE void apu_dpcm_step()
 	if (dpcm.bufempty && !dpcm.fetching && dpcm.LengthCtr)
 	{
 		dpcm.fetching = 1;
+		nes->cpu.pcmcycles = 4;
 //		CPU::PCMCycles = 4;
 		// decrement LengthCtr now, so $4015 reads are updated in time
 		dpcm.LengthCtr--;
 	}
 }
 
-static INLINE void apu_dpcm_fetch()
+void apu_dpcm_fetch()
 {
 	dpcm.buffer = cpu_read(dpcm.CurAddr);
 	cpu_tick();

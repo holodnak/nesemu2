@@ -57,6 +57,7 @@ static void mkdirr(char *path)
 		}
 		*p = 0;
 		mkdir(tmp);
+		chmod(tmp,0755);
 		*p = PATH_SEPERATOR;
 		p++;
 	}
@@ -99,7 +100,7 @@ static int findconfig(char *dest)
 
 	//check the users home directory
 	if(home) {
-		sprintf(dest,"%s%c.nesemu%c%s",home,PATH_SEPERATOR,PATH_SEPERATOR,CONFIG_FILENAME);
+		sprintf(dest,"%s%c.nesemu2%c%s",home,PATH_SEPERATOR,PATH_SEPERATOR,CONFIG_FILENAME);
 		log_printf("looking for configuration at '%s'\n",dest);
 		if(access(dest,06) == 0) {
 			return(0);
@@ -121,7 +122,7 @@ static int findconfig(char *dest)
 #else
 	//linux it is not ok to store in the same directory as executable (/usr/bin or something)
 	if(home) {
-		sprintf(dest,"%s%c%s",home,PATH_SEPERATOR,CONFIG_FILENAME);
+		sprintf(dest,"%s%c.nesemu2%c%s",home,PATH_SEPERATOR,PATH_SEPERATOR,CONFIG_FILENAME);
 	}
 	else {
 		sprintf(dest,"%s%c%s",cwd,PATH_SEPERATOR,CONFIG_FILENAME);
@@ -169,7 +170,7 @@ static vars_t *config_get_defaults()
 #ifdef WIN32
 	vars_set_string(ret,F_CONFIG,"path.data",						"%exepath%/data");
 #else
-	vars_set_string(ret,F_CONFIG,"path.data",						"%home%/.nesemu2/data");
+	vars_set_string(ret,F_CONFIG,"path.data",						"%home%/.nesemu2");
 #endif
 
 	vars_set_string(ret,F_CONFIG,"path.roms",						"%path.data%/roms");
@@ -227,7 +228,7 @@ int config_init()
 
 	//kludges, sort of
 	var_set_string("exepath",exepath);
-	if((str = getenv("home")) != 0)
+	if((str = getenv("HOME")) != 0)
 		var_set_string("home",str);
 
 	//make the directories

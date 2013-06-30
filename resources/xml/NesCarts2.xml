@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<database version="1.0" conformance="strict" agent="NesCartDB" author="BootGod" timestamp="Mon Oct 22 22:16:08 2012">
+
+	<game name="65 in 1">
+		<cartridge system="NES-NTSC" crc="6d92dff1" sha1="3a316be8652a9a677fc6468767c69d3ff221bd25">
+			<board type="BMC-65IN1" mapper="60">
+				<prg size="128k" />
+				<chr size="64k" />
+			</board>
+		</cartridge>
+	</game>
+
+	<game name="260 in 1">
+		<cartridge system="NES-NTSC" crc="df81364d" sha1="012fd90b213454b76608e018e70f89f1e166dc82">
+			<board type="BMC-260IN1" mapper="235">
+				<prg size="4096k" />
+				<vram size="8k"/>
+			</board>
+		</cartridge>
+	</game>
+
+	<game name="Bao Qing Tian">
+		<cartridge system="NES-NTSC" crc="c5e5c5b2" sha1="9c8bb9beb164cc6275284914537cb2b07d4f4108">
+			<board type="UNL-KASING" mapper="115">
+				<prg size="256k" />
+				<chr size="256k"/>
+			</board>
+		</cartridge>
+	</game>
+
+	<game name="Super Lion King">
+		<cartridge system="NES-NTSC" crc="6a03d3f3" sha1="6bc97b7459db034d5dd5b5828678cc4cab073663">
+			<board type="UNL-SUPERLIONKING" mapper="114">
+				<prg size="256k" />
+				<chr size="256k"/>
+			</board>
+		</cartridge>
+	</game>
+
+</database>

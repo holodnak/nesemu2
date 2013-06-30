@@ -1,0 +1,5 @@
+*.o
+nesemu2
+nesemu2.log
+projects/codeblocks/*.depend
+projects/codeblocks/*.layout

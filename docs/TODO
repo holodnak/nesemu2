@@ -70,6 +70,7 @@ mappers
  . mapper 112 doesnt work correctly.  need more info.
  . mapper 114 doesnt work.  need more info.
  ! fantasy zone uses sunsoft-1 chip but nescartdb doesnt specify the special wiring
+ . mapper 15 is broken
 
 submappers
  . which needs?
@@ -104,12 +105,14 @@ info
 
 broken games
  . guardian legend status bar...still broken
- . famicom wars intro/title screen is broken
  . ms. pac-man (tengen)
  . mmc3:  Family Circuit (1988-01-06)(Namco)(JP) (mirroring?)
  . twin eagle.  needs better timing?!  todo:  dig thru rom code
  . bill & ted:  the INC $FFFF writes twice.  need to insert delay for writes (or something)  see wiki
  . Fuzzical Fighter (1991-05-17)(Sigma Shougi)(JP) doesnt boot
+ . Chibi Maruko-Chan - Uki Uki Shopping (1991-10-04)(Namco)(JP)
+ . M&M Heroes (199x)(Waixing)(CN)[p] - sprites all on left
+ . Family Boxing (1987-06-19)(Namco)(JP)
 
 misc
  . go thru and fix the hard/soft reset code, not everything checks for hard

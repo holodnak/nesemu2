@@ -855,6 +855,7 @@
     <ClInclude Include="..\..\source\system\common\filters\scale2x\scale2x.h" />
     <ClInclude Include="..\..\source\system\common\filters\scale2x\scale3x.h" />
     <ClInclude Include="..\..\source\system\common\filters\scale2x\scalebit.h" />
+    <ClInclude Include="..\..\source\system\win32\resource.h" />
     <ClInclude Include="..\..\source\types.h" />
     <ClInclude Include="..\..\source\version.h" />
     <ClInclude Include="..\..\source\system\input.h" />

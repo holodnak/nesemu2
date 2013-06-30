@@ -77,11 +77,15 @@
 #define IDC_CARTDBEDITBUTTON            1032
 #define IDC_ADDBUTTON                   1032
 #define IDC_BROWSEBUTTON                1032
+#define IDC_PORT1CONFIGBUTTON           1032
 #define IDC_BUTTON2                     1033
 #define IDC_EDITBPBUTTON                1033
 #define IDC_DELETEBUTTON                1033
+#define IDC_PORT2CONFIGBUTTON           1033
 #define IDC_BUTTON3                     1034
 #define IDC_DELETEBPBUTTON              1034
+#define IDC_PORT1CONFIGBUTTON3          1034
+#define IDC_EXPCONFIGBUTTON             1034
 #define IDC_PIXELSTATIC                 1035
 #define IDC_LINESTATIC                  1036
 #define IDC_FRAMESTATIC                 1037

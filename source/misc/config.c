@@ -259,8 +259,12 @@ char *config_get_eval_string(char *dest,char *name)
 	char varname[64];
 	int pos;
 
+	//get string
+	if((p = config_get_string(name)) == 0)
+		return(0);
+
 	//make a copy of the string
-	tmp = mem_strdup(config_get_string(name));
+	tmp = mem_strdup(p);
 
 	strcpy(dest,tmp);
 

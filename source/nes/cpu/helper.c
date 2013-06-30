@@ -20,6 +20,25 @@
 
 static INLINE u8 memread(u32 addr)
 {
+	static int n;
+
+	//handle dpcm cycle stealing
+	if(nes->cpu.pcmcycles) {
+		n = nes->cpu.pcmcycles - 1;
+		nes->cpu.pcmcycles = 0;
+		if(addr == 0x4016 || addr == 0x4017) {
+			if(n--)
+				memread(addr);
+			while(n--)
+				cpu_tick();
+		}
+		else {
+			while(n--)
+				memread(addr);
+		}
+		apu_dpcm_fetch();
+	}
+
 	//increment cycle counter, check irq lines
 	cpu_tick();
 
@@ -29,6 +48,10 @@ static INLINE u8 memread(u32 addr)
 
 static INLINE void memwrite(u32 addr,u8 data)
 {
+	//handle dpcm cycle stealing
+	if(nes->cpu.pcmcycles)
+		nes->cpu.pcmcycles--;
+
 	//increment cycle counter, check irq lines
 	cpu_tick();
 

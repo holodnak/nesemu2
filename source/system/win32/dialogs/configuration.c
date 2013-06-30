@@ -29,6 +29,7 @@
 #include "misc/config.h"
 #include "misc/strutil.h"
 #include "misc/memutil.h"
+#include "inputdev/inputdev.h"
 
 static const char progid[] = "nesemu2.image.1";
 
@@ -200,8 +201,9 @@ LRESULT CALLBACK FileEditDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 					n = GetWindowTextLength(GetDlgItem(hwnd,IDC_FILEEDIT));
 					if(n) {
 						mem_free(str);
-						str = (char*)mem_alloc(n + 1);
-						GetWindowText(GetDlgItem(hwnd,IDC_FILEEDIT),str,n);
+						str = (char*)mem_alloc(n + 2);
+						memset(str,0,n+2);
+						GetWindowText(GetDlgItem(hwnd,IDC_FILEEDIT),str,n + 1);
 						EndDialog(hwnd,(INT_PTR)str);
 						return(TRUE);
 					}
@@ -440,6 +442,18 @@ static char *inputexpansion[] = {
 	0
 };
 
+//same function is in nes.c
+static int get_device_id(char *str)
+{
+	int ret = I_NULL;
+
+	if(stricmp(str,"joypad0") == 0)	ret = I_JOYPAD0;
+	if(stricmp(str,"joypad1") == 0)	ret = I_JOYPAD1;
+	if(stricmp(str,"zapper") == 0)	ret = I_ZAPPER;
+	if(stricmp(str,"powerpad") == 0)	ret = I_POWERPAD;
+	return(ret);
+}
+
 LRESULT CALLBACK SystemProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LPNMHDR nmhdr;
@@ -490,7 +504,10 @@ LRESULT CALLBACK SystemProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 			switch(nmhdr->code) {
 				case PSN_APPLY:
 					config_set_bool("video.framelimit",IsDlgButtonChecked(hDlg,IDC_FRAMELIMITCHECK) ? 1 : 0);
-//					GetDlgItemText_SetConfig(hDlg,IDC_FDSBIOSEDIT,"nes.fds.bios");
+					GetDlgItemText_SetConfig(hDlg,IDC_PORT1COMBO,"input.port0");
+					GetDlgItemText_SetConfig(hDlg,IDC_PORT2COMBO,"input.port1");
+					nes_set_inputdev(0,get_device_id(config_get_string("input.port0")));
+					nes_set_inputdev(1,get_device_id(config_get_string("input.port1")));
 					return(TRUE);
 			}
 			break;

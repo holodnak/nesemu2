@@ -48,10 +48,21 @@ static void vram_state(int mode,u8 *data)
 	}
 }
 
+static int get_device_id(char *str)
+{
+	int ret = I_NULL;
+
+	if(stricmp(str,"joypad0") == 0)	ret = I_JOYPAD0;
+	if(stricmp(str,"joypad1") == 0)	ret = I_JOYPAD1;
+	if(stricmp(str,"zapper") == 0)	ret = I_ZAPPER;
+	if(stricmp(str,"powerpad") == 0)	ret = I_POWERPAD;
+	return(ret);
+}
+
 int nes_init()
 {
 	int ret = 0;
-	
+
 	nes = (nes_t*)mem_alloc(sizeof(nes_t));
 	memset(nes,0,sizeof(nes_t));
 	nes_set_inputdev(0,I_NULL);
@@ -63,17 +74,23 @@ int nes_init()
 		state_register(B_WRAM,wram_state);
 		state_register(B_VRAM,vram_state);
 	}
+
+	//this could be moved elsewhere
+	nes_set_inputdev(0,get_device_id(config_get_string("input.port0")));
+	nes_set_inputdev(1,get_device_id(config_get_string("input.port1")));
+
+	//init all dependesnt systems
 	ret += cpu_init();
 	ret += ppu_init();
 	ret += apu_init();
-	ret += nes_movie_init();
+	ret += movie_init();
 	return(ret);
 }
 
 void nes_kill()
 {
 	if(nes) {
-		nes_movie_kill();
+		movie_kill();
 		nes_unload();
 		genie_unload();
 		state_kill();
@@ -153,6 +170,7 @@ int nes_load_patched(char *filename,char *patchfilename)
 
 void nes_unload()
 {
+	movie_stop();
 	//need to save sram/diskdata/whatever here
 	if(nes->cart)
 		cart_unload(nes->cart);
@@ -239,7 +257,7 @@ void nes_frame()
 	nes->inputdev[1]->update();
 	nes->expdev->update();
 	if(nes->movie.mode)
-		nes_movie_frame();
+		movie_frame();
 	cpu_execute_frame();
 }
 

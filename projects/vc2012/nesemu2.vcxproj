@@ -844,6 +844,7 @@
     <ClInclude Include="..\..\source\nes\apu\apu.h" />
     <ClInclude Include="..\..\source\nes\genie.h" />
     <ClInclude Include="..\..\source\nes\io.h" />
+    <ClInclude Include="..\..\source\nes\movie.h" />
     <ClInclude Include="..\..\source\nes\ppu\attribcache.h" />
     <ClInclude Include="..\..\source\nes\ppu\tilecache.h" />
     <ClInclude Include="..\..\source\system\common\filters\draw\draw.h" />
@@ -854,6 +855,7 @@
     <ClInclude Include="..\..\source\system\common\filters\scale2x\scale2x.h" />
     <ClInclude Include="..\..\source\system\common\filters\scale2x\scale3x.h" />
     <ClInclude Include="..\..\source\system\common\filters\scale2x\scalebit.h" />
+    <ClInclude Include="..\..\source\system\win32\resource.h" />
     <ClInclude Include="..\..\source\types.h" />
     <ClInclude Include="..\..\source\version.h" />
     <ClInclude Include="..\..\source\system\input.h" />
@@ -876,9 +878,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\docs\Todo" />
+    <None Include="..\..\README" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\source\system\win32\nesemu2.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\source\system\win32\mainicon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

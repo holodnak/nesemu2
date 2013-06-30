@@ -106,6 +106,7 @@ void cpu_reset(int hard)
 		nes->cpu.readpages[i + 1] = nes->cpu.writepages[i + 1] = (u8*)nes->cpu.ram + 0x400;
 	}
 
+	nes->cpu.pcmcycles = 0;
 	if(hard) {
 		A = X = Y = 0;
 		SP = 0xFD;

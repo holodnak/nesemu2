@@ -245,7 +245,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DialogBox(hInst,(LPCTSTR)IDD_MAPPERS,hWnd,(DLGPROC)MappersDlg);
 			break;
 		case IDM_EXIT:
-			DestroyWindow(hWnd);
+			if(config_get_bool("video.fullscreen") != 0)
+				emu_event(E_WINDOWED,0);
+			else
+				DestroyWindow(hWnd);
 			break;
 		case ID_VIEW_FULLSCREEN:
 			emu_event(E_TOGGLEFULLSCREEN,0);

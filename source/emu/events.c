@@ -58,6 +58,8 @@ int emu_event(int id,void *data)
 				nes_reset(1);
 				running = config_get_bool("video.pause_on_load") ? 0 : 1;
 			}
+			else
+				ret = 1;
 			break;
 
 		case E_LOADPATCH:
@@ -98,25 +100,25 @@ int emu_event(int id,void *data)
 
 		case E_RECORDMOVIE:
 			log_printf("emu_event:  recording movie from frame %d\n",nes->ppu.frames);
-			nes_movie_record();
+			movie_record();
 			break;
 
 		case E_PLAYMOVIE:
-			nes_movie_play();
+			movie_play();
 			log_printf("emu_event:  playing movie from frame %d\n",nes->ppu.frames);
 			break;
 
 		case E_STOPMOVIE:
-			nes_movie_stop();
+			movie_stop();
 			log_printf("emu_event:  stopping movie at frame %d\n",nes->ppu.frames);
 			break;
 
 		case E_LOADMOVIE:
-			nes_movie_load((char*)data);
+			movie_load((char*)data);
 			break;
 
 		case E_SAVEMOVIE:
-			nes_movie_save((char*)data);
+			movie_save((char*)data);
 			break;
 
 		case E_FLIPDISK:
@@ -177,6 +179,7 @@ int emu_event(int id,void *data)
 
 		//unhandled event
 		default:
+			log_printf("emu_event:  unhandled event id %d\n",id);
 			ret = -1;
 			break;
 	}

@@ -59,5 +59,6 @@ u32 memfile_copy(memfile_t *dest,memfile_t *src,u32 size);
 u32 memfile_fill(memfile_t *dest,u8 ch,u32 size);
 int memfile_getc(memfile_t *mf);
 int memfile_putc(u8 ch,memfile_t *mf);
+char *memfile_gets(char *str,int n,memfile_t *mf);
 
 #endif

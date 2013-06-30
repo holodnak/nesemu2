@@ -18,6 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+/* 
+	differences in mmc1 chip types (from the wiki):
+		MMC1A: PRG RAM is always enabled.
+		MMC1B: PRG RAM is enabled by default.
+		MMC1C: PRG RAM is disabled by default. 
+*/
+
 #include "mappers/mapperinc.h"
 #include "mappers/chips/mmc1.h"
 

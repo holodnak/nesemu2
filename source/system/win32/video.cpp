@@ -421,7 +421,7 @@ static int video_reinit()
 		}
 		for(i=0;i<32;i++)
 			updatepalette(i,palettecache[i]);
-		log_printf("video_reinit:  ddraw video inited, %ix%i %ibpp\n",ddsd.dwWidth,ddsd.dwHeight,screenbpp);
+		log_printf("video_reinit:  ddraw video inited, %ix%i %ibpp (scale %d, surfoffset = %d)\n",ddsd.dwWidth,ddsd.dwHeight,screenbpp,screenscale,surfoffset);
 	}
 	return(ret);
 }
@@ -542,4 +542,34 @@ extern "C" void video_resize()
 u8 *video_getscreen()
 {
 	return(screen);
+}
+
+extern "C" int video_zapperhit(int x,int y)
+{
+	int ret = 0;
+	palentry_t *e;
+	u8 color;
+
+	color = palettecache[screen[x + y * 256]];
+	e = &palette->pal[(color >> 5) & 7][color & 0x1F];
+	ret += (int)(e->r * 0.299);
+	ret += (int)(e->g * 0.587);
+	ret += (int)(e->b * 0.114);
+	return((ret >= 0x40) ? 1 : 0);
+}
+
+//kludge-city!
+extern "C" int video_getxoffset()
+{
+	return((surfoffset / (screenbpp / 8)) % screenw);
+}
+
+extern "C" int video_getyoffset()
+{
+	return((surfoffset / (screenbpp / 8)) / screenw);
+}
+
+extern "C" int video_getscale()
+{
+	return(screenscale);
 }

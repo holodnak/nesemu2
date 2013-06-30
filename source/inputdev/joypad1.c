@@ -60,10 +60,10 @@ static void update()
 static int movie(int mode)
 {
 	if(mode & MOVIE_PLAY) {
-		buttons = nes_movie_read_u8();
+		buttons = movie_read_u8();
 	}
 	else if(mode & MOVIE_RECORD) {
-		nes_movie_write_u8(buttons);
+		movie_write_u8(buttons);
 	}
 	return(1);
 }

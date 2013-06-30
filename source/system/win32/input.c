@@ -21,8 +21,9 @@
 #include <windows.h>
 #include "system/input.h"
 #include "system/system.h"
-#include "misc/config.h"
+#include "system/win32/mainwnd.h"
 #include "system/common/SDL_keysym.h"
+#include "misc/config.h"
 
 //these global variables provide information for the device input code
 int joyx,joyy;			//x and y coords for paddle/mouse
@@ -75,6 +76,42 @@ void input_poll()
 		joykeys[joyconfig[0][i]] = (u8)(GetAsyncKeyState(joyconfig[0][i]) >> 8);
 		joykeys[joyconfig[1][i]] = (u8)(GetAsyncKeyState(joyconfig[1][i]) >> 8);
 	}
+}
+
+extern int video_getxoffset();
+extern int video_getyoffset();
+extern int video_getscale();
+	
+int input_poll_mouse(int *x,int *y)
+{
+	POINT pos;
+	RECT rect;
+	int scale;
+
+	GetCursorPos(&pos);
+	scale = video_getscale();
+	if(config_get_bool("video.fullscreen") != 0) {
+		ShowCursor(TRUE);		//  <--- kludge!
+		pos.x -= video_getxoffset();
+		pos.y -= video_getyoffset();
+		pos.x /= scale;
+		pos.y /= scale;
+	}
+	else {
+		ScreenToClient(hWnd,&pos);
+		GetClientRect(hWnd,&rect);
+		if(rect.left == rect.right)
+			pos.x = 0;
+		else
+			pos.x = pos.x * 256 / (rect.right - rect.left);
+		if(rect.top == rect.bottom)
+			pos.y = 0;
+		else
+			pos.y = pos.y * 240 / (rect.bottom - rect.top);
+	}
+	*x = pos.x;
+	*y = pos.y;
+	return((GetKeyState(VK_LBUTTON) & 0x8000) ? 1 : 0);
 }
 
 typedef struct keymapentry_s {

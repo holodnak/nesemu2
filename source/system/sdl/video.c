@@ -35,7 +35,8 @@ static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;// | SDL_NOFRAME;
 static int screenw,screenh,screenbpp;
 static int screenscale;
 static u32 palette32[8][256];
-static u32 palettecache[256];
+static u32 palettecache32[256];
+static u8 palettecache[32];
 static double interval = 0;
 static u64 lasttime = 0;
 static palette_t *palette = 0;
@@ -99,7 +100,7 @@ int video_init()
 	lasttime = system_gettick();
 
 	//clear palette cache
-	memset(palettecache,0,256*sizeof(u32));
+	memset(palettecache32,0,256*sizeof(u32));
 
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
@@ -159,7 +160,7 @@ void video_endframe()
 
 	//draw everything
 	drawfunc(surface->pixels,surface->pitch,screen,256*4,256,240);
-	console_draw(surface->pixels,surface->pitch,screenh);
+	console_draw((u32*)surface->pixels,surface->pitch,screenh);
 
 	//flip buffers and unlock surface
 	SDL_Flip(surface);
@@ -183,7 +184,7 @@ void video_updateline(int line,u8 *s)
 	memcpy(nesscreen + (line * 256),s,256);
 	if(line >= 8 && line < 232) {
 		for(i=0;i<256;i++) {
-			*dest++ = palettecache[*s++];
+			*dest++ = palettecache32[*s++];
 		}
 	}
 	else {
@@ -196,14 +197,15 @@ void video_updateline(int line,u8 *s)
 //this handles palette changes from the nes engine
 void video_updatepalette(u8 addr,u8 data)
 {
-	palettecache[addr+0x00] = palette32[0][data];
-	palettecache[addr+0x20] = palette32[1][data];
-	palettecache[addr+0x40] = palette32[2][data];
-	palettecache[addr+0x60] = palette32[3][data];
-	palettecache[addr+0x80] = palette32[4][data];
-	palettecache[addr+0xA0] = palette32[5][data];
-	palettecache[addr+0xC0] = palette32[6][data];
-	palettecache[addr+0xE0] = palette32[7][data];
+	palettecache32[addr+0x00] = palette32[0][data];
+	palettecache32[addr+0x20] = palette32[1][data];
+	palettecache32[addr+0x40] = palette32[2][data];
+	palettecache32[addr+0x60] = palette32[3][data];
+	palettecache32[addr+0x80] = palette32[4][data];
+	palettecache32[addr+0xA0] = palette32[5][data];
+	palettecache32[addr+0xC0] = palette32[6][data];
+	palettecache32[addr+0xE0] = palette32[7][data];
+	palettecache[addr] = data;
 }
 
 void video_setpalette(palette_t *p)
@@ -238,4 +240,34 @@ int video_getbpp()
 u8 *video_getscreen()
 {
 	return(nesscreen);
+}
+
+int video_zapperhit(int x,int y)
+{
+	int ret = 0;
+	palentry_t *e;
+	u8 color;
+
+	color = palettecache[nesscreen[x + y * 256]];
+	e = &palette->pal[(color >> 5) & 7][color & 0x1F];
+	ret += (int)(e->r * 0.299);
+	ret += (int)(e->g * 0.587);
+	ret += (int)(e->b * 0.114);
+	return((ret >= 0x40) ? 1 : 0);
+}
+
+//kludge-city!
+int video_getxoffset()
+{
+	return(0);
+}
+
+int video_getyoffset()
+{
+	return(0);
+}
+
+int video_getscale()
+{
+	return(screenscale);
 }

@@ -34,5 +34,6 @@ void emu_kill();
 int emu_exit(int ret);
 int emu_addsubsystem(char *name,initfunc_t init,killfunc_t kill);
 int emu_mainloop();
+int emu_mainloop_test(char *script);
 
 #endif

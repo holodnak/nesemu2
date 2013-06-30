@@ -230,7 +230,7 @@ static INLINE void scanline_prerender()
 			break;
 		case 320:
 			fetch_spt1byte();
-			nes->ppu.oamaddr = 0;
+//			nes->ppu.oamaddr = 0;
 			break;
 
 		//nametable byte for next scanline
@@ -308,7 +308,7 @@ static INLINE void scanline_prerender_norender()
 			clear_nmi_line();
 			break;
 		case 320:
-			nes->ppu.oamaddr = 0;
+//			nes->ppu.oamaddr = 0;
 			break;
 		case 338:
 			skip_cycle();
@@ -494,7 +494,7 @@ static INLINE void scanline_visible()
 			break;
 		case 320:
 			fetch_spt1byte();
-			nes->ppu.oamaddr = 0;
+//			nes->ppu.oamaddr = 0;
 #ifdef QUICK_SPRITES
 			quick_draw_sprite_line();
 #endif

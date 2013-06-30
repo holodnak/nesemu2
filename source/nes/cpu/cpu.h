@@ -65,6 +65,9 @@ typedef struct cpu_s {
 	readfunc_t	readfuncs[64];
 	writefunc_t	writefuncs[64];
 
+	//kludge for apu pcm cycle stealing
+	u32	pcmcycles;
+
 } cpu_t;
 
 extern readfunc_t cpu_read;

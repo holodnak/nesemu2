@@ -112,7 +112,8 @@ broken games
  . Fuzzical Fighter (1991-05-17)(Sigma Shougi)(JP) doesnt boot
  . Chibi Maruko-Chan - Uki Uki Shopping (1991-10-04)(Namco)(JP)
  . M&M Heroes (199x)(Waixing)(CN)[p] - sprites all on left
- . Family Boxing (1987-06-19)(Namco)(JP)
+ . Family Boxing (1987-06-19)(Namco)(JP) (graphical problems)
+ . Formula 1 - Built to Win (crashes on load)
 
 misc
  . go thru and fix the hard/soft reset code, not everything checks for hard

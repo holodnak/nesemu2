@@ -27,6 +27,7 @@
 #include "palette/palette.h"
 #include "palette/generator.h"
 #include "system/video.h"
+#include "misc/paths.h"
 
 static palette_t *pal = 0;
 
@@ -106,8 +107,22 @@ int palette_save(char *filename,palette_t *p)
 
 int palette_init()
 {
+	char file[1024];
+
+	//clear the string
+	memset(file,0,1024);
+
+	//parse the bios path
+	config_get_eval_string(file,"path.palette");
+
+	//append the path seperator
+	file[strlen(file)] = PATH_SEPERATOR;
+
+	//append the bios filename
+	strcat(file,config_get_string("palette.filename"));
+
 	if(strcmp(config_get_string("palette.source"),"file") == 0) {
-		pal = palette_load(config_get_string("palette.filename"));
+		pal = palette_load(file);
 	}
 	if(pal == 0) {
 		pal = palette_generate(config_get_int("palette.hue"),config_get_int("palette.saturation"));

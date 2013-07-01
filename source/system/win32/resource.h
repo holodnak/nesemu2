@@ -126,6 +126,11 @@
 #define IDC_FILEEDIT                    1072
 #define IDC_TITLESTATIC                 1073
 #define IDC_URLSTATIC                   1074
+#define IDC_COMBO1                      1075
+#define IDC_HUESLIDER                   1076
+#define IDC_SLIDER2                     1077
+#define IDC_SATSLIDER                   1077
+#define IDC_HUESATSTATIC                1078
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -174,7 +179,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        145
 #define _APS_NEXT_COMMAND_VALUE         32819
-#define _APS_NEXT_CONTROL_VALUE         1075
+#define _APS_NEXT_CONTROL_VALUE         1079
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

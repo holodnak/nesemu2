@@ -96,6 +96,7 @@ palette_t *palette_load(char *filename)
 	}
 	fclose(fp);
 	generate_emphasis(ret);
+	log_printf("palette_load:  loaded palette '%s'\n",filename);
 	return(ret);
 }
 

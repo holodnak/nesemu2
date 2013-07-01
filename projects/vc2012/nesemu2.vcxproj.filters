@@ -244,6 +244,9 @@
     <Filter Include="Source Files\nes\cart\patch">
       <UniqueIdentifier>{34164005-3c6a-4dc0-a8fd-1ec7d550425c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\misc\slre">
+      <UniqueIdentifier>{f05d4425-4722-4d74-b2db-ff6a446c8e7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -1022,6 +1025,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\system\common\filters.c">
       <Filter>Source Files\system\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\misc\slre\slre.c">
+      <Filter>Source Files\misc\slre</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

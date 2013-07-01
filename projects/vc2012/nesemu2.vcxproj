@@ -449,6 +449,7 @@
     <ClCompile Include="..\..\source\misc\memfile.c" />
     <ClCompile Include="..\..\source\misc\memutil.c" />
     <ClCompile Include="..\..\source\misc\paths.c" />
+    <ClCompile Include="..\..\source\misc\slre\slre.c" />
     <ClCompile Include="..\..\source\misc\strutil.c" />
     <ClCompile Include="..\..\source\misc\vars.c" />
     <ClCompile Include="..\..\source\nes\apu\apu.c" />

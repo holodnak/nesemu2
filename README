@@ -54,6 +54,15 @@ If it is not found, it creates it in:
 If you do not like any of these locations, you can use --config <filename> as a
 command line parameter.
 
+Subtrees in the Code
+--------------------
+To update the subtrees use the following commands:
+
+   $ git fetch slre master
+   $ git subtree pull --prefix source/misc/slre slre master --squash
+
+These will update slre to the latest version.
+
 Credits
 -------
 Thanks goes out to the following groups/individuals:
@@ -64,3 +73,4 @@ Thanks goes out to the following groups/individuals:
   . Quietust for Nintendulator, sound code was based upon his.
   . Quietust for Nintendulator, zapper code based upon his.
   . SDLMAME project, sdl sound code is ripped directly from it.
+  . SLRE at https://code.google.com/p/slre

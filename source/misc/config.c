@@ -64,6 +64,7 @@ static void mkdirr(char *path)
 
 	//now create the directory we want
 	mkdir(path);
+	chmod(path,0755);
 
 	//free tmp string
 	mem_free(tmp);

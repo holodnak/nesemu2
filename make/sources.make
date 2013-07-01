@@ -7,6 +7,7 @@ PATH_SOURCE=source
 SOURCE_MISC = source/misc/config.c source/misc/log.c source/misc/crc32.c
 SOURCE_MISC += source/misc/memutil.c source/misc/vars.c source/misc/paths.c
 SOURCE_MISC += source/misc/memfile.c source/misc/strutil.c source/misc/history.c
+SOURCE_MISC += source/misc/slre/slre.c
 
 # cartdb source files
 SOURCE_CARTDB = source/cartdb/cartdb.c source/cartdb/parser.c

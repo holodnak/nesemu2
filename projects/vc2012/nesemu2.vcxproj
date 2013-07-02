@@ -342,6 +342,7 @@
     <ClCompile Include="..\..\source\mappers\boards\other\btl\pikachuy2k.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl\smb2b.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\colordreams.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\deathrace.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\hes.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\hosenkan.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\kasing.c" />

@@ -1029,6 +1029,9 @@
     <ClCompile Include="..\..\source\misc\slre\slre.c">
       <Filter>Source Files\misc\slre</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\deathrace.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

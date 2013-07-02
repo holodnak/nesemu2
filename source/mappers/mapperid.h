@@ -144,9 +144,12 @@ enum boardid_e {
 	B_UNL_UY,
 	B_UNL_SUPERLIONKING,
 
+	//colordreams
+	B_COLORDREAMS,
+	B_DEATHRACE,
+
 	//others
 	B_MAGICSERIES,
-	B_COLORDREAMS,
 	B_RUMBLESTATION,
 	B_HES,
 	B_ACTIVE,

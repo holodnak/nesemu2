@@ -335,6 +335,7 @@
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\reset4in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\super42in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\super700in1.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\supergk.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\superhik4in1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\superhikXin1.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\btl\biomiraclea.c" />

@@ -1032,6 +1032,9 @@
     <ClCompile Include="..\..\source\mappers\boards\other\deathrace.c">
       <Filter>Source Files\mappers\boards\other</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\bmc\supergk.c">
+      <Filter>Source Files\mappers\boards\other\bmc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

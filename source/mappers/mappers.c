@@ -196,6 +196,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_BMC_RESET4IN1);
 	MAPPER(B_BMC_65IN1);
 	MAPPER(B_BMC_GOLDENGAME260IN1);
+	MAPPER(B_BMC_SUPERGK);
 
 	//other (bootlegs)
 	MAPPER(B_BTL_MARIO1_MALEE2);

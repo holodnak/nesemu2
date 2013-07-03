@@ -1,5 +1,10 @@
 *.o
+*.sdf
+*.suo
 nesemu2
 nesemu2.log
 projects/codeblocks/*.depend
 projects/codeblocks/*.layout
+projects/vc2012/Release*
+projects/vc2012/Debug*
+test/

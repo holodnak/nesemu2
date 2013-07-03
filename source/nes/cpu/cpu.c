@@ -60,6 +60,9 @@ writefunc_t cpu_write;
 static u8 tmp8;
 static int tmpi;
 
+//pal hack
+static int palticks;
+
 //for stopping execution when invalid opcodes are encountered (kludge)
 extern int running;
 
@@ -88,6 +91,7 @@ extern int running;
 
 int cpu_init()
 {
+	palticks = 0;
 	cpu_disassemble_init();
 	state_register(B_CPU,cpu_state);
 	return(0);
@@ -151,6 +155,20 @@ void cpu_clear_irq(u8 state)
 	IRQSTATE &= ~state;
 }
 
+static void ppu_tick()
+{
+	if(nes->region->id & REGION_PAL) {
+		palticks++;
+		if(palticks == 5) {
+			palticks = 0;
+			ppu_step();
+		}
+	}
+	ppu_step();
+	ppu_step();
+	ppu_step();
+}
+
 void cpu_tick()
 {
 	//acknowledge interrupts
@@ -161,9 +179,7 @@ void cpu_tick()
 	CYCLES++;
 
 	//catch up the ppu
-	ppu_step();
-	ppu_step();
-	ppu_step();
+	ppu_tick();
 
 	//catch up the apu
 	apu_step();

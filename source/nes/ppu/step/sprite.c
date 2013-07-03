@@ -150,7 +150,7 @@ static INLINE void quick_process_sprites()
 {
 	int i,h,sprinrange,sprline;
 	u8 *s;
-	int line = SCANLINE == 261 ? -1 : SCANLINE;	//kludge
+	int line = SCANLINE == nes->region->end_line ? -1 : SCANLINE;	//kludge
 
 	//clear the sprite temp memory
 	for(i=0;i<8;i++) {

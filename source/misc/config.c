@@ -166,6 +166,8 @@ static vars_t *config_get_defaults()
 	vars_set_int   (ret,F_CONFIG,"input.joypad1.left",			'j');
 	vars_set_int   (ret,F_CONFIG,"input.joypad1.right",		'l');
 
+	vars_set_string(ret,F_CONFIG,"input.zapper.trigger",		"mb0");
+
 	vars_set_int   (ret,F_CONFIG,"sound.enabled",				1);
 
 #ifdef WIN32
@@ -193,6 +195,7 @@ static vars_t *config_get_defaults()
 	vars_set_string(ret,F_CONFIG,"nes.fds.bios",					"disksys.rom");
 	vars_set_int   (ret,F_CONFIG,"nes.fds.hle",					1);
 
+	vars_set_string(ret,F_CONFIG,"nes.region",					"ntsc");
 	vars_set_int   (ret,F_CONFIG,"nes.log_unhandled_io",		0);
 	vars_set_int   (ret,F_CONFIG,"nes.pause_on_load",			0);
 

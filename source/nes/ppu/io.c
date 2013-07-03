@@ -110,7 +110,7 @@ static INLINE void r2007increment()
 	int i;
 
 	//see if we are rendering
-	if((SCANLINE < 240 || SCANLINE == 261) && (CONTROL1 & 0x18)) {
+	if((SCANLINE < 240 || SCANLINE == nes->region->end_line) && (CONTROL1 & 0x18)) {
 		if((SCROLL >> 12) == 7) {
 			SCROLL &= 0xFFF;
 			i = SCROLL & 0x3E0;
@@ -150,7 +150,7 @@ u8 ppu_read(u32 addr)
 			}
 
 			//nmi suppression
-			if(SCANLINE == 241) {
+			if(SCANLINE == nes->region->vblank_start) {
 				if(LINECYCLES == 1) {
 					ret &= 0x7F;
 					cpu_clear_nmi();
@@ -196,7 +196,7 @@ void ppu_write(u32 addr,u8 data)
 		case 0:
 			if((STATUS & 0x80) && (data & 0x80) && ((CONTROL0 & 0x80) == 0))
 				cpu_set_nmi();
-			if(((data & 0x80) == 0) && (SCANLINE == 241) && (LINECYCLES < 4))
+			if(((data & 0x80) == 0) && (SCANLINE == nes->region->vblank_start) && (LINECYCLES < 4))
 				cpu_clear_nmi();
 			CONTROL0 = data;
 			TMPSCROLL = (TMPSCROLL & 0x73FF) | ((data & 3) << 10);
@@ -209,7 +209,7 @@ void ppu_write(u32 addr,u8 data)
 			return;
 		case 4:
 			//check if we are rendering
-			if((SCANLINE < 240 || SCANLINE == 261) && (CONTROL1 & 0x18))
+			if((SCANLINE < 240 || SCANLINE == nes->region->end_line) && (CONTROL1 & 0x18))
 				data = 0xFF;
 			nes->ppu.oam[nes->ppu.oamaddr++] = data;
 			return;

@@ -18,43 +18,33 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-static INLINE void inc_linecycles()
-{
-	LINECYCLES++;
-	if(LINECYCLES >= 341) {
-		LINECYCLES = 0;
-		SCANLINE++;
-		if(SCANLINE > nes->region->end_line) {
-			SCANLINE = 0;
-			FRAMES++;
-		}
-	}
-}
+#ifndef __nes__region_h__
+#define __nes__region_h__
 
-static INLINE void skip_cycle()
-{
-	if(((FRAMES & 1) != 0) && (CONTROL1 & 0x18) && (nes->region->id & REGION_PAL) == 0)
-		inc_linecycles();
-}
+//regions
+#define REGION_NTSC	0
+#define REGION_PAL	1
+#define REGION_DENDY	2
 
-static INLINE void clear_sp0hit_flag()
-{
-	STATUS &= ~(0x40 | 0x20);
-}
+typedef struct region_s {
 
-static INLINE void clear_nmi_flag()
-{
-	STATUS &= ~0x80;
-}
+	//region id
+	int	id;
 
-static INLINE void clear_nmi_line()
-{
-	cpu_clear_nmi();
-}
+	//master clock
+	u32	hz;
 
-static INLINE void set_nmi()
-{
-	STATUS |= 0x80;
-	if(CONTROL0 & 0x80)
-		cpu_set_nmi();
-}
+	//vblank start line
+	int	vblank_start;
+
+	//last line
+	int	end_line;
+} region_t;
+
+extern region_t region_ntsc;
+extern region_t region_pal;
+extern region_t region_dendy;
+
+void nes_set_region(int r);
+
+#endif

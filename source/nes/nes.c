@@ -59,12 +59,23 @@ static int get_device_id(char *str)
 	return(ret);
 }
 
+static int get_region_id(char *str)
+{
+	int ret = REGION_NTSC;
+
+	if(stricmp(str,"ntsc") == 0)	ret = REGION_NTSC;
+	if(stricmp(str,"pal") == 0)	ret = REGION_PAL;
+	if(stricmp(str,"dendy") == 0)	ret = REGION_DENDY;
+	return(ret);
+}
+
 int nes_init()
 {
 	int ret = 0;
 
 	nes = (nes_t*)mem_alloc(sizeof(nes_t));
 	memset(nes,0,sizeof(nes_t));
+	nes_set_region(REGION_NTSC);
 	nes_set_inputdev(0,I_NULL);
 	nes_set_inputdev(1,I_NULL);
 	nes_set_inputdev(2,I_NULL);
@@ -78,6 +89,8 @@ int nes_init()
 	//this could be moved elsewhere
 	nes_set_inputdev(0,get_device_id(config_get_string("input.port0")));
 	nes_set_inputdev(1,get_device_id(config_get_string("input.port1")));
+
+	nes_set_region(get_region_id(config_get_string("nes.region")));
 
 	//init all dependesnt systems
 	ret += cpu_init();

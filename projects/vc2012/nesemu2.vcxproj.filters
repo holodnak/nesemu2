@@ -1035,6 +1035,9 @@
     <ClCompile Include="..\..\source\mappers\boards\other\bmc\supergk.c">
       <Filter>Source Files\mappers\boards\other\bmc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\nes\region.c">
+      <Filter>Source Files\nes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

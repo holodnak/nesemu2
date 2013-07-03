@@ -23,6 +23,7 @@
 
 #include "types.h"
 #include "nes/movie.h"
+#include "nes/region.h"
 #include "nes/cpu/cpu.h"
 #include "nes/ppu/ppu.h"
 #include "nes/apu/apu.h"
@@ -79,6 +80,9 @@ typedef struct nes_s {
 
 	//movie support
 	movie_t		movie;
+
+	//region information
+	region_t		*region;
 
 } nes_t;
 

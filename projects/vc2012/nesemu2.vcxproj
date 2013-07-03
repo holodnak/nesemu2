@@ -645,6 +645,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\ppu\tilecache.c" />
+    <ClCompile Include="..\..\source\nes\region.c" />
     <ClCompile Include="..\..\source\nes\state\block.c" />
     <ClCompile Include="..\..\source\nes\state\state.c" />
     <ClCompile Include="..\..\source\system\common\filters.c" />

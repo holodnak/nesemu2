@@ -18,43 +18,39 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-static INLINE void inc_linecycles()
+#include "nes/nes.h"
+
+region_t region_ntsc = {
+	REGION_NTSC,
+	236250000 / 11,
+	241,261
+};
+
+region_t region_pal = {
+	REGION_PAL,
+	26601712,
+	241,311
+};
+
+region_t region_dendy = {
+	REGION_DENDY,
+	26601712,
+	291,311
+};
+
+void nes_set_region(int r)
 {
-	LINECYCLES++;
-	if(LINECYCLES >= 341) {
-		LINECYCLES = 0;
-		SCANLINE++;
-		if(SCANLINE > nes->region->end_line) {
-			SCANLINE = 0;
-			FRAMES++;
-		}
+	switch(r) {
+		default:
+			log_printf("nes_set_region:  invalid region, defaulting to ntsc.\n");
+		case REGION_NTSC:
+			nes->region = &region_ntsc;
+			break;
+		case REGION_PAL:
+			nes->region = &region_pal;
+			break;
+		case REGION_DENDY:
+			nes->region = &region_dendy;
+			break;
 	}
-}
-
-static INLINE void skip_cycle()
-{
-	if(((FRAMES & 1) != 0) && (CONTROL1 & 0x18) && (nes->region->id & REGION_PAL) == 0)
-		inc_linecycles();
-}
-
-static INLINE void clear_sp0hit_flag()
-{
-	STATUS &= ~(0x40 | 0x20);
-}
-
-static INLINE void clear_nmi_flag()
-{
-	STATUS &= ~0x80;
-}
-
-static INLINE void clear_nmi_line()
-{
-	cpu_clear_nmi();
-}
-
-static INLINE void set_nmi()
-{
-	STATUS |= 0x80;
-	if(CONTROL0 & 0x80)
-		cpu_set_nmi();
 }

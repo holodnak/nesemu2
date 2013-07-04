@@ -22,18 +22,21 @@
 
 region_t region_ntsc = {
 	REGION_NTSC,
+	60,
 	236250000 / 11,
 	241,261
 };
 
 region_t region_pal = {
 	REGION_PAL,
+	50,
 	26601712,
 	241,311
 };
 
 region_t region_dendy = {
 	REGION_DENDY,
+	50,
 	26601712,
 	291,311
 };
@@ -43,6 +46,7 @@ void nes_set_region(int r)
 	switch(r) {
 		default:
 			log_printf("nes_set_region:  invalid region, defaulting to ntsc.\n");
+			r = REGION_NTSC;
 		case REGION_NTSC:
 			nes->region = &region_ntsc;
 			break;
@@ -53,4 +57,5 @@ void nes_set_region(int r)
 			nes->region = &region_dendy;
 			break;
 	}
+	apu_set_region(r);
 }

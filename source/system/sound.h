@@ -26,5 +26,6 @@ void sound_kill();
 void sound_pause();
 void sound_play();
 void sound_update(void *buffer,int length);
+void sound_setfps(int fps);
 
 #endif

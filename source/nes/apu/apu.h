@@ -54,6 +54,7 @@ u8 apu_read(u32 addr);
 void apu_write(u32 addr,u8 data);
 void apu_setexternal(external_t *ext);
 void apu_state(int mode,u8 *data);
+void apu_set_region(int r);
 void apu_dpcm_fetch();
 
 #endif

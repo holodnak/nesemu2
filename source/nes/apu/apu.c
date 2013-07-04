@@ -228,3 +228,22 @@ void apu_state(int mode,u8 *data)
 {
 	STATE_ARRAY_U8(regs,0x20);
 }
+
+void apu_set_region(int r)
+{
+	//if this is a pal-based region
+	if(r & 1) {
+		NoiseFreqTable = NoiseFreqPAL;
+		DpcmFreqTable = DPCMFreqPAL;
+		FrameCycles = FrameCyclesPAL;
+		sound_setfps(50);
+	}
+
+	//ntsc based region
+	else {
+		NoiseFreqTable = NoiseFreqNTSC;
+		DpcmFreqTable = DPCMFreqNTSC;
+		FrameCycles = FrameCyclesNTSC;
+		sound_setfps(60);
+	}
+}

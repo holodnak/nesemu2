@@ -31,6 +31,9 @@ typedef struct region_s {
 	//region id
 	int	id;
 
+	//frames per second
+	int	fps;
+
 	//master clock
 	u32	hz;
 

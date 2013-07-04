@@ -32,7 +32,6 @@ static LPDIRECTSOUNDBUFFER PrimaryBuffer;
 static LPDIRECTSOUNDBUFFER Buffer;
 static unsigned long next_pos;
 static int isEnabled;
-static int			buflen;
 static unsigned long		MHz;
 static unsigned long		LockSize;
 static int			BufPos;
@@ -129,11 +128,9 @@ int sound_init()
 	isEnabled	= 0;
 	MHz		= 1;
 	LockSize	= 1;
-	buflen		= 0;
 	BufPos		= 0;
 	next_pos	= 0;
 	LockSize = LOCK_SIZE / 60;
-	buflen = LockSize / (BITS / 8);
 	if(FAILED(DirectSoundCreate(&DSDEVID_DefaultPlayback, &DirectSound, NULL))) {
 		sound_kill();
 		MessageBox(hWnd,"Error creating DirectSound interface","nesemu2",MB_OK);
@@ -198,13 +195,13 @@ void sound_update(void *buffer,int length)
 	unsigned long rpos, wpos;
 
 	do {
-//		Sleep(1);
+		Sleep(1);
 		if(isEnabled == 0)
 			return;
-		Try(Buffer->GetCurrentPosition(&rpos, &wpos),"Error getting audio position");
+		Try(Buffer->GetCurrentPosition(&rpos,&wpos),"Error getting audio position");
 		rpos /= LockSize;
 		wpos /= LockSize;
-		if (wpos < rpos)
+		if(wpos < rpos)
 			wpos += FRAMEBUF;
 	} while ((rpos <= next_pos) && (next_pos <= wpos));
 	if(isEnabled) {
@@ -213,4 +210,20 @@ void sound_update(void *buffer,int length)
 		Try(Buffer->Unlock(bufPtr,bufBytes,NULL,0),"Error unlocking sound buffer");
 		next_pos = (next_pos + 1) % FRAMEBUF;
 	}
+}
+
+void sound_setfps(int fps)
+{
+	int enabled = isEnabled;
+	int playing = Buffer ? 1 : 0;
+
+	if(enabled)
+		sound_pause();
+	if(playing)
+		stopsound();
+	LockSize = LOCK_SIZE / fps;
+	if(playing)
+		startsound();
+	if(enabled)
+		sound_play();
 }

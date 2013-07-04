@@ -25,7 +25,10 @@
 #define FRAME_IRQ			nes->apu.frame.irq
 #define FRAME_ZERO		nes->apu.frame.zero
 
-static s32 cycletable[5] = {7456,14912,22370,29828,37280};
+static s32 FrameCyclesNTSC[5] = { 7456,14912,22370,29828,37280 };
+static s32 FrameCyclesPAL[5] = { 8312,16626,24938,33252,41560 };
+
+static s32 *FrameCycles;
 
 static INLINE void apu_frame_reset(int hard)
 {
@@ -54,17 +57,17 @@ static INLINE void apu_frame_write(u32 addr,u8 data)
 
 static INLINE void apu_frame_step()
 {
-	if(FRAME_CYCLES == cycletable[0]) {
+	if(FRAME_CYCLES == FrameCycles[0]) {
 		FRAME_QUARTER = 2;
 	}
-	else if(FRAME_CYCLES == cycletable[1]) {
+	else if(FRAME_CYCLES == FrameCycles[1]) {
 		FRAME_QUARTER = 2;
 		FRAME_HALF = 2;
 	}
-	else if(FRAME_CYCLES == cycletable[2]) {
+	else if(FRAME_CYCLES == FrameCycles[2]) {
 		FRAME_QUARTER = 2;
 	}
-	else if(FRAME_CYCLES == cycletable[3]) {
+	else if(FRAME_CYCLES == FrameCycles[3]) {
 		if ((FRAME_REG & 0x80) == 0) {
 			FRAME_QUARTER = 2;
 			FRAME_HALF = 2;
@@ -72,7 +75,7 @@ static INLINE void apu_frame_step()
 			FRAME_CYCLES = -2;
 		}
 	}
-	else if (FRAME_CYCLES == cycletable[4]) {
+	else if (FRAME_CYCLES == FrameCycles[4]) {
 		FRAME_QUARTER = 2;
 		FRAME_HALF = 2;
 		FRAME_CYCLES = -2;

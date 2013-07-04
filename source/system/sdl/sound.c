@@ -394,3 +394,8 @@ void sound_update(void *buf,int size)
 	if(initialized_audio)
 		update_audio_stream((s16*)buf,size);
 }
+
+void sound_setfps(int fps)
+{
+
+}

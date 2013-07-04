@@ -57,6 +57,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_NINTENDO_UNROM_74HC08);
 	MAPPER(B_NINTENDO_EVENT);
 	MAPPER(B_NINTENDO_QJ);
+	MAPPER(B_NINTENDO_PAL_ZZ);
 
 	//konami
 	MAPPER(B_KONAMI_VRC1);

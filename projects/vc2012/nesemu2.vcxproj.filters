@@ -1038,6 +1038,9 @@
     <ClCompile Include="..\..\source\nes\region.c">
       <Filter>Source Files\nes</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\nintendo\pal_zz.c">
+      <Filter>Source Files\mappers\boards\nintendo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

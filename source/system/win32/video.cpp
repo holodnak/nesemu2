@@ -504,6 +504,10 @@ void video_endframe()
 //this handles lines coming directly from the nes engine
 void video_updateline(int line,u8 *s)
 {
+	if(line >= 240) {
+		log_printf("video_updateline:  trying to draw line out of range!  line %d is error!\n",line);
+		return;
+	}
 	memcpy(screen + (line * 256),s,256);
 	if(line >= 8 && line < 232)
 		drawline(line,s);

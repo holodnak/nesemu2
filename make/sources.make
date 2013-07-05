@@ -25,7 +25,7 @@ SOURCE_MAPPERS=$(foreach dir,$(MAPPER_DIRS),$(wildcard $(dir)/*.c))
 SOURCE_INPUTDEV = $(foreach dir,$(PATH_SOURCE)/inputdev,$(wildcard $(dir)/*.c))
 
 # nes core
-SOURCE_NES = source/nes/memory.c source/nes/nes.c source/nes/io.c source/nes/genie.c
+SOURCE_NES = source/nes/memory.c source/nes/nes.c source/nes/io.c source/nes/genie.c source/nes/region.c
 SOURCE_NES += source/nes/cart/cart.c source/nes/cart/ines.c source/nes/cart/ines20.c
 SOURCE_NES += source/nes/cart/unif.c source/nes/cart/fds.c source/nes/cart/nsf.c
 SOURCE_NES += source/nes/cart/patch/patch.c source/nes/cart/patch/ips.c source/nes/cart/patch/ups.c

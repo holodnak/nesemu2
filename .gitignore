@@ -9,7 +9,7 @@
 *.ncb
 *.suo
 nesemu2
-nesemu2.exe
+nesemu2*.exe
 nesemu2.log
 nesemu2.cfg
 stdout.txt

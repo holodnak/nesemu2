@@ -1,7 +1,7 @@
 # sources.make - source files for building nesemu2
 
 # path of source files
-PATH_SOURCE=source
+PATH_SOURCE = source
 
 # misc source files
 SOURCE_MISC = source/misc/config.c source/misc/log.c source/misc/crc32.c
@@ -18,8 +18,8 @@ SOURCE_EMU = source/emu/emu.c source/emu/commands.c source/emu/events.c
 SOURCE_EMU += source/emu/commands/general.c source/emu/commands/nes.c
 
 # search mapper directory for source files
-MAPPER_DIRS=$(shell find $(PATH_SOURCE)/mappers -type d)
-SOURCE_MAPPERS=$(foreach dir,$(MAPPER_DIRS),$(wildcard $(dir)/*.c))
+MAPPER_DIRS = $(shell find $(PATH_SOURCE)/mappers -type d)
+SOURCE_MAPPERS = $(foreach dir,$(MAPPER_DIRS),$(wildcard $(dir)/*.c))
 
 # search inputdev directory for source files
 SOURCE_INPUTDEV = $(foreach dir,$(PATH_SOURCE)/inputdev,$(wildcard $(dir)/*.c))

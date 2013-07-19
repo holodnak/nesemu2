@@ -3,6 +3,7 @@
 .PHONY: all clean distclean
 
 all: $(TARGET)
+	strip $(TARGET)
 
 clean:
 	rm -f $(OBJECTS) $(TARGET)

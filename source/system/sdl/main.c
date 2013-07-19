@@ -20,6 +20,7 @@
 
 #include <SDL/SDL.h>
 #include <stdio.h>
+#include "version.h"
 #include "emu/emu.h"
 #include "emu/commands.h"
 #include "emu/events.h"
@@ -39,6 +40,23 @@
 //required
 char configfilename[1024] = CONFIG_FILENAME;
 char exepath[1024] = "";
+
+static void usage(char *argv0)
+{
+	printf("\nnesemu2 v%s - Copyright 2013 James Holodnak\n\n",VERSION);
+	printf("Usage:  %s [options] filename\n\n",argv0);
+	printf("Supported ROM formats:  iNES, NES 2.0, UNIF, FDS, NSF\n\n");
+	printf("Options:\n\n");
+	printf("  --help          : Show this message and exit.\n");
+	printf("  --mappers       : Show supported mappers and exit.\n");
+	printf("  --config <file> : Use 'file' as configuration file.\n");
+	printf("  --patch <file>  : Specify patch file for ROM.\n");
+	printf("  --movie <file>  : Specify movie file.\n");
+	printf("  --record        : After loading rom, start recording movie (used with --movie).\n");
+	printf("  --recordtest    : After loading rom, start recording test (used with --movie).\n");
+	printf("  --test <file>   : Specify automated testing script.\n");
+	printf("\n");
+}
 
 //todo:  this is getting ugly
 int main(int argc,char *argv[])
@@ -68,6 +86,10 @@ int main(int argc,char *argv[])
 	for(i=1;i<argc;i++) {
 		if(strcmp("--mappers",argv[i]) == 0) {
 			command_execute("mappers");
+			return(0);
+		}
+		else if(strcmp("--help",argv[i]) == 0) {
+			usage(argv[0]);
 			return(0);
 		}
 		else if(strcmp("--record",argv[i]) == 0) {

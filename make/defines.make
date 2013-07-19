@@ -38,6 +38,10 @@ endif
 # compiler/linker programs
 CC = gcc
 LD = gcc
+ifeq ($(COLORGCC),1)
+	CC = colorgcc
+	LD = colorgcc
+endif
 
 # compiler/linker flags for debug
 CFLAGS_DEBUG = -g

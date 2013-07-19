@@ -64,11 +64,11 @@ typedef struct ppu_s {
 	//current nametable byte
 	u8		ntbyte;
 
+	//is the ppu outputting pixels
+	u8		rendering;
+
 	//current sprite we are fetching tile data for
 	u8		cursprite;
-
-	//line buffer (34 tiles) output of the ppu (bg + sprites)
-	u8		linebuffer[256 + 16];
 
 	//tile buffer (34 tiles) hold tiles/attributes read
 	u8		tilebuffer[256 + 16];

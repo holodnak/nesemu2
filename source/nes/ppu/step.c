@@ -53,6 +53,7 @@ static INLINE void scanline_prerender()
 
 		//the idle cycle
 		case 0:
+			nes->ppu.rendering = 1;
 			clear_sp0hit_flag();
 			break;
 
@@ -294,6 +295,7 @@ static INLINE void scanline_prerender()
 #endif
 }
 
+//scanline 0 with rendering disabled
 static INLINE void scanline_prerender_norender()
 {
 	switch(LINECYCLES) {
@@ -311,7 +313,7 @@ static INLINE void scanline_prerender_norender()
 //			nes->ppu.oamaddr = 0;
 			break;
 		case 338:
-			skip_cycle();
+//			skip_cycle();
 			break;
 	}
 }
@@ -559,17 +561,45 @@ static INLINE void scanline_visible()
 #endif
 }
 
+//scanlines in visible area with rendering disabled
+static INLINE void scanline_visible_norender()
+{
+	u8 color;
+
+	//visible pixels
+	if(LINECYCLES < 256) {
+
+		//palette index 0 (with emphasis bits)
+		color = nes->ppu.control1 & 0xE0;
+
+		//the 'background palette hack' (see nesdev wiki)
+		if((SCROLL & 0x3F00) == 0x3F00) {
+			color |= SCROLL & 0x1F;
+		}
+
+		//draw pixel
+		video_updatepixel(SCANLINE,LINECYCLES,color);
+	}
+}
+
+//post render scanline
+static INLINE void scanline_postrender()
+{
+	if(LINECYCLES == 0) {
+		nes->ppu.rendering = 0;
+	}
+}
+
+//first scanline of vblank
 static INLINE void scanline_startvblank()
 {
 	if(LINECYCLES == 0) {
 		set_nmi();
-//		log_printf("scanline_0:  frame %d, scanline %d, cycle %d:  setting VBLANK flag\n",FRAMES,SCANLINE,LINECYCLES);
 	}
 }
 
 void ppu_step()
 {
-	int rendering = 0;
 	u8 color;
 	u32 addr;
 
@@ -582,70 +612,66 @@ void ppu_step()
 			log_printf("%s",sram + 4);
 		}
 	}*/
+
+	//visible scanlines
 	if(SCANLINE < 240) {
 
 		//rendering is enabled
 		if(CONTROL1 & 0x18) {
 			scanline_visible();
-			rendering = 1;
 		}
 
 		//rendering is turned off
 		else {
-
-			//visible pixels
-			if(LINECYCLES < 256) {
-
-				//palette index 0 (with emphasis bits)
-				color = nes->ppu.control1 & 0xE0;
-
-				//the 'background palette hack'
-				if((SCROLL & 0x3F00) == 0x3F00) {
-					color |= SCROLL & 0x1F;
-				}
-
-				//draw pixel
-				video_updatepixel(SCANLINE,LINECYCLES,color);
-			}
+			scanline_visible_norender();
 		}
 	}
+
+	//post render scanline
+	else if(SCANLINE == 240) {
+		scanline_postrender();
+	}
+
+	//first scanline of vblank
 	else if(SCANLINE == nes->region->vblank_start) {
 		scanline_startvblank();
 	}
+
+	//last line in the frame
 	else if(SCANLINE == nes->region->end_line) {
-		if(CONTROL1 & 0x18) {
+		if(CONTROL1 & 0x18)
 			scanline_prerender();
-			rendering = 1;
-		}
 		else
 			scanline_prerender_norender();
 	}
+
+
 	if(LINECYCLES & 1) {
 		if(IOMODE) {
 			addr = IOADDR & 0x3FFF;
 
 			//call to ppucycle
-			if(IOMODE >= 5 && rendering == 0) {
+			if(IOMODE >= 5 && nes->ppu.rendering == 0) {
 				nes->ppu.busaddr = addr;
 				nes->mapper->ppucycle();
 			}
 
 			//perform delayed write
 			else if(IOMODE == 2) {
-				if(rendering == 0)
+				if(nes->ppu.rendering == 0)
 					ppu_memwrite(addr,IODATA);
 			}
 
 			//perform delayed read
 			else if(IOMODE == 1) {
 				IOMODE++;
-				if(rendering == 0) {
+				if(nes->ppu.rendering == 0) {
 					nes->ppu.latch = ppu_memread(addr);
 				}
 			}
 			IOMODE -= 2;
 		}
-		if(rendering == 0) {
+		if(nes->ppu.rendering == 0) {
 			if(IOMODE == 0) {
 				nes->ppu.busaddr = SCROLL;
 				nes->mapper->ppucycle();

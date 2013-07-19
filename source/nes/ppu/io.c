@@ -202,6 +202,10 @@ void ppu_write(u32 addr,u8 data)
 			TMPSCROLL = (TMPSCROLL & 0x73FF) | ((data & 3) << 10);
 			return;
 		case 1:
+			if((data & 0x18) && (SCANLINE < 240 || SCANLINE == nes->region->end_line))
+				nes->ppu.rendering = 1;
+			else
+				nes->ppu.rendering = 0;
 			CONTROL1 = data;
 			return;
 		case 3:
@@ -209,7 +213,7 @@ void ppu_write(u32 addr,u8 data)
 			return;
 		case 4:
 			//check if we are rendering
-			if((SCANLINE < 240 || SCANLINE == nes->region->end_line) && (CONTROL1 & 0x18))
+			if(nes->ppu.rendering)
 				data = 0xFF;
 			nes->ppu.oam[nes->ppu.oamaddr++] = data;
 			return;

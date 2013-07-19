@@ -224,11 +224,17 @@ static INLINE void quick_process_sprites()
 static INLINE void sprite0_hit_check()
 {
 	if(spr0 != 0) {
-		u8 *dest = nes->ppu.linebuffer;
+		u8 *dest = nes->ppu.tilebuffer;
 		u8 *line;
 		int xpos;
 		int x = LINECYCLES - 1;
 
+		//if background is disabled, always miss
+		if((CONTROL1 & 8) == 0)
+			return;
+		//if background is not visible in left 8 pixels, always miss
+		if(x < 8 && (CONTROL1 & 2) == 0)
+			return;
 		xpos = x - spr0->x;
 		if(xpos >= 0 && xpos < 8) {
 			if(((CONTROL1 & 4) == 0 && spr0->x == 0) || spr0->x == 255 || x == 255)

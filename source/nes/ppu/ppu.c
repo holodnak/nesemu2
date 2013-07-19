@@ -41,6 +41,7 @@ void ppu_reset(int hard)
 	nes->ppu.ioaddr = 0;
 	nes->ppu.iodata = 0;
 	nes->ppu.iomode = 0;
+	nes->ppu.rendering = 0;
 }
 
 void ppu_sync()

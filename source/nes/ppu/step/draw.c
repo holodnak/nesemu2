@@ -21,30 +21,31 @@
 static INLINE void drawpixel()
 {
 	int pos = LINECYCLES - 1;
-	u8 *dest = (u8*)nes->ppu.linebuffer + pos;
-	u8 pixel;
+	u8 output,pixel;
 
-	//draw background pixel
-	if((pos >= 8 || (nes->ppu.control1 & 2)) && (CONTROL1 & 8)) {
+	//draw background pixel if visible
+	if((pos >= 8 || (CONTROL1 & 2)) && (CONTROL1 & 8)) {
 		pixel = nes->ppu.tilebuffer[pos + nes->ppu.scrollx];
 		if((pixel & 3) == 0)
 			pixel = 0;
-		*dest = pixel;
+		output = pixel;
 	}
+
+	//color used when bg isnt visible
 	else
-		*dest = 0;
+		output = 0;
 
 	//draw sprite pixel with priority
 #ifdef QUICK_SPRITES
 	if(CONTROL1 & 0x10) {
 		sprite0_hit_check();
-		if(pos >= 8 || (nes->ppu.control1 & 4)) {
+		if(pos >= 8 || (CONTROL1 & 4)) {
 			pixel = nes->ppu.spritebuffer[pos];
 			if(pixel & 3) {
-				if((pixel & 0x10) == 0)    //foreground sprite
-					*dest = pixel | 0x10;
-				else if((*dest & 3) == 0)      //background sprite that is visible
-					*dest = pixel | 0x10;
+				if((pixel & 0x10) == 0)			//foreground sprite
+					output = pixel | 0x10;
+				else if((output & 3) == 0)		//background sprite that is visible
+					output = pixel | 0x10;
 			}
 		}
 	}
@@ -53,10 +54,10 @@ static INLINE void drawpixel()
 #endif
 
 	//apply color emphasis
-	*dest |= nes->ppu.control1 & 0xE0;
+	output |= nes->ppu.control1 & 0xE0;
 
 	//output pixel to the renderer
-	video_updatepixel(SCANLINE,pos,*dest);
+	video_updatepixel(SCANLINE,pos,output);
 }
 
 static INLINE void quick_draw_sprite_line()

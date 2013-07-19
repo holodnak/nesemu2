@@ -33,8 +33,14 @@ static INLINE void inc_linecycles()
 
 static INLINE void skip_cycle()
 {
-	if(((FRAMES & 1) != 0) && (CONTROL1 & 0x18) && (nes->region->id & REGION_PAL) == 0)
-		inc_linecycles();
+	//ensure we are not in pal mode
+	if((nes->region->id & REGION_PAL) == 0) {
+
+		//make sure we are on an odd frame and that the ppu is outputting pixels
+		if((FRAMES & 1) && nes->ppu.rendering) {
+			inc_linecycles();
+		}
+	}
 }
 
 static INLINE void clear_sp0hit_flag()

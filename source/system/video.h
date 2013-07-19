@@ -27,7 +27,7 @@ int video_init();
 void video_kill();
 void video_startframe();
 void video_endframe();
-void video_updateline(int line,u8 *s);
+void video_updatepixel(int line,int pixel,u8 s);
 void video_updatepalette(u8 addr,u8 data);
 void video_setpalette(palette_t *p);
 int video_getwidth();

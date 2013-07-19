@@ -24,14 +24,17 @@ static INLINE void drawpixel()
 	u8 *dest = (u8*)nes->ppu.linebuffer + pos;
 	u8 pixel;
 
+	//draw background pixel
 	if((pos >= 8 || (nes->ppu.control1 & 2)) && (CONTROL1 & 8)) {
 		pixel = nes->ppu.tilebuffer[pos + nes->ppu.scrollx];
 		if((pixel & 3) == 0)
 			pixel = 0;
-		*dest = pixel | (nes->ppu.control1 & 0xE0);
+		*dest = pixel;
 	}
 	else
 		*dest = 0;
+
+	//draw sprite pixel with priority
 #ifdef QUICK_SPRITES
 	if(CONTROL1 & 0x10) {
 		sprite0_hit_check();
@@ -48,6 +51,12 @@ static INLINE void drawpixel()
 #else
 	#error QUICK_SPRITES must be defined.
 #endif
+
+	//apply color emphasis
+	*dest |= nes->ppu.control1 & 0xE0;
+
+	//output pixel to the renderer
+	video_updatepixel(SCANLINE,pos,*dest);
 }
 
 static INLINE void quick_draw_sprite_line()

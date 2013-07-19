@@ -515,6 +515,20 @@ void video_updateline(int line,u8 *s)
 		blankline(line);
 }
 
+//this handles pixels coming directly from the nes engine
+void video_updatepixel(int line,int pixel,u8 s)
+{
+	int offset = (line * 256) + pixel;
+
+	nesscreen[offset] = s;
+	if(line >= 8 && line < 232) {
+		screen[offset] = palettecache32[s];
+	}
+	else {
+		screen[offset] = 0;
+	}
+}
+
 //this handles palette changes from the nes engine
 void video_updatepalette(u8 addr,u8 data)
 {

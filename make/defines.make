@@ -41,11 +41,11 @@ LD = gcc
 
 # compiler/linker flags for debug
 CFLAGS_DEBUG = -g
-LDFLAGS_DEBUG = 
+LDFLAGS_DEBUG =
 
 # compiler/linker flags for release
-CFLAGS_RELEASE = -O3 -funroll-loops -fomit-frame-pointer
-LDFLAGS_RELEASE = -s
+CFLAGS_RELEASE = -O2 -funroll-loops -fomit-frame-pointer
+LDFLAGS_RELEASE =
 
 # libraries for linking
 LIBS =

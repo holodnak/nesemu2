@@ -175,7 +175,7 @@ void video_endframe()
 	}
 }
 
-//this handles lines coming directly from the nes engine
+//this handles lines for gui/status messages
 void video_updateline(int line,u8 *s)
 {
 	u32 *dest = screen + (line * 256);
@@ -191,6 +191,20 @@ void video_updateline(int line,u8 *s)
 		for(i=0;i<256;i++) {
 			*dest++ = 0;
 		}
+	}
+}
+
+//this handles pixels coming directly from the nes engine
+void video_updatepixel(int line,int pixel,u8 s)
+{
+	int offset = (line * 256) + pixel;
+
+	nesscreen[offset] = s;
+	if(line >= 8 && line < 232) {
+		screen[offset] = palettecache32[s];
+	}
+	else {
+		screen[offset] = 0;
 	}
 }
 

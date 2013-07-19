@@ -446,7 +446,7 @@ static INLINE void scanline_visible()
 			fetch_pt1byte();
 			drawpixel();
 			inc_hscroll();
-			video_updateline(SCANLINE,nes->ppu.linebuffer);
+//			video_updateline(SCANLINE,nes->ppu.linebuffer);
 			inc_vscroll();
 			break;
 
@@ -570,6 +570,7 @@ static INLINE void scanline_startvblank()
 void ppu_step()
 {
 	int rendering = 0;
+	u8 color;
 	u32 addr;
 
 //blargg test debug output
@@ -582,15 +583,29 @@ void ppu_step()
 		}
 	}*/
 	if(SCANLINE < 240) {
+
+		//rendering is enabled
 		if(CONTROL1 & 0x18) {
 			scanline_visible();
 			rendering = 1;
 		}
+
+		//rendering is turned off
 		else {
-			if(LINECYCLES < 256)
-				nes->ppu.linebuffer[LINECYCLES] = 0;
-			else if(LINECYCLES == 256) {
-				video_updateline(SCANLINE,nes->ppu.linebuffer);
+
+			//visible pixels
+			if(LINECYCLES < 256) {
+
+				//palette index 0 (with emphasis bits)
+				color = nes->ppu.control1 & 0xE0;
+
+				//the 'background palette hack'
+				if((SCROLL & 0x3F00) == 0x3F00) {
+					color |= SCROLL & 0x1F;
+				}
+
+				//draw pixel
+				video_updatepixel(SCANLINE,LINECYCLES,color);
 			}
 		}
 	}

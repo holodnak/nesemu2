@@ -2,8 +2,20 @@
 
 .PHONY: all clean distclean
 
-all: $(TARGET)
-	strip $(TARGET)
+all: $(TARGET) hlefds nsfbios
+
+hlefds:
+	make -C ./resources/bios/hlefds/
+
+nsfbios:
+	make -C ./resources/bios/nsf/
+
+install: all
+	echo Installing for user into $(INSTALLPATH)
+	mkdir -p $(INSTALLPATH) $(INSTALLPATH)/bios $(INSTALLPATH)/palette
+	cp $(BIOSFILES) $(INSTALLPATH)/bios
+	cp $(PALETTEFILES) $(INSTALLPATH)/palette
+	cp $(XMLFILES) $(INSTALLPATH)
 
 clean:
 	rm -f $(OBJECTS) $(TARGET)

@@ -49,7 +49,7 @@ LDFLAGS_DEBUG =
 
 # compiler/linker flags for release
 CFLAGS_RELEASE = -O2 -funroll-loops -fomit-frame-pointer
-LDFLAGS_RELEASE =
+LDFLAGS_RELEASE = -s
 
 # libraries for linking
 LIBS =
@@ -61,3 +61,14 @@ LDFLAGS = $(LDFLAGS_$(BUILD))
 # resource compiler (win32 only)
 RC = windres
 RCFLAGS = --input-format=rc --output-format=coff
+
+# install variables
+BIOSPATH=resources/bios
+XMLPATH=resources/xml
+PALETTEPATH=resources/palettes
+
+BIOSFILES=$(BIOSPATH)/hlefds/hlefds.bin $(BIOSPATH)/nsf/nsfbios.bin
+XMLFILES=$(XMLPATH)/NesCarts.xml $(XMLPATH)/NesCarts2.xml
+PALETTEFILES=$(wildcard $(PALETTEPATH)/*.pal)
+
+INSTALLPATH=$(HOME)/.nesemu2

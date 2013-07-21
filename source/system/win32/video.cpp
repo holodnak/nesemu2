@@ -51,7 +51,10 @@ HINSTANCE ddrawdll;
 LPDIRECTDRAWCREATEEX DirectDrawCreateEx;
 #endif
 
-static u8 *screen = 0;
+static u8 *nesscreen = 0;
+static u16 *screen16;
+static u32 *screen32;
+static void *screen;
 static int screenw,screenh,screenbpp;
 static int screenscale;
 static u16 palette15[8][256];
@@ -76,8 +79,6 @@ static DDSURFACEDESC2 ddsd;
 static HMENU hMenu = 0;
 static RECT rect;
 
-static void (*drawline)(int,u8*) = 0;
-static void (*blankline)(int) = 0;
 static void (*updatepalette)(u32,u8) = 0;
 
 static void drawline1x_16(int line,u8 *src)
@@ -365,8 +366,12 @@ static int video_reinit()
 {
 	int i,ret;
 
+	if(nesscreen == 0)
+		nesscreen = (u8*)mem_alloc(256 * (240 + 16));
 	if(screen == 0)
-		screen = (u8*)mem_alloc(256 * (240 + 16));
+		screen = (u8*)mem_alloc(256 * (240 + 16) * 4);
+	screen16 = (u16*)screen;
+	screen32 = (u32*)screen;
 	filter = getfilterint(config_get_string("video.filter"));
 	screenscale = config_get_int("video.scale");
 	screenw = 256 * screenscale;
@@ -398,22 +403,10 @@ static int video_reinit()
 					screenbpp = 15;
 					updatepalette = updatepalette15;
 				}
-				drawline = drawline1x_16;
-				blankline = blankline1x_16;
-				if(screenscale == 2) {
-					drawline = drawline2x_16;
-					blankline = blankline2x_16;
-				}
 				break;
 			case 32:
 				screenbpp = 32;
 				updatepalette = updatepalette32;
-				drawline = drawline1x_32;
-				blankline = blankline1x_32;
-				if(screenscale == 2) {
-					drawline = drawline2x_32;
-					blankline = blankline2x_32;
-				}
 				break;
 			default:
 				MessageBox(hWnd,"Error detecting bits per pixel","nesemu2",MB_OK | MB_ICONERROR);
@@ -446,9 +439,15 @@ int video_init()
 
 void video_kill()
 {
+	if(nesscreen) {
+		mem_free(nesscreen);
+		nesscreen = 0;
+	}
 	if(screen) {
 		mem_free(screen);
 		screen = 0;
+		screen16 = 0;
+		screen32 = 0;
 	}
 	SAFE_RELEASE(lpDirectDrawClipper);
 	SAFE_RELEASE(lpSecondaryDDS);
@@ -478,7 +477,43 @@ void video_endframe()
 	RECT rect;
 	POINT pt = {0, 0};
 	u64 t;
+	int x,y,linesize;
+	u16 *s16,*d16;
+	u32 *s32,*d32;
 
+	//blit screen to surface
+	switch(screenbpp) {
+		case 8:
+		case 24:
+		default:
+			log_printf("video_endframe:  blitting unsupported bit depth: %d\n",screenbpp);
+			break;
+		case 15:
+		case 16:
+			linesize = pitch / 2;
+			s16 = screen16;
+			d16 = (u16*)((u8*)ddsd.lpSurface + surfoffset);
+			for(y=0;y<240;y++) {
+				for(x=0;x<256;x++) {
+					d16[x] = s16[x];
+				}
+				s16 += 256;
+				d16 += linesize;
+			}
+			break;
+		case 32:
+			linesize = pitch / 4;
+			s32 = screen32;
+			d32 = (u32*)((u8*)ddsd.lpSurface + surfoffset);
+			for(y=0;y<240;y++) {
+				for(x=0;x<256;x++) {
+					d32[x] = s32[x];
+				}
+				s32 += 256;
+				d32 += linesize;
+			}
+			break;
+	}
 	lpSecondaryDDS->Unlock(NULL);
 	GetClientRect(hWnd,&rect);
 	if((rect.right == 0) || (rect.bottom == 0))
@@ -501,31 +536,20 @@ void video_endframe()
 	}
 }
 
-//this handles lines coming directly from the nes engine
-void video_updateline(int line,u8 *s)
-{
-	if(line >= 240) {
-		log_printf("video_updateline:  trying to draw line out of range!  line %d is error!\n",line);
-		return;
-	}
-	memcpy(screen + (line * 256),s,256);
-	if(line >= 8 && line < 232)
-		drawline(line,s);
-	else
-		blankline(line);
-}
-
 //this handles pixels coming directly from the nes engine
 void video_updatepixel(int line,int pixel,u8 s)
 {
 	int offset = (line * 256) + pixel;
 
 	nesscreen[offset] = s;
-	if(line >= 8 && line < 232) {
-		screen[offset] = palettecache32[s];
-	}
-	else {
-		screen[offset] = 0;
+	switch(screenbpp) {
+		case 15:
+		case 16:
+			screen16[offset] = palettecache16[s];
+			break;
+		case 32:
+			screen32[offset] = palettecache32[s];
+			break;
 	}
 }
 
@@ -559,7 +583,7 @@ extern "C" void video_resize()
 
 u8 *video_getscreen()
 {
-	return(screen);
+	return(nesscreen);
 }
 
 extern "C" int video_zapperhit(int x,int y)
@@ -568,7 +592,8 @@ extern "C" int video_zapperhit(int x,int y)
 	palentry_t *e;
 	u8 color;
 
-	color = palettecache[screen[x + y * 256]];
+	//todo:  this doesnt seem correct...nesscreen value range 0-FF...
+	color = palettecache[nesscreen[x + y * 256]];
 	e = &palette->pal[(color >> 5) & 7][color & 0x1F];
 	ret += (int)(e->r * 0.299);
 	ret += (int)(e->g * 0.587);

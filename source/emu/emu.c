@@ -129,7 +129,7 @@ int emu_addsubsystem(char *name,initfunc_t init,killfunc_t kill)
 int emu_mainloop()
 {
 	u8 *line = (u8*)mem_alloc(512);
-	int i;
+	int i,p;
 	u64 t,total,frames;
 
 	//initialize the palette in case the rom isnt loaded first
@@ -153,7 +153,8 @@ int emu_mainloop()
 		}
 		else {
 			for(i=0;i<240;i++) {
-				video_updateline(i,line);
+				for(p=0;p<256;p++)
+					video_updatepixel(i,p,line[p]);
 			}
 		}
 		video_endframe();

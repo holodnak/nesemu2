@@ -18,89 +18,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <string.h>
-#include "emu/commands.h"
-#include "misc/log.h"
-#include "misc/memutil.h"
+#include "mappers/mapperinc.h"
+#include "mappers/chips/latch.h"
 
-#define COMMAND_START	static command_t commands[] = {
-#define COMMAND(n)		{"" #n "", command_ ## n},
-#define COMMAND_END		{0,0}};
-
-typedef int (*cmdfunc_t)(int argc,char **argv);
-
-typedef struct command_s {
-	char *name;
-	cmdfunc_t func;
-} command_t;
-
-int command_help(int,char**);
-
-COMMAND_START
-	COMMAND(help)
-	COMMAND(mappers)
-	COMMAND(set)
-	COMMAND(unset)
-	COMMAND(quit)
-	COMMAND(load)
-	COMMAND(unload)
-	COMMAND(reset)
-	COMMAND(hardreset)
-	COMMAND(readcpu)
-	COMMAND(writecpu)
-	COMMAND(readppu)
-COMMAND_END
-
-COMMAND_FUNC(help)
+static void sync()
 {
-	command_t *c = commands;
-
-	log_printf("available commands:\n\n   ");
-	for(c=commands;c->name;c++) {
-		log_printf("%s ",c->name);
-	}
-	return(0);
+	mem_setprg32(8,latch_data);
+//	mem_setchr8(0,latch_data >> 2);
 }
 
-int command_init()
+static void reset(int hard)
 {
-	return(0);
+	latch_reset(sync,hard);
 }
 
-void command_kill()
-{
-
-}
-
-int command_execute(char *s)
-{
-	int i,argc = 0;
-	char *argv[64];		//not more than 64 args!
-	char *str;
-
-	//eat whitespace in front
-	while(*s == ' ') {
-		s++;
-	}
-	str = mem_strdup(s);
-
-	//split up the command line (needs improvement)
-	argv[argc] = strtok(str," \t");
-	while(argv[argc] != 0) {
-		argv[++argc] = strtok(0," \t");
-	}
-
-	//try to execute the command
-	for(i=0;commands[i].name;i++) {
-		if(strcmp(argv[0],commands[i].name) == 0) {
-			commands[i].func(argc,argv);
-			mem_free(str);
-			return(0);
-		}
-	}
-
-	//bad command or file name!
-	log_printf("invalid command '%s'\n",argv[0]);
-	mem_free(str);
-	return(1);
-}
+MAPPER(B_SUBOR_STUDYGAME,reset,0,0,latch_state);

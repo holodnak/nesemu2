@@ -145,6 +145,7 @@ enum boardid_e {
 	B_UNL_RACERMATE,
 	B_UNL_UY,
 	B_UNL_SUPERLIONKING,
+	B_UNL_BITCORP,
 
 	//colordreams
 	B_COLORDREAMS,
@@ -195,6 +196,9 @@ enum boardid_e {
 	B_SA_72007,
 	B_SA_72008,
 	B_SA_0161M,
+
+	//subor
+	B_SUBOR_STUDYGAME,
 
 	//camerica
 	B_CAMERICA_BF9093,

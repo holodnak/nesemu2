@@ -5,10 +5,10 @@
 all: $(TARGET) hlefds nsfbios
 
 hlefds:
-	make -C ./resources/bios/hlefds/
+	+$(MAKE) -C ./resources/bios/hlefds/
 
 nsfbios:
-	make -C ./resources/bios/nsf/
+	+$(MAKE) -C ./resources/bios/nsf/
 
 install: all
 	echo Installing for user into $(INSTALLPATH)

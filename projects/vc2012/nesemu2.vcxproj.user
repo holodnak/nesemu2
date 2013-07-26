@@ -29,7 +29,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">
     <LocalDebuggerWorkingDirectory>..\..\test</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>high-hopes.nes</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>smbdh.nes</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">
     <LocalDebuggerCommandArguments>smbdh.nes</LocalDebuggerCommandArguments>

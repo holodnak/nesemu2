@@ -1041,6 +1041,9 @@
     <ClCompile Include="..\..\source\mappers\boards\nintendo\pal_zz.c">
       <Filter>Source Files\mappers\boards\nintendo</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\unl\bitcorp.c">
+      <Filter>Source Files\mappers\boards\other\unl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

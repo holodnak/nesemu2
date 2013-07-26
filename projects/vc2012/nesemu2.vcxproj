@@ -135,7 +135,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>D:\Development\zlib-1.2.7;D:\Development\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);QUICK_SPRITES;ACCURATE_SPRITE0;CPU_UNDOC;MATTAPU</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);QUICK_SPRITES;CPU_UNDOC</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -216,7 +216,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);QUICK_SPRITES;ACCURATE_SPRITE0;CPU_UNDOC;MATTAPU</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);QUICK_SPRITES;CPU_UNDOC</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -353,6 +353,7 @@
     <ClCompile Include="..\..\source\mappers\boards\other\nitra.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\opencorp.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\rumblestation.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\unl\bitcorp.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\h2288.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\racermate.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\superlionking.c" />

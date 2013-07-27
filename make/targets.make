@@ -2,7 +2,9 @@
 
 .PHONY: all clean distclean
 
-all: $(TARGET) hlefds nsfbios
+all: $(TARGET)
+
+resources: hlefds nsfbios
 
 hlefds:
 	+$(MAKE) -C ./resources/bios/hlefds/
@@ -10,15 +12,24 @@ hlefds:
 nsfbios:
 	+$(MAKE) -C ./resources/bios/nsf/
 
-install: all
-	echo Installing for user into $(INSTALLPATH)
-	mkdir -p $(INSTALLPATH) $(INSTALLPATH)/bios $(INSTALLPATH)/palette
-	cp $(BIOSFILES) $(INSTALLPATH)/bios
-	cp $(PALETTEFILES) $(INSTALLPATH)/palette
-	cp $(XMLFILES) $(INSTALLPATH)
+install: all resources
+	@echo Installing nesemu2 into $(INSTALLPATH)
+	cp $(TARGET) $(INSTALLPATH)
+	@echo Installing common data into $(DATAPATH)
+	mkdir -p $(DATAPATH)/bios $(DATAPATH)/palette $(DATAPATH)/xml
+	cp $(BIOSFILES) $(DATAPATH)/bios
+	cp $(PALETTEFILES) $(DATAPATH)/palette
+	cp $(XMLFILES) $(DATAPATH)/xml
+
+uninstall:
+	@echo Removing nesemu2 from $(INSTALLPATH) and nesemu2 data from $(DATAPATH)
+	rm -f $(INSTALLPATH)/$(TARGET)
+	rm -rf $(DATAPATH)
 
 clean:
 	rm -f $(OBJECTS) $(TARGET)
+	+$(MAKE) -C ./resources/bios/hlefds/ clean
+	+$(MAKE) -C ./resources/bios/nsf/ clean
 
 distclean: clean
 	rm -f $(TRASHFILES)

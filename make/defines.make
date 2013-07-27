@@ -71,4 +71,8 @@ BIOSFILES=$(BIOSPATH)/hlefds/hlefds.bin $(BIOSPATH)/nsf/nsfbios.bin
 XMLFILES=$(XMLPATH)/NesCarts.xml $(XMLPATH)/NesCarts2.xml
 PALETTEFILES=$(wildcard $(PALETTEPATH)/*.pal)
 
-INSTALLPATH=$(HOME)/.nesemu2
+# path to install the executable
+INSTALLPATH=/usr/bin
+
+# path to install nesemu2 data (bios, xml, etc)
+DATAPATH=/usr/share/nesemu2

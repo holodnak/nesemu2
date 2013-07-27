@@ -195,7 +195,8 @@ static void write(u32 addr,u8 data)
 		//fds control
 		case 0x4025:
 			clearirq(IRQ_DISK);
-			mem_setmirroring(((data & 8) >> 3) ^ 1);
+			mirror = ((data & 8) >> 3) ^ 1;
+			mem_setmirroring(mirror);
 			if(diskside == 0xFF)
 				break;
 			if((data & 0x40) == 0) {
@@ -336,9 +337,20 @@ static void state(int mode,u8 *data)
 		newdiskside = diskside;
 		diskside = 0xFF;
 	}
-	STATE_U16(irqcounter);
+	STATE_INT(diskside);
+	STATE_U8(mirror);
+	STATE_U8(diskread);
+	STATE_U8(writeskip);
+	STATE_U8(diskirq);
+	STATE_U8(timerirq);
 	STATE_U8(irqenable);
-	STATE_U8(diskside);
+	STATE_U8(ioenable);
+	STATE_U8(control);
+	STATE_U8(status);
+	STATE_U16(irqcounter);
+	STATE_U16(irqlatch);
+	STATE_INT(diskaddr);
+	STATE_INT(diskflip);
 	sync();
 }
 

@@ -172,17 +172,20 @@ static vars_t *config_get_defaults()
 
 #ifdef WIN32
 	vars_set_string(ret,F_CONFIG,"path.data",						"%exepath%/data");
+	vars_set_string(ret,F_CONFIG,"path.user",						"%path.data%");
 #else
-	vars_set_string(ret,F_CONFIG,"path.data",						"%home%/.nesemu2");
+	vars_set_string(ret,F_CONFIG,"path.data",						"/usr/share/nesemu2");
+	vars_set_string(ret,F_CONFIG,"path.user",						"%home%/.nesemu2");
 #endif
 
-	vars_set_string(ret,F_CONFIG,"path.roms",						"%path.data%/roms");
 	vars_set_string(ret,F_CONFIG,"path.bios",						"%path.data%/bios");
-	vars_set_string(ret,F_CONFIG,"path.save",						"%path.data%/save");
-	vars_set_string(ret,F_CONFIG,"path.state",					"%path.data%/state");
 	vars_set_string(ret,F_CONFIG,"path.patch",					"%path.data%/patch");
 	vars_set_string(ret,F_CONFIG,"path.palette",					"%path.data%/palette");
-	vars_set_string(ret,F_CONFIG,"path.cheat",					"%path.data%/cheat");
+	vars_set_string(ret,F_CONFIG,"path.xml",						"%path.data%/xml");
+
+	vars_set_string(ret,F_CONFIG,"path.save",						"%path.user%/save");
+	vars_set_string(ret,F_CONFIG,"path.state",					"%path.user%/state");
+	vars_set_string(ret,F_CONFIG,"path.cheat",					"%path.user%/cheat");
 
 	vars_set_string(ret,F_CONFIG,"palette.source",				"generator");
 	vars_set_int   (ret,F_CONFIG,"palette.hue",					-15);
@@ -192,15 +195,17 @@ static vars_t *config_get_defaults()
 	vars_set_string(ret,F_CONFIG,"nes.gamegenie.bios",			"genie.rom");
 	vars_set_int   (ret,F_CONFIG,"nes.gamegenie.enabled",		0);
 
-	vars_set_string(ret,F_CONFIG,"nes.fds.bios",					"disksys.rom");
+	vars_set_string(ret,F_CONFIG,"nes.fds.bios",					"hlefds.bin");
 	vars_set_int   (ret,F_CONFIG,"nes.fds.hle",					1);
+
+	vars_set_string(ret,F_CONFIG,"nes.nsf.bios",					"nsfbios.bin");
 
 	vars_set_string(ret,F_CONFIG,"nes.region",					"ntsc");
 	vars_set_int   (ret,F_CONFIG,"nes.log_unhandled_io",		0);
 	vars_set_int   (ret,F_CONFIG,"nes.pause_on_load",			0);
 
 	vars_set_int   (ret,F_CONFIG,"cartdb.enabled",				1);
-	vars_set_string(ret,F_CONFIG,"cartdb.filename",				"%path.data%/NesCarts.xml;%path.data%/NesCarts2.xml");
+	vars_set_string(ret,F_CONFIG,"cartdb.filename",				"%path.xml%/NesCarts.xml;%path.xml%/NesCarts2.xml");
 
 	vars_set_string(ret,0,"version",VERSION);
 	return(ret);
@@ -236,7 +241,7 @@ int config_init()
 		var_set_string("home",str);
 
 	//make the directories
-	makepath(config_get_eval_string(tmp,"path.data"));
+	makepath(config_get_eval_string(tmp,"path.user"));
 	makepath(config_get_eval_string(tmp,"path.save"));
 	makepath(config_get_eval_string(tmp,"path.state"));
 	makepath(config_get_eval_string(tmp,"path.cheat"));

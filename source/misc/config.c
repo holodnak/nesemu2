@@ -138,6 +138,7 @@ static int findconfig(char *dest)
 static vars_t *config_get_defaults()
 {
 	vars_t *ret = vars_create();
+	char *str;
 
 	vars_set_int   (ret,F_CONFIG,"video.framelimit",			1);
 	vars_set_int   (ret,F_CONFIG,"video.fullscreen",			0);
@@ -208,13 +209,16 @@ static vars_t *config_get_defaults()
 	vars_set_string(ret,F_CONFIG,"cartdb.filename",				"%path.xml%/NesCarts.xml;%path.xml%/NesCarts2.xml");
 
 	vars_set_string(ret,0,"version",VERSION);
+	vars_set_string(ret,0,"exepath",exepath);
+	if((str = getenv("HOME")) != 0)
+		vars_set_string(ret,0,"home",str);
+
 	return(ret);
 }
 
 int config_init()
 {
 	vars_t *v;
-	char *str;
 	char tmp[1024];
 
 	//find configuration file
@@ -234,11 +238,6 @@ int config_init()
 		//destroy the loaded vars
 		vars_destroy(v);
 	}
-
-	//kludges, sort of
-	var_set_string("exepath",exepath);
-	if((str = getenv("HOME")) != 0)
-		var_set_string("home",str);
 
 	//make the directories
 	makepath(config_get_eval_string(tmp,"path.user"));

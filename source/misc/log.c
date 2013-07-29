@@ -36,7 +36,7 @@
 #define LOGFILENAME "nesemu2.log"
 
 static FILE *logfd = 0;
-static char logfilename[MAX_PATH] = LOGFILENAME;
+static char logfilename[MAX_PATH] = "";
 static void (*loghook)(char*) = 0;
 static history_t history = {0,0};
 
@@ -52,8 +52,8 @@ int log_init()
 	//clear the string
 	memset(logfilename,0,MAX_PATH);
 
-	//parse the bios path
-	config_get_eval_string(logfilename,"path.data");
+	//parse the log path
+	config_get_eval_string(logfilename,"path.user");
 
 	//append the path seperator
 	logfilename[strlen(logfilename)] = PATH_SEPERATOR;

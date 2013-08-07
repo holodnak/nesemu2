@@ -56,7 +56,7 @@ SOURCE_SYSTEM_SDL_WIN32 = source/system/sdl/win32/SDL_win32_main.c source/system
 SOURCE_SYSTEM_SDL_LINUX = source/system/linux/stricmp.c
 
 # sdl/osx system files
-SOURCE_SYSTEM_SDL_OSX = source/system/sdl/osx/SDLmain.o
+SOURCE_SYSTEM_SDL_OSX = source/system/linux/stricmp.c source/system/sdl/osx/SDLMain.o
 
 # common system files
 SOURCE_SYSTEM_COMMON = source/system/common/filters.c
@@ -100,7 +100,7 @@ endif
 
 ifeq ($(OSTARGET),OSX)
 	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_OSX) $(SOURCE_SYSTEM_COMMON)
-	LIBS += -lSDL
+	LIBS += -framework SDL -framework cocoa
 	TARGET = $(OUTPUT)
 endif
 

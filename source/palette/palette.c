@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "misc/memutil.h"
+#include "misc/strutil.h"
 #include "misc/log.h"
 #include "misc/config.h"
 #include "palette/palette.h"
@@ -117,7 +118,7 @@ int palette_init()
 	config_get_eval_string(file,"path.palette");
 
 	//append the path seperator
-	file[strlen(file)] = PATH_SEPERATOR;
+	str_appendchar(file,PATH_SEPERATOR);
 
 	//append the bios filename
 	strcat(file,config_get_string("palette.filename"));

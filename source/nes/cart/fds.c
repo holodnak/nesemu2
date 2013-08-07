@@ -21,6 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "misc/memutil.h"
+#include "misc/strutil.h"
 #include "misc/log.h"
 #include "misc/config.h"
 #include "misc/paths.h"
@@ -74,7 +75,7 @@ int cart_load_fds(cart_t *ret,memfile_t *file)
 	config_get_eval_string(biosfile,"path.bios");
 
 	//append the path seperator
-	biosfile[strlen(biosfile)] = PATH_SEPERATOR;
+	str_appendchar(biosfile,PATH_SEPERATOR);
 
 	//append the bios filename
 	strcat(biosfile,config_get_string("nes.fds.bios"));

@@ -25,6 +25,7 @@
 #include "nes/state/state.h"
 #include "mappers/mapperinc.h"
 #include "misc/memutil.h"
+#include "misc/strutil.h"
 #include "misc/config.h"
 #include "misc/log.h"
 #include "misc/paths.h"
@@ -206,7 +207,7 @@ int genie_load()
 		config_get_eval_string(biosfile,"path.bios");
 
 		//append the path seperator
-		biosfile[strlen(biosfile)] = PATH_SEPERATOR;
+		str_appendchar(biosfile,PATH_SEPERATOR);
 
 		//append the bios filename
 		strcat(biosfile,config_get_string("nes.gamegenie.bios"));

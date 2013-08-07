@@ -25,6 +25,7 @@
 #include "misc/paths.h"
 #include "misc/config.h"
 #include "misc/memutil.h"
+#include "misc/strutil.h"
 #include "mappers/mapperid.h"
 
 static int loadbios(cart_t *ret,char *filename)
@@ -107,7 +108,7 @@ int cart_load_nsf(cart_t *ret,memfile_t *file)
 	config_get_eval_string(biosfile,"path.bios");
 
 	//append the path seperator
-	biosfile[strlen(biosfile)] = PATH_SEPERATOR;
+	str_appendchar(biosfile,PATH_SEPERATOR);
 
 	//append the bios filename
 	strcat(biosfile,"nsfbios.bin");

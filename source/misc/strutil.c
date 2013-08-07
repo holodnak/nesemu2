@@ -41,3 +41,12 @@ char *str_eatwhitespace(char *str)
 		*p-- = 0;
 	return(ret);
 }
+
+//append a single char to the end of a string
+void str_appendchar(char *str,char ch)
+{
+	int n = strlen(str);
+
+	str[n] = ch;
+	str[n+1] = 0;
+}

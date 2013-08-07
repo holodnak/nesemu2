@@ -25,6 +25,7 @@
 #include "misc/log.h"
 #include "misc/config.h"
 #include "misc/paths.h"
+#include "misc/strutil.h"
 #include "misc/history.h"
 #include "system/system.h"
 #include "version.h"
@@ -56,7 +57,7 @@ int log_init()
 	config_get_eval_string(logfilename,"path.user");
 
 	//append the path seperator
-	logfilename[strlen(logfilename)] = PATH_SEPERATOR;
+	str_appendchar(logfilename,PATH_SEPERATOR);
 
 	//append the bios filename
 	strcat(logfilename,LOGFILENAME);

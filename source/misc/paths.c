@@ -22,6 +22,7 @@
 #include <string.h>
 #include "misc/paths.h"
 #include "misc/memutil.h"
+#include "misc/strutil.h"
 #include "misc/config.h"
 #include "misc/log.h"
 #include "emu/emu.h"
@@ -49,7 +50,7 @@ void paths_makestatefilename(char *romfilename,char *dest,int len)
 	config_get_eval_string(dest,"path.state");
 
 	//append the path seperator
-	dest[strlen(dest)] = PATH_SEPERATOR;
+	str_appendchar(dest,PATH_SEPERATOR);
 
 	//normalize the path seperators
 	paths_normalize(tmp);

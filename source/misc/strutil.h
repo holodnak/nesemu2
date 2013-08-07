@@ -22,5 +22,6 @@
 #define __strutil_h__
 
 char *str_eatwhitespace(char *str);
+void str_appendchar(char *str,char ch);
 
 #endif

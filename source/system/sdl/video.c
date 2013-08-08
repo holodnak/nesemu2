@@ -44,6 +44,7 @@ static u32 *screen = 0;
 static u8 *nesscreen = 0;
 static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
 static filter_t *filter;
+static int rshift,gshift,bshift;
 
 enum filters_e {
 	F_NONE,
@@ -88,6 +89,17 @@ static int find_drawfunc()
 	return(1);
 }
 
+static print_surface_info(SDL_Surface *s)
+{
+	SDL_PixelFormat *pf = s->format;
+
+	log_printf("print_surface_info:  sdl surface info:\n");
+	log_printf("  bits per pixel:  %d\n",pf->BitsPerPixel);
+	log_printf("  red:    mask:  %08X    shift:  %d\n",pf->Rmask,pf->Rshift);
+	log_printf("  green:  mask:  %08X    shift:  %d\n",pf->Gmask,pf->Gshift);
+	log_printf("  blue:   mask:  %08X    shift:  %d\n",pf->Bmask,pf->Bshift);
+}
+
 int video_init()
 {
 	int i;
@@ -127,6 +139,10 @@ int video_init()
 	surface = SDL_SetVideoMode(screenw,screenh,screenbpp,flags);
 	SDL_WM_SetCaption("nesemu2",NULL);
 	SDL_ShowCursor(0);
+	print_surface_info(surface);
+	rshift = surface->format->Rshift;
+	gshift = surface->format->Gshift;
+	bshift = surface->format->Bshift;
 
 	//allocate memory for temp screen buffer
 	screen = (u32*)mem_realloc(screen,256 * (240 + 16) * (screenbpp / 8) * 4);
@@ -231,7 +247,7 @@ void video_setpalette(palette_t *p)
 	for(j=0;j<8;j++) {
 		for(i=0;i<256;i++) {
 			e = &p->pal[j][i & 0x3F];
-			palette32[j][i] = (e->r << 16) | (e->g << 8) | (e->b << 0);
+			palette32[j][i] = (e->r << rshift) | (e->g << gshift) | (e->b << bshift);
 		}
 	}
 }

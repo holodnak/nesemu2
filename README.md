@@ -2,6 +2,7 @@ nesemu2
 =======
   * Cycle accurate cross platform Nintendo NES emulator for Win32/Linux/OSX
   * Copyright 2013 James Holodnak
+  * Visit the official website at http://www.nesemu2.com/
 
 Building with make
 ------------------

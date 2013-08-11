@@ -97,7 +97,7 @@ void draw3x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h)
 
 void draw4x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h)
 {
-	u32 x,y;
+	u32 x,y,z;
 
 	destp /= 4;
 	srcp /= 4;
@@ -105,22 +105,55 @@ void draw4x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h)
 		for(x=0;x<w;x++) {
 			u32 pixel = src[x + (y * srcp)];
 
-			dest[x*4+0 + ((y*4+0) * destp)] = pixel;
-			dest[x*4+1 + ((y*4+0) * destp)] = pixel;
-			dest[x*4+2 + ((y*4+0) * destp)] = pixel;
-			dest[x*4+3 + ((y*4+0) * destp)] = pixel;
-			dest[x*4+0 + ((y*4+1) * destp)] = pixel;
-			dest[x*4+1 + ((y*4+1) * destp)] = pixel;
-			dest[x*4+2 + ((y*4+1) * destp)] = pixel;
-			dest[x*4+3 + ((y*4+1) * destp)] = pixel;
-			dest[x*4+0 + ((y*4+2) * destp)] = pixel;
-			dest[x*4+1 + ((y*4+2) * destp)] = pixel;
-			dest[x*4+2 + ((y*4+2) * destp)] = pixel;
-			dest[x*4+3 + ((y*4+2) * destp)] = pixel;
-			dest[x*4+0 + ((y*4+3) * destp)] = pixel;
-			dest[x*4+1 + ((y*4+3) * destp)] = pixel;
-			dest[x*4+2 + ((y*4+3) * destp)] = pixel;
-			dest[x*4+3 + ((y*4+3) * destp)] = pixel;
+			for(z=0;z<4;z++) {
+				dest[x*4+0 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+1 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+2 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+3 + ((y*4+z) * destp)] = pixel;
+			}
+		}
+	}
+}
+
+void draw5x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h)
+{
+	u32 x,y,z;
+
+	destp /= 4;
+	srcp /= 4;
+	for(y=0;y<h;y++) {
+		for(x=0;x<w;x++) {
+			u32 pixel = src[x + (y * srcp)];
+
+			for(z=0;z<5;z++) {
+				dest[x*4+0 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+1 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+2 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+3 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+4 + ((y*4+z) * destp)] = pixel;
+			}
+		}
+	}
+}
+
+void draw6x(u32 *dest,u32 destp,u32 *src,u32 srcp,u32 w,u32 h)
+{
+	u32 x,y,z;
+
+	destp /= 4;
+	srcp /= 4;
+	for(y=0;y<h;y++) {
+		for(x=0;x<w;x++) {
+			u32 pixel = src[x + (y * srcp)];
+
+			for(z=0;z<6;z++) {
+				dest[x*4+0 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+1 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+2 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+3 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+4 + ((y*4+z) * destp)] = pixel;
+				dest[x*4+5 + ((y*4+z) * destp)] = pixel;
+			}
 		}
 	}
 }

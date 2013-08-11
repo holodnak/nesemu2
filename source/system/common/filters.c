@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <string.h>
 #include "system/common/filters.h"
 #include "system/common/filters/draw/draw.h"
 #include "system/common/filters/interpolate/interpolate.h"
@@ -51,3 +52,25 @@ FILTER_END()
 //	FILTER_MODE(3,ntsc3x)
 //	FILTER_MODE(4,ntsc4x)
 //FILTER_END()
+
+int filter_get_int(char *str)
+{
+	if(stricmp("interpolate",str) == 0)	return(F_INTERPOLATE);
+	if(stricmp("scale",str) == 0)			return(F_SCALE);
+	if(stricmp("ntsc",str) == 0)			return(F_NTSC);
+	return(F_NONE);
+}
+
+filter_t *filter_get(int flt)
+{
+	filter_t *ret = 0;
+
+	switch(flt) {
+		default:
+		case F_NONE:			ret = &filter_draw;				break;
+		case F_INTERPOLATE:	ret = &filter_interpolate;		break;
+		case F_SCALE:			ret = &filter_scale;				break;
+//		case F_NTSC:			ret = &filter_ntsc;				break;
+	}
+	return(ret);
+}

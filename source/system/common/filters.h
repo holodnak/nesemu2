@@ -47,9 +47,24 @@ typedef struct filter_s {
 
 } filter_t;
 
+enum filters_e {
+
+	//filters
+	F_DRAW = 0,
+	F_INTERPOLATE,
+	F_SCALE,
+	F_NTSC,
+
+	//clones
+	F_NONE = F_DRAW,
+};
+
 FILTER_DECL(draw);
 FILTER_DECL(interpolate);
 FILTER_DECL(scale);
 FILTER_DECL(ntsc);
+
+int filter_get_int(char *str);
+filter_t *filter_get(int flt);
 
 #endif

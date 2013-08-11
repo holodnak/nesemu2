@@ -31,11 +31,20 @@
 #include "system/common/filters.h"
 
 static SDL_Surface *surface = 0;
-static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;// | SDL_NOFRAME;
+static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;
 static int screenw,screenh,screenbpp;
 static int screenscale;
-static u32 palette32[8][256];
+
+//palette data fed to video system
+static u16 palette15[8][256];		//15 bit color
+static u16 palette16[8][256];		//16 bit color
+static u32 palette32[8][256];		//32 bit color
+
+//caches of all available colors
+static u16 palettecache16[256];
 static u32 palettecache32[256];
+
+//actual values written to nes palette ram
 static u8 palettecache[32];
 static double interval = 0;
 static u64 lasttime = 0;
@@ -44,34 +53,9 @@ static u32 *screen = 0;
 static u8 *nesscreen = 0;
 static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
 static filter_t *filter;
+
 static int rshift,gshift,bshift;
-
-enum filters_e {
-	F_NONE,
-	F_INTERPOLATE,
-	F_SCALE,
-	F_NTSC,
-};
-
-static int get_filter_int(char *str)
-{
-	if(stricmp("interpolate",str) == 0)	return(F_INTERPOLATE);
-	if(stricmp("scale",str) == 0)			return(F_SCALE);
-	if(stricmp("ntsc",str) == 0)			return(F_NTSC);
-	return(F_NONE);
-}
-
-static filter_t *get_filter(int flt)
-{
-	filter_t *ret = &filter_draw;
-
-	switch(flt) {
-		case F_INTERPOLATE:	ret = &filter_interpolate;		break;
-		case F_SCALE:			ret = &filter_scale;				break;
-//		case F_NTSC:			ret = &filter_ntsc;				break;
-	}
-	return(ret);
-}
+static int rloss,gloss,bloss;
 
 static int find_drawfunc()
 {
@@ -89,7 +73,7 @@ static int find_drawfunc()
 	return(1);
 }
 
-static print_surface_info(SDL_Surface *s)
+static get_surface_info(SDL_Surface *s)
 {
 	SDL_PixelFormat *pf = s->format;
 
@@ -98,6 +82,76 @@ static print_surface_info(SDL_Surface *s)
 	log_printf("  red:    mask:  %08X    shift:  %d\n",pf->Rmask,pf->Rshift);
 	log_printf("  green:  mask:  %08X    shift:  %d\n",pf->Gmask,pf->Gshift);
 	log_printf("  blue:   mask:  %08X    shift:  %d\n",pf->Bmask,pf->Bshift);
+
+	rshift = pf->Rshift;
+	gshift = pf->Gshift;
+	bshift = pf->Bshift;
+	rloss = pf->Rloss;
+	gloss = pf->Gloss;
+	bloss = pf->Bloss;
+}
+
+static int absolute_value(int v)
+{
+	return((v < 0) ? (0 - v) : v);
+}
+
+int find_video_mode(int scale,int flags,int *w,int *h)
+{
+	SDL_Rect **modes,*mode;
+	int i,wantw,wanth;
+
+	modes = SDL_ListModes(NULL,flags);
+	*w = *h = 0;
+
+	//if nothing returned
+	if(modes == (SDL_Rect**)0) {
+		log_printf("find_video_mode:  fatal error:  no modes available\n");
+		return(1);
+	}
+
+	//see if any mode is available (windowed mode)
+	if(modes == (SDL_Rect**)-1) {
+		log_printf("find_video_mode:  all resolutions available\n");
+		*w = 256 * scale;
+		*h = 240 * scale;
+		return(0);
+	}
+
+	//output modes
+	log_printf("find_video_mode:  available modes:\n");
+	for(i=0;modes[i];i++) {
+		log_printf("find_video_mode:    %d x %d\n",modes[i]->w,modes[i]->h);
+	}
+
+	//calculate minimum wanted resolution
+	wantw = scale * 256;
+	wanth = scale * 240;
+
+	for(mode=0,i=0;modes[i];i++) {
+		if(modes[i]->w >= wantw && modes[i]->h >= wanth) {
+			if(mode == 0) {
+				mode = modes[i];
+				log_printf("find_video_mode:  first match = mode %d x %d\n",modes[i]->w,modes[i]->h);
+			}
+			else {
+				int diffw,diffh;
+
+				diffw = absolute_value(mode->w - modes[i]->w);
+				diffh = absolute_value(mode->h - modes[i]->h);
+				log_printf("find_video_mode:  mode %d x %d:  diffw = %d, diffh = %d\n",modes[i]->w,modes[i]->h,diffw,diffh);
+			}
+		}
+	}
+	return(0);
+}
+
+static int get_desktop_bpp()
+{
+	const SDL_VideoInfo *vi = SDL_GetVideoInfo();
+
+	log_printf("get_desktop_bpp:  current display mode is %d x %d, %d bpp\n",vi->current_w,vi->current_h,vi->vfmt->BitsPerPixel);
+	return(vi->vfmt->BitsPerPixel);
 }
 
 int video_init()
@@ -111,20 +165,28 @@ int video_init()
 	interval = (double)system_getfrequency() / 60.0f;
 	lasttime = system_gettick();
 
-	//clear palette cache
+	//clear palette caches
+	memset(palettecache16,0,256*sizeof(u16));
 	memset(palettecache32,0,256*sizeof(u32));
 
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
 	flags |= config_get_bool("video.fullscreen") ? SDL_FULLSCREEN : 0;
 	screenscale = config_get_int("video.scale");
-	screenbpp = 32;
 
-	if(flags & SDL_FULLSCREEN)
+	//fullscreen mode
+	if(flags & SDL_FULLSCREEN) {
 		screenscale = (screenscale < 2) ? 2 : screenscale;
+		screenbpp = 32;
+	}
 
-	i = get_filter_int(config_get_string("video.filter"));
-	filter = get_filter((screenscale == 1) ? F_NONE : i);
+	//windowed mode
+	else {
+		screenbpp = get_desktop_bpp();
+	}
+
+	i = filter_get_int(config_get_string("video.filter"));
+	filter = filter_get((screenscale == 1) ? F_NONE : i);
 
 	if(find_drawfunc() != 0) {
 		log_printf("video_init:  error finding appropriate draw func, using draw1x\n");
@@ -135,14 +197,20 @@ int video_init()
 	screenw = filter->minwidth / filter->minscale * screenscale;
 	screenh = filter->minheight / filter->minscale * screenscale;
 
+	//fullscreen mode
+{//	if(flags & SDL_FULLSCREEN) {
+		int w,h;
+
+		if(find_video_mode(screenscale,flags | SDL_FULLSCREEN,&w,&h) == 0) {
+			log_printf("found %d x %d\n",w,h);
+		}
+	}
+
 	//initialize surface/window
 	surface = SDL_SetVideoMode(screenw,screenh,screenbpp,flags);
 	SDL_WM_SetCaption("nesemu2",NULL);
 	SDL_ShowCursor(0);
-	print_surface_info(surface);
-	rshift = surface->format->Rshift;
-	gshift = surface->format->Gshift;
-	bshift = surface->format->Bshift;
+	get_surface_info(surface);
 
 	//allocate memory for temp screen buffer
 	screen = (u32*)mem_realloc(screen,256 * (240 + 16) * (screenbpp / 8) * 4);
@@ -238,6 +306,7 @@ void video_updatepalette(u8 addr,u8 data)
 	palettecache[addr] = data;
 }
 
+//must be called AFTER video_init
 void video_setpalette(palette_t *p)
 {
 	int i,j;

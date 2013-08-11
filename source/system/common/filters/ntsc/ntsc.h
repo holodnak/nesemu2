@@ -18,22 +18,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __video_h__
-#define __video_h__
+#ifndef __filter__ntsc_h__
+#define __filter__ntsc_h__
 
-#include "palette/palette.h"
+#include "types.h"
 
-int video_init();
-void video_kill();
-void video_startframe();
-void video_endframe();
-void video_updatepixel(int line,int pixel,u8 s);
-void video_updatepalette(u8 addr,u8 data);
-void video_setpalette(palette_t *p);
-int video_getwidth();
-int video_getheight();
-int video_getbpp();
-u8 *video_getscreen();
-u8 *video_getbasepalette();
+int ntsc_init();
+void ntsc_kill();
+void ntsc_palette_changed();
+void ntsc2x(void *dst,u32 dst_slice,void *src,u32 src_slice,u32 width,u32 height);
+void ntsc3x(void *dst,u32 dst_slice,void *src,u32 src_slice,u32 width,u32 height);
+void ntsc4x(void *dst,u32 dst_slice,void *src,u32 src_slice,u32 width,u32 height);
 
 #endif

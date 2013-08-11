@@ -23,6 +23,7 @@
 #include "system/common/filters/draw/draw.h"
 #include "system/common/filters/interpolate/interpolate.h"
 #include "system/common/filters/scale2x/scalebit.h"
+#include "system/common/filters/ntsc/ntsc.h"
 
 #define FILTER_START(name,minw,minh,mins)	filter_t filter_ ## name = { #name,minw,minh,mins, {
 #define FILTER_MODE(scale,func)				{scale,func},
@@ -47,11 +48,27 @@ FILTER_START(scale,512,480,2)
 	FILTER_MODE(4,scale4x)
 FILTER_END()
 
-//FILTER_START(ntsc,602,480,2)
-//	FILTER_MODE(2,ntsc2x)
-//	FILTER_MODE(3,ntsc3x)
-//	FILTER_MODE(4,ntsc4x)
-//FILTER_END()
+FILTER_START(ntsc,602,480,2)
+	FILTER_MODE(2,ntsc2x)
+	FILTER_MODE(3,ntsc3x)
+	FILTER_MODE(4,ntsc4x)
+FILTER_END()
+
+int filter_init()
+{
+	ntsc_init();
+	return(0);
+}
+
+void filter_kill()
+{
+	ntsc_kill();
+}
+
+void filter_palette_changed()
+{
+	ntsc_palette_changed();
+}
 
 int filter_get_int(char *str)
 {
@@ -70,7 +87,7 @@ filter_t *filter_get(int flt)
 		case F_NONE:			ret = &filter_draw;				break;
 		case F_INTERPOLATE:	ret = &filter_interpolate;		break;
 		case F_SCALE:			ret = &filter_scale;				break;
-//		case F_NTSC:			ret = &filter_ntsc;				break;
+		case F_NTSC:			ret = &filter_ntsc;				break;
 	}
 	return(ret);
 }

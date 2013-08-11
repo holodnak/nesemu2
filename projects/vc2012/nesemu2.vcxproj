@@ -653,6 +653,7 @@
     <ClCompile Include="..\..\source\system\common\filters.c" />
     <ClCompile Include="..\..\source\system\common\filters\draw\draw.c" />
     <ClCompile Include="..\..\source\system\common\filters\interpolate\interpolate.c" />
+    <ClCompile Include="..\..\source\system\common\filters\ntsc\ntsc.c" />
     <ClCompile Include="..\..\source\system\common\filters\scale2x\scale2x.c" />
     <ClCompile Include="..\..\source\system\common\filters\scale2x\scale3x.c" />
     <ClCompile Include="..\..\source\system\common\filters\scale2x\scalebit.c" />
@@ -858,6 +859,7 @@
     <ClInclude Include="..\..\source\system\common\filters\hq2x\hq3x.h" />
     <ClInclude Include="..\..\source\system\common\filters\hq2x\hq4x.h" />
     <ClInclude Include="..\..\source\system\common\filters\interpolate\interpolate.h" />
+    <ClInclude Include="..\..\source\system\common\filters\ntsc\ntsc.h" />
     <ClInclude Include="..\..\source\system\common\filters\scale2x\scale2x.h" />
     <ClInclude Include="..\..\source\system\common\filters\scale2x\scale3x.h" />
     <ClInclude Include="..\..\source\system\common\filters\scale2x\scalebit.h" />

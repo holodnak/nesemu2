@@ -247,6 +247,9 @@
     <Filter Include="Source Files\misc\slre">
       <UniqueIdentifier>{f05d4425-4722-4d74-b2db-ff6a446c8e7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\system\common\filters\ntsc">
+      <UniqueIdentifier>{906573c3-433e-4f39-89a7-bb68185084a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\system\sdl\input.c">
@@ -1044,6 +1047,9 @@
     <ClCompile Include="..\..\source\mappers\boards\other\unl\bitcorp.c">
       <Filter>Source Files\mappers\boards\other\unl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\system\common\filters\ntsc\ntsc.c">
+      <Filter>Source Files\system\common\filters\ntsc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">
@@ -1183,6 +1189,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\system\win32\resource.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\system\common\filters\ntsc\ntsc.h">
+      <Filter>Source Files\system\common\filters\ntsc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,13 +5,13 @@
 
 /* Uncomment to enable emphasis support and use a 512 color palette instead
 of the base 64 color palette. */
-#define NES_NTSC_EMPHASIS 1
+//#define NES_NTSC_EMPHASIS 1
 
 /* The following affect the built-in blitter only; a custom blitter can
 handle things however it wants. */
 
 /* Bits per pixel of output. Can be 15, 16, 32, or 24 (same as 32). */
-#define NES_NTSC_OUT_DEPTH 16
+#define NES_NTSC_OUT_DEPTH 32
 
 /* Type of input pixel values. You'll probably use unsigned short
 if you enable emphasis above. */

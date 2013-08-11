@@ -64,6 +64,9 @@ FILTER_DECL(interpolate);
 FILTER_DECL(scale);
 FILTER_DECL(ntsc);
 
+int filter_init();
+void filter_kill();
+void filter_palette_changed();
 int filter_get_int(char *str);
 filter_t *filter_get(int flt);
 

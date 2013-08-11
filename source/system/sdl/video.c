@@ -30,10 +30,14 @@
 #include "misc/config.h"
 #include "system/common/filters.h"
 
+//system related variables
 static SDL_Surface *surface = 0;
 static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;
 static int screenw,screenh,screenbpp;
 static int screenscale;
+
+//palette with emphasis applied
+static u8 palette[8][64 * 3];
 
 //palette data fed to video system
 static u16 palette15[8][256];		//15 bit color
@@ -46,14 +50,20 @@ static u32 palettecache32[256];
 
 //actual values written to nes palette ram
 static u8 palettecache[32];
+
+//for frame limiting
 static double interval = 0;
 static u64 lasttime = 0;
-static palette_t *palette = 0;
+
+//pointer to scree and copy of the nes screen
 static u32 *screen = 0;
 static u8 *nesscreen = 0;
+
+//draw function pointer and pointer to current video filter
 static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
 static filter_t *filter;
 
+//for correct colors
 static int rshift,gshift,bshift;
 static int rloss,gloss,bloss;
 
@@ -73,7 +83,7 @@ static int find_drawfunc()
 	return(1);
 }
 
-static get_surface_info(SDL_Surface *s)
+static void get_surface_info(SDL_Surface *s)
 {
 	SDL_PixelFormat *pf = s->format;
 
@@ -91,16 +101,18 @@ static get_surface_info(SDL_Surface *s)
 	bloss = pf->Bloss;
 }
 
+//return absolute value
 static int absolute_value(int v)
 {
 	return((v < 0) ? (0 - v) : v);
 }
 
-int find_video_mode(int scale,int flags,int *w,int *h)
+int find_video_mode(int wantw,int wanth,int flags,int *w,int *h)
 {
 	SDL_Rect **modes,*mode;
-	int i,wantw,wanth;
+	int i,diffw[2],diffh[2];
 
+	//get list of modes from sdl
 	modes = SDL_ListModes(NULL,flags);
 	*w = *h = 0;
 
@@ -113,8 +125,8 @@ int find_video_mode(int scale,int flags,int *w,int *h)
 	//see if any mode is available (windowed mode)
 	if(modes == (SDL_Rect**)-1) {
 		log_printf("find_video_mode:  all resolutions available\n");
-		*w = 256 * scale;
-		*h = 240 * scale;
+		*w = wantw;
+		*h = wanth;
 		return(0);
 	}
 
@@ -124,25 +136,30 @@ int find_video_mode(int scale,int flags,int *w,int *h)
 		log_printf("find_video_mode:    %d x %d\n",modes[i]->w,modes[i]->h);
 	}
 
-	//calculate minimum wanted resolution
-	wantw = scale * 256;
-	wanth = scale * 240;
-
+	//search for closest video mode
 	for(mode=0,i=0;modes[i];i++) {
 		if(modes[i]->w >= wantw && modes[i]->h >= wanth) {
 			if(mode == 0) {
 				mode = modes[i];
-				log_printf("find_video_mode:  first match = mode %d x %d\n",modes[i]->w,modes[i]->h);
 			}
 			else {
-				int diffw,diffh;
-
-				diffw = absolute_value(mode->w - modes[i]->w);
-				diffh = absolute_value(mode->h - modes[i]->h);
-				log_printf("find_video_mode:  mode %d x %d:  diffw = %d, diffh = %d\n",modes[i]->w,modes[i]->h,diffw,diffh);
+				diffw[0] = absolute_value(mode->w - wantw);
+				diffh[0] = absolute_value(mode->h - wanth);
+				diffw[1] = absolute_value(modes[i]->w - wantw);
+				diffh[1] = absolute_value(modes[i]->h - wanth);
+				if((diffw[1] + diffh[1]) < (diffw[0] + diffh[0])) {
+					mode = modes[i];
+				}
 			}
 		}
 	}
+
+	//if a mode was found set the return variables
+	if(mode) {
+		*w = mode->w;
+		*h = mode->h;
+	}
+
 	return(0);
 }
 
@@ -156,8 +173,6 @@ static int get_desktop_bpp()
 
 int video_init()
 {
-	int i;
-
 	if(nesscreen == 0)
 		nesscreen = (u8*)mem_alloc(256 * (240 + 16));
 
@@ -185,8 +200,11 @@ int video_init()
 		screenbpp = get_desktop_bpp();
 	}
 
-	i = filter_get_int(config_get_string("video.filter"));
-	filter = filter_get((screenscale == 1) ? F_NONE : i);
+	//initialize the video filters
+	filter_init();
+
+	//get pointer to video filter
+	filter = filter_get((screenscale == 1) ? F_NONE : filter_get_int(config_get_string("video.filter")));
 
 	if(find_drawfunc() != 0) {
 		log_printf("video_init:  error finding appropriate draw func, using draw1x\n");
@@ -194,15 +212,18 @@ int video_init()
 		drawfunc = filter->modes[0].draw32;
 	}
 
+	//calculate desired screen dimensions
 	screenw = filter->minwidth / filter->minscale * screenscale;
 	screenh = filter->minheight / filter->minscale * screenscale;
 
 	//fullscreen mode
-{//	if(flags & SDL_FULLSCREEN) {
+	if(flags & SDL_FULLSCREEN) {
 		int w,h;
 
-		if(find_video_mode(screenscale,flags | SDL_FULLSCREEN,&w,&h) == 0) {
-			log_printf("found %d x %d\n",w,h);
+		if(find_video_mode(screenw,screenh,flags | SDL_FULLSCREEN,&w,&h) == 0) {
+			screenw = w;
+			screenh = h;
+			log_printf("video_init:  best display mode:  %d x %d\n",w,h);
 		}
 	}
 
@@ -223,6 +244,7 @@ int video_init()
 
 void video_kill()
 {
+	filter_kill();
 	SDL_ShowCursor(1);
 	if(screen)
 		mem_free(screen);
@@ -312,61 +334,45 @@ void video_setpalette(palette_t *p)
 	int i,j;
 	palentry_t *e;
 
-	palette = p;
+	for(j=0;j<8;j++) {
+		for(i=0;i<64;i++) {
+			palette[j][(i * 3) + 0] = p->pal[j][i].r;
+			palette[j][(i * 3) + 1] = p->pal[j][i].g;
+			palette[j][(i * 3) + 2] = p->pal[j][i].b;
+		}
+	}
+
 	for(j=0;j<8;j++) {
 		for(i=0;i<256;i++) {
 			e = &p->pal[j][i & 0x3F];
 			palette32[j][i] = (e->r << rshift) | (e->g << gshift) | (e->b << bshift);
 		}
 	}
+
+	filter_palette_changed();
 }
 
-int video_getwidth()
-{
-	return(screenw);
-}
-
-int video_getheight()
-{
-	return(screenh);
-}
-
-int video_getbpp()
-{
-	return(screenbpp);
-}
-
-u8 *video_getscreen()
-{
-	return(nesscreen);
-}
+int video_getwidth()				{	return(screenw);			}
+int video_getheight()			{	return(screenh);			}
+int video_getbpp()				{	return(screenbpp);		}
+u8 *video_getscreen()			{	return(nesscreen);		}
+u8 *video_getpalette()			{	return(palette);			}
 
 int video_zapperhit(int x,int y)
 {
 	int ret = 0;
-	palentry_t *e;
+	u8 *e;
 	u8 color;
 
 	color = palettecache[nesscreen[x + y * 256]];
-	e = &palette->pal[(color >> 5) & 7][color & 0x1F];
-	ret += (int)(e->r * 0.299);
-	ret += (int)(e->g * 0.587);
-	ret += (int)(e->b * 0.114);
+	e = &palette[(color >> 5) & 7][(color & 0x3F) * 3];
+	ret += (int)(e[0] * 0.299f);
+	ret += (int)(e[1] * 0.587f);
+	ret += (int)(e[2] * 0.114f);
 	return((ret >= 0x40) ? 1 : 0);
 }
 
 //kludge-city!
-int video_getxoffset()
-{
-	return(0);
-}
-
-int video_getyoffset()
-{
-	return(0);
-}
-
-int video_getscale()
-{
-	return(screenscale);
-}
+int video_getxoffset()	{	return(0);	}
+int video_getyoffset()	{	return(0);	}
+int video_getscale()		{	return(screenscale);	}

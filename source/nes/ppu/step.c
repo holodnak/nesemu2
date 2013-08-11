@@ -600,7 +600,6 @@ static INLINE void scanline_startvblank()
 
 void ppu_step()
 {
-	u8 color;
 	u32 addr;
 
 //blargg test debug output

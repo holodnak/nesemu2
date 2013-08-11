@@ -1,5 +1,7 @@
-nesemu2 -- Cycle accurate nes emulator for Win32/Linux/OSX
-        -- Copyright 2013 James Holodnak
+nesemu2
+=======
+Cycle accurate nes emulator for Win32/Linux/OSX
+Copyright 2013 James Holodnak
 
 Building with make
 ------------------
@@ -15,26 +17,26 @@ The build target is automatically determined by the makefile.  Linux/OSX must us
 the SDL library.  For Win32 just specify USESDL=0 on the command line to build the
 Win32 API version.  Here are some example command lines for building:
 
-   To build using the default options and autodetect your OS.
-      $ make
+To build using the default options and autodetect your OS.
+  make
       
-   For building the Win32 API version.
-      $ make USESDL=0
+For building the Win32 API version.
+  make USESDL=0
 
-   Enabling the undocumented opcodes.
-      $ make CPU_UNDOC=1
+Enabling the undocumented opcodes.
+  make CPU_UNDOC=1
 
-   Forcing to build on a specific OS.
-      $ make OSTARGET=OSX
+Forcing to build on a specific OS.
+  make OSTARGET=OSX
 
-   Building on forced Win32, undocument opcodes and fast sprites enabled.
-      $ make OSTARGET=WIN32 CPU_UNDOC=1 QUICK_SPRITES=1
+Building on forced Win32, undocument opcodes and fast sprites enabled.
+  make OSTARGET=WIN32 CPU_UNDOC=1 QUICK_SPRITES=1
 
 Basic Usage
 -----------
 Just run it like this:
 
-   $ ./nesemu2 <ines/ines 2.0/unif/fds file>
+  ./nesemu2 <ines/ines 2.0/unif/fds file>
    
 The Win32 API target operates like a standard Win32 program.  Use File -> Open.
 
@@ -58,8 +60,8 @@ Subtrees in the Code
 --------------------
 To update the subtrees use the following commands:
 
-   $ git fetch slre master
-   $ git subtree pull --prefix source/misc/slre slre master --squash
+  git fetch slre master
+  git subtree pull --prefix source/misc/slre slre master --squash
 
 These will update slre to the latest version.
 

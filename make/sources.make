@@ -64,6 +64,7 @@ SOURCE_SYSTEM_COMMON = source/system/common/filters.c
 SOURCE_SYSTEM_COMMON += source/system/common/filters/draw/draw.c source/system/common/filters/interpolate/interpolate.c
 SOURCE_SYSTEM_COMMON += source/system/common/filters/scale2x/scalebit.c source/system/common/filters/scale2x/scale2x.c
 SOURCE_SYSTEM_COMMON += source/system/common/filters/scale2x/scale3x.c
+SOURCE_SYSTEM_COMMON += source/system/common/filters/ntsc/ntsc.c
 
 # build list of source files
 SOURCES = $(SOURCE_MISC) $(SOURCE_EMU) $(SOURCE_MAPPERS) $(SOURCE_INPUTDEV) $(SOURCE_NES) $(SOURCE_PALETTE)

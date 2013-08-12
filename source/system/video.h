@@ -34,6 +34,6 @@ int video_getwidth();
 int video_getheight();
 int video_getbpp();
 u8 *video_getscreen();
-u8 *video_getbasepalette();
+u8 *video_getpalette();
 
 #endif

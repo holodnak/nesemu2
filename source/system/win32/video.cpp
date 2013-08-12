@@ -57,13 +57,13 @@ static u32 *screen32;
 static void *screen;
 static int screenw,screenh,screenbpp;
 static int screenscale;
+static u8 palette[8][64 * 3];
 static u16 palette15[8][256];
 static u16 palette16[8][256];
 static u32 palette32[8][256];
 static u8 palettecache[32];
 static u16 palettecache16[256];
 static u32 palettecache32[256];
-static palette_t *palette = 0;
 static double interval = 0;
 static u64 lasttime = 0;
 static int filter = 0;
@@ -565,7 +565,17 @@ void video_setpalette(palette_t *p)
 	int i,j;
 	palentry_t *e;
 
-	palette = p;
+	//save palette
+	for(j=0;j<8;j++) {
+		for(i=0;i<64;i++) {
+			e = &p->pal[j][i];
+			palette[j][(i * 3) + 0] = e->r;
+			palette[j][(i * 3) + 1] = e->g;
+			palette[j][(i * 3) + 2] = e->b;
+		}
+	}
+
+	//update the converted palettes
 	for(j=0;j<8;j++) {
 		for(i=0;i<256;i++) {
 			e = &p->pal[j][i & 0x3F];
@@ -576,28 +586,29 @@ void video_setpalette(palette_t *p)
 	}
 }
 
-extern "C" void video_resize()
-{
-//	GetClientRect(hWnd,&rect);
-}
-
 u8 *video_getscreen()
 {
 	return(nesscreen);
 }
 
+u8 *video_getpalette()
+{
+	return(palette);
+}
+
 extern "C" int video_zapperhit(int x,int y)
 {
 	int ret = 0;
-	palentry_t *e;
-	u8 color;
+	u8 *e,color,pixel;
 
 	//todo:  this doesnt seem correct...nesscreen value range 0-FF...
-	color = palettecache[nesscreen[x + y * 256]];
-	e = &palette->pal[(color >> 5) & 7][color & 0x1F];
-	ret += (int)(e->r * 0.299);
-	ret += (int)(e->g * 0.587);
-	ret += (int)(e->b * 0.114);
+	pixel = nesscreen[x + y * 256];
+	emphasis = pixel >> 5;
+	color = palettecache[pixel & 0x1F];
+	e = &palette[emphasis][color];
+	ret += (int)(e[0] * 0.299f);
+	ret += (int)(e[1] * 0.587f);
+	ret += (int)(e[2] * 0.114f);
 	return((ret >= 0x40) ? 1 : 0);
 }
 

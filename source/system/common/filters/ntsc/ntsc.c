@@ -53,7 +53,7 @@ static void palette_changed()
 	setup.decoder_matrix = NULL;
 	setup.palette_out = NULL;
 	setup.palette = NULL;
-	setup.base_palette = video_getbasepalette();
+	setup.base_palette = video_getpalette();
 	nes_ntsc_init(ntsc,&setup);
 }
 
@@ -84,7 +84,6 @@ void ntsc2x(void *d,u32 dst_slice,void *s,u32 src_slice,u32 width,u32 height)
 	int bpp = 32;
 	int i,h;
 	int chunk_count = (256 - 1) / nes_ntsc_in_chunk;
-
 	u8 *screen = video_getscreen();
 	u8 *src = screen;
 	u32 *dst = (u32*)d;
@@ -93,19 +92,20 @@ void ntsc2x(void *d,u32 dst_slice,void *s,u32 src_slice,u32 width,u32 height)
 	for(h=0;h<240;h++) {
 		u32 *dststart = dst;
 
-		NES_NTSC_BEGIN_ROW( ntsc, phase, nes_ntsc_black, nes_ntsc_black, pal[*src++] );
+		NES_NTSC_BEGIN_ROW( ntsc, phase, nes_ntsc_black, nes_ntsc_black, pal[*src & 0x1F] | ((*src & 0xE0) << 1) );
+		src++;
 
 		for(i=0;i<chunk_count;i++,src+=3,dst+=7) {
 
-			NES_NTSC_COLOR_IN( 0, pal[src[0]] );
+			NES_NTSC_COLOR_IN( 0, pal[src[0] & 0x1F] | ((src[0] & 0xE0) << 1) );
 			NES_NTSC_RGB_OUT( 0, dst[0], bpp );
 			NES_NTSC_RGB_OUT( 1, dst[1], bpp );
 
-			NES_NTSC_COLOR_IN( 1, pal[src[1]] );
+			NES_NTSC_COLOR_IN( 1, pal[src[1] & 0x1F] | ((src[1] & 0xE0) << 1) );
 			NES_NTSC_RGB_OUT( 2, dst[2], bpp );
 			NES_NTSC_RGB_OUT( 3, dst[3], bpp );
 
-			NES_NTSC_COLOR_IN( 2, pal[src[2]] );
+			NES_NTSC_COLOR_IN( 2, pal[src[2] & 0x1F] | ((src[2] & 0xE0) << 1) );
 			NES_NTSC_RGB_OUT( 4, dst[4], bpp );
 			NES_NTSC_RGB_OUT( 5, dst[5], bpp );
 			NES_NTSC_RGB_OUT( 6, dst[6], bpp );

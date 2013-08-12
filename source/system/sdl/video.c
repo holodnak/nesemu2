@@ -87,11 +87,11 @@ static void get_surface_info(SDL_Surface *s)
 {
 	SDL_PixelFormat *pf = s->format;
 
-	log_printf("print_surface_info:  sdl surface info:\n");
+	log_printf("get_surface_info:  sdl surface info:\n");
 	log_printf("  bits per pixel:  %d\n",pf->BitsPerPixel);
-	log_printf("  red:    mask:  %08X    shift:  %d\n",pf->Rmask,pf->Rshift);
-	log_printf("  green:  mask:  %08X    shift:  %d\n",pf->Gmask,pf->Gshift);
-	log_printf("  blue:   mask:  %08X    shift:  %d\n",pf->Bmask,pf->Bshift);
+	log_printf("    red:    mask:  %08X    shift:  %d    loss: %d\n",pf->Rmask,pf->Rshift,pf->Rloss);
+	log_printf("    green:  mask:  %08X    shift:  %d    loss: %d\n",pf->Gmask,pf->Gshift,pf->Gloss);
+	log_printf("    blue:   mask:  %08X    shift:  %d    loss: %d\n",pf->Bmask,pf->Bshift,pf->Bloss);
 
 	rshift = pf->Rshift;
 	gshift = pf->Gshift;

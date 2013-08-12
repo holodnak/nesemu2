@@ -5,7 +5,7 @@
 
 /* Uncomment to enable emphasis support and use a 512 color palette instead
 of the base 64 color palette. */
-//#define NES_NTSC_EMPHASIS 1
+#define NES_NTSC_EMPHASIS 1
 
 /* The following affect the built-in blitter only; a custom blitter can
 handle things however it wants. */

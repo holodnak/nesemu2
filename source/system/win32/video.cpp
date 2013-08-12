@@ -33,15 +33,8 @@ extern "C" {
 	#include "system/system.h"
 	#include "system/video.h"
 	#include "system/win32/mainwnd.h"
+	#include "system/common/filters.h"
 }
-
-typedef struct filter_s {
-	int (*init);
-	void (*kill);
-	void (*draw)(void*,void*,int);
-	int (*getminwidth)();
-	int (*getminheight)();
-} filter_t;
 
 #undef _MSC_VER
 
@@ -66,7 +59,6 @@ static u16 palettecache16[256];
 static u32 palettecache32[256];
 static double interval = 0;
 static u64 lasttime = 0;
-static int filter = 0;
 
 static int pitch;
 static int surfoffset;
@@ -77,109 +69,13 @@ static LPDIRECTDRAWSURFACE7 lpPrimaryDDS,lpSecondaryDDS;
 static LPDIRECTDRAWCLIPPER lpDirectDrawClipper;
 static DDSURFACEDESC2 ddsd;
 static HMENU hMenu = 0;
-static RECT rect;
+//static RECT rect;
 
 static void (*updatepalette)(u32,u8) = 0;
 
-static void drawline1x_16(int line,u8 *src)
-{
-	u16 *d = (u16*)((u8*)ddsd.lpSurface + (line * pitch) + surfoffset);
-	int i;
-
-	for(i=0;i<256;i++) {
-		*d++ = palettecache16[src[i]];
-	}
-}
-
-static void drawline1x_32(int line,u8 *src)
-{
-	u32 *d = (u32*)((u8*)ddsd.lpSurface + (line * pitch) + surfoffset);
-	int i;
-
-	for(i=0;i<256;i++) {
-		*d++ = palettecache32[src[i]];
-	}
-}
-
-static void drawline2x_16(int line,u8 *src)
-{
-	u16 *d1 = (u16*)((u8*)ddsd.lpSurface + (line * 2 * pitch) + surfoffset);
-	u16 *d2 = (u16*)((u8*)d1 + pitch);
-	u16 pixel;
-	int i;
-
-	for(i=0;i<256;i++) {
-		pixel = palettecache16[src[i]];
-		*d1++ = pixel;
-		*d1++ = pixel;
-		*d2++ = pixel;
-		*d2++ = pixel;
-	}
-}
-
-static void drawline2x_32(int line,u8 *src)
-{
-	u32 *d1 = (u32*)((u8*)ddsd.lpSurface + (line * 2 * pitch) + surfoffset);
-	u32 *d2 = (u32*)((u8*)d1 + pitch);
-	u32 pixel;
-	int i;
-
-	for(i=0;i<256;i++) {
-		pixel = palettecache32[src[i]];
-		*d1++ = pixel;
-		*d1++ = pixel;
-		*d2++ = pixel;
-		*d2++ = pixel;
-	}
-}
-
-static void blankline1x_16(int line)
-{
-	u16 *d = (u16*)((u8*)ddsd.lpSurface + (line * pitch) + surfoffset);
-	int i;
-
-	for(i=0;i<256;i++) {
-		*d++ = 0;
-	}
-}
-
-static void blankline1x_32(int line)
-{
-	u32 *d = (u32*)((u8*)ddsd.lpSurface + (line * pitch) + surfoffset);
-	int i;
-
-	for(i=0;i<256;i++) {
-		*d++ = 0;
-	}
-}
-
-static void blankline2x_16(int line)
-{
-	u16 *d1 = (u16*)((u8*)ddsd.lpSurface + (line * 2 * pitch) + surfoffset);
-	u16 *d2 = (u16*)((u8*)d1 + pitch);
-	int i;
-
-	for(i=0;i<256;i++) {
-		*d1++ = 0;
-		*d1++ = 0;
-		*d2++ = 0;
-		*d2++ = 0;
-	}
-}
-
-static void blankline2x_32(int line)
-{
-	u32 *d1 = (u32*)((u8*)ddsd.lpSurface + (line * 2 * pitch) + surfoffset);
-	u32 *d2 = (u32*)((u8*)d1 + pitch);
-	int i;
-
-	for(i=0;i<256;i++) {
-		*d1++ = 0;
-		*d1++ = 0;
-		*d2++ = 0;
-		*d2++ = 0;
-	}
-}
+//draw function pointer and pointer to current video filter
+static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
+static filter_t *filter;
 
 static void updatepalette15(u32 addr,u8 data)
 {
@@ -215,6 +111,38 @@ static void updatepalette32(u32 addr,u8 data)
 	palettecache32[addr+0xA0] = palette32[5][data];
 	palettecache32[addr+0xC0] = palette32[6][data];
 	palettecache32[addr+0xE0] = palette32[7][data];
+}
+
+static void resizeclient(HWND hwnd,int w,int h)
+{
+	RECT rc,rw;
+
+	GetWindowRect(hwnd,&rw);
+	GetClientRect(hwnd,&rc);
+	SetWindowPos(hwnd,0,0,0,((rw.right - rw.left) - rc.right) + w,((rw.bottom - rw.top) - rc.bottom) + h,SWP_NOZORDER | SWP_NOMOVE);
+}
+
+static int find_drawfunc(int scale,int bpp)
+{
+	int i;
+
+	for(i=0;filter->modes[i].scale;i++) {
+		if(filter->modes[i].scale == scale) {
+			switch(bpp) {
+				case 32:
+					drawfunc = filter->modes[i].draw32;
+					return(0);
+				case 16:
+				case 15:
+				//	drawfunc = filter->modes[i].draw16;
+				//	return(0);
+				default:
+					log_printf("find_drawfunc:  unsupported bit depth (%d)\n",bpp);
+					return(2);
+			}
+		}
+	}
+	return(1);
 }
 
 #define SAFE_RELEASE(vv)	\
@@ -260,6 +188,7 @@ static int initddraw()
 
 static int initwindowed()
 {
+	resizeclient(hWnd,screenw,screenh);
 	if(FAILED(lpDD->SetCooperativeLevel(hWnd, DDSCL_NORMAL))) {
 		MessageBox(hWnd,"Error setting DirectDraw cooperative level","nesemu2",MB_OK | MB_ICONERROR);
 		return(1);
@@ -306,7 +235,7 @@ static int initfullscreen()
 		ShowWindow(hDebugger,SW_MINIMIZE);
 	SetWindowLongPtr(hWnd,GWL_STYLE,WS_POPUP);
 	SetMenu(hWnd,NULL);
-	GetWindowRect(hWnd,&rect);
+//	GetWindowRect(hWnd,&rect);
 	if(FAILED(lpDD->SetCooperativeLevel(hWnd,DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_NOWINDOWCHANGES))) {
 		MessageBox(hWnd,"Error setting DirectDraw cooperative level","nesemu2",MB_OK | MB_ICONERROR);
 		return(1);
@@ -353,30 +282,35 @@ static int initfullscreen()
 	return(0);
 }
 
-static int getfilterint(char *str)
+static int initvideo()
 {
-	if(stricmp("Scanline",str) == 0)			return(1);
-	if(stricmp("Interpolate",str) == 0)		return(2);
-	if(stricmp("Scale",str) == 0)				return(3);
-	if(stricmp("NTSC",str) == 0)				return(4);
-	return(0);
-}
-
-static int video_reinit()
-{
+	RECT rect;
+	POINT pt = {0, 0};
 	int i,ret;
 
+	//nesscreen is nes screen data (raw palette indexes)
 	if(nesscreen == 0)
 		nesscreen = (u8*)mem_alloc(256 * (240 + 16));
+
+	//copy of unfiltered screen data (ready for output)
 	if(screen == 0)
 		screen = (u8*)mem_alloc(256 * (240 + 16) * 4);
 	screen16 = (u16*)screen;
 	screen32 = (u32*)screen;
-	filter = getfilterint(config_get_string("video.filter"));
+
+	//initialize the video filters
+	filter_init();
+
+	//get pointer to video filter
+	filter = filter_get((screenscale == 1) ? F_NONE : filter_get_int(config_get_string("video.filter")));
+
+	//calculate desired screen dimensions
 	screenscale = config_get_int("video.scale");
-	screenw = 256 * screenscale;
-	screenh = 240 * screenscale;
+	screenw = filter->minwidth / filter->minscale * screenscale;
+	screenh = filter->minheight / filter->minscale * screenscale;
 	screenbpp = 32;
+
+	//initialize video
 	if(config_get_bool("video.fullscreen")) {
 		ret = initfullscreen();
 	}
@@ -384,15 +318,41 @@ static int video_reinit()
 		ret = initwindowed();
 		resizeclient(hWnd,screenw,screenh);
 	}
+
+	//get draw function
+	if(find_drawfunc(screenscale,screenbpp) != 0) {
+		log_printf("video_init:  error finding appropriate draw func, using draw1x\n");
+		filter = &filter_draw;
+		drawfunc = filter->modes[0].draw32;
+	}
+
+	//if video initialized ok, finalize the initialization
 	if(ret == 0) {
+
+		//get surface information
 		if(FAILED(lpSecondaryDDS->GetSurfaceDesc(&ddsd))) {
 			MessageBox(hWnd,"Failed to retrieve surface description","nesemu2",MB_OK | MB_ICONERROR);
 			return(1);
 		}
-		video_startframe();
+
+		//clear the screen
+		lpSecondaryDDS->Lock(NULL,&ddsd,DDLOCK_WAIT | DDLOCK_NOSYSLOCK | DDLOCK_WRITEONLY,NULL);
 		memset(ddsd.lpSurface,0,ddsd.lPitch * ddsd.dwHeight);
-		video_endframe();
+		lpSecondaryDDS->Unlock(NULL);
+		GetClientRect(hWnd,&rect);
+//		if((rect.right == 0) || (rect.bottom == 0))
+//			return;
+		ClientToScreen(hWnd,&pt);
+		rect.left += pt.x;
+		rect.right += pt.x;
+		rect.top += pt.y;
+		rect.bottom += pt.y;
+		lpPrimaryDDS->Blt(&rect,lpSecondaryDDS,NULL,DDBLT_WAIT,NULL);
+
+		//line width
 		pitch = ddsd.lPitch;
+
+		//check if bit depth is supported
 		switch(ddsd.ddpfPixelFormat.dwRGBBitCount) {
 			case 16:
 				if(ddsd.ddpfPixelFormat.dwRBitMask == 0xF800) {
@@ -412,8 +372,11 @@ static int video_reinit()
 				MessageBox(hWnd,"Error detecting bits per pixel","nesemu2",MB_OK | MB_ICONERROR);
 				return(1);
 		}
+
+		//update palette
 		for(i=0;i<32;i++)
 			updatepalette(i,palettecache[i]);
+
 		log_printf("video_reinit:  ddraw video inited, %ix%i %ibpp (scale %d, surfoffset = %d)\n",ddsd.dwWidth,ddsd.dwHeight,screenbpp,screenscale,surfoffset);
 	}
 	return(ret);
@@ -423,14 +386,16 @@ int video_init()
 {
 	int ret;
 
+	//setup timer to limit frames
 	interval = (double)system_getfrequency() / 60.0f;
 	lasttime = system_gettick();
+
 	hMenu = GetMenu(hWnd);
 	if(initddraw() != 0) {
 		killddraw();
 		return(1);
 	}
-	if((ret = video_reinit())) {
+	if((ret = initvideo())) {
 		log_printf("video_init:  failed\n");
 		video_kill();
 	}
@@ -454,7 +419,8 @@ void video_kill()
 	SAFE_RELEASE(lpPrimaryDDS);
 	if(config_get_bool("video.fullscreen")) {
 		ShowCursor(TRUE);
-		SetWindowPos(hWnd,0,rect.left,rect.top,0,0,SWP_NOCOPYBITS | SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER);
+//		SetWindowPos(hWnd,0,rect.left,rect.top,0,0,SWP_NOCOPYBITS | SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER);
+		SetWindowPos(hWnd,0,0,0,0,0,SWP_NOCOPYBITS | SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER);
 		SetWindowLongPtr(hWnd,GWL_STYLE,WS_OVERLAPPEDWINDOW);
 		SetMenu(hWnd,hMenu);
 		ShowWindow(hWnd,SW_RESTORE);
@@ -467,6 +433,12 @@ void video_kill()
 	killddraw();
 }
 
+int video_reinit()
+{
+	video_kill();
+	return(video_init());
+}
+
 void video_startframe()
 {
 	lpSecondaryDDS->Lock(NULL,&ddsd,DDLOCK_WAIT | DDLOCK_NOSYSLOCK | DDLOCK_WRITEONLY,NULL);
@@ -477,12 +449,11 @@ void video_endframe()
 	RECT rect;
 	POINT pt = {0, 0};
 	u64 t;
-	int x,y,linesize;
-	u16 *s16,*d16;
-	u32 *s32,*d32;
 
 	//blit screen to surface
-	switch(screenbpp) {
+	drawfunc(ddsd.lpSurface,ddsd.lPitch,screen,256*4,256,240);
+
+/*	switch(screenbpp) {
 		case 8:
 		case 24:
 		default:
@@ -513,7 +484,7 @@ void video_endframe()
 				d32 += linesize;
 			}
 			break;
-	}
+	}*/
 	lpSecondaryDDS->Unlock(NULL);
 	GetClientRect(hWnd,&rect);
 	if((rect.right == 0) || (rect.bottom == 0))
@@ -584,6 +555,8 @@ void video_setpalette(palette_t *p)
 			palette32[j][i] = (e->r << 16) | (e->g << 8) | (e->b << 0);
 		}
 	}
+
+	filter_palette_changed();
 }
 
 u8 *video_getscreen()
@@ -593,15 +566,14 @@ u8 *video_getscreen()
 
 u8 *video_getpalette()
 {
-	return(palette);
+	return(palette[0]);
 }
 
 extern "C" int video_zapperhit(int x,int y)
 {
 	int ret = 0;
-	u8 *e,color,pixel;
+	u8 *e,color,pixel,emphasis;
 
-	//todo:  this doesnt seem correct...nesscreen value range 0-FF...
 	pixel = nesscreen[x + y * 256];
 	emphasis = pixel >> 5;
 	color = palettecache[pixel & 0x1F];

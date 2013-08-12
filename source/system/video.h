@@ -25,6 +25,7 @@
 
 int video_init();
 void video_kill();
+int video_reinit();
 void video_startframe();
 void video_endframe();
 void video_updatepixel(int line,int pixel,u8 s);

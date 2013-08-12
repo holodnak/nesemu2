@@ -67,17 +67,24 @@ static filter_t *filter;
 static int rshift,gshift,bshift;
 static int rloss,gloss,bloss;
 
-static int find_drawfunc()
+static int find_drawfunc(int scale,int bpp)
 {
 	int i;
 
 	for(i=0;filter->modes[i].scale;i++) {
-		if(filter->modes[i].scale == screenscale) {
-//			if(screenbpp == 32)
-				drawfunc = filter->modes[i].draw32;
-//			else
-//				drawfunc = filter->modes[i].draw16;
-			return(0);
+		if(filter->modes[i].scale == scale) {
+			switch(bpp) {
+				case 32:
+					drawfunc = filter->modes[i].draw32;
+					return(0);
+				case 16:
+				case 15:
+				//	drawfunc = filter->modes[i].draw16;
+				//	return(0);
+				default:
+					log_printf("find_drawfunc:  unsupported bit depth (%d)\n",bpp);
+					return(2);
+			}
 		}
 	}
 	return(1);
@@ -206,7 +213,7 @@ int video_init()
 	//get pointer to video filter
 	filter = filter_get((screenscale == 1) ? F_NONE : filter_get_int(config_get_string("video.filter")));
 
-	if(find_drawfunc() != 0) {
+	if(find_drawfunc(screenscale,screenbpp) != 0) {
 		log_printf("video_init:  error finding appropriate draw func, using draw1x\n");
 		filter = &filter_draw;
 		drawfunc = filter->modes[0].draw32;
@@ -252,6 +259,12 @@ void video_kill()
 		mem_free(nesscreen);
 	screen = 0;
 	nesscreen = 0;
+}
+
+int video_reinit()
+{
+	video_kill();
+	return(video_init());
 }
 
 void video_startframe()

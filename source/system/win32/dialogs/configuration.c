@@ -26,6 +26,7 @@
 #include <commctrl.h>
 #include "system/win32/resource.h"
 #include "system/win32/mainwnd.h"
+#include "system/video.h"
 #include "misc/config.h"
 #include "misc/strutil.h"
 #include "misc/memutil.h"
@@ -419,10 +420,19 @@ LRESULT CALLBACK NesProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 static char *filters[] = {
 	"None",
-	"Scanlines",
 	"Interpolate",
 	"Scale",
 	"NTSC",
+	0
+};
+
+static char *scales[] = {
+	"Normal",
+	"2x",
+	"3x",
+	"4x",
+	"5x",
+	"6x",
 	0
 };
 
@@ -460,6 +470,7 @@ LRESULT CALLBACK SystemProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 	static char tmpstr[1024];
 	char *ptr;
 	int i;
+	int reinitvideo = 0;
 
 	switch(message) {
 		case WM_INITDIALOG:
@@ -471,6 +482,13 @@ LRESULT CALLBACK SystemProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 				ComboBox_AddString(GetDlgItem(hDlg,IDC_FILTERCOMBO),filters[i]);
 				if(stricmp(filters[i],ptr) == 0)
 					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_FILTERCOMBO),i);
+			}
+
+			//scale
+			for(i=0;scales[i];i++) {
+				ComboBox_AddString(GetDlgItem(hDlg,IDC_SCALECOMBO),scales[i]);
+				if((i + 1) == config_get_int("video.scale"))
+					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_SCALECOMBO),i);
 			}
 
 			//port1 input devices
@@ -504,6 +522,22 @@ LRESULT CALLBACK SystemProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 			switch(nmhdr->code) {
 				case PSN_APPLY:
 					config_set_bool("video.framelimit",IsDlgButtonChecked(hDlg,IDC_FRAMELIMITCHECK) ? 1 : 0);
+					ptr = mem_strdup(config_get_string("video.filter"));
+					GetDlgItemText_SetConfig(hDlg,IDC_FILTERCOMBO,"video.filter");
+					if(stricmp(ptr,config_get_string("video.filter")) != 0) {
+						reinitvideo = 1;
+					}
+					mem_free(ptr);
+					i = ComboBox_GetCurSel(GetDlgItem(hDlg,IDC_SCALECOMBO));
+					if(i != CB_ERR) {
+						if(config_get_int("video.scale") != (i + 1)) {
+							config_set_int("video.scale",i + 1);
+							reinitvideo = 1;
+						}
+					}
+					if(reinitvideo) {
+						video_reinit();
+					}
 					GetDlgItemText_SetConfig(hDlg,IDC_PORT1COMBO,"input.port0");
 					GetDlgItemText_SetConfig(hDlg,IDC_PORT2COMBO,"input.port1");
 					nes_set_inputdev(0,get_device_id(config_get_string("input.port0")));

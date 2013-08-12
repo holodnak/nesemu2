@@ -103,6 +103,7 @@
 #define IDC_FILTERCOMBO                 1050
 #define IDC_FRAMELIMITCHECK             1051
 #define IDC_RESOLUTIONCOMBO             1052
+#define IDC_SCALECOMBO                  1052
 #define IDC_SOUNDENABLEDCHECK           1053
 #define IDC_PORT1COMBO                  1054
 #define IDC_PORT2COMBO                  1055

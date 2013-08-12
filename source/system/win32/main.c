@@ -84,7 +84,6 @@ static void console_loghook(char *str)
 }
 
 void loadrom(char *filename);
-void resizeclient(HWND hwnd,int w,int h);
 
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -111,7 +110,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	if(emu_init() != 0)
 		return(FALSE);
 
-	resizeclient(hWnd,config_get_int("video.scale") * 256,config_get_int("video.scale") * 240);
    ShowWindow(hWnd,nCmdShow);
    UpdateWindow(hWnd);
 

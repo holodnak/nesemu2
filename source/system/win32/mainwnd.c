@@ -41,18 +41,6 @@ CHAR szWindowClass[MAX_LOADSTRING];			//the main window class name
 //defined in main.c
 extern int quit,running;
 
-//defined in video.cpp
-void video_resize();
-
-void resizeclient(HWND hwnd,int w,int h)
-{
-	RECT rc,rw;
-
-	GetWindowRect(hwnd,&rw);
-	GetClientRect(hwnd,&rc);
-	SetWindowPos(hwnd,0,0,0,((rw.right - rw.left) - rc.right) + w,((rw.bottom - rw.top) - rc.bottom) + h,SWP_NOZORDER | SWP_NOMOVE);
-}
-
 static int filedialog(HWND parent,int type,char *buffer,char *title,char *filter,char *curdir)
 {
 	OPENFILENAME dlgdata;
@@ -278,7 +266,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	case WM_SIZE:
-		video_resize();
+//		video_resize();
 		break;
 	case WM_DROPFILES:
 		DragQueryFile((HDROP)wParam,0,dest,1024);

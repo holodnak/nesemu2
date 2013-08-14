@@ -120,6 +120,7 @@
 #define IDC_SEEKADDRESSBUTTON           1066
 #define IDC_SEEKADDRESSEDIT             1067
 #define IDC_LIST1                       1068
+#define IDC_PALETTELIST                 1068
 #define IDC_LIST2                       1069
 #define IDC_FILELIST                    1069
 #define IDC_CARTDBENABLECHECK           1070
@@ -132,6 +133,9 @@
 #define IDC_SLIDER2                     1077
 #define IDC_SATSLIDER                   1077
 #define IDC_HUESATSTATIC                1078
+#define IDC_SPIN1                       1079
+#define IDC_USEPALETTEFILECHECK         1080
+#define IDC_SPIN2                       1081
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -180,7 +184,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        145
 #define _APS_NEXT_COMMAND_VALUE         32819
-#define _APS_NEXT_CONTROL_VALUE         1079
+#define _APS_NEXT_CONTROL_VALUE         1081
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

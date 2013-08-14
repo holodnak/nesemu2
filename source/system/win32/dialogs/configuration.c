@@ -549,9 +549,98 @@ LRESULT CALLBACK SystemProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 	return(FALSE);
 }
 
+LRESULT CALLBACK PaletteProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	LPNMHDR nmhdr;
+	static char tmpstr[1024];
+	char *ptr;
+	int i;
+	int reinitvideo = 0;
+
+	switch(message) {
+		case WM_INITDIALOG:
+			CheckDlgButton(hDlg,IDC_FRAMELIMITCHECK,config_get_bool("video.framelimit") ? BST_CHECKED : BST_UNCHECKED);
+
+			//video filters
+			ptr = config_get_string("video.filter");
+			for(i=0;filters[i];i++) {
+				ComboBox_AddString(GetDlgItem(hDlg,IDC_FILTERCOMBO),filters[i]);
+				if(stricmp(filters[i],ptr) == 0)
+					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_FILTERCOMBO),i);
+			}
+
+			//scale
+			for(i=0;scales[i];i++) {
+				ComboBox_AddString(GetDlgItem(hDlg,IDC_SCALECOMBO),scales[i]);
+				if((i + 1) == config_get_int("video.scale"))
+					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_SCALECOMBO),i);
+			}
+
+			//port1 input devices
+			ptr = config_get_string("input.port0");
+			for(i=0;inputdevices[i];i++) {
+				ComboBox_AddString(GetDlgItem(hDlg,IDC_PORT1COMBO),inputdevices[i]);
+				if(stricmp(inputdevices[i],ptr) == 0)
+					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_PORT1COMBO),i);
+			}
+
+			//port2 input devices
+			ptr = config_get_string("input.port1");
+			for(i=0;inputdevices[i];i++) {
+				ComboBox_AddString(GetDlgItem(hDlg,IDC_PORT2COMBO),inputdevices[i]);
+				if(stricmp(inputdevices[i],ptr) == 0)
+					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_PORT2COMBO),i);
+			}
+
+			//expansion port devices
+			ptr = config_get_string("input.expansion");
+			for(i=0;inputexpansion[i];i++) {
+				ComboBox_AddString(GetDlgItem(hDlg,IDC_EXPANSIONCOMBO),inputexpansion[i]);
+				if(stricmp(inputexpansion[i],ptr) == 0)
+					ComboBox_SetCurSel(GetDlgItem(hDlg,IDC_EXPANSIONCOMBO),i);
+			}
+
+			return(TRUE);
+
+		case WM_NOTIFY:
+			nmhdr = (LPNMHDR)lParam;
+			switch(nmhdr->code) {
+				case PSN_APPLY:
+					config_set_bool("video.framelimit",IsDlgButtonChecked(hDlg,IDC_FRAMELIMITCHECK) ? 1 : 0);
+					ptr = mem_strdup(config_get_string("video.filter"));
+					GetDlgItemText_SetConfig(hDlg,IDC_FILTERCOMBO,"video.filter");
+					if(stricmp(ptr,config_get_string("video.filter")) != 0) {
+						reinitvideo = 1;
+					}
+					mem_free(ptr);
+					i = ComboBox_GetCurSel(GetDlgItem(hDlg,IDC_SCALECOMBO));
+					if(i != CB_ERR) {
+						if(config_get_int("video.scale") != (i + 1)) {
+							config_set_int("video.scale",i + 1);
+							reinitvideo = 1;
+						}
+					}
+					if(reinitvideo) {
+						video_reinit();
+					}
+					GetDlgItemText_SetConfig(hDlg,IDC_PORT1COMBO,"input.port0");
+					GetDlgItemText_SetConfig(hDlg,IDC_PORT2COMBO,"input.port1");
+					nes_set_inputdev(0,get_device_id(config_get_string("input.port0")));
+					nes_set_inputdev(1,get_device_id(config_get_string("input.port1")));
+					return(TRUE);
+			}
+			break;
+	}
+	return(FALSE);
+}
+
+#define SETDIALOG(idx,id,proc) \
+	psp[idx].pszTemplate = MAKEINTRESOURCE(id); \
+	psp[idx].pfnDlgProc = (DLGPROC)proc;
+
 VOID ConfigurationPropertySheet(HWND hWnd)
 {
-	PROPSHEETPAGE psp[4];
+	PROPSHEETPAGE psp[5];
 	PROPSHEETHEADER psh;
 	UINT i;
 
@@ -571,14 +660,12 @@ VOID ConfigurationPropertySheet(HWND hWnd)
 		psp[i].dwSize = sizeof(PROPSHEETPAGE);
 		psp[i].hInstance = hInst;
 	}
-	psp[0].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL1);
-	psp[0].pfnDlgProc = GeneralProc;
-	psp[1].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL2);
-	psp[1].pfnDlgProc = PathsProc;
-	psp[2].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL3);
-	psp[2].pfnDlgProc = NesProc;
-	psp[3].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG_GENERAL4);
-	psp[3].pfnDlgProc = SystemProc;
+
+	SETDIALOG(0,IDD_CONFIG_GENERAL,GeneralProc);
+	SETDIALOG(1,IDD_CONFIG_PATHS,PathsProc);
+	SETDIALOG(2,IDD_CONFIG_NES,NesProc);
+	SETDIALOG(3,IDD_CONFIG_PALETTE,PaletteProc);
+	SETDIALOG(4,IDD_CONFIG_SYSTEM,SystemProc);
 
 	//show the property sheet
 	PropertySheet(&psh);

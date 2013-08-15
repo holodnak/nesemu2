@@ -52,6 +52,11 @@ static int cursorpos = 0;
 static char statusmsg[1024];
 static int statustime = 0;
 
+//input buffer
+static char inputbuf[1024];
+static int inputbuflen,inputbufpos;
+static int cursorblink;
+
 void console_loghook(char *str)
 {
 	linebuffer_add(str);
@@ -62,7 +67,10 @@ void console_loghook(char *str)
 int console_init()
 {
 	int ret = 0;
-	
+
+	memset(inputbuf,0,1024);	
+	inputbuflen = inputbufpos = 0;
+	cursorblink = 0;
 	showing = 0;
 	width = video_getwidth();
 	height = video_getheight() * 3 / 5 + 4;
@@ -131,6 +139,13 @@ void console_draw(u32 *dest,int w,int h)
 	//draw the prompt
 	font_drawchar(']',screen + 2 + ((height - 9) * width),width);
 
+	//draw the input buffer
+	font_drawstr(inputbuf,screen + 10 + ((height - 9) * width),width);
+
+	//draw the blinking cursor
+	if(cursorblink & 0x20)
+		font_drawchar('_',screen + 10 + ((height - 9) * width) + (inputbufpos * 8),width);
+
 	src = screen;
 	//copy newly rendered screen to dest
 	src += (height - ypos) * width;
@@ -192,4 +207,104 @@ void console_update()
 	}
 	if(statustime)
 		statustime--;
+	cursorblink = (cursorblink + 1) & 0x3F;
+//	cursorblink++;
+}
+
+static int isignored(int ch)
+{
+	if(ch == '`' || ch == '~')
+		return(1);
+	return(0);
+}
+
+void console_keyevent(int state,int sym)
+{
+	int modstate = SDL_GetModState();
+	int isshift = modstate & (KMOD_LSHIFT | KMOD_RSHIFT);
+	int iscaps = modstate & KMOD_CAPS;
+	int i,ch = -1;
+
+	//ignore keyup events
+	if(state == SDL_KEYUP)
+		return;
+
+	//if shift is pressed invert caps lock state
+	if(isshift)
+		iscaps ^= KMOD_CAPS;
+
+	//if this is a letter
+	if(isalnum(sym)) {
+		ch = sym - SDLK_a;
+		if(iscaps)
+			ch += 'A';
+		else
+			ch += 'a';
+	}
+
+	//if this is a printable character and we are not ignoring it
+	else if(isprint(sym) && isignored(sym) == 0) {
+		ch = sym;
+	}
+
+	//cursor left
+	else if(sym == SDLK_LEFT) {
+		if(inputbufpos)
+			inputbufpos--;
+		return;
+	}
+
+	//cursor right
+	else if(sym == SDLK_RIGHT) {
+		if(inputbufpos < inputbuflen)
+			inputbufpos++;
+		return;
+	}
+
+	//backspace
+	else if(sym == SDLK_BACKSPACE) {
+		if(inputbufpos) {
+			inputbuflen--;
+			inputbufpos--;
+			for(i=inputbufpos;i<inputbuflen;i++) {
+				inputbuf[i] = inputbuf[i+1];
+			}
+			inputbuf[i] = 0;
+		}
+		return;
+	}
+
+	else if(sym == SDLK_RETURN) {
+		command_execute(inputbuf);
+		inputbufpos = inputbuflen = 0;
+		memset(inputbuf,0,1024);
+		return;
+	}
+
+	//unknown key, ignore it
+	else {
+//		log_printf("ignored key $%02X (%c)",sym,sym);
+		return;
+	}
+
+	//add key to input buffer
+	inputbuf[inputbufpos] = (char)ch;
+
+	//see if it is at the end of the input buffer
+	if(inputbufpos == inputbuflen) {
+		inputbufpos++;
+		inputbuflen++;
+		inputbuf[inputbufpos] = 0;
+	}
+
+	else if (inputbufpos < inputbuflen) {
+		inputbufpos++;
+	}
+
+	else {
+		log_printf("console_keyevent:  bug!");
+	}
+
+//	log_printf("console_keyevent:  pos = %d, len = %d",inputbufpos,inputbuflen);
+
 }

@@ -55,7 +55,7 @@ COMMAND_FUNC(help)
 {
 	command_t *c = commands;
 
-	log_printf("available commands:\n\n   ");
+	log_printf("available commands:\n   ");
 	for(c=commands;c->name;c++) {
 		log_printf("%s ",c->name);
 	}
@@ -82,6 +82,12 @@ int command_execute(char *s)
 	while(*s == ' ') {
 		s++;
 	}
+
+	//empty strings do nothing
+	if(strcmp(s,"") == 0)
+		return(1);
+
+	//make a copy of the string
 	str = mem_strdup(s);
 
 	//split up the command line (needs improvement)

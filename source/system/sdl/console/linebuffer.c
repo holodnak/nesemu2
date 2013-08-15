@@ -85,13 +85,16 @@ void linebuffer_add(char *str)
 	}
 	else {
 		char *tmp = mem_strdup(str);
-		char *p = tmp;
+		char *tmpp,*p = tmp;
 		size_t len = strlen(p);
 
 		while(len >= maxlen) {
+			tmpp = mem_strdup(p);
+			tmpp[maxlen] = 0;
+			addline(tmpp);
+			mem_free(tmpp);
 			p[maxlen-1] = 0;
 //			printf("adding wrapped line:  '%s' (len = %d, maxlen = %d)\n",p,len,maxlen);
-			addline(p);
 			p += maxlen;
 			len -= maxlen;
 		}

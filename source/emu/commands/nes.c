@@ -67,7 +67,7 @@ COMMAND_FUNC(load)
 	//need a way to load the functions common to all systems/targets
 	if(nes_load(argv[1]) == 0) {
 		nes_reset(1);
-		running = config_get_bool("nes.pause_on_load");
+		running = config_get_bool("nes.pause_on_load") ? 0 : 1;
 	}
 	return(0);
 }

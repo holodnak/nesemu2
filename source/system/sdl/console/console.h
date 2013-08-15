@@ -27,5 +27,6 @@ int console_init();
 void console_kill();
 void console_draw(u32 *dest,int w,int h);
 void console_update();
+void console_keyevent(int state,int sym);
 
 #endif

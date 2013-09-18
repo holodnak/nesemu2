@@ -168,9 +168,13 @@ int nes_load_patched(char *filename,char *patchfilename)
 
 	//see if we should pre-init some wram for the cart
 	if((c->battery & 1) && c->wram.size == 0) {
-		cart_setwramsize(c,8);
+		c->wram.size = 8;
 		log_printf("nes_load:  cart has battery, pre-allocating wram\n");
 	}
+
+	//allocate wram
+	if(c->wram.size)
+		cart_setwramsize(c,c->wram.size);
 
 	//see if the nes accepts it (mapper is supported)
 	if(nes_load_cart(c) != 0) {

@@ -264,12 +264,14 @@ void cart_unload(cart_t *r)
 static void allocdata(data_t *data,u32 len)
 {
 	//if size hasnt changed, return
-	if(data->size == len) {
-		return;
-	}
-	if(data->size > len) {
-		log_printf("allocdata:  cannot reduce size of memory region (old = %d, new = %d)\n",data->size,len);
-		return;
+	if(data->data) {
+		if(data->size == len) {
+			return;
+		}
+		if(data->size > len) {
+			log_printf("allocdata:  cannot reduce size of memory region (old = %d, new = %d)\n",data->size,len);
+			return;
+		}
 	}
 
 	//set size and create mask
@@ -288,8 +290,12 @@ static void allocdata(data_t *data,u32 len)
 
 void cart_setwramsize(cart_t *r,int banks)
 {
-	allocdata(&r->wram,banks * 1024);
-	log_printf("cart_setwramsize:  wram size set to %dkb\n",banks);
+	//UGLY UGLY HACK!
+	if(banks < 128)
+		banks *= 1024;
+	//END UGLY UGLY HACK
+	allocdata(&r->wram,banks);
+	log_printf("cart_setwramsize:  wram size set to %dkb\n",banks / 1024);
 }
 
 void cart_setvramsize(cart_t *r,int banks)

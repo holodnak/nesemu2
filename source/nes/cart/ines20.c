@@ -33,6 +33,8 @@ static int parse_ines20_header(cart_t *ret,u8 *header)
 	//prg/chr sizes
 	ret->prg.size = header[4] * 0x4000;
 	ret->chr.size = header[5] * 0x2000;
+	ret->prg.size += (((header[9] >> 0) & 0xF) << 8) * 0x4000;
+	ret->chr.size += (((header[9] >> 4) & 0xF) << 8) * 0x2000;
 
 	//mirroring info
 	ret->mirroring = header[6] & 1;
@@ -52,13 +54,20 @@ static int parse_ines20_header(cart_t *ret,u8 *header)
 	//submapper number
 	submapper = (header[8] & 0xF0) >> 4;
 
+	//wram/sram sizes
+	if(header[10] & 0xF)
+		ret->wram.size += 0x80 << ((header[10] & 0xF) - 1);
+
+	if(header[10] & 0xF0)
+		ret->wram.size += 0x80 << (((header[10] >> 4) & 0xF) - 1);
+
 	//pc10 rom
 	if(header[7] & 2)
 		ret->pc10rom.size = 8192;
 
 	//print some rom infos
-	log_printf("parse_ines20_header:  %dkb prg, %dkb chr, mapper %d.%d, %s mirroring\n",
-		ret->prg.size / 1024,ret->chr.size / 1024,mapper,submapper,
+	log_printf("parse_ines20_header:  %dkb prg, %dkb chr, %dkb sram/wram, mapper %d.%d, %s mirroring\n",
+		ret->prg.size / 1024,ret->chr.size / 1024,ret->wram.size / 1024,mapper,submapper,
 		(ret->mirroring == MIRROR_4) ? "four screen" :
 		((ret->mirroring == 0) ? "horizontal" : "vertical"));
 

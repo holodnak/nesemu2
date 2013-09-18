@@ -169,6 +169,15 @@ void mmc1_syncvram(int aand,int oor)
 
 void mmc1_syncsram()
 {
+	if(nes->cart->wram.size == 16) {
+		mem_setwram8(6,(mmc1_getlowchr() >> 3) & 1);
+		return;
+	}
+	else if(nes->cart->wram.size == 32) {
+		mem_setwram8(6,(mmc1_getlowchr() >> 2) & 3);
+		return;
+	}
+
 	if(type == C_MMC1A) {
 		mem_setwram8(6,0);
 	}

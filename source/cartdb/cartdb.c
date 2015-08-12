@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <string.h>
+#include <ctype.h>
 #include "cartdb/cartdb.h"
 #include "cartdb/parser.h"
 #include "misc/memutil.h"

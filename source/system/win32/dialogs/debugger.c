@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include "system/win32/resource.h"
 #include "system/win32/mainwnd.h"
+#include "misc/memutil.h"
+#include "misc/strutil.h"
 #include "nes/nes.h"
 
 typedef struct breakpoint_s {
@@ -36,6 +38,16 @@ typedef struct breakpoint_s {
 
 static int pc;
 static breakpoint_t *breakpoints = 0;
+
+static void add_breakpoint(breakpoint_t *bp)
+{
+	breakpoint_t **cur = &breakpoints;
+
+	while(*cur) {
+		cur = &((*cur)->next);
+	}
+	*cur = bp;
+}
 
 static void update_disasm(HWND hwnd)
 {
@@ -96,16 +108,40 @@ static void update(HWND hwnd)
 
 LRESULT CALLBACK BreakpointDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	static breakpoint_t *bp;
+	static int mode;
+	char buf[256];
+
 	switch(message) {
 
 		case WM_INITDIALOG:
+			if(lParam == 0) {
+				bp = (breakpoint_t*)mem_alloc(sizeof(breakpoint_t));
+				mode = 0;
+			}
+			else {
+				bp = (breakpoint_t*)lParam;
+				mode = 1;
+			}
 			return(TRUE);
 
 		case WM_COMMAND:
 			switch(LOWORD(wParam)) {
 				case IDOK:
+					if(mode == 0) {
+						EndDialog(hDlg,(INT_PTR)bp);
+					}
+					else {
+						EndDialog(hDlg,0);
+					}
+					memset(buf,0,256);
+					GetDlgItemText(hDlg,IDC_STARTEDIT,buf,64);
+					bp->startaddr = str_tou32(buf);
+					GetDlgItemText(hDlg,IDC_ENDEDIT,buf,64);
+					bp->endaddr = str_tou32(buf);
+					return(TRUE);
 				case IDCANCEL:
-					EndDialog(hDlg,LOWORD(wParam));
+					EndDialog(hDlg,0);
 					return(TRUE);
 			}
 			break;
@@ -160,7 +196,10 @@ LRESULT CALLBACK DebuggerDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 
 				//breakpoint handling
 				case IDC_ADDBPBUTTON:
-					bp = DialogBoxParam(hInst,(LPCTSTR)IDD_BREAKPOINT,hWnd,BreakpointDlg,(LPARAM)0);
+					bp = (breakpoint_t*)DialogBoxParam(hInst,(LPCTSTR)IDD_BREAKPOINT,hWnd,BreakpointDlg,(LPARAM)0);
+					if(bp) {
+						add_breakpoint(bp);
+					}
 					return(TRUE);
 				case IDOK:
 				case IDCANCEL:

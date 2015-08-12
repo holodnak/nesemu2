@@ -142,6 +142,8 @@
 #define IDC_SPIN1                       1079
 #define IDC_USEPALETTEFILECHECK         1080
 #define IDC_SPIN2                       1081
+#define IDC_STARTEDIT                   1081
+#define IDC_ENDEDIT                     1082
 #define ID_FILE_OPEN                    32771
 #define ID_NES_SOFTRESET                32772
 #define ID_NES_HARDRESET                32773
@@ -190,7 +192,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        145
 #define _APS_NEXT_COMMAND_VALUE         32819
-#define _APS_NEXT_CONTROL_VALUE         1081
+#define _APS_NEXT_CONTROL_VALUE         1083
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

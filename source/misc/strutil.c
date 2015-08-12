@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <string.h>
+#include <ctype.h>
 #include "misc/strutil.h"
 
 //check if a char is whitespace
@@ -49,4 +50,38 @@ void str_appendchar(char *str,char ch)
 
 	str[n] = ch;
 	str[n+1] = 0;
+}
+
+//converts a numerical string to unsigned number
+u32 str_tou32(char *str)
+{
+	u32 i,ret = 0;
+	size_t len;
+	char ch;
+	int base = 10;
+
+	if(*str == '$') {
+		base = 16;
+		str++;
+	}
+	else if(str[0] == '0' && tolower(str[1]) == 'x') {
+		str += 2;
+		base = 16;
+	}
+
+	len = strlen(str);
+
+	for(i=0;i<len;i++) {
+		ret *= base;
+		ch = toupper(*str++);
+		if(ch >= 'A' && ch <= 'F')
+			ch = 10 + ch - 'A';
+		else if(ch >= '0' && ch <= '9')
+			ch = ch - '0';
+		else {
+			return((u32)-1);
+		}
+		ret += ch;
+	}
+	return(ret);
 }

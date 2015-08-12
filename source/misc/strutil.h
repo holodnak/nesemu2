@@ -21,7 +21,10 @@
 #ifndef __strutil_h__
 #define __strutil_h__
 
+#include "types.h"
+
 char *str_eatwhitespace(char *str);
 void str_appendchar(char *str,char ch);
+u32 str_tou32(char *str);
 
 #endif

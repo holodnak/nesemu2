@@ -59,6 +59,12 @@ SOURCE_SYSTEM_SDL_LINUX = source/system/linux/stricmp.c
 # sdl/osx system files
 SOURCE_SYSTEM_SDL_OSX = source/system/linux/stricmp.c source/system/sdl/osx/SDLMain.o
 
+# raspberry pi system files
+SOURCE_SYSTEM_PI = source/system/pi/main.c source/system/sdl/system.c source/system/sdl/input.c
+SOURCE_SYSTEM_PI += source/system/sdl/gpioinput.c
+SOURCE_SYSTEM_PI += source/system/sdl/video.c source/system/sdl/sound.c
+SOURCE_SYSTEM_PI += source/system/sdl/console/font.c source/system/sdl/console/fontdata.c
+
 # common system files
 SOURCE_SYSTEM_COMMON = source/system/common/filters.c
 SOURCE_SYSTEM_COMMON += source/system/common/filters/draw/draw.c source/system/common/filters/interpolate/interpolate.c
@@ -88,7 +94,7 @@ ifeq ($(OSTARGET),WIN32)
 		LIBS += -lSDL
 		TARGET = $(OUTPUT)-sdl.exe
 	else
-		SOURCES += $(SOURCE_SYSTEM_WIN32)
+		SOURCES += $(SOURCE_SYSTEM_WIN32) $(SOURCE_SYSTEM_COMMON)
 		LIBS += -lcomctl32 -lgdi32 -lcomdlg32 -lddraw -ldsound -ldxguid
 		TARGET = $(OUTPUT)-win32.exe
 	endif
@@ -102,7 +108,15 @@ endif
 
 ifeq ($(OSTARGET),OSX)
 	SOURCES += $(SOURCE_SYSTEM_SDL) $(SOURCE_SYSTEM_SDL_OSX) $(SOURCE_SYSTEM_COMMON)
-	LIBS += -framework SDL -framework cocoa
+	CPPFLAGS += -I/usr/local/include
+	LDFLAGS += -L/usr/local/lib
+	LIBS += -lSDL -framework cocoa
+	TARGET = $(OUTPUT)
+endif
+
+ifeq ($(OSTARGET),PI)
+	SOURCES += $(SOURCE_SYSTEM_PI) $(SOURCE_SYSTEM_COMMON)
+	LIBS += -lSDL -lm
 	TARGET = $(OUTPUT)
 endif
 

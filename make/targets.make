@@ -41,7 +41,7 @@ source/system/win32/nesemu2-res.o: source/system/win32/nesemu2.rc
 
 # osx objective c
 source/system/sdl/osx/%.o: source/system/sdl/osx/%.m
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -I/usr/local/include -c $< -o $@
 
 # output executable
 $(TARGET): $(OBJECTS)

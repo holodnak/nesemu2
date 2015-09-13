@@ -18,6 +18,11 @@ ifeq ($(OSTARGET),UNKNOWN)
 			USESDL = 1
 			OSTARGET = OSX
 		endif
+		UNAME = $(shell uname -m)
+		ifeq ($(UNAME),armv7l)
+			USESDL = 1
+			OSTARGET = PI
+		endif
 	endif
 endif
 ifeq ($(OSTARGET),UNKNOWN)

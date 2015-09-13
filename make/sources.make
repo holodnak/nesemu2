@@ -61,7 +61,7 @@ SOURCE_SYSTEM_SDL_OSX = source/system/linux/stricmp.c source/system/sdl/osx/SDLM
 
 # raspberry pi system files
 SOURCE_SYSTEM_PI = source/system/pi/main.c source/system/sdl/system.c source/system/sdl/input.c
-SOURCE_SYSTEM_PI += source/system/sdl/gpioinput.c
+SOURCE_SYSTEM_PI += source/system/pi/gpioinput.c
 SOURCE_SYSTEM_PI += source/system/sdl/video.c source/system/sdl/sound.c
 SOURCE_SYSTEM_PI += source/system/sdl/console/font.c source/system/sdl/console/fontdata.c
 

@@ -42,7 +42,7 @@ char exepath[1024] = "";
 
 static void usage(char *argv0)
 {
-	printf("\nnesemu2 v%s - Copyright 2013 James Holodnak\n\n",VERSION);
+	printf("\nnesemu2 v%s-pi - Copyright 2013-2015 James Holodnak\n\n",VERSION);
 	printf("Usage:  %s [options] filename\n\n",argv0);
 	printf("Supported ROM formats:  iNES, NES 2.0, UNIF, FDS, NSF\n\n");
 	printf("Options:\n\n");

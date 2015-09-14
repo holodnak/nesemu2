@@ -27,7 +27,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">
-    <LocalDebuggerWorkingDirectory>..\..\test</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory>..\..\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommandArguments>smbdh.nes</LocalDebuggerCommandArguments>
   </PropertyGroup>

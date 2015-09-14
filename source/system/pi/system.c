@@ -25,7 +25,6 @@
 #include "system/video.h"
 #include "system/input.h"
 #include "system/sound.h"
-#include "system/sdl/console/console.h"
 #include "nes/nes.h"
 #include "nes/state/state.h"
 #include "misc/paths.h"
@@ -63,7 +62,8 @@ void system_checkevents()
 				break;
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
-				console_keyevent(event.key.type,event.key.keysym.sym);
+				if(event.key.keysym.sym == SDLK_ESCAPE)
+					quit++;
 				break;
 		}
 	}

@@ -260,7 +260,8 @@ void video_kill()
 		mem_free(screen32);
 	if(nesscreen)
 		mem_free(nesscreen);
-	screen = 0;
+	screen16 = 0;
+	screen32 = 0;
 	nesscreen = 0;
 }
 

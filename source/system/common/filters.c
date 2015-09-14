@@ -32,12 +32,12 @@
 #define FILTER_END()								{0,0}}};
 
 FILTER_START(draw,256,240,1)
-	FILTER_MODE(1,draw1x)
-	FILTER_MODE(2,draw2x)
-	FILTER_MODE(3,draw3x)
-	FILTER_MODE(4,draw4x)
-	FILTER_MODE(5,draw5x)
-	FILTER_MODE(6,draw6x)
+	FILTER_MODE(1,draw1x_16,draw1x)
+	FILTER_MODE(2,draw2x_16,draw2x)
+	FILTER_MODE(3,draw3x_16,draw3x)
+	FILTER_MODE(4,draw4x_16,draw4x)
+	FILTER32_MODE(5,draw5x)
+	FILTER32_MODE(6,draw6x)
 FILTER_END()
 
 FILTER_START(interpolate,512,480,2)

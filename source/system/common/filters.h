@@ -41,7 +41,7 @@ typedef struct filter_s {
 		int	scale;
 
 		//function to draw from source to dest
-//		void	(*draw16)(void*,u32,void*,u32,u32,u32);
+		void	(*draw16)(void*,u32,void*,u32,u32,u32);
 		void	(*draw32)(void*,u32,void*,u32,u32,u32);
 	} modes[8];
 

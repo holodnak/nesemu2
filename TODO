@@ -1,0 +1,8 @@
+pi port
+-------
+. put 16bpp video
+. find smaller video mode
+. fix building for pi target
+. sound?
+. code speedups
+

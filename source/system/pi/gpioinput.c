@@ -55,5 +55,5 @@ static void state(int mode,u8 *data)
 //	STATE_U8(buttons);
 }
 
-INPUTDEV(I_CUSTOM + 0,read0,write,update,movie,state);
-INPUTDEV(I_CUSTOM + 1,read1,write,update,movie,state);
+INPUTDEV(I_CUSTOM0,read0,write,update,movie,state);
+INPUTDEV(I_CUSTOM1,read1,write,update,movie,state);

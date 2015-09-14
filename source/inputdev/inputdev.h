@@ -57,11 +57,18 @@ typedef struct inputdev_s {
 } inputdev_t;
 
 enum inputdevid_e {
-	I_NULL,
+
+	I_NULL = 0,
 	I_JOYPAD0,
 	I_JOYPAD1,
 	I_ZAPPER,
 	I_POWERPAD,
+
+	I_CUSTOM0 = 100,
+	I_CUSTOM1,
+	I_CUSTOM2,
+	I_CUSTOM3
+
 };
 
 inputdev_t *inputdev_get(int id);

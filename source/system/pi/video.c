@@ -254,8 +254,10 @@ void video_kill()
 {
 	filter_kill();
 	SDL_ShowCursor(1);
-	if(screen)
-		mem_free(screen);
+	if(screen16)
+		mem_free(screen16);
+	if(screen32)
+		mem_free(screen32);
 	if(nesscreen)
 		mem_free(nesscreen);
 	screen = 0;
@@ -279,7 +281,7 @@ void video_endframe()
 	u64 t;
 
 	//draw everything
-	drawfunc(surface->pixels,surface->pitch,screen,256*2,256,240);
+	drawfunc(surface->pixels,surface->pitch,screen16,256*2,256,240);
 
 	//flip buffers and unlock surface
 	SDL_Flip(surface);
@@ -351,7 +353,7 @@ int video_getwidth()			{	return(screenw);			}
 int video_getheight()			{	return(screenh);			}
 int video_getbpp()				{	return(screenbpp);		}
 u8 *video_getscreen()			{	return(nesscreen);		}
-u8 *video_getpalette()			{	return(palette);			}
+u8 *video_getpalette()			{	return((u8*)palette);			}
 
 int video_zapperhit(int x,int y)
 {

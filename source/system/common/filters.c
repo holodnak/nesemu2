@@ -26,7 +26,9 @@
 #include "system/common/filters/ntsc/ntsc.h"
 
 #define FILTER_START(name,minw,minh,mins)	filter_t filter_ ## name = { #name,minw,minh,mins, {
-#define FILTER_MODE(scale,func)				{scale,func},
+#define FILTER_MODE(scale,func16,func32)		{scale,func16,func32},
+#define FILTER16_MODE(scale,func)				{scale,func,0},
+#define FILTER32_MODE(scale,func)				{scale,0,func},
 #define FILTER_END()								{0,0}}};
 
 FILTER_START(draw,256,240,1)
@@ -39,21 +41,21 @@ FILTER_START(draw,256,240,1)
 FILTER_END()
 
 FILTER_START(interpolate,512,480,2)
-	FILTER_MODE(2,interpolate2x)
-	FILTER_MODE(3,interpolate3x)
-	FILTER_MODE(4,interpolate4x)
+	FILTER32_MODE(2,interpolate2x)
+	FILTER32_MODE(3,interpolate3x)
+	FILTER32_MODE(4,interpolate4x)
 FILTER_END()
 
 FILTER_START(scale,512,480,2)
-	FILTER_MODE(2,scale2x)
-	FILTER_MODE(3,scale3x)
-	FILTER_MODE(4,scale4x)
+	FILTER32_MODE(2,scale2x)
+	FILTER32_MODE(3,scale3x)
+	FILTER32_MODE(4,scale4x)
 FILTER_END()
 
 FILTER_START(ntsc,602,480,2)
-	FILTER_MODE(2,ntsc2x)
-	FILTER_MODE(3,ntsc3x)
-	FILTER_MODE(4,ntsc4x)
+	FILTER32_MODE(2,ntsc2x)
+	FILTER32_MODE(3,ntsc3x)
+	FILTER32_MODE(4,ntsc4x)
 FILTER_END()
 
 int filter_init()

@@ -48,6 +48,15 @@ ifeq ($(COLORGCC),1)
 	LD = colorgcc
 endif
 
+ifeq ($(OSTARGET),PI)
+	ifeq ($(CROSS),1)
+		CC = arm-linux-gnueabihf-gcc
+		LD = arm-linux-gnueabihf-ld
+		CFLAGS += -I../pidev/include
+		LDFLAGS_PI = -L../pidev/lib -rpath ../pidev/lib
+	endif
+endif
+
 # compiler/linker flags for debug
 CFLAGS_DEBUG = -g
 LDFLAGS_DEBUG =
@@ -61,7 +70,7 @@ LIBS =
 
 # compiler/linker flags
 CPPFLAGS = $(CFLAGS_$(BUILD)) $(DEFINES) -I$(PATH_SOURCE) -D$(OSTARGET) -D$(BUILD)
-LDFLAGS = $(LDFLAGS_$(BUILD))
+LDFLAGS = $(LDFLAGS_$(OSTARGET)) $(LDFLAGS_$(BUILD))
 
 # resource compiler (win32 only)
 RC = windres

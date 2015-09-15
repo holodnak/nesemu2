@@ -41,8 +41,8 @@ int input_init()
 	wiringPiSetupGpio();
     pinMode(pin_led, PWM_OUTPUT);
     pinMode(pin_reset, INPUT);     // Set regular LED as output
-    pinMode(butPin, INPUT);      // Set button as INPUT
-    pullUpDnControl(butPin, PUD_UP); // Enable pull-up resistor on button
+//    pinMode(butPin, INPUT);      // Set button as INPUT
+//    pullUpDnControl(butPin, PUD_UP); // Enable pull-up resistor on button
 	return(0);
 }
 

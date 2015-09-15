@@ -60,7 +60,7 @@ SOURCE_SYSTEM_SDL_LINUX = source/system/linux/stricmp.c
 SOURCE_SYSTEM_SDL_OSX = source/system/linux/stricmp.c source/system/sdl/osx/SDLMain.o
 
 # raspberry pi system files
-SOURCE_SYSTEM_PI = source/system/pi/main.c source/system/pi/system.c source/system/sdl/input.c
+SOURCE_SYSTEM_PI = source/system/pi/main.c source/system/pi/system.c source/system/pi/input.c
 SOURCE_SYSTEM_PI += source/system/pi/gpioinput.c source/system/pi/video.c source/system/pi/sound.c
 SOURCE_SYSTEM_PI += source/system/sdl/console/font.c source/system/sdl/console/fontdata.c
 SOURCE_SYSTEM_PI += source/system/linux/stricmp.c
@@ -115,7 +115,7 @@ ifeq ($(OSTARGET),OSX)
 endif
 
 ifeq ($(OSTARGET),PI)
-	SOURCES += $(SOURCE_SYSTEM_PI) $(SOURCE_SYSTEM_COMMON)
+	SOURCES += $(SOURCE_SYSTEM_PI)
 	LIBS += -lSDL -lm
 	TARGET = $(OUTPUT)
 endif

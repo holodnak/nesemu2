@@ -28,24 +28,22 @@
 #include "system/sdl/console/console.h"
 #include "misc/memutil.h"
 #include "misc/config.h"
-#include "system/common/filters.h"
 
 //system related variables
 static SDL_Surface *surface = 0;
 static int flags = SDL_DOUBLEBUF | SDL_HWSURFACE;
 static int screenw,screenh,screenbpp;
 static int screenscale;
+void (*video_updatepixel)(int,int,u8) = 0;
 
 //palette with emphasis applied
 static u8 palette[8][64 * 3];
 
 //palette data fed to video system
 static u16 palette16[8][256];		//16 bit color
-static u32 palette32[8][256];		//32 bit color
 
 //caches of all available colors
 static u16 palettecache16[256];
-static u32 palettecache32[256];
 
 //actual values written to nes palette ram
 static u8 palettecache[32];
@@ -56,8 +54,6 @@ static u64 lasttime = 0;
 
 //pointer to scree and copy of the nes screen
 static u16 *screen16 = 0;
-static u32 *screen32 = 0;
-static u8 *nesscreen = 0;
 
 //draw function pointer and pointer to current video filter
 static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
@@ -67,27 +63,17 @@ static filter_t *filter;
 static int rshift,gshift,bshift;
 static int rloss,gloss,bloss;
 
-static int find_drawfunc(int scale,int bpp)
+//this handles pixels coming directly from the nes engine
+void video_updatepixel_1x(int line,int pixel,u8 s)
 {
-	int i;
+	int offset = (line * 256) + pixel;
 
-	for(i=0;filter->modes[i].scale;i++) {
-		if(filter->modes[i].scale == scale) {
-			switch(bpp) {
-				case 32:
-					drawfunc = filter->modes[i].draw32;
-					return(0);
-				case 16:
-				case 15:
-					drawfunc = filter->modes[i].draw16;
-					return(0);
-				default:
-					log_printf("find_drawfunc:  unsupported bit depth (%d)\n",bpp);
-					return(2);
-			}
-		}
+	if(line >= 8 && line < 232) {
+		screen16[offset] = palettecache16[s];
 	}
-	return(1);
+	else {
+		screen16[offset] = 0;
+	}
 }
 
 static void get_surface_info(SDL_Surface *s)
@@ -180,16 +166,12 @@ static int get_desktop_bpp()
 
 int video_init()
 {
-	if(nesscreen == 0)
-		nesscreen = (u8*)mem_alloc(256 * (240 + 16));
-
 	//setup timer to limit frames
 	interval = (double)system_getfrequency() / 60.0f;
 	lasttime = system_gettick();
 
 	//clear palette caches
 	memset(palettecache16,0,256*sizeof(u16));
-	memset(palettecache32,0,256*sizeof(u32));
 
 	//set screen info
 	flags &= ~SDL_FULLSCREEN;
@@ -207,21 +189,9 @@ int video_init()
 		screenbpp = get_desktop_bpp();
 	}
 
-	//initialize the video filters
-	filter_init();
-
-	//get pointer to video filter
-	filter = filter_get((screenscale == 1) ? F_NONE : filter_get_int(config_get_string("video.filter")));
-
-	if(find_drawfunc(screenscale,screenbpp) != 0) {
-		log_printf("video_init:  error finding appropriate draw func, using draw1x\n");
-		filter = &filter_draw;
-		drawfunc = filter->modes[0].draw32;
-	}
-
 	//calculate desired screen dimensions
-	screenw = filter->minwidth / filter->minscale * screenscale;
-	screenh = filter->minheight / filter->minscale * screenscale;
+	screenw = 256 * screenscale;
+	screenh = 240 * screenscale;
 
 	//fullscreen mode
 	if(flags & SDL_FULLSCREEN) {
@@ -240,9 +210,11 @@ int video_init()
 	SDL_ShowCursor(0);
 	get_surface_info(surface);
 
+	//set correct pixel drawing function
+	video_updatepixel = video_updatepixel_1x;
+
 	//allocate memory for temp screen buffer
-	screen16 = (u32*)mem_realloc(screen16,256 * (240 + 16) * (screenbpp / 8) * 2);
-	screen32 = (u32*)mem_realloc(screen32,256 * (240 + 16) * (screenbpp / 8) * 4);
+	screen16 = (u16*)mem_realloc(screen16,256 * (240 + 16) * (screenbpp / 8) * 2);
 
 	//print information
 	log_printf("video initialized:  %dx%dx%d %s\n",surface->w,surface->h,surface->format->BitsPerPixel,(flags & SDL_FULLSCREEN) ? "fullscreen" : "windowed");
@@ -256,13 +228,8 @@ void video_kill()
 	SDL_ShowCursor(1);
 	if(screen16)
 		mem_free(screen16);
-	if(screen32)
-		mem_free(screen32);
-	if(nesscreen)
-		mem_free(nesscreen);
 	screen16 = 0;
-	screen32 = 0;
-	nesscreen = 0;
+	video_updatepixel = 0;
 }
 
 int video_reinit()
@@ -294,20 +261,6 @@ void video_endframe()
 			t = system_gettick();
 		} while((double)(t - lasttime) < interval);
 		lasttime = t;
-	}
-}
-
-//this handles pixels coming directly from the nes engine
-void video_updatepixel(int line,int pixel,u8 s)
-{
-	int offset = (line * 256) + pixel;
-
-	nesscreen[offset] = s;
-	if(line >= 8 && line < 232) {
-		screen16[offset] = palettecache16[s];
-	}
-	else {
-		screen16[offset] = 0;
 	}
 }
 
@@ -343,7 +296,6 @@ void video_setpalette(palette_t *p)
 		for(i=0;i<256;i++) {
 			e = &p->pal[j][i & 0x3F];
 			palette16[j][i] = ((e->r >> rloss) << rshift) | ((e->g >> gloss) << gshift) | ((e->b >> bloss) << bshift);
-			palette32[j][i] = (e->r << rshift) | (e->g << gshift) | (e->b << bshift);
 		}
 	}
 
@@ -353,21 +305,13 @@ void video_setpalette(palette_t *p)
 int video_getwidth()			{	return(screenw);			}
 int video_getheight()			{	return(screenh);			}
 int video_getbpp()				{	return(screenbpp);		}
-u8 *video_getscreen()			{	return(nesscreen);		}
+u8 *video_getscreen()			{	return(0);		}
 u8 *video_getpalette()			{	return((u8*)palette);			}
 
+//no zapper support on pi
 int video_zapperhit(int x,int y)
 {
-	int ret = 0;
-	u8 *e;
-	u8 color;
-
-	color = palettecache[nesscreen[x + y * 256]];
-	e = &palette[(color >> 5) & 7][(color & 0x3F) * 3];
-	ret += (int)(e[0] * 0.299f);
-	ret += (int)(e[1] * 0.587f);
-	ret += (int)(e[2] * 0.114f);
-	return((ret >= 0x40) ? 1 : 0);
+	return(0);
 }
 
 //kludge-city!

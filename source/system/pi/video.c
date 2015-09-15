@@ -55,10 +55,6 @@ static u64 lasttime = 0;
 //pointer to scree and copy of the nes screen
 static u16 *screen16 = 0;
 
-//draw function pointer and pointer to current video filter
-static void (*drawfunc)(void*,u32,void*,u32,u32,u32);		//dest,destpitch,src,srcpitch,width,height
-static filter_t *filter;
-
 //for correct colors
 static int rshift,gshift,bshift;
 static int rloss,gloss,bloss;

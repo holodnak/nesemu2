@@ -213,7 +213,21 @@ void console_update()
 
 static int isignored(int ch)
 {
-	if(ch == '`' || ch == '~')
+	if (ch == '`' || ch == '~')
+		return(1);
+	return(0);
+}
+
+static int isletter(int ch)
+{
+	if (ch >= SDLK_a && ch <= SDLK_z)
+		return(1);
+	return(0);
+}
+
+static int isnumber(int ch)
+{
+	if (ch >= SDLK_0 && ch <= SDLK_9)
 		return(1);
 	return(0);
 }
@@ -233,8 +247,22 @@ void console_keyevent(int state,int sym)
 	if(isshift)
 		iscaps ^= KMOD_CAPS;
 
+	//cursor left
+	if (sym == SDLK_LEFT) {
+		if (inputbufpos)
+			inputbufpos--;
+		return;
+	}
+
+	//cursor right
+	else if (sym == SDLK_RIGHT) {
+		if (inputbufpos < inputbuflen)
+			inputbufpos++;
+		return;
+	}
+
 	//if this is a letter
-	if(isalnum(sym)) {
+	else if(isletter(sym) || isnumber(sym)) {
 		ch = sym - SDLK_a;
 		if(iscaps)
 			ch += 'A';
@@ -243,23 +271,9 @@ void console_keyevent(int state,int sym)
 	}
 
 	//if this is a printable character and we are not ignoring it
-	else if(isprint(sym) && isignored(sym) == 0) {
-		ch = sym;
-	}
-
-	//cursor left
-	else if(sym == SDLK_LEFT) {
-		if(inputbufpos)
-			inputbufpos--;
-		return;
-	}
-
-	//cursor right
-	else if(sym == SDLK_RIGHT) {
-		if(inputbufpos < inputbuflen)
-			inputbufpos++;
-		return;
-	}
+//	else if(isprint(sym) && isignored(sym) == 0) {
+//		ch = sym;
+//	}
 
 	//backspace
 	else if(sym == SDLK_BACKSPACE) {

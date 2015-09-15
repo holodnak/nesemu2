@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug - Win32|Win32">
       <Configuration>Debug - Win32</Configuration>
@@ -30,27 +30,27 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -107,7 +107,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>D:\Development\zlib-1.2.7;D:\Development\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>c:\projects\zlib-1.2.8;c:\projects\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);QUICK_SPRITES;ACCURATE_SPRITE0;CPU_UNDOC;MATTAPU</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -123,7 +123,7 @@
     <Link>
       <AdditionalDependencies>SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)nesemu2.exe</OutputFile>
-      <AdditionalLibraryDirectories>D:\Development\SDL-1.2.15\lib;D:\Development\zlib-1.2.7\win32\zlib\Debug;C:\mingw\home\Guest\zlib\Debug;C:\DELL\drivers\R8088\SDL-1.2.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>c:\projects\SDL-1.2.15\lib;D:\Development\zlib-1.2.7\win32\zlib\Debug;C:\mingw\home\Guest\zlib\Debug;C:\DELL\drivers\R8088\SDL-1.2.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)nesemu2.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -134,7 +134,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>D:\Development\zlib-1.2.7;D:\Development\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>c:\projects\zlib-1.2.8;c:\projects\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);QUICK_SPRITES;CPU_UNDOC</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -150,7 +150,7 @@
     <Link>
       <AdditionalDependencies>ddraw.lib;dsound.lib;dxguid.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)nesemu2.exe</OutputFile>
-      <AdditionalLibraryDirectories>D:\Development\SDL-1.2.15\lib;D:\Development\zlib-1.2.7\win32\zlib\Debug;C:\mingw\home\Guest\zlib\Debug;C:\DELL\drivers\R8088\SDL-1.2.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>c:\projects\SDL-1.2.15\lib;D:\Development\zlib-1.2.7\win32\zlib\Debug;C:\mingw\home\Guest\zlib\Debug;C:\DELL\drivers\R8088\SDL-1.2.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)nesemu2.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -161,7 +161,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>D:\Development\zlib-1.2.7;D:\Development\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>c:\projects\zlib-1.2.8;c:\projects\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);QUICK_SPRITES;CPU_UNDOC;MATTAPU</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -176,7 +176,7 @@
     <Link>
       <AdditionalDependencies>SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)nesemu2.exe</OutputFile>
-      <AdditionalLibraryDirectories>D:\Development\SDL-1.2.15\lib;D:\Development\zlib-1.2.7\win32\zlib\Debug;C:\mingw\home\Guest\zlib\Debug;C:\DELL\drivers\R8088\SDL-1.2.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>c:\projects\SDL-1.2.15\lib;D:\Development\zlib-1.2.7\win32\zlib\Debug;C:\mingw\home\Guest\zlib\Debug;C:\DELL\drivers\R8088\SDL-1.2.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)nesemu2.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -193,7 +193,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>D:\Development\zlib-1.2.7;D:\Development\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>c:\projects\zlib-1.2.8;c:\projects\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -204,7 +204,7 @@
     <Link>
       <AdditionalDependencies>SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)nesemu2.exe</OutputFile>
-      <AdditionalLibraryDirectories>D:\Development\SDL-1.2.15\lib;D:\Development\zlib-1.2.7\win32\zlib\Release;C:\mingw\home\Guest\zlib\Release;C:\DELL\drivers\R8088\SDL-1.2.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>c:\projects\SDL-1.2.15\lib;D:\Development\zlib-1.2.7\win32\zlib\Release;C:\mingw\home\Guest\zlib\Release;C:\DELL\drivers\R8088\SDL-1.2.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -223,7 +223,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>D:\Development\zlib-1.2.7;D:\Development\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>c:\projects\zlib-1.2.8;c:\projects\SDL-1.2.15\include;..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -234,7 +234,7 @@
     <Link>
       <AdditionalDependencies>ddraw.lib;dsound.lib;dxguid.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)nesemu2.exe</OutputFile>
-      <AdditionalLibraryDirectories>D:\Development\SDL-1.2.15\lib;D:\Development\zlib-1.2.7\win32\zlib\Release;C:\mingw\home\Guest\zlib\Release;C:\DELL\drivers\R8088\SDL-1.2.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>c:\projects\SDL-1.2.15\lib;D:\Development\zlib-1.2.7\win32\zlib\Release;C:\mingw\home\Guest\zlib\Release;C:\DELL\drivers\R8088\SDL-1.2.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -660,42 +660,52 @@
     <ClCompile Include="..\..\source\system\sdl\console\console.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\sdl\console\font.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\sdl\console\fontdata.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\sdl\console\linebuffer.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\sdl\input.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\sdl\main.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\sdl\sound.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\sdl\system.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\sdl\video.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\sdl\win32\SDL_win32_main.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\memory.c" />
     <ClCompile Include="..\..\source\nes\nes.c">
@@ -789,50 +799,62 @@
     <ClCompile Include="..\..\source\system\win32\dialogs\about.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\dialogs\cheatsearch.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\dialogs\configuration.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\dialogs\console.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\dialogs\debugger.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\dialogs\mappers.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\input.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\main.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\mainwnd.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\sound.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\system.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\system\win32\video.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
 *.suo
 *.bin
 *.aps
-*.vsp
+*.vsp*
 *.opensdf
 *.sdf
 *.psess

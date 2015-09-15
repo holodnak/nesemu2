@@ -116,7 +116,7 @@ endif
 
 ifeq ($(OSTARGET),PI)
 	SOURCES += $(SOURCE_SYSTEM_PI)
-	LIBS += -lSDL -lm
+	LIBS += -lSDL -lm -lwiringPi
 	TARGET = $(OUTPUT)
 endif
 

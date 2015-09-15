@@ -36,11 +36,14 @@ const int pin_p1_d0 = 16;
 const int pin_p1_d3 = 20;
 const int pin_p1_d4 = 21;
 
+u8 joykeys[370];		//keyboard state
+int joyconfig[4][8];	//joypad button configuration
+
 int input_init()
 {
-	wiringPiSetupGpio();
-    pinMode(pin_led, PWM_OUTPUT);
-    pinMode(pin_reset, INPUT);     // Set regular LED as output
+//	wiringPiSetupGpio();
+//    pinMode(pin_led, PWM_OUTPUT);
+//    pinMode(pin_reset, INPUT);     // Set regular LED as output
 //    pinMode(butPin, INPUT);      // Set button as INPUT
 //    pullUpDnControl(butPin, PUD_UP); // Enable pull-up resistor on button
 	return(0);

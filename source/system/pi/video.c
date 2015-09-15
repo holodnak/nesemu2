@@ -53,7 +53,11 @@ static double interval = 0;
 static u64 lasttime = 0;
 
 //pointer to scree and copy of the nes screen
-static u16 *screen16 = 0;
+//static u16 *screen16 = 0;
+
+//pointer to framebuffer memory
+static u16 *screen = 0;
+static int pitch = 0;
 
 //for correct colors
 static int rshift,gshift,bshift;
@@ -62,13 +66,13 @@ static int rloss,gloss,bloss;
 //this handles pixels coming directly from the nes engine
 void video_updatepixel_1x(int line,int pixel,u8 s)
 {
-	int offset = (line * 256) + pixel;
+	int offset = (line * pitch) + pixel;
 
 	if(line >= 8 && line < 232) {
-		screen16[offset] = palettecache16[s];
+		screen[offset] = palettecache16[s];
 	}
 	else {
-		screen16[offset] = 0;
+		screen[offset] = 0;
 	}
 }
 
@@ -210,7 +214,7 @@ int video_init()
 	video_updatepixel = video_updatepixel_1x;
 
 	//allocate memory for temp screen buffer
-	screen16 = (u16*)mem_realloc(screen16,256 * (240 + 16) * (screenbpp / 8) * 2);
+//	screen16 = (u16*)mem_realloc(screen16,256 * (240 + 16) * (screenbpp / 8) * 2);
 
 	//print information
 	log_printf("video initialized:  %dx%dx%d %s\n",surface->w,surface->h,surface->format->BitsPerPixel,(flags & SDL_FULLSCREEN) ? "fullscreen" : "windowed");
@@ -220,11 +224,10 @@ int video_init()
 
 void video_kill()
 {
-	filter_kill();
 	SDL_ShowCursor(1);
-	if(screen16)
-		mem_free(screen16);
-	screen16 = 0;
+//	if(screen16)
+//		mem_free(screen16);
+//	screen16 = 0;
 	video_updatepixel = 0;
 }
 
@@ -238,6 +241,8 @@ void video_startframe()
 {
 	//lock sdl surface
 	SDL_LockSurface(surface);
+	screen = surface->pixels;
+	pitch = surface->pitch;
 }
 
 void video_endframe()
@@ -245,7 +250,7 @@ void video_endframe()
 	u64 t;
 
 	//draw everything
-	drawfunc(surface->pixels,surface->pitch,screen16,256*2,256,240);
+//	drawfunc(surface->pixels,surface->pitch,screen16,256*2,256,240);
 
 	//flip buffers and unlock surface
 	SDL_Flip(surface);
@@ -294,8 +299,6 @@ void video_setpalette(palette_t *p)
 			palette16[j][i] = ((e->r >> rloss) << rshift) | ((e->g >> gloss) << gshift) | ((e->b >> bloss) << bshift);
 		}
 	}
-
-	filter_palette_changed();
 }
 
 int video_getwidth()			{	return(screenw);			}

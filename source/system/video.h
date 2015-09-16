@@ -28,12 +28,7 @@ void video_kill();
 int video_reinit();
 void video_startframe();
 void video_endframe();
-#ifdef PI
-//pi only kludge
-void (*video_updatepixel)(int,int,u8);
-#else
 void video_updatepixel(int line,int pixel,u8 s);
-#endif
 void video_updatepalette(u8 addr,u8 data);
 void video_setpalette(palette_t *p);
 int video_getwidth();

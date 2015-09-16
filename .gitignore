@@ -24,3 +24,4 @@ projects/vc2012/Profile
 projects/vc2012/ipch
 test/
 resources/old/
+perf*

@@ -58,11 +58,11 @@ ifeq ($(OSTARGET),PI)
 endif
 
 # compiler/linker flags for debug
-CFLAGS_DEBUG = -g
+CFLAGS_DEBUG = -g -O3
 LDFLAGS_DEBUG =
 
 # compiler/linker flags for release
-CFLAGS_RELEASE = -O2 -funroll-loops -fomit-frame-pointer
+CFLAGS_RELEASE = -O3
 LDFLAGS_RELEASE = -s
 
 # libraries for linking

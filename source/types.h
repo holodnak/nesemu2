@@ -31,6 +31,11 @@
 	#error unknown compiler.  please #define int64.
 #endif
 
+#ifdef DEBUG
+	#undef INLINE
+	#define INLINE
+#endif
+
 typedef signed char		s8;
 typedef signed short		s16;
 typedef signed int		s32;

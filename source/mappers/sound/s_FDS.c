@@ -105,7 +105,7 @@ static void LogTableInitialize(void)
 	for (i = 1; i < (1 << LIN_BITS) + 1; i++)
 	{
 		u32 ua;
-		a = i << (LOG_LIN_BITS - LIN_BITS);
+		a = (double)((u64)i << (LOG_LIN_BITS - LIN_BITS));
 		ua = (u32)((LOG_LIN_BITS - (log(a) / log(2))) * (1 << LOG_BITS));
 		lineartbl[i] = ua << 1;
 	}

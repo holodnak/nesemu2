@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <SDL/SDL.h>
+#include "emu/commands.h"
 #include "misc/log.h"
 #include "misc/memutil.h"
 #include "palette/palette.h"

@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "mappers/fds/calls.h"
 #include "mappers/fds/hle.h"

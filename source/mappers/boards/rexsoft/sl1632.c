@@ -21,12 +21,12 @@
 #include "mappers/mapperinc.h"
 #include "mappers/chips/mmc3.h"
 
-static u8 prg[2],chr[8],mirror,mode;
+static u8 prg[2],chr[8],mirror, bankmode;
 static writefunc_t write4;
 
 static void syncprg()
 {
-	if(mode & 2) {
+	if(bankmode & 2) {
 		mmc3_syncprg(0xFF,0x00);
 	}
 	else {
@@ -42,10 +42,10 @@ static void syncchr()
 	u8 modes[4] = {5,5,3,1};
 	int i,bank;
 
-	if(mode & 2) {
+	if(bankmode & 2) {
 		for(i=0;i<8;i++) {
 			bank = mmc3_getchrreg(i);
-			bank |= mode << modes[(i >> 1) ^ ((mmc3_getcommand() >> 6) & 2)] & 0x100;
+			bank |= bankmode << modes[(i >> 1) ^ ((mmc3_getcommand() >> 6) & 2)] & 0x100;
 			mem_setchr1(i,bank);
 		}
 	}
@@ -73,7 +73,7 @@ static void write_mode(u32 addr,u8 data)
 	log_printf("sl1632.c:  mode:  $%04X = $%02X\n",addr,data);
 	if((addr & 0xFF00) == 0x4100) {
 		log_printf("sl1632.c:  mode:  $%04X = $%02X\n",addr,data);
-		mode = data;
+		bankmode = data;
 		sync();
 	}
 }
@@ -84,10 +84,10 @@ static void write(u32 addr,u8 data)
 
 	if((addr & 0xA131) == 0xA131) {
 		log_printf("sl1632.c:  mode:  $%04X = $%02X\n",addr,data);
-		mode = data;
+		bankmode = data;
 	}
 
-	if(mode & 2) {
+	if(bankmode & 2) {
 		mmc3_write(addr,data);
 	}
 	else {
@@ -118,7 +118,7 @@ static void reset(int hard)
 {
 	int i;
 
-	mode = 0;
+	bankmode = 0;
 	if(hard) {
 		for(i=0;i<8;i++) {
 			prg[i & 1] = 0;
@@ -144,7 +144,7 @@ static void ppucycle()
 
 static void state(int mode,u8 *data)
 {
-	mmc3_state(mode,data);
+	mmc3_state(bankmode,data);
 }
 
 MAPPER(B_REXSOFT_SL1632,reset,ppucycle,0,state);

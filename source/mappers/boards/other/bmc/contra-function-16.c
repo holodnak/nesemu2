@@ -28,6 +28,7 @@ static void sync()
 	bank = (latch_data << 1) & 0x7E;
 	x = (latch_data >> 7) & 1;
 	switch(latch_addr & 3) {
+		default:
 		case 0:
 			banks[0] = bank | 0;
 			banks[1] = bank | 1;

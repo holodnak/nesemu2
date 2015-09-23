@@ -155,7 +155,7 @@ void cpu_clear_irq(u8 state)
 	IRQSTATE &= ~state;
 }
 
-static void ppu_tick()
+static INLINE void ppu_tick()
 {
 	if(nes->region->id & REGION_PAL) {
 		palticks++;

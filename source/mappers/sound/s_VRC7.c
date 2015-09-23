@@ -53,7 +53,7 @@
 		YM2143 data sheet
 
 **************************************************************************************/
-//#include	"..\..\interface.h"
+#include	"misc/log.h"
 #include	"s_VRC7.h"
 #include	<stdio.h>
 #include	<stdlib.h>
@@ -540,7 +540,7 @@ makeDphaseARTable (void)
 #ifdef USE_SPEC_ENV_SPEED
 				dphaseARTable[AR][Rks] = rate_adjust (attacktable[RM][RL]);
 #else
-				dphaseARTable[AR][Rks] = rate_adjust ((3 * (RL + 4) << (RM + 1)));
+				dphaseARTable[AR][Rks] = (u32)rate_adjust ((3 * (RL + 4) << (RM + 1)));
 #endif
 				break;
 			}
@@ -580,7 +580,7 @@ makeDphaseDRTable (void)
 #ifdef USE_SPEC_ENV_SPEED
 				dphaseDRTable[DR][Rks] = rate_adjust (decaytable[RM][RL]);
 #else
-				dphaseDRTable[DR][Rks] = rate_adjust ((RL + 4) << (RM - 1));
+				dphaseDRTable[DR][Rks] = (u32)rate_adjust ((RL + 4) << (RM - 1));
 #endif
 				break;
 			}
@@ -820,11 +820,11 @@ maketables (u32 c, u32 r)
 	}
 }
 
-OPLL *OPLL_new (u32 clk, u32 rate)
+OPLL *OPLL_new (u32 clk2, u32 rate2)
 {
 	OPLL *opll;
 
-	maketables (clk, rate);
+	maketables (clk2, rate2);
 
 	opll = (OPLL *) calloc (sizeof (OPLL), 1);
 	if (opll == NULL)

@@ -23,6 +23,7 @@
 #include "misc/memutil.h"
 #include "misc/memfile.h"
 #include "misc/crc32.h"
+#include "misc/log.h"
 #include "system/video.h"
 
 #define MOVIE_PREALLOC_SIZE	1024

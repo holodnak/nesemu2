@@ -21,11 +21,12 @@
 #include <string.h>
 #include "nes/cart/patch/patch.h"
 #include "misc/memutil.h"
+#include "misc/log.h"
 
 int patch_apply_ips(patch_t *p,memfile_t *file)
 {
 	u8 data[4];
-	u32 size,offset,n;
+	u32 size,offset;
 	char eof[4] = "EOF";
 
 	//skip over the header, it has been verified (hopefully)

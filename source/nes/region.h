@@ -29,19 +29,19 @@
 typedef struct region_s {
 
 	//region id
-	int	id;
+	u32	id;
 
 	//frames per second
-	int	fps;
+	u32	fps;
 
 	//master clock
 	u32	hz;
 
 	//vblank start line
-	int	vblank_start;
+	u32	vblank_start;
 
 	//last line
-	int	end_line;
+	u32	end_line;
 } region_t;
 
 extern region_t region_ntsc;

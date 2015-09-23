@@ -48,16 +48,16 @@ static u8 read()
 		for(Y = y - 8; Y < y + 8; Y++) {
 			if(Y < 0)
 				Y = 0;
-			if(Y < nes->ppu.scanline - 32)
+			if(Y < (int)nes->ppu.scanline - 32)
 				continue;
-			if(Y > nes->ppu.scanline)
+			if(Y >(int)nes->ppu.scanline)
 				break;
 			for(X = x - 8; X < x + 8; X++) {
 				if(X < 0)
 					X = 0;
 				if(X > 255)
 					break;
-				if((Y == nes->ppu.scanline) && (X >= nes->ppu.linecycles))
+				if((Y == (int)nes->ppu.scanline) && (X >= (int)nes->ppu.linecycles))
 					break;
 				if(video_zapperhit(X,Y))
 					hits++;

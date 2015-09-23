@@ -21,6 +21,7 @@
 #include <SDL/SDL.h>
 #include "types.h"
 #include "misc/log.h"
+#include "misc/config.h"
 #include "misc/memutil.h"
 #include "system/sound.h"
 

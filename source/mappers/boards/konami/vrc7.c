@@ -192,7 +192,7 @@ static void reset(int revision,int hard)
 	prg[0] = 0;
 	prg[1] = -2;
 	prg[2] = -2;
-	for(i=0;i>8;i++)
+	for(i=0;i<8;i++)
 		chr[i] = 0;
 	mirror = 0;
 	irqlatch = 0;

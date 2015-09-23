@@ -48,6 +48,18 @@ static blockfunc_t blockinfo[16];
 static u32 ident = MAKEID('N','S','T','\0');
 static u32 version = 0x0100;
 
+static char *makestr(u32 u)
+{
+	static char str[5];
+
+	str[0] = (u8)(u >> 24);
+	str[1] = (u8)(u >> 16);
+	str[2] = (u8)(u >>  8);
+	str[3] = (u8)(u >>  0);
+	str[4] = 0;
+	return(str);
+}
+
 int state_init()
 {
 	memset(blockinfo,0,sizeof(blockfunc_t) * 16);
@@ -118,7 +130,7 @@ int state_load(memfile_t *file)
 		if((block = block_load(file)) == 0)
 			break;
 		size += 8 + block->size;
-		log_printf("state_load:  loaded block '%4s' (%08X) (%d bytes)\n",&block->type,block->type,block->size);
+		log_printf("state_load:  loaded block '%4s' (%08X) (%d bytes)\n", makestr(block->type),block->type,block->size);
 		for(i=0;blockinfo[i].type;i++) {
 			if(blockinfo[i].type == block->type) {
 				blockinfo[i].func(STATE_LOAD,block->data);
@@ -126,7 +138,7 @@ int state_load(memfile_t *file)
 			}
 		}
 		if(blockinfo[i].type == 0) {
-			log_printf("state_load:  no handler for block type '%4s' (%d bytes)\n",&block->type,block->size);
+			log_printf("state_load:  no handler for block type '%4s' (%d bytes)\n", makestr(block->type),block->size);
 		}
 		block_destroy(block);
 	}
@@ -168,7 +180,7 @@ int state_save(memfile_t *file)
 	for(i=0;blockinfo[i].type;i++) {
 		if(blockinfo[i].size == 0)
 			continue;
-		printf("saving block '%4s' (%d bytes)\n",&blockinfo[i].type,blockinfo[i].size);
+		log_printf("saving block '%4s' (%d bytes)\n", makestr(blockinfo[i].type),blockinfo[i].size);
 		block = block_create(blockinfo[i].type,blockinfo[i].size);
 		blockinfo[i].func(STATE_SAVE,block->data);
 		block_save(file,block);

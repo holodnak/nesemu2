@@ -20,19 +20,20 @@
 
 #include "mappers/mapperinc.h"
 
-static u8 select,mode;
+static u8 select, bankmode;
 static u8 outerprg,prg,chr;
 
 static void sync()
 {
 	int banklo,bankhi,outerbank,bank,shift,mask;
 
-	shift = (mode >> 4) & 3;
+	shift = (bankmode >> 4) & 3;
 	mask = (1 << shift) - 1;
 	outerbank = (outerprg & ~mask) | (prg & mask);
 	bank = ((outerprg & ~mask) << 1) | (prg & ((mask << 1) | 1));
+	banklo = bankhi = 0;
 	//prg bank mode
-	switch((mode >> 2) & 3) {
+	switch((bankmode >> 2) & 3) {
 		//32kb mode
 		case 0:
 		case 1:
@@ -53,7 +54,7 @@ static void sync()
 	mem_setprg16(0x8,banklo);
 	mem_setprg16(0xC,bankhi);
 	mem_setvram8(0,chr);
-	switch(mode & 3) {
+	switch(bankmode & 3) {
 		case 0:	mem_setmirroring(MIRROR_1L);	break;
 		case 1:	mem_setmirroring(MIRROR_1H);	break;
 		case 2:	mem_setmirroring(MIRROR_V);	break;
@@ -71,16 +72,16 @@ static void write_register(u32 addr,u8 data)
 	switch(select) {
 		case 0x00:
 			chr = data & 3;
-			if((mode & 2) == 0)
-				mode = (mode & 0xFE) | ((data >> 4) & 1);
+			if((bankmode & 2) == 0)
+				bankmode = (bankmode & 0xFE) | ((data >> 4) & 1);
 			break;
 		case 0x01:
 			prg = data & 0xF;
-			if((mode & 2) == 0)
-				mode = (mode & 0xFE) | ((data >> 4) & 1);
+			if((bankmode & 2) == 0)
+				bankmode = (bankmode & 0xFE) | ((data >> 4) & 1);
 			break;
 		case 0x80:
-			mode = data & 0x3F;
+			bankmode = data & 0x3F;
 			break;
 		case 0x81:
 			outerprg = data & 0x3F;
@@ -101,7 +102,7 @@ static void reset(int hard)
 		select = 0;
 		prg = 0xF;
 		chr = 3;
-		mode = 0x3F;
+		bankmode = 0x3F;
 		outerprg = 0x3F;
 	}
 	sync();
@@ -110,7 +111,7 @@ static void reset(int hard)
 static void state(int mode,u8 *data)
 {
 	STATE_U8(select);
-	STATE_U8(mode);
+	STATE_U8(bankmode);
 	STATE_U8(outerprg);
 	STATE_U8(prg);
 	STATE_U8(chr);

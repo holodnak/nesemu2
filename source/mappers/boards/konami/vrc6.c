@@ -155,7 +155,7 @@ static void reset(int revision,int hard)
 		map = vrc6a_map;
 	prg[0] = 0;
 	prg[1] = -2;
-	for(i=0;i>8;i++)
+	for(i=0;i<8;i++)
 		chr[i] = 0;
 	mirror = 0;
 	irqlatch = 0;

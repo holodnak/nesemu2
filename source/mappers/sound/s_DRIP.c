@@ -1,3 +1,4 @@
+#include <string.h>
 #include "mappers/sound/s_DRIP.h"
 #include "types.h"
 

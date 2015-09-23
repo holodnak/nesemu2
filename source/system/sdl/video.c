@@ -114,13 +114,13 @@ static int absolute_value(int v)
 	return((v < 0) ? (0 - v) : v);
 }
 
-int find_video_mode(int wantw,int wanth,int flags,int *w,int *h)
+int find_video_mode(int wantw,int wanth,int flags2,int *w,int *h)
 {
 	SDL_Rect **modes,*mode;
 	int i,diffw[2],diffh[2];
 
 	//get list of modes from sdl
-	modes = SDL_ListModes(NULL,flags);
+	modes = SDL_ListModes(NULL, flags2);
 	*w = *h = 0;
 
 	//if nothing returned
@@ -369,7 +369,7 @@ int video_getwidth()				{	return(screenw);			}
 int video_getheight()			{	return(screenh);			}
 int video_getbpp()				{	return(screenbpp);		}
 u8 *video_getscreen()			{	return(nesscreen);		}
-u8 *video_getpalette()			{	return(palette);			}
+u8 *video_getpalette()			{	return((u8*)palette);	}
 
 int video_zapperhit(int x,int y)
 {

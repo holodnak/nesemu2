@@ -20,7 +20,7 @@
 
 #include "mappers/mapperinc.h"
 
-static u8 prg,chr[3];
+static u8 prg,chr[4];
 
 static void sync()
 {

@@ -80,7 +80,7 @@ void patch_unload(patch_t *p)
 
 int patch_apply(patch_t *p,memfile_t *file)
 {
-	int format,n;
+	int n;
 
 	log_printf("patch_apply:  applying patch...\n");
 

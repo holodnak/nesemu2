@@ -24,14 +24,14 @@
 #define BMC_70IN1B	1
 
 static int revision;
-static u8 mode,mirror;
+static u8 bankmode,mirror;
 static u8 bankhi,banklo,chrbank;
 static u8 hwswitch;
 static readfunc_t cpuread;
 
 static void sync()
 {
-	switch(mode) {
+	switch(bankmode) {
 		case 0x00:
 		case 0x10:
 			mem_setprg16(0x8,bankhi | banklo);
@@ -54,7 +54,7 @@ static void sync()
 
 static u8 read(u32 addr)
 {
-	if(addr >= 0x8000 && mode == 0x10) {
+	if(addr >= 0x8000 && bankmode == 0x10) {
 		return(cpuread((addr & 0xFFF0) | hwswitch));
 	}
 	return(cpuread(addr));
@@ -72,7 +72,7 @@ static void write_8000(u32 addr,u8 data)
 
 static void write_C000(u32 addr,u8 data)
 {
-	mode = addr & 0x30;
+	bankmode = addr & 0x30;
 	banklo = addr & 7;
 	sync();
 }
@@ -89,7 +89,7 @@ static void reset(int r,int hard)
 		mem_setwritefunc(0xC + i,write_C000);
 	}
 	mem_setvramsize(8);
-	mode = 0;
+	bankmode = 0;
 	bankhi = banklo = 0;
 	if(hard) {
 		if(r == BMC_70IN1)
@@ -116,7 +116,7 @@ static void reset_70in1b(int hard)
 static void state(int mode,u8 *data)
 {
 	CFG_U8(hwswitch);
-	STATE_U8(mode);
+	STATE_U8(bankmode);
 	STATE_U8(mirror);
 	STATE_U8(bankhi);
 	STATE_U8(banklo);

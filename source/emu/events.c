@@ -92,7 +92,7 @@ int emu_event(int id,void *data)
 			break;
 
 		case E_SAVESTATE:
-			if(nes->cart == 0)
+			if(nes == 0 || nes->cart == 0)
 				log_printf("emu_event:  cannot load state, no rom loaded\n");
 			paths_makestatefilename(nes->cart->filename,dest,1024);
 			nes_savestate(dest);
@@ -125,15 +125,15 @@ int emu_event(int id,void *data)
 			if(nes->cart == 0)
 				break;
 			if((nes->cart->mapperid & B_TYPEMASK) == B_FDS) {
-				u8 data[4] = {0,0,0,0};
+				u8 d[4] = {0,0,0,0};
 
-				nes->mapper->state(CFG_SAVE,data);
-				if(data[0] == 0xFF)
-					data[0] = 0;
+				nes->mapper->state(CFG_SAVE,d);
+				if(d[0] == 0xFF)
+					d[0] = 0;
 				else
-					data[0] ^= 1;
-				nes->mapper->state(CFG_LOAD,data);
-				log_printf("disk inserted!  side = %d\n",data[0]);
+					d[0] ^= 1;
+				nes->mapper->state(CFG_LOAD,d);
+				log_printf("disk inserted!  side = %d\n",d[0]);
 			}
 			else
 				log_printf("cannot flip disk.  not fds.\n");

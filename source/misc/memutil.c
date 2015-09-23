@@ -48,7 +48,7 @@ static char *bytestr(size_t sz)
 	static char str[64];
 
 	if(sz < 1024)
-		sprintf(str,"%db",sz);
+		sprintf(str,"%ub",sz);
 	else if(sz < 1024 * 1024)
 		sprintf(str,"%.2fkb",(double)sz / 1024.0f);
 	else if(sz < 1024 * 1024 * 1024)
@@ -140,7 +140,10 @@ void *memutil_alloc(size_t size,char *file,int line)
 	int i;
 
 	checkinited();
-	ret = malloc(size);
+	if ((ret = malloc(size)) == 0) {
+		log_printf("memutil_alloc:  unable to alloc %d bytes\n", size);
+		exit(-1);
+	}
 	memset(ret,0,size);
 	num_alloc++;
 	num_bytes += size;
@@ -196,7 +199,6 @@ void memutil_free(void *ptr,char *file,int line)
 	int i;
 
 	checkinited();
-	free(ptr);
 	num_free++;
 	for(i=0;i<MAX_CHUNKS;i++) {
 		if(chunks[i].ptr == ptr && chunks[i].flags) {
@@ -207,5 +209,6 @@ void memutil_free(void *ptr,char *file,int line)
 	if(i == MAX_CHUNKS) {
 		log_printf("memutil_free:  trying to free memory not in list in file %s @ line %d\n",file,line);
 	}
+	free(ptr);
 	memutil_count();
 }

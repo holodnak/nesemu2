@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "nes/cart/patch/patch.h"
+#include "misc/log.h"
 
 int patch_apply_ups(patch_t *ret,memfile_t *file)
 {

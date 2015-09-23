@@ -22,13 +22,13 @@
 #include "mappers/chips/latch.h"
 
 static readfunc_t oldread;
-static u8 mode,dip;
+static u8 bankmode,dip;
 
 static void sync()
 {
 	u8 prglo,prghi,chr;
 
-	mode = (latch_addr >> 8) & 1;
+	bankmode = (latch_addr >> 8) & 1;
 	prglo = ((latch_addr >> 4) & 0xE) & ~(~latch_addr >> 7 & 1);
 	prghi = ((latch_addr >> 4) & 0xE) | (~latch_addr >> 7 & 1);
 	chr = latch_addr & 0xF;
@@ -40,7 +40,7 @@ static void sync()
 
 static u8 read(u32 addr)
 {
-	if(mode && addr >= 0x8000) {
+	if(bankmode && addr >= 0x8000) {
 		return(dip);
 	}
 	return(oldread(addr));
@@ -66,7 +66,7 @@ static void reset(int hard)
 
 static void state(int mode,u8 *data)
 {
-	STATE_U8(mode);
+	STATE_U8(bankmode);
 	latch_state(mode,data);
 }
 

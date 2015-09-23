@@ -64,10 +64,10 @@ int main(int argc,char *argv[])
 	int i,ret;
 	int recordmovie = 0;
 	char *p;
-	char romfilename[1024];
-	char patchfilename[1024];
-	char moviefilename[1024];
-	char testfilename[1024];
+	char romfilename[1024] = "";
+	char patchfilename[1024] = "";
+	char moviefilename[1024] = "";
+	char testfilename[1024] = "";
 
 	//clear the tmp strings and configfile string
 	memset(romfilename,0,1024);

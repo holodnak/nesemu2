@@ -263,4 +263,6 @@ void input_update_config()
 		joyconfig[0][i] = translatekey(joyconfig[0][i]);
 		joyconfig[1][i] = translatekey(joyconfig[1][i]);
 	}
+
+	log_printf("input_update_config: keys translated\n");
 }

@@ -307,9 +307,9 @@ char *config_get_eval_string(char *dest,char *name)
 					log_printf("config_get_eval_string:  variable cannot reference itself (var '%s')\n",varname);
 				}
 				else {
-					char *tmp = (char*)mem_alloc(1024);
+					char *tmp2 = (char*)mem_alloc(1024);
 
-					p2 = var_get_eval_string(tmp,varname);
+					p2 = var_get_eval_string(tmp2,varname);
 					if(p2 == 0) {
 						log_printf("config_get_eval_string:  variable '%s' referenced non-existant variable '%s', using '.'\n",name,varname);
 						dest[pos++] = '.';
@@ -321,7 +321,7 @@ char *config_get_eval_string(char *dest,char *name)
 							dest[pos] = 0;
 						}
 					}
-					mem_free(tmp);
+					mem_free(tmp2);
 				}
 			}
 		}

@@ -20,28 +20,28 @@
 
 #include "mappers/mapperinc.h"
 
-static u8 mode,bank;
+static u8 bankmode,bank;
 
 static void sync()
 {
-	if(mode & 1)
+	if(bankmode & 1)
 		mem_setprg8(0x6,bank | 0x23);
 	else
 		mem_setprg8(0x6,bank | 0x2F);
-	if(mode == 2)
+	if(bankmode == 2)
 		mem_setprg16(0x8,(bank >> 1) | 1);
 	else
 		mem_setprg16(0x8,bank >> 1);
-	if(mode & 1)
+	if(bankmode & 1)
 		mem_setprg16(0xC,(bank >> 1) | 1);
 	else
 		mem_setprg16(0xC,(bank >> 1) | 7);
-	mem_setmirroring((mode == 3) ? MIRROR_H : MIRROR_V);
+	mem_setmirroring((bankmode == 3) ? MIRROR_H : MIRROR_V);
 }
 
 static void write67(u32 addr,u8 data)
 {
-	mode = ((data >> 3) & 2) | ((data >> 1) & 1);
+	bankmode = ((data >> 3) & 2) | ((data >> 1) & 1);
 	sync();
 }
 
@@ -49,7 +49,7 @@ static void write_upper(u32 addr,u8 data)
 {
 	bank = (data & 0xF) << 2;
 	if(bank & 4)
-		mode = ((data >> 3) & 2) | (mode & 1);
+		bankmode = ((data >> 3) & 2) | (bankmode & 1);
 	sync();
 }
 
@@ -63,14 +63,14 @@ static void reset(int hard)
 		mem_setwritefunc(i,write_upper);
 	mem_setvramsize(8);
 	mem_setvram8(0,0);
-	mode = 1;
+	bankmode = 1;
 	bank = 0;
 	sync();
 }
 
 static void state(int mode,u8 *data)
 {
-	STATE_U8(mode);
+	STATE_U8(bankmode);
 	STATE_U8(bank);
 	sync();
 }

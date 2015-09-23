@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "nes/nes.h"
+#include "misc/log.h"
 
 region_t region_ntsc = {
 	REGION_NTSC,

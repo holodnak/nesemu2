@@ -20,11 +20,11 @@
 
 #include "mappers/mapperinc.h"
 
-static u8 prg,mode,mirror;
+static u8 prg, bankmode,mirror;
 
 static void sync()
 {
-	if(mode == 0) {
+	if(bankmode == 0) {
 		mem_setprg32(8,prg >> 1);
 	}
 	else {
@@ -44,7 +44,7 @@ static void write(u32 addr,u8 data)
 	else {
 		prg &= 0x40;
 		prg |= ((data >> 2) & 0x20) | (data & 0x1F);
-		mode = (data >> 5) & 1;
+		bankmode = (data >> 5) & 1;
 		mirror = (data >> 6) & 1;
 	}
 	sync();
@@ -59,7 +59,7 @@ static void reset(int hard)
 		mem_setwritefunc(i,write);	
 	}
 	if(hard) {
-		prg = mode = mirror = 0;
+		prg = bankmode = mirror = 0;
 	}
 	sync();
 }
@@ -67,7 +67,7 @@ static void reset(int hard)
 static void state(int mode,u8 *data)
 {
 	STATE_U8(prg);
-	STATE_U8(mode);
+	STATE_U8(bankmode);
 	STATE_U8(mirror);
 	sync();
 }

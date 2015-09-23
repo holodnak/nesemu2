@@ -104,6 +104,21 @@
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'" />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -119,6 +134,7 @@
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -146,6 +162,7 @@
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ddraw.lib;dsound.lib;dxguid.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -172,6 +189,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -200,6 +218,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <CompileAs>CompileAsC</CompileAs>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -230,6 +249,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <CompileAs>Default</CompileAs>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ddraw.lib;dsound.lib;dxguid.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>

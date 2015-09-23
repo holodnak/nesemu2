@@ -11,34 +11,34 @@
     <LocalDebuggerCommandArguments>allnight.fds</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
-    <LocalDebuggerCommandArguments>smb3.nes</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>mario.nes</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>..\..\test</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
-    <LocalDebuggerWorkingDirectory>..\..\..</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory>c:\projects\tests</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">
-    <LocalDebuggerCommandArguments>smbdh.nes</LocalDebuggerCommandArguments>
-    <LocalDebuggerWorkingDirectory>..\..\..</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerCommandArguments>mario.nes</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>c:\projects\tests</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">
-    <LocalDebuggerWorkingDirectory>..\..\..</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory>c:\projects\tests</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>smbdh.nes</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>mario.nes</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">
-    <LocalDebuggerCommandArguments>pr8.nes</LocalDebuggerCommandArguments>
-    <LocalDebuggerWorkingDirectory>..\..\..</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerCommandArguments>mario.nes</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>c:\projects\tests</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">
-    <LocalDebuggerCommandArguments>smbdh.nes</LocalDebuggerCommandArguments>
-    <LocalDebuggerWorkingDirectory>..\..\..</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerCommandArguments>mario.nes</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>c:\projects\tests</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

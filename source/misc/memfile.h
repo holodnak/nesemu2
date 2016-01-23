@@ -30,7 +30,7 @@ typedef struct memfile_s {
 	u32	size;
 
 	//current position in the data
-	u32	curpos;
+	int	curpos;
 
 	//has the data been modified
 	u32	changed;

@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
  *   Copyright (C) 2013 by James Holodnak                                  *
  *   jamesholodnak@gmail.com                                               *
  *                                                                         *
@@ -102,7 +102,9 @@ void memfile_close(memfile_t *mf)
 		if(strchr(mf->mode,'w')) {
 			log_printf("memfile_close:  writing changes to '%s'\n",mf->filename);
 			fseek(fp,0,SEEK_SET);
-			fwrite(mf->data,1,mf->size,fp);
+			if(mf->data) {
+				fwrite(mf->data,1,mf->size,fp);
+			}
 		}
 		fclose(fp);
 		mem_free(mf->filename);

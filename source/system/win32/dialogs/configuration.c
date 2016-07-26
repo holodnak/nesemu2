@@ -28,6 +28,7 @@
 #include "system/win32/mainwnd.h"
 #include "system/video.h"
 #include "misc/config.h"
+#include "misc/log.h"
 #include "misc/strutil.h"
 #include "misc/memutil.h"
 #include "inputdev/inputdev.h"
@@ -638,7 +639,7 @@ LRESULT CALLBACK PaletteProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 	psp[idx].pszTemplate = MAKEINTRESOURCE(id); \
 	psp[idx].pfnDlgProc = (DLGPROC)proc;
 
-VOID ConfigurationPropertySheet(HWND hWnd)
+VOID ConfigurationPropertySheet(HWND hwnd)
 {
 	PROPSHEETPAGE psp[5];
 	PROPSHEETHEADER psh;
@@ -648,7 +649,7 @@ VOID ConfigurationPropertySheet(HWND hWnd)
 	memset(&psh,0,sizeof(PROPSHEETHEADER));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
 	psh.dwFlags = PSH_USEICONID | PSH_PROPSHEETPAGE;
-	psh.hwndParent = hWnd;
+	psh.hwndParent = hwnd;
 	psh.hInstance = hInst;
 	psh.pszCaption = (LPSTR) "Configuration";
 	psh.nPages = sizeof(psp) / sizeof(PROPSHEETPAGE);

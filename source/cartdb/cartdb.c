@@ -263,6 +263,8 @@ static int process_chip(int mapperid,char *board,int mapper,node_t *node)
 	if((chip = find_attrib(node,"type")) == 0)
 		return(mapperid);
 
+	log_printf("processing child chip node: %s (mapperid = %d)\n", chip,mapperid);
+
 	//SxROM boards, process mmc1 type
 	if(mapperid == B_NINTENDO_SxROM) {
 		if(strncmp(chip,"MMC1A",5) == 0)			mapperid = B_NINTENDO_SxROM_MMC1A;
@@ -272,10 +274,10 @@ static int process_chip(int mapperid,char *board,int mapper,node_t *node)
 	}
 
 	//vrc2 boards, find wiring configuration
-	if(mapperid == B_KONAMI_VRC2) {
-		if(strncmp(chip,"VRC2",4) == 0 && get_pin_map(node,pins,64) == 0) {
-			if(pins[3] == P_PRG_A0 && pins[4] == P_PRG_A1) {
-				if(pins[21] == P_NC) {
+	if (mapperid == B_KONAMI_VRC2) {
+		if (strncmp(chip, "VRC2", 4) == 0 && get_pin_map(node, pins, 64) == 0) {
+			if (pins[3] == P_PRG_A0 && pins[4] == P_PRG_A1) {
+				if (pins[21] == P_NC) {
 					mapperid = B_KONAMI_VRC2A;
 					log_printf("process_chip:  vrc2a detected.\n");
 				}
@@ -284,13 +286,42 @@ static int process_chip(int mapperid,char *board,int mapper,node_t *node)
 					log_printf("process_chip:  vrc2c detected, using vrc4b.\n");
 				}
 			}
-			else if(pins[3] == P_PRG_A1 && pins[4] == P_PRG_A0) {
+			else if (pins[3] == P_PRG_A1 && pins[4] == P_PRG_A0) {
 				mapperid = B_KONAMI_VRC2B;
 				log_printf("process_chip:  vrc2b detected.\n");
 			}
 			else
-				log_printf("process_chip:  unknown vrc2 pin configuration (pin3 = %d, pin4 = %d)\n",pins[3],pins[4]);
+				log_printf("process_chip:  unknown vrc2 pin configuration (pin3 = %d, pin4 = %d)\n", pins[3], pins[4]);
 
+		}
+	}
+
+	//vrc4 boards
+	if (mapperid == B_KONAMI_VRC4) {
+		if (strncmp(chip, "VRC4", 4) == 0 && get_pin_map(node, pins, 64) == 0) {
+			if (pins[3] == P_PRG_A7 && pins[4] == P_PRG_A6) {
+				mapperid = B_KONAMI_VRC4C;
+				log_printf("process_chip:  vrc4c detected.\n");
+			}
+			else if (pins[3] == P_PRG_A0 && pins[4] == P_PRG_A1) {
+				mapperid = B_KONAMI_VRC4B;
+				log_printf("process_chip:  vrc4b detected.\n");
+			}
+			else if (pins[3] == P_PRG_A2 && pins[4] == P_PRG_A1) {
+				mapperid = B_KONAMI_VRC4A;
+				log_printf("process_chip:  vrc4a detected.\n");
+			}
+			else if (pins[3] == P_PRG_A2 && pins[4] == P_PRG_A3) {
+				mapperid = B_KONAMI_VRC4B;
+				log_printf("process_chip:  vrc4d detected.\n");
+			}
+			else if (pins[3] == P_PRG_A3 && pins[4] == P_PRG_A2) {
+				mapperid = B_KONAMI_VRC4E;
+				log_printf("process_chip:  vrc4e detected.\n");
+			}
+			else {
+				log_printf("process_chip:  unknown vrc4 pin configuration (pin3 = %d, pin4 = %d)\n", pins[3], pins[4]);
+			}
 		}
 	}
 
@@ -412,6 +443,8 @@ int cartdb_find(cart_t *cart)
 	//try to find cart node with same crc32
 	cartnode = find_cart(crc32);
 	if(cartnode) {
+
+		log_printf("cartdb_find:  cart found in database.\n");
 
 		//copy game title
 		if((str = find_attrib(cartnode->parent,"name")))

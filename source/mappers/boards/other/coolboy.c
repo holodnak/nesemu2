@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013 by James Holodnak                                  *
+ *   Copyright (C) 2013-2016 by James Holodnak                             *
  *   jamesholodnak@gmail.com                                               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,18 +18,56 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-static INLINE void OP_NOP()
+#include "mappers/mapperinc.h"
+#include "mappers/chips/mmc3.h"
+
+static u8 regs[4];
+
+static void write(u32 addr, u8 data)
 {
+	u8 scramble[8] = { 0,3,1,5,6,7,2,4 };
+
+	switch (addr & 0xE001) {
+	case 0x8000:
+		break;
+	case 0x8001:
+		mmc3_write(0xA000, data);
+		break;
+	case 0xA000:
+		mmc3_write(0x8000, scramble[data & 7] | (data & 0xC0));
+		break;
+	case 0xA001:
+		break;
+	case 0xC000:
+		mmc3_write(0x8001, data);
+		break;
+	case 0xC001:
+		mmc3_write(0xC000, data);
+		mmc3_write(0xC001, data);
+		break;
+	case 0xE000:
+	case 0xE001:
+		mmc3_write(addr, data);
+		break;
+	}
 }
 
-static INLINE void OP_NOPR()
+static void write_coolboy(u32 addr, u8 data)
 {
-	memread(EFFADDR);
+
 }
 
-static INLINE void OP_UNK()
+static void reset(int hard)
 {
-	BADOPCODE++;
-	log_printf("OP_UNK:  $%04X = $%02X (cpu cycle %d)\n",OPADDR,OPCODE,CYCLES);
-	running = 0;
+	int i;
+
+	for (i = 0; i < 4; i++)
+		regs[i] = 0;
+	mmc3_reset(C_MMC3B, mmc3_sync, hard);
+	for (i = 8; i<16; i++)
+		mem_setwritefunc(i, write);
+	mem_setwritefunc(6, write_coolboy);
+	mem_setwritefunc(7, write_coolboy);
 }
+
+MAPPER(B_COOLBOY, reset, mmc3_ppucycle, 0, mmc3_state);

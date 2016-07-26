@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
  *   Copyright (C) 2013 by James Holodnak                                  *
  *   jamesholodnak@gmail.com                                               *
  *                                                                         *
@@ -36,7 +36,6 @@ HLECALL(loadbootfiles)
 	//leet hax
 	log_hle("loadbootfiles:  setting diskside to 0\n");
 	diskside = 0;
-	pos = 0;
 
 	//load disk header
 	pos = diskside * 65500;

@@ -138,7 +138,7 @@ static void write(u32 addr,u8 data)
 
 static void clockirq()
 {
-	if(irqcounter >= 0xFF) {
+	if(irqcounter == 0xFF) {
 		irqcounter = irqlatch;
 		cpu_set_irq(IRQ_MAPPER);
 	}

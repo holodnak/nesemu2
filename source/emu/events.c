@@ -92,8 +92,10 @@ int emu_event(int id,void *data)
 			break;
 
 		case E_SAVESTATE:
-			if(nes == 0 || nes->cart == 0)
+			if (nes == 0 || nes->cart == 0) {
 				log_printf("emu_event:  cannot load state, no rom loaded\n");
+				break;
+			}
 			paths_makestatefilename(nes->cart->filename,dest,1024);
 			nes_savestate(dest);
 			break;

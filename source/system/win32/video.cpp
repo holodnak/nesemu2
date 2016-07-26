@@ -508,19 +508,39 @@ void video_endframe()
 }
 
 //this handles pixels coming directly from the nes engine
-void video_updatepixel(int line,int pixel,u8 s)
+void video_updatepixel(int line, int pixel, u8 s)
 {
 	int offset = (line * 256) + pixel;
 
 	nesscreen[offset] = s;
-	switch(screenbpp) {
-		case 15:
-		case 16:
-			screen16[offset] = palettecache16[s];
-			break;
-		case 32:
-			screen32[offset] = palettecache32[s];
-			break;
+	switch (screenbpp) {
+	case 15:
+	case 16:
+		screen16[offset] = palettecache16[s];
+		break;
+	case 32:
+		screen32[offset] = palettecache32[s];
+		break;
+	}
+}
+
+#define MAKERGB555(pp) \
+	(((pp) >> (3 + 0)) << 0) | \
+	(((pp) >> (3 + 8)) << 5) | \
+	(((pp) >> (3 + 16)) << 10);
+
+extern "C" void video_updaterawpixel(int line, int pixel, u32 s)
+	{
+	int offset = (line * 256) + pixel;
+
+	switch (screenbpp) {
+	case 15:
+	case 16:
+		screen16[offset] = MAKERGB555(s);
+		break;
+	case 32:
+		screen32[offset] = s;
+		break;
 	}
 }
 

@@ -68,6 +68,9 @@ typedef struct cpu_s {
 	//kludge for apu pcm cycle stealing
 	u32	pcmcycles;
 
+	//bad opcode counter
+	int	badopcode;
+
 } cpu_t;
 
 extern readfunc_t cpu_read;

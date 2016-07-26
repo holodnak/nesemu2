@@ -98,7 +98,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Debugger"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LISTBOX         IDC_DISASMLIST,5,5,135,236,LBS_SORT | LBS_USETABSTOPS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_DISASMLIST,5,5,135,236,LBS_USETABSTOPS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     SCROLLBAR       IDC_DISASMSCROLL,140,5,10,236,SBS_VERT
     EDITTEXT        IDC_AEDIT,170,32,20,13,ES_AUTOHSCROLL
     EDITTEXT        IDC_XEDIT,170,47,20,13,ES_AUTOHSCROLL
@@ -519,6 +519,7 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_MAIN                ICON                    "mainicon.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

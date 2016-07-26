@@ -63,7 +63,7 @@ static void write(u32 addr,u8 data)
 			prg[0] = data;
 			break;
 		case 0x9000:
-			mirror = data & 3;
+			mirror = data & 1;
 			break;
 		case 0xA000:
 			prg[1] = data;

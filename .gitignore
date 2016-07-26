@@ -22,6 +22,7 @@ projects/vc2012/Release*
 projects/vc2012/Debug*
 projects/vc2012/Profile
 projects/vc2012/ipch
+projects/vc2012/nesemu2.VC.*
 test/
 resources/old/
 .DS_Store

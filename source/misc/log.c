@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
  *   Copyright (C) 2013 by James Holodnak                                  *
  *   jamesholodnak@gmail.com                                               *
  *                                                                         *
@@ -103,7 +103,7 @@ void log_sethook(void (*hook)(char*))
 void log_print(char *str)
 {
 	//output message to stdout
-	printf(str);
+	printf("%s",str);
 
 	//output message to hook function
 	if(loghook) {

@@ -24,6 +24,7 @@
 #include "system/win32/mainwnd.h"
 #include "system/common/SDL_keysym.h"
 #include "misc/config.h"
+#include "misc/log.h"
 
 //these global variables provide information for the device input code
 int joyx,joyy;			//x and y coords for paddle/mouse

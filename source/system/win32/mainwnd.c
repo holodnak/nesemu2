@@ -97,7 +97,7 @@ void loadrom(char *filename)
 	}
 }
 
-static void file_open(HWND hWnd)
+static void file_open(HWND hwnd)
 {
 	char buffer[1024];
 	static char filter[] =
@@ -109,13 +109,13 @@ static void file_open(HWND hWnd)
 		"All Files (*.*)\0*.*\0";
 
 	memset(buffer,0,1024);
-	if(filedialog(hWnd,0,buffer,"Open NES ROM...",filter,0) != 0)
+	if(filedialog(hwnd,0,buffer,"Open NES ROM...",filter,0) != 0)
 		return;
 	log_printf("WndProc:  loading file '%s'\n",buffer);
 	loadrom(buffer);
 }
 
-static void file_open_patch(HWND hWnd)
+static void file_open_patch(HWND hwnd)
 {
 	char buffer[1024];
 	static char filter[] =
@@ -125,7 +125,7 @@ static void file_open_patch(HWND hWnd)
 		"All Files (*.*)\0*.*\0";
 
 	memset(buffer,0,1024);
-	if(filedialog(hWnd,0,buffer,"Open Patch...",filter,0) != 0)
+	if(filedialog(hwnd,0,buffer,"Open Patch...",filter,0) != 0)
 		return;
 	log_printf("WndProc:  loading patch '%s'\n",buffer);
 	emu_event(E_LOADPATCH,buffer);
@@ -135,23 +135,23 @@ static char moviefilter[] =
 	"nesemu2 Movie Files (*.n2movie)\0*.n2movie\0"
 	"All Files (*.*)\0*.*\0";
 
-static void load_movie(HWND hWnd)
+static void load_movie(HWND hwnd)
 {
 	char buffer[1024];
 
 	memset(buffer,0,1024);
-	if(filedialog(hWnd,0,buffer,"Load Movie...",moviefilter,0) != 0)
+	if(filedialog(hwnd,0,buffer,"Load Movie...",moviefilter,0) != 0)
 		return;
 	log_printf("WndProc:  loading movie '%s'\n",buffer);
 	emu_event(E_LOADMOVIE,buffer);
 }
 
-static void save_movie(HWND hWnd)
+static void save_movie(HWND hwnd)
 {
 	char buffer[1024];
 
 	memset(buffer,0,1024);
-	if(filedialog(hWnd,1,buffer,"Save Movie...",moviefilter,0) != 0)
+	if(filedialog(hwnd,1,buffer,"Save Movie...",moviefilter,0) != 0)
 		return;
 	log_printf("WndProc:  saving movie '%s'\n",buffer);
 	emu_event(E_SAVEMOVIE,buffer);

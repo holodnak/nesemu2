@@ -226,6 +226,8 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_KASING);
 	MAPPER(B_NANJING);
 	MAPPER(B_HOSENKAN);
+	MAPPER(B_JYCOMPANY);
+	MAPPER(B_COOLBOY);
 
 	//homebrew
 	MAPPER(B_TEPPLES);

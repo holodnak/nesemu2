@@ -161,6 +161,8 @@ enum boardid_e {
 	B_KASING,
 	B_NANJING,
 	B_HOSENKAN,
+	B_JYCOMPANY,
+	B_COOLBOY,
 
 	//c&e
 	B_CNE_FSB,
@@ -246,7 +248,8 @@ enum boardid_e {
 
 	//mapping for default chips used
 	B_NINTENDO_SxROM	= B_NINTENDO_SxROM_MMC1B,
-	B_KONAMI_VRC2		= B_KONAMI_VRC2B,
+	B_KONAMI_VRC2 = B_KONAMI_VRC2B,
+	B_KONAMI_VRC4 = B_KONAMI_VRC4B,
 
 	//extra support
 	B_NSF =		0x10000000,

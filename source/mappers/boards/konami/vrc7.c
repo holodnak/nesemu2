@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
  *   Copyright (C) 2013 by James Holodnak                                  *
  *   jamesholodnak@gmail.com                                               *
  *                                                                         *
@@ -190,8 +190,8 @@ static void reset(int revision,int hard)
 	mem_setwramsize(8);
 	mem_setwram8(6,0);
 	prg[0] = 0;
-	prg[1] = -2;
-	prg[2] = -2;
+	prg[1] = (u8)-2;
+	prg[2] = (u8)-2;
 	for(i=0;i<8;i++)
 		chr[i] = 0;
 	mirror = 0;

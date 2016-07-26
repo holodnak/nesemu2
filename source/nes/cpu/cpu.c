@@ -52,6 +52,8 @@
 #define PREV_NMISTATE	nes->cpu.prev_nmistate
 #define PREV_IRQSTATE	nes->cpu.prev_irqstate
 
+#define BADOPCODE			nes->cpu.badopcode
+
 //cpu memory read/write functions
 readfunc_t cpu_read;
 writefunc_t cpu_write;
@@ -111,6 +113,7 @@ void cpu_reset(int hard)
 	}
 
 	nes->cpu.pcmcycles = 0;
+	nes->cpu.badopcode = 0;
 	if(hard) {
 		A = X = Y = 0;
 		SP = 0xFD;

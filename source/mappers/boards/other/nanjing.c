@@ -25,13 +25,13 @@ static u8 reg[2],prg,security,trigger,strobe,vram[2];
 static void sync()
 {
 	mem_setprg32(8,prg);
-	mem_setvram4(0,vram[0]);
-	mem_setvram4(4,vram[1]);
-	mem_setwram8(6,0);
+	mem_setvram4(0, vram[0]);
+	mem_setvram4(4, vram[1]);
 }
 
 static u8 read(u32 addr)
 {
+	log_printf("nanjing read: $%04X (PC = %04X)\n", addr, nes->cpu.pc);
 	switch(addr & 0x7700) {
 		case 0x5000:
 			return(4);
@@ -43,8 +43,9 @@ static u8 read(u32 addr)
 	return((u8)(addr >> 8));
 }
 
-static void write(u32 addr,u8 data)
+static void write(u32 addr, u8 data)
 {
+	log_printf("nanjing write: $%04X = $%02X (PC = %04X)\n", addr, data, nes->cpu.pc);
 	if(addr == 0x5101) {
 		u8 tmp = strobe;
 
@@ -79,10 +80,34 @@ static void write(u32 addr,u8 data)
 	}
 }
 
+static u8 sram[0x2000];
+
+static u8 read_sram(u32 addr)
+{
+	u8 ret = addr >> 8;
+
+//	log_printf("sram read: $%04X (pc = %04X)\n", addr, nes->cpu.pc);
+	if (addr >= 0x6000 && addr < 0x8000)
+		ret = sram[addr & 0x1FFF];
+
+	return(ret);
+}
+
+static void write_sram(u32 addr, u8 data)
+{
+//	log_printf("sram write: $%04X = $%02X (pc = %04X)\n", addr, data, nes->cpu.pc);
+	if (addr >= 0x6000 && addr < 0x8000)
+		sram[addr & 0x1FFF] = data;
+}
+
 static void reset(int hard)
 {
-	mem_setreadfunc(5,read);
-	mem_setwritefunc(5,write);
+	mem_setreadfunc(5, read);
+	mem_setwritefunc(5, write);
+	mem_setreadfunc(6, read_sram);
+	mem_setwritefunc(6, write_sram);
+	mem_setreadfunc(7, read_sram);
+	mem_setwritefunc(7, write_sram);
 	mem_setvramsize(8);
 	mem_setwramsize(8);
 	reg[0] = 0xFF;

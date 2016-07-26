@@ -27,6 +27,8 @@ u32 latch_addr;
 
 void latch_write(u32 addr,u8 data)
 {
+//	if (nes->cpu.readpages[addr >> 10][addr & 0x3FF] != data)
+		log_printf("latch_write: $%04X = $%02X (PC = $%04X)\n", addr, data, nes->cpu.pc);
 	latch_addr = addr;
 	latch_data = data;
 	sync();

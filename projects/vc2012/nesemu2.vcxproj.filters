@@ -1050,6 +1050,12 @@
     <ClCompile Include="..\..\source\system\common\filters\ntsc\ntsc.c">
       <Filter>Source Files\system\common\filters\ntsc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\jycompany.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\coolboy.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

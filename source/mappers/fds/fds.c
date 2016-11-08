@@ -72,7 +72,7 @@ static void sync()
 	mem_setmirroring(mirror);
 }
 
-static u8 read(u32 addr)
+static u8 fds_read(u32 addr)
 {
 	u8 ret = 0;
 
@@ -123,7 +123,7 @@ static u8 read(u32 addr)
 //				log_printf("fds_read:  disk not inserted.  (diskside = $%02X, control = $%02X)\n",diskside,control);
 				ret |= 2;
 			}
-//			log_printf("fds.c:  read:  status = $%02X\n",ret);
+//			log_printf("fds.c:  read $4032:  status = $%02X\n",ret);
 			return(ret);
 
 		//external connector read
@@ -141,7 +141,7 @@ static u8 read(u32 addr)
 	return((u8)(addr >> 8));
 }
 
-static void write(u32 addr,u8 data)
+static void fds_write(u32 addr,u8 data)
 {
 	if(addr < 0x4020) {
 		write4(addr,data);
@@ -167,7 +167,7 @@ static void write(u32 addr,u8 data)
 
 		//irq enable
 		case 0x4022:
-//			log_printf("fds.c:  irq write:  $%04X = $%02X\n",addr,data);
+//			log_printf("fds.c:  irq enable:  $%04X = $%02X\n",addr,data);
 			clearirq(IRQ_TIMER);
 			irqenable = data;
 			irqcounter = irqlatch;
@@ -194,6 +194,7 @@ static void write(u32 addr,u8 data)
 
 		//fds control
 		case 0x4025:
+//			log_printf("fds.c:  $4025 write: %02X (diskaddr == %d)\n", data, diskaddr);
 			clearirq(IRQ_DISK);
 			mirror = ((data & 8) >> 3) ^ 1;
 			mem_setmirroring(mirror);
@@ -240,15 +241,15 @@ static void write(u32 addr,u8 data)
 	}
 }
 
-static void reset(int hard)
+static void fds_reset(int hard)
 {
 	u8 *bios;
 
 	//setup for fds
 	read4 = mem_getreadfunc(4);
 	write4 = mem_getwritefunc(4);
-	mem_setreadfunc(4,read);
-	mem_setwritefunc(4,write);
+	mem_setreadfunc(4, fds_read);
+	mem_setwritefunc(4, fds_write);
 	mem_setwramsize(32);
 	mem_setvramsize(8);
 	mem_setwram32(6,0);
@@ -289,7 +290,7 @@ static void reset(int hard)
 
 void hlefds_cpucycle2();
 
-static void cpucycle()
+static void fds_cpucycle()
 {
 	if(hlefds == 2)
 		hlefds_intercept();
@@ -327,7 +328,7 @@ static void cpucycle()
 	}
 }
 
-static void state(int mode,u8 *data)
+static void fds_state(int mode, u8 *data)
 {
 	int olddiskside = diskside;
 
@@ -354,4 +355,173 @@ static void state(int mode,u8 *data)
 	sync();
 }
 
-MAPPER(B_FDS,reset,0,cpucycle,state);
+MAPPER(B_FDS, fds_reset, 0, fds_cpucycle, fds_state);
+
+static int prgbase;
+static u8 vectors[16] = { 
+	0,0,0,0,
+	0x4C, 0x64, 0xE1, 0x00, 0x00, 0x00,
+	0x6C, 0xFC, 0xDF, 0x00, 0x00, 0x00,
+};
+
+static u8 gdram[1024 * 1024];
+static u8 gdbank = 0;
+static u8 gdrun = 0;
+
+static u8 doctor_read(u32 addr)
+{
+	u8 ret = 0;
+
+	if (addr < 0x4100) {
+		ret = fds_read(addr);
+		return(ret);
+	}
+
+	switch (addr >> 12) {
+
+	case 0x4:
+		switch (addr) {
+
+		case 0x42FF:
+			break;
+		case 0x43FF:
+			break;
+		case 0x4410:
+			break;
+		case 0x4411:
+			break;
+
+		case 0x4FF0:
+		case 0x4FF1:
+		case 0x4FF2:
+		case 0x4FF3:
+		case 0x4FF4:
+		case 0x4FF5:
+		case 0x4FF6:
+		case 0x4FF7:
+		case 0x4FF8:
+		case 0x4FF9:
+		case 0x4FFA:
+		case 0x4FFB:
+		case 0x4FFC:
+		case 0x4FFD:
+		case 0x4FFE:
+		case 0x4FFF:
+			ret = vectors[addr & 0xF];
+			break;
+		}
+
+		log_printf("doctor read: %04X = %02X\n", addr, ret);
+		break;
+
+	case 0x5:
+		log_printf("doctor read: %04X\n", addr);
+		break;
+
+	case 0x6:
+	case 0x7:
+	case 0x8:
+	case 0x9:
+	case 0xA:
+	case 0xB:
+	case 0xC:
+	case 0xD:
+		ret = gdram[gdbank * 0x8000 + (addr & 0x7FFF)];
+//		log_printf("doctor read: %04X\n", addr);
+		break;
+
+	case 0xE:
+	case 0xF:
+		if(gdrun == 0)
+			ret = nes->cart->prg.data[prgbase + (addr & 0x1FFF)];
+		else
+			ret = gdram[gdbank * 0x8000 + (addr & 0x7FFF)];
+		break;
+	}
+
+	return(ret);
+}
+
+static void doctor_write(u32 addr, u8 data)
+{
+	if (addr < 0x4100) {
+		fds_write(addr, data);
+		return;
+	}
+
+	switch (addr >> 12) {
+
+	case 0x4:
+		switch (addr) {
+
+		case 0x42FF:
+			vectors[5] = gdram[0x7FFA];
+			vectors[6] = gdram[0x7FFB];
+			vectors[0xB] = gdram[0x7FFC];
+			vectors[0xC] = gdram[0x7FFD];
+			gdrun = 1;
+			break;
+		case 0x43FF:
+			break;
+		case 0x4410:
+			break;
+		case 0x4411:
+			break;
+		case 0x4FFF:
+			prgbase = 0x2000;
+			break;
+		}
+
+		log_printf("doctor write: %04X = %02X\n", addr, data);
+		break;
+
+	case 0x5:
+		log_printf("doctor write: %04X = %02X\n", addr, data);
+		break;
+
+	case 0x6:
+	case 0x7:
+	case 0x8:
+	case 0x9:
+	case 0xA:
+	case 0xB:
+	case 0xC:
+	case 0xD:
+		gdram[gdbank * 0x8000 + (addr & 0x7FFF)] = data;
+//		log_printf("doctor write: %04X = %02X\n", addr, data);
+		break;
+
+	case 0xE:
+	case 0xF:
+		log_printf("doctor write: %04X = %02X\n", addr, data);
+		break;
+
+	}
+}
+
+static void doctor_reset(int hard)
+{
+	int i;
+
+	fds_reset(hard);
+	for (i = 4; i < 16; i++) {
+		mem_unsetcpu4(i);
+		mem_setreadfunc(i, doctor_read);
+		mem_setwritefunc(i, doctor_write);
+	}
+	prgbase = 0x0000;
+	gdbank = 0;
+	gdrun = 0;
+}
+
+static void doctor_cpucycle()
+{
+	fds_cpucycle();
+}
+
+static void doctor_state(int mode, u8 *data)
+{
+	fds_state(mode, data);
+}
+
+MAPPER(B_DOCTOR, doctor_reset, 0, doctor_cpucycle, doctor_state);

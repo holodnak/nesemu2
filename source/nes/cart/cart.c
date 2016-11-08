@@ -31,6 +31,7 @@
 #include "nes/cart/ines20.h"
 #include "nes/cart/unif.h"
 #include "nes/cart/fds.h"
+#include "nes/cart/doctor.h"
 #include "nes/cart/nsf.h"
 #include "nes/cart/patch/patch.h"
 
@@ -59,6 +60,7 @@
 #define FORMAT_RAWFDS	5
 #define FORMAT_NSF		6
 #define FORMAT_SPLIT		7
+#define FORMAT_DOCTOR	8
 
 //thanks tnse for this, long ago
 static u32 createmask(u32 size)
@@ -85,10 +87,10 @@ static int determineformat(memfile_t *file)
 	u8 ident_fds[] = "FDS\x1a";
 	u8 ident_rawfds[] = "\x01*NINTENDO-HVC*";
 	u8 ident_nsf[] = "NESM\x1a";
-	u8 header[16];
+	u8 header[66];
 
-	//read first 16 bytes and reset curpos
-	memfile_read(header,1,16,file);
+	//read first 66 bytes and reset curpos
+	memfile_read(header,1,66,file);
 	memfile_rewind(file);
 
 	//check if ines format
@@ -107,12 +109,18 @@ static int determineformat(memfile_t *file)
 		return(FORMAT_FDS);
 
 	//check if raw fds disk
-	if(memcmp(header,ident_rawfds,15) == 0)
+	if(memcmp(header, ident_rawfds, 15) == 0)
 		return(FORMAT_RAWFDS);
 
 	//check if raw fds disk
 	if(memcmp(header,ident_nsf,5) == 0)
 		return(FORMAT_NSF);
+
+	//determine gamedoctor disk
+	if (memcmp(header + 3, ident_rawfds, 15) == 0 && header[0] == 0 && header[1] == 0) {
+		if (header[61] == 2 && header[63] == 0 && header[64] == 0 && header[65] == 3)
+			return(FORMAT_DOCTOR);
+	}
 
 	return(FORMAT_UNKNOWN);
 }
@@ -167,16 +175,22 @@ cart_t *cart_load_patched(const char *filename,const char *patchfilename)
 		case FORMAT_INES20:	n = cart_load_ines20(ret,file);	break;
 		case FORMAT_UNIF:		n = cart_load_unif(ret,file);		break;
 		case FORMAT_FDS:
-		case FORMAT_RAWFDS:	n = cart_load_fds(ret,file);		break;
+		case FORMAT_RAWFDS:	n = cart_load_fds(ret, file);		break;
+		case FORMAT_DOCTOR:	n = cart_load_doctor(ret, file);	break;
 		case FORMAT_NSF:		n = cart_load_nsf(ret,file);		break;
 //		case FORMAT_SPLIT:	n = cart_load_split(ret,file);	break;
+		default:
+			log_printf("cart_load:  unhandled format (bug).\n");
+			mem_free(ret);
+			memfile_close(file);
+			return(0);
 	}
 
 	//if error, free data and print error
 	if(n != 0) {
 		mem_free(ret);
 		memfile_close(file);
-		log_printf("cart_load:  error loading '%s'\n",filename);
+		log_printf("cart_load:  error loading '%s'\n", filename);
 		return(0);
 	}
 

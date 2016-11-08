@@ -162,6 +162,7 @@ enum boardid_e {
 	B_NANJING,
 	B_HOSENKAN,
 	B_JYCOMPANY,
+	B_JYCOMPANY_NTCTL,
 	B_COOLBOY,
 
 	//c&e
@@ -242,6 +243,7 @@ enum boardid_e {
 	B_TEPPLES,
 	B_DRIPGAME,
 	B_MAGICFLOOR,
+	B_NES_DISK_SYSTEM,
 
 	//for getting a count of supported boards
 	B_BOARDEND,
@@ -252,12 +254,13 @@ enum boardid_e {
 	B_KONAMI_VRC4 = B_KONAMI_VRC4B,
 
 	//extra support
-	B_NSF =		0x10000000,
-	B_FDS =		0x20000000,
-	B_HLEFDS =	0x20000001,
-	B_DRPCJR =	0x30000000,
-	B_GENIE =	0x40000000,
-	B_TYPEMASK =0xF0000000,
+	B_NSF			= 0x10000000,
+	B_FDS			= 0x20000000,
+	B_HLEFDS		= B_FDS | 1,
+	B_DOCTOR		= B_FDS | 2,
+	B_DRPCJR		= 0x30000000,
+	B_GENIE		= 0x40000000,
+	B_TYPEMASK	= 0xF0000000,
 
 };
 

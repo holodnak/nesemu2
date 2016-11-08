@@ -602,16 +602,6 @@ void ppu_step()
 {
 	u32 addr;
 
-//blargg test debug output
-/*	if(SCANLINE == 0 && LINECYCLES == 0) {
-		u8 *sram = nes->cart->sram.size ? nes->cart->sram.data : 0;
-
-		if(sram && sram[0] < 0x80 && sram[1] == 0xDE && sram[2] == 0xB0 && sram[3] == 0x61) {
-			sram[0] = 0xFF;
-			log_printf("%s",sram + 4);
-		}
-	}*/
-
 	//visible scanlines
 	if(SCANLINE < 240) {
 

@@ -1056,6 +1056,12 @@
     <ClCompile Include="..\..\source\mappers\boards\other\coolboy.c">
       <Filter>Source Files\mappers\boards\other</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\mappers\boards\other\nesdisksystem.c">
+      <Filter>Source Files\mappers\boards\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\doctor.c">
+      <Filter>Source Files\nes\cart</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\types.h">

@@ -374,6 +374,7 @@
     <ClCompile Include="..\..\source\mappers\boards\other\kasing.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\magicseries.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\nanjing.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\nesdisksystem.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\nitra.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\opencorp.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\rumblestation.c" />
@@ -523,6 +524,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\source\nes\cart\doctor.c" />
     <ClCompile Include="..\..\source\nes\cart\fds.c">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">$(IntDir)/nes/cart/</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">$(IntDir)/nes/cart/</ObjectFileName>

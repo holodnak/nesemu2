@@ -40,6 +40,7 @@ static u8 irqtarget,irqenable,irqstatus,irqcounter;
 static u8 *exram;
 static void (*sync)();
 static readfunc_t ppuread;
+static u8 splitmode, splitscroll, splitbank;
 
 u8 mmc5_ppuread(u32 addr)
 {
@@ -229,6 +230,7 @@ u8 mmc5_read(u32 addr)
 			return(exram[addr & 0x3FF]);
 		return(0xFF);
 	}
+
 	switch(addr) {
 		//sound
 		case 0x5015:
@@ -266,6 +268,7 @@ void mmc5_write(u32 addr,u8 data)
 			exram[addr & 0x3FF] = data;
 		return;
 	}
+
 	switch(addr) {
 		//sound registers
 		case 0x5000:
@@ -278,60 +281,20 @@ void mmc5_write(u32 addr,u8 data)
 		case 0x5007:
 		case 0x5010:
 		case 0x5011:
-		case 0x5015:
-			MMC5sound_Write(addr,data);
-			break;
-
-		//prg mode select
-		case 0x5100:
-			prgmode = data & 3;
-			break;
-
-		//chr mode select
-		case 0x5101:
-			chrmode = data & 3;
-			break;
-
-		//prg ram 'a' and 'b' select
-		case 0x5102:
-		case 0x5103:
-			prgprotect[addr & 1] = data & 3;
-			break;
-
-		//exram mode
-		case 0x5104:
-			exrammode = data & 3;
-			break;
-
-		//mirroring mode
-		case 0x5105:
-			mirror = data;
-			break;
-
-		//fill tile
-		case 0x5106:
-			filltile = data & 3;
-			break;
-
-		//fill attribute
-		case 0x5107:
-			fillattrib = data & 3;
-			break;
-
-		//prgram select
-		case 0x5113:
-			prgram = data & 7;
-			break;
-
-		//prgrom regs
+		case 0x5015:	MMC5sound_Write(addr,data);		break;
+		case 0x5100:	prgmode = data & 3;					break;
+		case 0x5101:	chrmode = data & 3;					break;
+		case 0x5102:	prgprotect[0] = data & 3;			break;
+		case 0x5103:	prgprotect[1] = data & 3;			break;
+		case 0x5104:	exrammode = data & 3;				break;
+		case 0x5105:	mirror = data;							break;
+		case 0x5106:	filltile = data & 3;					break;
+		case 0x5107:	fillattrib = data & 3;				break;
+		case 0x5113:	prgram = data & 7;					break;
 		case 0x5114:
 		case 0x5115:
 		case 0x5116:
-		case 0x5117:
-			prg[addr & 3] = data;
-			break;
-
-		//chr 'a' regs
+		case 0x5117:	prg[addr & 3] = data;	mmc5_syncprg();	break;
 		case 0x5120:
 		case 0x5121:
 		case 0x5122:
@@ -342,53 +305,24 @@ void mmc5_write(u32 addr,u8 data)
 		case 0x5127:
 			chra[addr & 7] = data | (chrhi << 8);
 			chrselect = 0;
+			mmc5_syncchr();
 			break;
-
-		//chr 'b' regs
 		case 0x5128:
 		case 0x5129:
 		case 0x512A:
 		case 0x512B:
 			chrb[addr & 3] = data | (chrhi << 8);
 			chrselect = 1;
+			mmc5_syncchr();
 			break;
-
-		//high 2 bits of all chr registers
-		case 0x5130:
-			chrhi = data & 3;
-			break;
-
-		//split screen control
-		case 0x5200:
-			break;
-
-		//split screen vscroll
-		case 0x5201:
-			break;
-
-		//split screen chr page
-		case 0x5202:
-			break;
-
-		//irq enable
-		case 0x5203:
-			irqtarget = data;
-			break;
-
-		//irq enable
-		case 0x5204:
-			irqenable = data;
-			break;
-
-		//multiplicand
-		case 0x5205:
-			multiply[0] = data;
-			break;
-
-		//multiplier
-		case 0x5206:
-			multiply[1] = data;
-			break;
+		case 0x5130:	chrhi = data & 3;						break;
+		case 0x5200:	splitmode = data;						break;
+		case 0x5201:	splitscroll = data;					break;
+		case 0x5202:	splitbank = data;						break;
+		case 0x5203:	irqtarget = data;						break;
+		case 0x5204:	irqenable = data;						break;
+		case 0x5205:	multiply[0] = data;					break;
+		case 0x5206:	multiply[1] = data;					break;
 
 		default:
 			log_printf("mmc5:  unhandled write $%04X = $%02X\n",addr,data);
@@ -467,7 +401,9 @@ static void scanline_detected()
 
 void mmc5_ppucycle()
 {
+	//visible scanlines
 	if(SCANLINE < 240) {
+
 		//see if rendering is enabled
 		if(CONTROL1 & 0x18) {
 

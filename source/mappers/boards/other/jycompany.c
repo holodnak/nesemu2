@@ -20,7 +20,7 @@
 
 #include "mappers/mapperinc.h"
 
-static u8 irqmode, irqcounter, irqprescaler, irqenabled, irqxor, irqwait;
+static u8 irqmode, irqenabled, irqxor, irqwait;
 static u8 mode, mirror, ntram, chrblock;
 static u8 prgbank[4];
 static u8 chrbanklo[8];
@@ -28,7 +28,8 @@ static u8 chrbankhi[8];
 static u8 ntbank[8];
 static u8 ram[8];
 static u8 mul[2];
-static u8 dip = 0;
+static u8 dip;
+static u8 ntctl = 0;
 
 static u8 reverse(u8 byte)
 {
@@ -151,13 +152,32 @@ void sync_chr()
 	}
 }
 
+#define ntbank(nn)			(ntbank[nn] | (ntbank[(nn) + 4] << 8))
+
 void sync_nt()
 {
-	switch (mirror & 3) {
-	case 0: mem_setmirroring(MIRROR_V); break;
-	case 1: mem_setmirroring(MIRROR_H); break;
-	case 2: mem_setmirroring(MIRROR_1L); break;
-	case 3: mem_setmirroring(MIRROR_1H); break;
+	int i;
+
+	if (ntctl == 0) {
+		switch (mirror & 3) {
+		case 0: mem_setmirroring(MIRROR_V); break;
+		case 1: mem_setmirroring(MIRROR_H); break;
+		case 2: mem_setmirroring(MIRROR_1L); break;
+		case 3: mem_setmirroring(MIRROR_1H); break;
+		}
+	}
+
+	else {
+		for (i = 0; i < 4; i++) {
+			if ((mode & 0x40) || ((ntram ^ ntbank(i)) & 0x80)) {
+				mem_setchr1(0x8 + i, ntbank(i));
+				mem_setchr1(0xC + i, ntbank(i));
+			}
+			else {
+				mem_setnt1(0x8 + i, ntbank(i) & 1);
+				mem_setnt1(0xC + i, ntbank(i) & 1);
+			}
+		}
 	}
 }
 
@@ -175,6 +195,7 @@ static u8 read5(u32 addr)
 	switch (addr) {
 	case 0x5000:
 		ret = dip;
+		break;
 	case 0x5800:
 		ret = (mul[0] * mul[1]) & 0xFF;
 		break;
@@ -214,25 +235,48 @@ static void write5(u32 addr, u8 data)
 	log_printf("write5: $%04X = $%02X\n", addr, data);
 }
 
+static u16 irqtotal;
+
+#define COUNT_UP() ((irqmode & 0xC0) == 0x40)
+
+static void update_prescaler(u8 n)
+{
+	n ^= irqxor;
+	n ^= (COUNT_UP() ? 0xFF : 0);
+	irqtotal &= (irqmode & 4) ? ~7 : ~0xFF;
+	irqtotal |= (irqmode & 4) ? (n & 7) : n;
+}
+
+static void update_counter(u8 n)
+{
+	n ^= irqxor;
+	n ^= (COUNT_UP() ? 0xFF : 0);
+	irqtotal &= (irqmode & 4) ? 7 : 0xFF;
+	irqtotal |= (irqmode & 4) ? (n << 3) : (n << 8);
+}
+
+static int irqline = -3;
+
+static void clock_irqtotal()
+{
+	if (irqtotal == 0) {
+		if (irqenabled) {
+			log_printf("irq\n");
+			cpu_set_irq(IRQ_MAPPER);
+			irqline = SCANLINE;
+		}
+	}
+	irqtotal--;
+//	log_printf("clock_irqtotal: irqtotal = $%02X %02X\n",irqtotal >> 8, irqtotal & 0xFF);
+}
+
 static void write(u32 addr, u8 data)
 {
 	switch (addr & 0xF000) {
-	case 0x8000:
-		prgbank[addr & 3] = data;
-		sync_prg();
-		break;
-	case 0x9000:
-		chrbanklo[addr & 7] = data;
-		sync_chr();
-		break;
-	case 0xA000:
-		chrbankhi[addr & 7] = data;
-		sync_chr();
-		break;
-	case 0xB000:
-		ntbank[addr & 7] = data;
-		sync_nt();
-		break;
+	case 0x8000:	prgbank[addr & 3] = data;		sync_prg();		break;
+	case 0x9000:	chrbanklo[addr & 7] = data;	sync_chr();		break;
+	case 0xA000:	chrbankhi[addr & 7] = data;	sync_chr();		break;
+	case 0xB000:	ntbank[addr & 7] = data;		sync_nt();		break;
 	case 0xC000:
 		switch (addr & 7) {
 		case 0:
@@ -240,6 +284,14 @@ static void write(u32 addr, u8 data)
 		case 1:
 			irqmode = data;
 			log_printf("irqmode = %02X @ PC = %04X\n", data, nes->cpu.pc);
+			log_printf("   %d-bit prescaler\n", (irqmode & 4) ? 3 : 8);
+			log_printf("   counting %s\n", (irqmode & 0xC0) == 0x80 ? "down" : (irqmode & 0xC0) == 0x40 ? "up" : "paused");
+			log_printf("   source %s\n", 
+				(irqmode & 3) == 0 ? "cpu cycles" :
+				(irqmode & 3) == 1 ? "ppu a12 rising" :
+				(irqmode & 3) == 2 ? "ppu reads" :
+				(irqmode & 3) == 3 ? "cpu writes" : "unknown");
+			log_printf("   funky mode %s\n", (irqmode & 8) ? "enabled" : "disabled");
 			break;
 		case 2:
 			irqenabled = 0;
@@ -249,11 +301,11 @@ static void write(u32 addr, u8 data)
 			irqenabled = 1;
 			break;
 		case 4:
-			irqprescaler = data ^ irqxor;
-			log_printf("irqprescaler = %02X @ PC = %04X\n", data, nes->cpu.pc);
+			update_prescaler(data);
+			log_printf("irqprescaler = %02X (3bit= %1X) @ PC = %04X\n", data, data & 7, nes->cpu.pc);
 			break;
 		case 5:
-			irqcounter = data ^ irqxor;
+			update_counter(data);
 			log_printf("irqcounter = %02X @ PC = %04X\n", data, nes->cpu.pc);
 			break;
 		case 6:
@@ -266,8 +318,9 @@ static void write(u32 addr, u8 data)
 	case 0xD000:
 		switch (addr & 3) {
 		case 0:
-			mode = data;
+			mode = (data & ~0x20) | (ntctl ? 0x20 : 0);
 			log_printf("mode = %02X @ PC = %04X\n", data, nes->cpu.pc);
+			log_printf("  chr bank size = %d\n", 1 << (3 - ((mode & 0x18) >> 3)));
 			sync_prg();
 			sync_chr();
 			sync_nt();
@@ -282,6 +335,7 @@ static void write(u32 addr, u8 data)
 			break;
 		case 3:
 			chrblock = data;
+			log_printf("chrblock = %02X @ PC = %04X\n", data, nes->cpu.pc);
 			sync_chr();
 			break;
 		}
@@ -293,17 +347,18 @@ static void write(u32 addr, u8 data)
 	}
 }
 
-static void reset(int hard)
+static void reset(int hard, int ntc)
 {
 	int i;
 
+	ntctl = ntc;
 	mem_setreadfunc(5, read5);
 	mem_setwritefunc(5, write5);
 	for (i = 8; i<16; i++)
 		mem_setwritefunc(i, write);
 
 	if (hard) {
-		mode = 0;
+		mode = ntctl ? 0x20 : 0;
 		mirror = 0;
 		ntram = 0;
 		chrblock = 0;
@@ -315,7 +370,6 @@ static void reset(int hard)
 		}
 	}
 
-	irqcounter = irqprescaler = 0;
 	irqenabled = irqmode = 0;
 	irqxor = 0;
 	irqwait = 0;
@@ -325,38 +379,15 @@ static void reset(int hard)
 	sync_nt();
 }
 
-static int irqline = 0;
-
-static void irqclock()
+static void reset_normal(int hard)
 {
-	unsigned char mask;
-	if (irqmode & 0x4)
-		mask = 0x7;
-	else	mask = 0xFF;
-	if ((irqmode & 0xC0) == 0x80)
-	{
-		irqprescaler--;
-		if ((irqprescaler & mask) == mask)
-		{
-			irqcounter--;
-			if (irqcounter == 0xFF) {
-				cpu_set_irq(IRQ_MAPPER);
-				irqline = SCANLINE;
-			}
-		}
-	}
-	if ((irqmode & 0xC0) == 0x40)
-	{
-		irqprescaler++;
-		if (!(irqprescaler & mask))
-		{
-			irqcounter++;
-			if (!irqcounter) {
-				cpu_set_irq(IRQ_MAPPER);
-				irqline = SCANLINE;
-			}
-		}
-	}
+	reset(hard, 0);
+}
+
+static void reset_ntctl(int hard)
+{
+	reset(hard, 1);
+	dip = 0xC0;
 }
 
 static u32 irqaddr;
@@ -365,7 +396,7 @@ static void ppucycle()
 {
 	if (irqenabled && (irqmode & 3) == 1) {
 		if ((irqaddr & 0x1000) == 0 && (nes->ppu.busaddr & 0x1000))
-			irqclock();
+			clock_irqtotal();
 		irqaddr = nes->ppu.busaddr;
 	}
 }
@@ -377,15 +408,15 @@ static void cpucycle()
 	int i;
 
 	if (LINECYCLES == 0) {
-		if (irqline) {
+		if (irqline != -3) {
 			for (i = 0; i < 256; i++) {
 				video_updaterawpixel(irqline, i, 0x00FF00);
 			}
+			irqline = -3;
 		}
-		irqline = 0;
 	}
 	if (irqenabled && (irqmode & 3) == 0) {
-		irqclock();
+		clock_irqtotal();
 	}
 }
 
@@ -394,4 +425,5 @@ static void state(int mode, u8 *data)
 
 }
 
-MAPPER(B_JYCOMPANY, reset, ppucycle, cpucycle, state);
+MAPPER(B_JYCOMPANY, reset_normal, ppucycle, cpucycle, state);
+MAPPER(B_JYCOMPANY_NTCTL, reset_ntctl, ppucycle, cpucycle, state);

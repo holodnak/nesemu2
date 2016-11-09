@@ -45,6 +45,8 @@ static u8 irqenable,ioenable,control,status;
 static u16 irqcounter,irqlatch;
 static int diskaddr;
 static int diskflip;
+static readfunc_t read_disk;
+static writefunc_t write_disk;
 
 //hle
 static int hlefds = 0;
@@ -70,6 +72,16 @@ static void clearirq(u8 mask)
 static void sync()
 {
 	mem_setmirroring(mirror);
+}
+
+static u8 fds_read_disk(u32 diskaddr)
+{
+	return(nes->cart->disk.data[(diskside * 65500) + diskaddr]);
+}
+
+static void fds_write_disk(u32 diskaddr, u8 data)
+{
+	nes->cart->disk.data[(diskside * 65500) + diskaddr] = data;
 }
 
 static u8 fds_read(u32 addr)
@@ -98,11 +110,12 @@ static u8 fds_read(u32 addr)
 				return(diskread);
 
 			//get byte read from disk
-			diskread = nes->cart->disk.data[(diskside * 65500) + diskaddr];
+//			diskread = nes->cart->disk.data[(diskside * 65500) + diskaddr];
+			diskread = read_disk(diskaddr);
 //			log_printf("fds.c:  $4031 read:  side = %d, diskaddr = %d, diskdata = $%02X\n",diskside,diskaddr,diskread);
 
 			//increment disk data address
-			if(diskaddr < 64999)
+//			if(diskaddr < 64999)
 				diskaddr++;
 
 			//setup disk irq cycles
@@ -186,7 +199,8 @@ static void fds_write(u32 addr,u8 data)
 					if(writeskip)
 						writeskip--;
 					else if(diskaddr >= 2) {
-						nes->cart->disk.data[(diskside * 65500) + (diskaddr - 2)] = data;
+//						nes->cart->disk.data[(diskside * 65500) + (diskaddr - 2)] = data;
+						write_disk(diskaddr - 2, data);
 //						log_printf("fds.c:  writing data to disk %d addr (%d - 2) data $%02X\n",diskside,diskaddr,data);
 					}
 			}
@@ -246,6 +260,8 @@ static void fds_reset(int hard)
 	u8 *bios;
 
 	//setup for fds
+	read_disk = fds_read_disk;
+	write_disk = fds_write_disk;
 	read4 = mem_getreadfunc(4);
 	write4 = mem_getwritefunc(4);
 	mem_setreadfunc(4, fds_read);
@@ -366,7 +382,29 @@ static u8 vectors[16] = {
 
 static u8 gdram[1024 * 1024];
 static u8 gdbank = 0;
-static u8 gdrun = 0;
+static u8 gdchrbank = 0;
+static u8 gdmode = 0xFF;
+static u8 gdmirror = 0;
+static u8 rampages[4];	//8k pages
+static u8 reg4411 = 0;
+
+static u8 doctor_read_disk(u32 diskaddr)
+{
+	u8 ret = nes->cart->disk.data[(diskside * 80000) + diskaddr];
+
+//	log_printf("doctor read: %d = %02X\n", (diskside * 80000) + diskaddr, ret);
+	return(ret);
+}
+
+static void doctor_write_disk(u32 diskaddr, u8 data)
+{
+	nes->cart->disk.data[(diskside * 80000) + diskaddr] = data;
+}
+
+static void gdsync()
+{
+	mem_setmirroring(gdmirror);
+}
 
 static u8 doctor_read(u32 addr)
 {
@@ -384,11 +422,13 @@ static u8 doctor_read(u32 addr)
 
 		case 0x42FF:
 			break;
+
 		case 0x43FF:
 			break;
 		case 0x4410:
 			break;
 		case 0x4411:
+			ret = reg4411;
 			break;
 
 		case 0x4FF0:
@@ -426,16 +466,36 @@ static u8 doctor_read(u32 addr)
 	case 0xB:
 	case 0xC:
 	case 0xD:
-		ret = gdram[gdbank * 0x8000 + (addr & 0x7FFF)];
-//		log_printf("doctor read: %04X\n", addr);
-		break;
-
 	case 0xE:
 	case 0xF:
-		if(gdrun == 0)
-			ret = nes->cart->prg.data[prgbase + (addr & 0x1FFF)];
-		else
-			ret = gdram[gdbank * 0x8000 + (addr & 0x7FFF)];
+		//log_printf("doctor read: %04X\n", addr);
+
+		//bios read
+		if (gdmode == 0xFF) {
+			if (addr >= 0xE000)
+				ret = nes->cart->prg.data[prgbase + (addr & 0x1FFF)];
+			else
+				ret = gdram[gdbank * 0x8000 + (addr & 0x7FFF)];
+		}
+
+		//gdram read
+		else {
+			u32 offset;
+
+			if (addr >= 0x8000 && addr < 0xC000) {
+				offset = (rampages[0] * 0x4000) + (addr & 0x3FFF);
+			}
+			else {
+				offset = (rampages[1] * 0x4000) + (addr & 0x3FFF);
+			}
+			ret = gdram[offset];
+
+/*			if (addr >= 0xC000)
+				ret = gdram[(addr & 0x3FFF) + 0x1C000];
+			else if (addr >= 0x8000)
+				ret = gdram[(addr & 0x3FFF) + (rampages[0] * 0x4000)];*/
+		}
+
 		break;
 	}
 
@@ -454,19 +514,44 @@ static void doctor_write(u32 addr, u8 data)
 	case 0x4:
 		switch (addr) {
 
+		//start game?
 		case 0x42FF:
-			vectors[5] = gdram[0x7FFA];
-			vectors[6] = gdram[0x7FFB];
-			vectors[0xB] = gdram[0x7FFC];
-			vectors[0xC] = gdram[0x7FFD];
-			gdrun = 1;
+			gdmode = data >> 5;
+			gdmirror = ~(data >> 4) & 1;
+
+			rampages[0] = 0;
+			rampages[1] = 7;
+
+			gdsync();
+
+//			doctor_write(0x8000, 0);
+
+			{
+				memfile_t *mf = memfile_open("gdram.dump", "wb");
+
+				memfile_write(gdram, 0x8000, 8, mf);
+				memfile_close(mf);
+
+//				mf = memfile_open("gdisks.dump", "wb");
+//				memfile_write(nes->cart->disk.data, nes->cart->disk.size, 1, mf);
+//				memfile_close(mf);
+			}
+
 			break;
+
+		//selects 32kb gdram bank
 		case 0x43FF:
+			gdbank = data >> 4;
+			gdchrbank = data >> 4;
 			break;
+
 		case 0x4410:
 			break;
 		case 0x4411:
+			reg4411 = data;
 			break;
+
+		//enable game doctor
 		case 0x4FFF:
 			prgbase = 0x2000;
 			break;
@@ -487,15 +572,30 @@ static void doctor_write(u32 addr, u8 data)
 	case 0xB:
 	case 0xC:
 	case 0xD:
-		gdram[gdbank * 0x8000 + (addr & 0x7FFF)] = data;
-//		log_printf("doctor write: %04X = %02X\n", addr, data);
-		break;
-
 	case 0xE:
 	case 0xF:
-		log_printf("doctor write: %04X = %02X\n", addr, data);
-		break;
+//		log_printf("doctor write: %04X = %02X (pc = %04X)\n", addr, data, nes->cpu.pc);
 
+		switch (gdmode) {
+		case 0:
+			rampages[0] = data & 7;
+			break;
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			break;
+		default:
+			if (addr < 0xE000) {
+				if(reg4411 != 4)
+					gdram[gdbank * 0x8000 + (addr & 0x7FFF)] = data;
+			}
+			break;
+		}
+		break;
 	}
 }
 
@@ -511,7 +611,9 @@ static void doctor_reset(int hard)
 	}
 	prgbase = 0x0000;
 	gdbank = 0;
-	gdrun = 0;
+	gdmode = 0xFF;
+	read_disk = doctor_read_disk;
+	write_disk = doctor_write_disk;
 }
 
 static void doctor_cpucycle()

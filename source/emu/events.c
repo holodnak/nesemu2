@@ -132,8 +132,10 @@ int emu_event(int id,void *data)
 				nes->mapper->state(CFG_SAVE,d);
 				if(d[0] == 0xFF)
 					d[0] = 0;
-				else
-					d[0] ^= 1;
+				else {
+//					d[0] ^= 1;
+					d[0] = (d[0] + 1) & 3;
+				}
 				nes->mapper->state(CFG_LOAD,d);
 				log_printf("disk inserted!  side = %d\n",d[0]);
 			}

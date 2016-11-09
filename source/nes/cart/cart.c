@@ -243,6 +243,7 @@ cart_t *cart_load_patched(const char *filename,const char *patchfilename)
 	}
 	else
 		ret->filename = mem_strdup((char*)filename);
+
 	log_printf("cart_load:  rom filename is '%s'\n",ret->filename);
 
 	//close file

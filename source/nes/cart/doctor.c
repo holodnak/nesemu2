@@ -98,13 +98,103 @@ void copy_block(u8 *dst, u8 *src, int size) {
 	memcpy(dst, src, size);
 }
 
-int cart_load_doctor(cart_t *ret, memfile_t *file)
+#define SIDE_SIZE 80000
+
+void load_diskside(memfile_t *mf, u8 *data, int size)
 {
 	u8 *tmpbuf, *ptr;
+	int i, o;
+
+	//convert the format to fds format
+	tmpbuf = (u8*)mem_alloc(SIDE_SIZE);
+
+	memfile_read(tmpbuf, 1, size, mf);
+
+	ptr = data;
+	i = 3;
+	o = 0;
+
+	memcpy(ptr + o, tmpbuf + i, 0x38);
+	i += 0x38 + 2;
+	o += 0x38;
+
+	memcpy(ptr + o, tmpbuf + i, 2);
+	i += 2 + 2;
+	o += 2;
+
+	while (tmpbuf[i] == 3) {
+
+		int size = (tmpbuf[i + 13] | (tmpbuf[i + 14] << 8)) + 1;
+
+		memcpy(ptr + o, tmpbuf + i, 16);
+		i += 16 + 2;
+		o += 16;
+
+		memcpy(ptr + o, tmpbuf + i, size);
+		i += size + 2;
+		o += size;
+	}
+	mem_free(tmpbuf);
+}
+
+int count_doctors(char *filename)
+{
+	char diskfile[1024];
+	memfile_t *mf;
+	int ret = 0;
+
+	strncpy(diskfile, filename, 1024);
+	for (;;) {
+		if ((mf = memfile_open(diskfile, "rb")) == 0) {
+			break;
+		}
+		memfile_close(mf);
+		diskfile[strlen(diskfile) - 1]++;
+		ret++;
+	}
+	return(ret);
+}
+
+void load_doctors(char *filename, int *size, u8 **data)
+{
+	char diskfile[1024];
+	memfile_t *mf;
+	int i, num;
+	u8 *ptr;
+
+	strcpy(diskfile, filename);
+
+	num = count_doctors(filename);
+	log_printf("doctors: %d\n", num);
+
+	*size = num * SIDE_SIZE;
+	*data = mem_alloc(*size);
+	ptr = *data;
+
+	for (i = 0; i < num; i++) {
+
+		//try to open disk image
+		if ((mf = memfile_open(diskfile, "rb")) == 0) {
+			break;
+		}
+
+		//load disk side
+		load_diskside(mf, ptr, mf->size);
+
+		//increment
+		log_printf("loaded '%s' (%d bytes).\n", diskfile, mf->size);
+		memfile_close(mf);
+		diskfile[strlen(diskfile) - 1]++;
+		ptr += SIDE_SIZE;
+	}
+	log_printf("load_doctors: finished.  %d bytes.\n", *size);
+}
+
+int cart_load_doctor(cart_t *ret, memfile_t *file)
+{
 	u8 gdheader[3];
 	u8 header[16];
 	u32 size;
-	int i, o;
 	char biosfile[1024];
 	char drbiosfile[1024];
 
@@ -155,14 +245,7 @@ int cart_load_doctor(cart_t *ret, memfile_t *file)
 	memfile_read(header, 1, 16, file);
 
 	//check if disk is valid
-	if (memcmp(header, fdsident2, 15) == 0) {
-
-		//skip back to the beginning
-		memfile_seek(file, 3, SEEK_SET);
-	}
-
-	//bad disk
-	else {
+	if (memcmp(header, fdsident2, 15) != 0) {
 		log_printf("cart_load_doctor:  bad gamedoctor image.\n");
 		return(1);
 	}
@@ -171,41 +254,10 @@ int cart_load_doctor(cart_t *ret, memfile_t *file)
 	ret->mapperid = B_DOCTOR;
 
 	//setup the disk data pointers
-	ret->disk.size = size;
-	ret->disk.data = (u8*)mem_alloc(size);
+	load_doctors(file->filename, &ret->disk.size, &ret->disk.data);
 	ret->diskoriginal.size = 0;
 	ret->diskoriginal.data = 0;
 
-	//convert the format to fds format
-	tmpbuf = (u8*)mem_alloc(size);
-	memfile_read(tmpbuf, 1, size, file);
-
-	ptr = ret->disk.data;
-	i = 0;
-	o = 0;
-
-	memcpy(ptr + o, tmpbuf + i, 0x38);
-	i += 0x38 + 2;
-	o += 0x38;
-
-	memcpy(ptr + o, tmpbuf + i, 2);
-	i += 2 + 2;
-	o += 2;
-
-	while (tmpbuf[i] == 3) {
-
-		int size = (tmpbuf[i + 13] | (tmpbuf[i + 14] << 8)) + 1;
-
-		memcpy(ptr + o, tmpbuf + i, 16);
-		i += 16 + 2;
-		o += 16;
-
-		memcpy(ptr + o, tmpbuf + i, size);
-		i += size + 2;
-		o += size;
-	}
-
-	log_printf("cart_load_doctor:  loaded disk, %d sides (%d bytes)\n", ret->disk.size / 65500, size);
-	mem_free(tmpbuf);
+	log_printf("cart_load_doctor:  loaded disk, %d sides (%d bytes)\n", ret->disk.size / SIDE_SIZE, size);
 	return(0);
 }

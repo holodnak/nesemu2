@@ -211,6 +211,7 @@ static mapper_t *get_mapper(int mapperid)
 	MAPPER(B_UNL_UY);
 	MAPPER(B_UNL_SUPERLIONKING);
 	MAPPER(B_UNL_BITCORP);
+	MAPPER(B_UNL_FS304);
 
 	//colordreams
 	MAPPER(B_COLORDREAMS);

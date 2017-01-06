@@ -146,6 +146,7 @@ enum boardid_e {
 	B_UNL_UY,
 	B_UNL_SUPERLIONKING,
 	B_UNL_BITCORP,
+	B_UNL_FS304,
 
 	//colordreams
 	B_COLORDREAMS,

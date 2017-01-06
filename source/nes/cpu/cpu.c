@@ -90,6 +90,7 @@ extern int running;
 
 //include functions to execute opcodes
 #include "execute.c"
+//#include "newcpu.c"
 
 int cpu_init()
 {

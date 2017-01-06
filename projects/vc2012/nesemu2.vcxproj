@@ -379,6 +379,7 @@
     <ClCompile Include="..\..\source\mappers\boards\other\opencorp.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\rumblestation.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\bitcorp.c" />
+    <ClCompile Include="..\..\source\mappers\boards\other\unl\fs304.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\h2288.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\racermate.c" />
     <ClCompile Include="..\..\source\mappers\boards\other\unl\superlionking.c" />
@@ -549,6 +550,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - SDL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Win32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\nes\cpu\newcpu.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\source\nes\cpu\opcodes\alu.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug - SDL|Win32'">true</ExcludedFromBuild>

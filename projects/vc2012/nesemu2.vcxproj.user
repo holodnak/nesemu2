@@ -32,7 +32,7 @@
     <LocalDebuggerCommandArguments>metroid.fds</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Win32|Win32'">
-    <LocalDebuggerCommandArguments>contra.a</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>zelda3.nes</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>d:\projects\tests</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>

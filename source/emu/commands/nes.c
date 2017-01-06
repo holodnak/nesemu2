@@ -133,26 +133,52 @@ COMMAND_FUNC(writecpu)
 
 COMMAND_FUNC(readppu)
 {
-	u32 addr,size,n;
+	u32 addr, size, n;
 
-	CHECK_ARGS(2,"usage:  readppu <addr> [size]\n");
+	CHECK_ARGS(2, "usage:  readppu <addr> [size]\n");
 	CHECK_CART();
 	addr = str2int(argv[1]);
-	if(addr == (u32)-1) {
+	if (addr == (u32)-1) {
 		log_printf("invalid address\n");
 	}
 	else {
-		if(argc >= 3) {
+		if (argc >= 3) {
 			size = str2int(argv[2]);
-			for(n=0;n<size;n++) {
-				log_printf("$%02X ",ppu_memread(addr+n));
-				if((n & 0xF) == 0xF)
+			for (n = 0; n<size; n++) {
+				log_printf("$%02X ", ppu_memread(addr + n));
+				if ((n & 0xF) == 0xF)
 					log_printf("\n");
 			}
 		}
 		else {
-			log_printf("$%04X = $%02X\n",addr,ppu_memread(addr));
+			log_printf("$%04X = $%02X\n", addr, ppu_memread(addr));
 		}
 	}
+	return(0);
+}
+
+COMMAND_FUNC(dump)
+{
+	u32 addr, size, n;
+
+	CHECK_ARGS(3, "usage:  dump <area> <filename>\n");
+	CHECK_CART();
+
+	//dumping prg
+	if (stricmp("prg", argv[1]) == 0) {
+		size = nes->cart->prg.size;
+		memfile_t *mf = memfile_open(argv[2], "wb");
+
+		if (mf == 0) {
+			log_printf("error creating file %s\n", argv[2]);
+			return(0);
+		}
+		memfile_write(nes->cart->prg.data, size, 1, mf);
+		memfile_close(mf);
+		log_printf("dumped %d bytes of PRG to file '%s'\n", size, argv[2]);
+	}
+
+	else
+		log_printf("please choose valid area and filename to save for dump\n");
 	return(0);
 }

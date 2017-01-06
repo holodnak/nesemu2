@@ -129,7 +129,7 @@ u32 cpu_execute(u32 cycles)
 	u64 start = CYCLES;
 	u64 stop = CYCLES + cycles;
 
-	while(CYCLES < stop && BADOPCODE == 0) {
+	while (CYCLES < stop && BADOPCODE == 0) {
 		cpu_step();
 		if (OPCODE == 0)
 			break;

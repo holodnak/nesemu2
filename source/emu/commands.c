@@ -49,6 +49,7 @@ COMMAND_START
 	COMMAND(readcpu)
 	COMMAND(writecpu)
 	COMMAND(readppu)
+	COMMAND(dump)
 COMMAND_END
 
 COMMAND_FUNC(help)

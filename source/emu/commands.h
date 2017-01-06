@@ -55,6 +55,8 @@ COMMAND_DECL(readppu);
 COMMAND_DECL(loadstate);
 COMMAND_DECL(savestate);
 
+COMMAND_DECL(dump);
+
 int command_execute(char *str);
 
 #endif
